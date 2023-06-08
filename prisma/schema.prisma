@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum AttrType {
+  Button
+  Image
+  Color
+}
+
+enum ProductType {
+  Fixed
+  Variable
+}
+
+enum StockType {
+  InStock
+  OutOfStock
+  StockLevel
+}
+
+enum Role {
+  Admin
+  Seller
+  Buyer
+  Trader
+  Staff
+  SuperAdmin
+}
+
+enum NotiType {
+  ContactMsg
+  NewOrder
+  UpdateOrder
+  RemindOrder
+  RejectOrder
+  CancelOrder
+}
+
+model State {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String     @unique
+  nameMM    String
+  lat       String
+  lng       String
+  capital   String
+  color     String?
+  districts District[]
+  User      User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  productIds String[] @db.ObjectId
+}
+
+model Township {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String    @unique
+  nameMM     String
+  District   District? @relation(fields: [districtId], references: [id])
+  districtId String?   @db.ObjectId
+  User       User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model District {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String     @unique
+  nameMM    String
+  townships Township[]
+  State     State?     @relation(fields: [stateId], references: [id])
+  stateId   String?    @db.ObjectId
+  User      User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  username        String           @unique
+  iv              String
+  encryptedData   String
+  email           String?          @unique
+  role            Role             @default(Seller)
+  userDefinedId   String?          @db.ObjectId
+  userDefinedRole UserDefinedRole? @relation(fields: [userDefinedId], references: [id])
+  profile         String?
+  phoneNum        String?          @unique
+  name            String?
+  nameMM          String?
+  brandName       String?
+  brandNameMM     String?
+  houseNo         String?
+  street          String?
+  stateStr        String?
+  districtStr     String?
+  townshipStr     String?
+  address         String?
+  state           State?           @relation(fields: [stateId], references: [id])
+  stateId         String?          @db.ObjectId
+  district        District?        @relation(fields: [districtId], references: [id])
+  districtId      String?          @db.ObjectId
+  township        Township?        @relation(fields: [townshipId], references: [id])
+  townshipId      String?          @db.ObjectId
+
+  isBlocked Boolean? @default(false)
+  isDeleted Boolean? @default(false)
+
+  adminNote String?
+
+  lastLogin       DateTime?
+  lastNotiOpen    DateTime?
+  lastMessageOpen DateTime?
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model UserDefinedRole {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  permission String[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  User       User[]
+}

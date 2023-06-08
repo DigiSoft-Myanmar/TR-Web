@@ -1,0 +1,355 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 100;
+  src: url("../public/fonts/inter/Inter-Thin.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 200;
+  src: url("../public/fonts/inter/Inter-ExtraLight.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 300;
+  src: url("../public/fonts/inter/Inter-Light.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 400;
+  src: url("../public/fonts/inter/Inter-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 500;
+  src: url("../public/fonts/inter/Inter-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 600;
+  src: url("../public/fonts/inter/Inter-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 700;
+  src: url("../public/fonts/inter/Inter-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 800;
+  src: url("../public/fonts/inter/Inter-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 900;
+  src: url("../public/fonts/inter/Inter-Black.ttf");
+}
+
+@font-face {
+  font-family: "MyanmarAngoun";
+  src: url("../public/fonts/MyanmarAngoun.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 100;
+  src: url("../public/fonts/poppins/Poppins-Thin.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 100;
+  font-style:italic;
+  src: url("../public/fonts/poppins/Poppins-ThinItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 200;
+  src: url("../public/fonts/poppins/Poppins-ExtraLight.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 200;
+  font-style:italic;
+  src: url("../public/fonts/poppins/Poppins-ExtraLightItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 300;
+  src: url("../public/fonts/poppins/Poppins-Light.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 300;
+  font-style:italic;
+  src: url("../public/fonts/poppins/Poppins-LightItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 400;
+  src: url("../public/fonts/poppins/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 500;
+  src: url("../public/fonts/poppins/Poppins-Medium.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 500;
+  font-style: italic;
+  src: url("../public/fonts/poppins/Poppins-MediumItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 600;
+  src: url("../public/fonts/poppins/Poppins-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 600;
+  font-style: italic;
+  src: url("../public/fonts/poppins/Poppins-SemiBoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 700;
+  src: url("../public/fonts/poppins/Poppins-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 700;
+  font-style: italic;
+  src: url("../public/fonts/poppins/Poppins-BoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 800;
+  src: url("../public/fonts/poppins/Poppins-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 800;
+  font-style: italic;
+  src: url("../public/fonts/poppins/Poppins-ExtraBoldItalic.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 900;
+  src: url("../public/fonts/poppins/Poppins-Black.ttf");
+}
+
+@font-face {
+  font-family: "Poppins";
+  font-weight: 900;
+  font-style: italic;
+  src: url("../public/fonts/poppins/Poppins-BlackItalic.ttf");
+}
+
+@font-face {
+  font-family: "Pyidaungsu";
+  src: url("../public/fonts/Pyidaungsu.ttf");
+}
+
+@font-face {
+  font-family: "Pyidaungsu";
+  font-weight: bold;
+  src: url("../public/fonts/Pyidaungsu-Bold.ttf");
+}
+
+.active-route{
+    @apply text-primaryText bg-primary border-l-[6px] border-l-accent -ml-1
+}
+
+
+.angle{
+    position: absolute;
+    z-index: 20;
+    top: 25px;
+    left: -30px;
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    text-transform: uppercase;
+    font-size: 11px;
+    padding: 5px 40px;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+    height:17px;
+    width:17px;
+    border-radius: 50%;
+    pointer-events: auto;
+    -webkit-appearance: none;
+    @apply bg-primary
+  }
+
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+  details > summary {
+    list-style: none;
+  }
+  
+  details summary::-webkit-details-marker {
+    display:none;
+  }
+
+  .table-pdp{
+    @apply w-full text-sm text-left text-gray-500
+  }
+  
+  .table-pdp thead{
+    @apply text-xs text-white uppercase bg-primary
+  }
+  
+  .table-pdp th{
+    @apply py-4 px-6
+  }
+  
+  .table-pdp td{
+    @apply py-4 px-6
+  }
+  
+  .table-pdp tbody tr{
+    @apply bg-white border-b
+  }
+  
+  .table-pdp tbody tr:nth-child(even) {
+    @apply bg-slate-100 border-b
+  }
+  
+  .table-pdp tbody tr:nth-child(odd) {
+    @apply bg-white border-b
+  }
+  
+  input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{
+ appearance: none;
+ -webkit-appearance: none;
+}
+input[type="number"]{
+  -moz-appearance: textfield; 
+ }
+ 
+
+.se-empty .sun-editor{
+  border: none;
+  background: none;
+}
+
+
+.se-empty .sun-editor .se-container .se-wrapper .sun-editor-editable{
+  background: none;
+  padding: 0px;
+  @apply text-gray-400
+}
+
+div.loading-bar {
+  background-color: #d6cec2;
+  border-radius: 10px;
+  margin-top: 25px;
+  overflow: hidden;
+  position: relative;
+  @apply h-1
+}
+
+
+div.loading-bar::after {
+  content: '';
+  position: absolute;
+  transform: translateX(-20px);
+  animation: loop 2s ease infinite;
+  @apply bg-primary w-1/2 h-1
+}
+
+@keyframes loop {
+  0%,100% {
+    transform: translateX(-56px);
+  }
+  50% {
+    transform: translateX(160px)
+  }
+}
+
+.Mui-checked{
+  @apply text-primary !important
+}
+
+.drawer-toggle ~ .drawer-side > .drawer-overlay{
+  @apply bg-sellerBg/80 backdrop-blur
+}
+
+.no-spinner {
+  -moz-appearance: textfield;
+}
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+img {
+  pointer-events: none;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  height: 1em;
+  width: 1em;
+  border-radius: 50em;
+  background: url("https://pro.fontawesome.com/releases/v5.10.0/svgs/solid/times.svg") no-repeat 50% 50%;
+  background-size: contain;
+  opacity: 0;
+  pointer-events: none;
+}
+
+input[type="search"]:focus::-webkit-search-cancel-button {
+  opacity: 1;
+  pointer-events: all;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  filter: invert(0.7);
+}
+
+input[type="text"], input[type="password"] {
+  font-family: "Pyidaungsu", "Inter", "Poppins";
+}
