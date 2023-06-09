@@ -1,59 +1,20 @@
-import { PrismaClient, Role } from "@prisma/client";
+import { Gender, PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function seedUsers() {
   await prisma.user.upsert({
-    where: { username: "heinhtoo" },
+    where: { email: "heinhtoozaw99@gmail.com" },
     update: {
-      username: "heinhtoo",
+      username: "Hein Htoo",
       email: "heinhtoozaw99@gmail.com",
       role: Role.SuperAdmin,
-      iv: "bda25b5cc9eff9754bb26598cfbb3ee4",
-      encryptedData: "36a52ef4779b9dca51bf930896740dbc",
     },
     create: {
-      username: "heinhtoo",
+      username: "Hein Htoo",
       email: "heinhtoozaw99@gmail.com",
       role: Role.SuperAdmin,
-      iv: "bda25b5cc9eff9754bb26598cfbb3ee4",
-      encryptedData: "36a52ef4779b9dca51bf930896740dbc",
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { username: "hninyu" },
-    update: {
-      username: "hninyu",
-      email: "hninyushwe@gmail.com",
-      role: Role.SuperAdmin,
-      iv: "bda25b5cc9eff9754bb26598cfbb3ee4",
-      encryptedData: "36a52ef4779b9dca51bf930896740dbc",
-    },
-    create: {
-      username: "hninyu",
-      email: "hninyushwe@gmail.com",
-      role: Role.SuperAdmin,
-      iv: "bda25b5cc9eff9754bb26598cfbb3ee4",
-      encryptedData: "36a52ef4779b9dca51bf930896740dbc",
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { username: "thandar" },
-    update: {
-      username: "thandar",
-      email: "thandarphyu@gmail.com",
-      role: Role.SuperAdmin,
-      iv: "bda25b5cc9eff9754bb26598cfbb3ee4",
-      encryptedData: "36a52ef4779b9dca51bf930896740dbc",
-    },
-    create: {
-      username: "thandar",
-      email: "thandarphyu@gmail.com",
-      role: Role.SuperAdmin,
-      iv: "bda25b5cc9eff9754bb26598cfbb3ee4",
-      encryptedData: "36a52ef4779b9dca51bf930896740dbc",
+      gender: Gender.Male,
     },
   });
 }

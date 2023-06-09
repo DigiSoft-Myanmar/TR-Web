@@ -20,6 +20,12 @@ enum AttrType {
 enum ProductType {
   Fixed
   Variable
+  Auction
+}
+
+enum Gender {
+  Male
+  Female
 }
 
 enum StockType {
@@ -39,11 +45,42 @@ enum Role {
 
 enum NotiType {
   ContactMsg
+  Feedback
+  NewUser
+  LowStock
+  NewSubscriber
+  NewUserReview
+  NewProductReview
+  UpdateUserReview
+  UpdateProductReview
+  UpdateMembership
   NewOrder
+  NewProduct
+  UpdateProduct
   UpdateOrder
+  MembershipExpired
+  MembershipNearExpired
   RemindOrder
-  RejectOrder
   CancelOrder
+}
+
+enum UGCReportType {
+  Counterfeit
+  Misleading
+  Defective
+  Missing
+  Violation
+  Inappropriate
+  Fraudulent
+  Unfair
+  Prohibited
+  Other
+}
+
+enum FeedbackType {
+  Product
+  Brand
+  Buyer
 }
 
 model State {
@@ -60,7 +97,7 @@ model State {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  productIds String[] @db.ObjectId
+  ShippingCost ShippingCost[]
 }
 
 model Township {
@@ -71,8 +108,9 @@ model Township {
   districtId String?   @db.ObjectId
   User       User[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  ShippingCost ShippingCost[]
 }
 
 model District {
@@ -84,49 +122,105 @@ model District {
   stateId   String?    @db.ObjectId
   User      User[]
 
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  ShippingCost ShippingCost[]
+}
+
+model Category {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String?
+  nameMM String?
+  color  String?
+  slug   String  @unique
+  icon   String?
+
+  parentId       String?    @db.ObjectId
+  parentCategory Category?  @relation("CategorySubCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategory    Category[] @relation("CategorySubCategory")
+  Product        Product[]  @relation(fields: [productIds], references: [id])
+  productIds     String[]   @db.ObjectId
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model Attribute {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  name   String   @unique
+  nameMM String?
+  type   AttrType @default(Button)
+
+  Term Term[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Term {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String    @unique
+  nameMM      String?
+  value       String?
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+  attributeId String    @db.ObjectId
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
 model User {
   id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  username        String           @unique
-  iv              String
-  encryptedData   String
   email           String?          @unique
   role            Role             @default(Seller)
   userDefinedId   String?          @db.ObjectId
   userDefinedRole UserDefinedRole? @relation(fields: [userDefinedId], references: [id])
-  profile         String?
   phoneNum        String?          @unique
-  name            String?
-  nameMM          String?
-  brandName       String?
-  brandNameMM     String?
-  houseNo         String?
-  street          String?
-  stateStr        String?
-  districtStr     String?
-  townshipStr     String?
-  address         String?
-  state           State?           @relation(fields: [stateId], references: [id])
-  stateId         String?          @db.ObjectId
-  district        District?        @relation(fields: [districtId], references: [id])
-  districtId      String?          @db.ObjectId
-  township        Township?        @relation(fields: [townshipId], references: [id])
-  townshipId      String?          @db.ObjectId
+  username        String?
+  displayName     String?
+  dob             DateTime?
+  gender          Gender
+  nrcFront        String?
+  nrcBack         String?
+  profile         String?
+
+  houseNo     String?
+  street      String?
+  stateStr    String?
+  districtStr String?
+  townshipStr String?
+  address     String?
+  state       State?    @relation(fields: [stateId], references: [id])
+  stateId     String?   @db.ObjectId
+  district    District? @relation(fields: [districtId], references: [id])
+  districtId  String?   @db.ObjectId
+  township    Township? @relation(fields: [townshipId], references: [id])
+  townshipId  String?   @db.ObjectId
 
   isBlocked Boolean? @default(false)
   isDeleted Boolean? @default(false)
 
   adminNote String?
 
-  lastLogin       DateTime?
-  lastNotiOpen    DateTime?
-  lastMessageOpen DateTime?
+  Product           Product[]
+  ShippingCost      ShippingCost[]
+  currentMembership Membership?    @relation(fields: [membershipId], references: [id])
+  membershipId      String?        @db.ObjectId
 
-  createdAt DateTime? @default(now())
-  updatedAt DateTime  @updatedAt
+  lastLogin    DateTime?
+  lastNotiOpen DateTime?
+
+  createdAt       DateTime?      @default(now())
+  updatedAt       DateTime       @updatedAt
+  CartItems       CartItems?
+  SiteVisit       SiteVisit?
+  WishedItems     WishedItems?
+  Review          Review[]
+  Feedback        Feedback[]
+  HelpMessage     HelpMessage[]
+  NotiToken       NotiToken[]
+  Notification    Notification[] @relation(fields: [notificationIds], references: [id])
+  notificationIds String[]       @db.ObjectId
+  PromoCode       PromoCode[]
+  Order           Order[]
 }
 
 model UserDefinedRole {
@@ -136,4 +230,398 @@ model UserDefinedRole {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   User       User[]
+}
+
+model Membership {
+  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                     String   @unique
+  nameMM                   String?
+  adsDetails               String?
+  adsDetailsMM             String?
+  saleReportDetails        String?
+  saleReportDetailsMM      String?
+  topSearchDetails         String?
+  topSearchDetailsMM       String?
+  extraAdsPricing          Int?
+  extraSKUPricing          Int?
+  price                    Int?
+  validity                 Int?
+  onBoardingLimit          Int?
+  topSearchStart           Int?
+  SKUListing               Int?
+  subCategoryReport        Int?
+  freeAdsLimit             Int?
+  adsValidity              Int?
+  adsLifeTime              Int?
+  percentagePerTransaction Float?
+  productLimit             Int?
+  isInfinity               Boolean
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  User                     User[]
+}
+
+model Product {
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  name     String?
+  nameMM   String?
+  slug     String?     @unique
+  SKU      String?
+  type     ProductType @default(Fixed)
+  seller   User        @relation(fields: [sellerId], references: [id])
+  sellerId String      @db.ObjectId
+
+  categories  Category[] @relation(fields: [categoryIds], references: [id])
+  categoryIds String[]   @db.ObjectId
+  tags        String[]
+  imgList     String[]
+
+  regularPrice  Int?
+  salePrice     Int?
+  isPercent     Boolean?   @default(false)
+  isSalePeriod  Boolean?   @default(false)
+  stockType     StockType? @default(InStock)
+  stockLevel    Int?
+  saleStartDate DateTime?
+  saleEndDate   DateTime?
+
+  estimatedPrice Int?
+  openingBid     Int?
+  startTime      DateTime?
+  endTime        DateTime?
+
+  attributes              Json[]
+  variations              Json[]
+  description             String?
+  descriptionMM           String?
+  additionalInformation   String?
+  additionalInformationMM String?
+  shippingInformation     String?
+  shippingInformationMM   String?
+
+  isPublished Boolean @default(false)
+  isFeatured  Boolean @default(false)
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Review        Review[]
+  Feedback      Feedback[]
+  ProductView   ProductView[]
+  WishedItems   WishedItems[] @relation(fields: [wishedItemsId], references: [id])
+  wishedItemsId String[]      @db.ObjectId
+  Brand         Brand?        @relation(fields: [brandId], references: [id])
+  brandId       String?       @db.ObjectId
+
+  Condition   Condition? @relation(fields: [conditionId], references: [id])
+  conditionId String?    @db.ObjectId
+}
+
+model Brand {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String?
+  nameMM String?
+
+  Product   Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Condition {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  name   String?
+  nameMM String?
+
+  Product   Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model CartItems {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String   @unique @db.ObjectId
+  cartItems       Json[]
+  billingAddress  Json
+  shippingAddress Json
+  shippingFee     Json[]
+  isAddressDiff   Boolean
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SiteVisit {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  visitDate   String
+  isMobile    Boolean  @default(false)
+  ipAddress   String?
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?  @unique @db.ObjectId
+  detailsInfo Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WishedItems {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String    @unique @db.ObjectId
+  products   Product[] @relation(fields: [productIds], references: [id])
+  productIds String[]  @db.ObjectId
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model ShippingCost {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  seller              User      @relation(fields: [sellerId], references: [id])
+  sellerId            String    @db.ObjectId
+  state               State?    @relation(fields: [stateId], references: [id])
+  stateId             String?   @db.ObjectId
+  district            District? @relation(fields: [districtId], references: [id])
+  districtId          String?   @db.ObjectId
+  township            Township? @relation(fields: [townshipId], references: [id])
+  townshipId          String?   @db.ObjectId
+  isOfferFreeShipping Boolean   @default(false)
+  shippingIncluded    Boolean   @default(false)
+  defaultShippingCost Int?
+  freeShippingCost    Int?
+  shippingCost        Int?
+  carGateShippingCost Int?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Review {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  product           Product? @relation(fields: [productId], references: [id])
+  productId         String?  @db.ObjectId
+  createdBy         User     @relation(fields: [createdByUserId], references: [id])
+  createdByUserId   String   @db.ObjectId
+  helpfulUsersId    String[]
+  notHelpfulUsersId String[]
+  rating            Int
+  message           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Feedback {
+  id           String          @id @default(auto()) @map("_id") @db.ObjectId
+  product      Product?        @relation(fields: [productId], references: [id])
+  productId    String?         @db.ObjectId
+  sellerId     String?
+  feedbackType FeedbackType    @default(Product)
+  user         User            @relation(fields: [userId], references: [id])
+  userId       String          @db.ObjectId
+  details      String?
+  reasons      UGCReportType[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model HelpMessage {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String
+  phone          String
+  message        String
+  solution       String?
+  isSolved       Boolean  @default(false)
+  solvedBy       User?    @relation(fields: [solvedByUserId], references: [id])
+  solvedByUserId String?  @db.ObjectId
+  device         Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ProductView {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   String   @db.ObjectId
+  clickedDate String
+  address     String
+  createdAt   DateTime @default(now())
+}
+
+model Subscribe {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  createdAt DateTime @default(now())
+}
+
+model Legal {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  accessibility      String?
+  accessibilityMM    String?
+  returnPolicy       String?
+  returnPolicyMM     String?
+  refundPolicy       String?
+  refundPolicyMM     String?
+  privacyPoliy       String?
+  privacyPoliyMM     String?
+  cookie             String?
+  cookieMM           String?
+  termsNConditions   String?
+  termsNConditionsMM String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Configuration {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  lowStockLimit        Int
+  maximumAuctionPeriod Int
+  senderEmail          String
+  senderEmailPassword  Json?
+  senderEmailHost      String
+  senderEmailPort      String
+  senderEmailTSL       Boolean
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model NotiToken {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String? @db.ObjectId
+
+  notificationToken String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  body      String
+  image     String?
+  type      NotiType
+  details   Json?
+  sendList  String[] @db.ObjectId
+  sendUsers User[]   @relation(fields: [sendList], references: [id])
+  createdAt String
+
+  @@map(name: "notifications")
+}
+
+model PromoCode {
+  id                   String  @id @default(auto()) @map("_id") @db.ObjectId
+  img                  String?
+  promoCode            String  @unique
+  minimumPurchasePrice Int
+  discount             Int
+  isPercent            Boolean @default(false)
+  isShippingFree       Boolean @default(false)
+
+  couponUsage                  Int?
+  isCouponUsageInfinity        Boolean @default(false)
+  isCouponUsagePerUserInfinity Boolean @default(false)
+  couponUsagePerUser           Int?
+
+  userIds String @db.ObjectId
+  users   User   @relation(fields: [userIds], references: [id])
+
+  isScheduled Boolean   @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Order     Order[]
+}
+
+model Order {
+  id              String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderNo         Int     @unique
+  orderBy         User    @relation(fields: [orderByUserId], references: [id])
+  orderByUserId   String  @db.ObjectId
+  billingAddress  Json
+  isAddressDiff   Boolean @default(false)
+  shippingAddress Json
+  cartItems       Json[]
+  sellerResponse  Json[]
+  buyerNote       String?
+
+  discountTotal Int?
+
+  promoId   String?    @db.ObjectId
+  promoCode PromoCode? @relation(fields: [promoId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FAQGroup {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  titleMM       String
+  icon          String
+  description   String
+  descriptionMM String
+  FAQ           FAQ[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model FAQ {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  question   String
+  questionMM String
+  answer     String
+  answerMM   String
+  faqGroup   FAQGroup @relation(fields: [fAQGroupId], references: [id])
+  fAQGroupId String   @db.ObjectId
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Content {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  googleMapUrl  String?
+  googleMapUrl1 String?
+  lat           Float?
+  long          Float?
+  email         String?
+  phone         String?
+  address       String?
+  addressMM     String?
+  socialUrl     String[]
+
+  aboutTitle         String?
+  aboutTitleMM       String?
+  aboutDescription   String?
+  aboutDescriptionMM String?
+  homeBannerImg      String?
+  sellBannerImg      String?
+  sellRegisterImg    String?
+  loginImg           String?
+  registerImg        String?
+
+  playStoreURL   String?
+  appStoreURL    String?
+  facebookPlugin String?
+
+  homeTitle         String?
+  homeTitleMM       String?
+  homeDescription   String?
+  homeDescriptionMM String?
+
+  mobileImg           String?
+  mobileTitle         String?
+  mobileTitleMM       String?
+  mobileDescription   String?
+  mobileDescriptionMM String?
+
+  sellTitle         String?
+  sellTitleMM       String?
+  sellDescription   String?
+  sellDescriptionMM String?
+
+  homeFeatures Json[]
+  howToOrder   Json[]
+  sellFeatures Json[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
