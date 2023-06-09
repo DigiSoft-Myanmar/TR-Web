@@ -83,6 +83,32 @@ enum FeedbackType {
   Buyer
 }
 
+enum AdsLocation {
+  HomeAds1
+  HomeAds21
+  HomeAds22
+  HomeAds31
+  HomeAds32
+  HomeAds33
+  HomeAds34
+  HomeAds41
+  HomeAds42
+  HomeAds43
+  HomeAds44
+  ProductAds11
+  ProductAds12
+  ProductAds21
+  ProductAds22
+  ProductAds23
+  ProductAds24
+  Marketplace1
+  Marketplace21
+  Marketplace22
+  Marketplace23
+  Marketplace24
+  Memberships1
+}
+
 model State {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   name      String     @unique
@@ -98,6 +124,7 @@ model State {
   updatedAt DateTime @updatedAt
 
   ShippingCost ShippingCost[]
+  UserAddress  UserAddress[]
 }
 
 model Township {
@@ -111,6 +138,7 @@ model Township {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   ShippingCost ShippingCost[]
+  UserAddress  UserAddress[]
 }
 
 model District {
@@ -125,6 +153,7 @@ model District {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   ShippingCost ShippingCost[]
+  UserAddress  UserAddress[]
 }
 
 model Category {
@@ -197,6 +226,7 @@ model User {
 
   isBlocked Boolean? @default(false)
   isDeleted Boolean? @default(false)
+  sellAllow Boolean? @default(false)
 
   adminNote String?
 
@@ -204,6 +234,12 @@ model User {
   ShippingCost      ShippingCost[]
   currentMembership Membership?    @relation(fields: [membershipId], references: [id])
   membershipId      String?        @db.ObjectId
+
+  isOfferFreeShipping Boolean? @default(false)
+  shippingIncluded    Boolean  @default(false)
+  defaultShippingCost Int?
+  freeShippingCost    Int?
+  shippingCost        Int?
 
   lastLogin    DateTime?
   lastNotiOpen DateTime?
@@ -221,6 +257,10 @@ model User {
   notificationIds String[]       @db.ObjectId
   PromoCode       PromoCode[]
   Order           Order[]
+  Ads             Ads[]
+  Auctions        Auctions[]
+  AuctionList     AuctionList?
+  UserAddress     UserAddress[]
 }
 
 model UserDefinedRole {
@@ -314,6 +354,7 @@ model Product {
 
   Condition   Condition? @relation(fields: [conditionId], references: [id])
   conditionId String?    @db.ObjectId
+  Auctions    Auctions[]
 }
 
 model Brand {
@@ -347,6 +388,28 @@ model CartItems {
   isAddressDiff   Boolean
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model AuctionList {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String     @unique @db.ObjectId
+  auctionList Auctions[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Auctions {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  product         Product?     @relation(fields: [productId], references: [id])
+  productId       String?      @db.ObjectId
+  createdBy       User         @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String       @db.ObjectId
+  amount          Int
+  SKU             String
+  createdAt       DateTime     @default(now())
+  AuctionList     AuctionList? @relation(fields: [auctionListId], references: [id])
+  auctionListId   String?      @db.ObjectId
 }
 
 model SiteVisit {
@@ -624,4 +687,45 @@ model Content {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+//Ads Locations - { location, startDate}
+model Ads {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  adsImg       String
+  seller       User       @relation(fields: [sellerId], references: [id])
+  sellerId     String     @db.ObjectId
+  url          String?
+  adsLocations Json[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  AdsClick     AdsClick[]
+}
+
+model AdsClick {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  ads         Ads      @relation(fields: [adsId], references: [id])
+  adsId       String   @db.ObjectId
+  clickedDate String
+  address     String
+  createdAt   DateTime @default(now())
+}
+
+model UserAddress {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  user             User      @relation(fields: [userId], references: [id])
+  userId           String    @db.ObjectId
+  name             String
+  phoneNum         String
+  email            String?
+  addressName      String?
+  houseNo          String?
+  street           String?
+  state            State?    @relation(fields: [stateId], references: [id])
+  stateId          String?   @db.ObjectId
+  district         District? @relation(fields: [districtId], references: [id])
+  districtId       String?   @db.ObjectId
+  township         Township? @relation(fields: [townshipId], references: [id])
+  townshipId       String?   @db.ObjectId
+  isBillingAddress Boolean   @default(false)
 }

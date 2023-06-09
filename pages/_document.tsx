@@ -4,12 +4,7 @@ import Script from "next/script";
 
 export default function Document() {
   return (
-    <Html
-      lang="en"
-      style={{
-        backgroundColor: "#1D1D1D",
-      }}
-    >
+    <Html lang="en">
       <Head />
       <body>
         <Main />

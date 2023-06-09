@@ -183,7 +183,7 @@
 }
 
 .active-route{
-    @apply text-primaryText bg-primary border-l-[6px] border-l-accent -ml-1
+    @apply text-primaryText bg-primary/20 border-l-[6px] border-l-primary -ml-1
 }
 
 
@@ -313,7 +313,7 @@ div.loading-bar::after {
 }
 
 .drawer-toggle ~ .drawer-side > .drawer-overlay{
-  @apply bg-sellerBg/80 backdrop-blur
+  @apply bg-darkShade/80 backdrop-blur
 }
 
 .no-spinner {

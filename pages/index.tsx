@@ -11,7 +11,7 @@ export function IndexPage() {
   const router = useRouter();
   return (
     <div>
-      <button
+      {/* <button
         className="bg-sellerBg/50 backdrop-blur  border border-primary rounded-md p-3 hover:bg-primary hover:text-primaryText transition text-gray-300"
         onClick={() => {
           router.push(router.route, router.asPath, {
@@ -43,7 +43,7 @@ export function IndexPage() {
           </div>
         )}
       </button>
-      <div className="bg-red-500 px-3 py-2 text-white">{t("home")}</div>
+      <div className="bg-red-500 px-3 py-2 text-white">{t("home")}</div> */}
     </div>
   );
 }

@@ -24,14 +24,11 @@ export enum TransactionStatusSeller {
 export enum ImgType {
   Product = "Product",
   Profile = "Profile",
-  Screenshot = "Screenshot",
   PromoCode = "PromoCode",
   Ads = "Ads",
   SiteManagement = "SiteManagement",
   Category = "Category",
   Attribute = "Attribute",
-  Payment = "Payment",
-  Badge = "Badge",
   Others = "Others",
 }
 

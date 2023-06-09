@@ -9,6 +9,7 @@ import NProgress from "nprogress"; //nprogress module
 import "nprogress/nprogress.css"; //styles of nprogress
 import Router from "next/router";
 import { QueryClient, QueryClientProvider } from "react-query";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 //Route Events.
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
@@ -38,7 +39,9 @@ function MyApp({ Component, pageProps }: any) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <SessionProvider session={pageProps.session}>
-          <Component {...pageProps} />
+          <DefaultLayout>
+            <Component {...pageProps} />
+          </DefaultLayout>
         </SessionProvider>
       </ThemeProvider>
     </QueryClientProvider>

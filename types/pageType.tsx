@@ -17,6 +17,14 @@ export type FeatureType = {
   descriptionMM: string;
 };
 
+export enum PrivacyType {
+  accessibility = "Accessibility",
+  cookie = "Cookie",
+  privacy = "Privacy Policy",
+  return = "Return & Refund Policy",
+  termsNConditions = "Terms & Conditions",
+}
+
 /*
 The product is counterfeit or fake.
 The product description is inaccurate or misleading.

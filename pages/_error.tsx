@@ -1,5 +1,5 @@
 import nextI18nextConfig from "../next-i18next.config";
-import { isInternal } from "@/utils/authHelper";
+import { isInternal } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -26,9 +26,7 @@ function _error({ statusCode }: Props) {
             <h1 className="text-9xl font-black text-gray-200">{statusCode}</h1>
 
             <p
-              className={`text-3xl font-bold tracking-tight ${
-                isInternal(session) ? "text-gray-900" : "text-gray-400"
-              } sm:text-4xl`}
+              className={`text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl`}
             >
               Uh-oh!
             </p>
@@ -41,7 +39,7 @@ function _error({ statusCode }: Props) {
 
             <Link
               href="/"
-              className="mt-6 inline-block rounded bg-primary px-5 py-3 text-sm font-medium text-primaryText hover:bg-primary-focus focus:outline-none focus:ring"
+              className="mt-6 inline-block rounded bg-primary px-5 py-3 text-sm font-medium text-white hover:bg-primary-focus focus:outline-none focus:ring"
             >
               Go Back Home
             </Link>
