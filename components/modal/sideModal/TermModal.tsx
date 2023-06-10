@@ -9,12 +9,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/presentational/FormInput";
 import { Term } from "@/models/product";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { AttrType } from "@prisma/client";
 import ColorPicker from "@/components/presentational/ColorPicker";
 import ErrorText from "@/components/presentational/ErrorText";
 import SingleGalleryModal from "./SingleGalleryModal";
 import { ImgType } from "@/types/orderTypes";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   isModalOpen: boolean;
@@ -57,6 +63,7 @@ function TermModal({
   const [fileSrc, setFileSrc] = React.useState("");
 
   const [galleryModalOpen, setGalleryModalOpen] = React.useState(false);
+  const { data: session }: any = useSession();
 
   React.useEffect(() => {
     if (term && term.value && type === AttrType.Image) {
@@ -70,22 +77,27 @@ function TermModal({
     for (let i = 0; i < file!.length; i++) {
       form.append("theFiles", file![i]);
     }
-    return fetch(`/api/gallery?type=${ImgType.Attribute}`, {
-      method: "POST",
-      body: form,
-    }).then(async (data) => {
-      if (data.status === 200) {
-        let json = await data.json();
-        return { isSuccess: true, fileName: json.filesData[0].filename };
-      } else {
-        if (data.status === 413) {
-          showErrorDialog(t("fileTooLarge"), "", router.locale);
+    if (getHeaders(session)) {
+      return fetch(`/api/gallery?type=${ImgType.Attribute}`, {
+        method: "POST",
+        body: form,
+        headers: getHeaders(session),
+      }).then(async (data) => {
+        if (data.status === 200) {
+          let json = await data.json();
+          return { isSuccess: true, fileName: json.filesData[0].filename };
         } else {
-          showErrorDialog(data.statusText, "", router.locale);
+          if (data.status === 413) {
+            showErrorDialog(t("fileTooLarge"), "", router.locale);
+          } else {
+            showErrorDialog(data.statusText, "", router.locale);
+          }
+          return { isSuccess: false };
         }
-        return { isSuccess: false };
-      }
-    });
+      });
+    } else {
+      return { isSuccess: false };
+    }
   }
 
   async function submitTerm(data: Term) {
@@ -111,37 +123,51 @@ function TermModal({
       }
     }
     if (term && term.id) {
-      fetch("/api/products/terms?id=" + term.id, {
-        method: "PUT",
-        body: JSON.stringify({
-          ...data,
-          attributeId: term.attributeId,
-          value: v,
-        }),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/products/terms?id=" + term.id, {
+          method: "PUT",
+          body: JSON.stringify({
+            ...data,
+            attributeId: term.attributeId,
+            value: v,
+          }),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     } else {
-      fetch("/api/products/terms", {
-        method: "POST",
-        body: JSON.stringify({
-          ...data,
-          attributeId: term.attributeId,
-          value: v,
-        }),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/products/terms", {
+          method: "POST",
+          body: JSON.stringify({
+            ...data,
+            attributeId: term.attributeId,
+            value: v,
+          }),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     }
   }
 
@@ -339,7 +365,7 @@ function TermModal({
                                             showErrorDialog(
                                               t("fileTooLarge"),
                                               "",
-                                              router.locale,
+                                              router.locale
                                             );
                                           } else {
                                             setFile(e.currentTarget.files);

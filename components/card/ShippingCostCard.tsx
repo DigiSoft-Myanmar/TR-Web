@@ -1,10 +1,16 @@
-import { showConfirmationDialog, showErrorDialog } from "@/util/swalFunction";
+import {
+  showConfirmationDialog,
+  showErrorDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
 import ShippingCostDialog from "../modal/dialog/ShippingCostDialog";
 import ShippingCostDistrinct from "./ShippingCostDistrict";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
   const { t } = useTranslation("common");
@@ -13,6 +19,7 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
   const [detailOpen, setDetailOpen] = React.useState(false);
   const [shippingCost, setShippingCost] = React.useState<any>();
   const [isUpdate, setUpdate] = React.useState(true);
+  const { data: session }: any = useSession();
 
   React.useEffect(() => {
     if (state && state.name && isUpdate === true) {
@@ -23,13 +30,13 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
             console.log(
               json,
               state.name,
-              "/api/shippingCost?brandId=" + brandId + "&state=" + state.id,
+              "/api/shippingCost?brandId=" + brandId + "&state=" + state.id
             );
             setShippingCost(json);
             setUpdate(false);
           } else {
           }
-        },
+        }
       );
     }
   }, [isUpdate, brandId, state]);
@@ -83,7 +90,7 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                           {formatAmount(
                             shippingCost.shippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       ) : (
@@ -92,7 +99,7 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                           {formatAmount(
                             shippingCost.defaultShippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       )}
@@ -105,7 +112,7 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                           {formatAmount(
                             shippingCost.freeShippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       ) : (
@@ -153,30 +160,37 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                             " အတွက်ပို့ဆောင်မှုရပ်တန့်ခြင်းသေချာပါသလား။",
                           router.locale,
                           () => {
-                            fetch(
-                              "/api/shippingCost?brandId=" +
-                                brandId +
-                                "&state=" +
-                                state.id,
-                              {
-                                method: "POST",
-                                body: JSON.stringify({
-                                  shippingIncluded: false,
-                                }),
-                              },
-                            ).then(async (data) => {
-                              if (data.status === 200) {
-                                setUpdate(true);
-                              } else {
-                                let json = await data.json();
-                                showErrorDialog(
-                                  json.error,
-                                  json.errorMM,
-                                  router.locale,
-                                );
-                              }
-                            });
-                          },
+                            if (getHeaders(session)) {
+                              fetch(
+                                "/api/shippingCost?brandId=" +
+                                  brandId +
+                                  "&state=" +
+                                  state.id,
+                                {
+                                  method: "POST",
+                                  body: JSON.stringify({
+                                    shippingIncluded: false,
+                                  }),
+                                  headers: getHeaders(session),
+                                }
+                              ).then(async (data) => {
+                                if (data.status === 200) {
+                                  setUpdate(true);
+                                } else {
+                                  let json = await data.json();
+                                  showErrorDialog(
+                                    json.error,
+                                    json.errorMM,
+                                    router.locale
+                                  );
+                                }
+                              });
+                            } else {
+                              showUnauthorizedDialog(router.locale, () => {
+                                router.push("/login");
+                              });
+                            }
+                          }
                         );
                       }}
                     >
@@ -202,27 +216,34 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      fetch(
-                        "/api/shippingCost?brandId=" +
-                          brandId +
-                          "&state=" +
-                          state.id,
-                        {
-                          method: "POST",
-                          body: JSON.stringify({ shippingIncluded: true }),
-                        },
-                      ).then(async (data) => {
-                        if (data.status === 200) {
-                          setUpdate(true);
-                        } else {
-                          let json = await data.json();
-                          showErrorDialog(
-                            json.error,
-                            json.errorMM,
-                            router.locale,
-                          );
-                        }
-                      });
+                      if (getHeaders(session)) {
+                        fetch(
+                          "/api/shippingCost?brandId=" +
+                            brandId +
+                            "&state=" +
+                            state.id,
+                          {
+                            method: "POST",
+                            body: JSON.stringify({ shippingIncluded: true }),
+                            headers: getHeaders(session),
+                          }
+                        ).then(async (data) => {
+                          if (data.status === 200) {
+                            setUpdate(true);
+                          } else {
+                            let json = await data.json();
+                            showErrorDialog(
+                              json.error,
+                              json.errorMM,
+                              router.locale
+                            );
+                          }
+                        });
+                      } else {
+                        showUnauthorizedDialog(router.locale, () => {
+                          router.push("/login");
+                        });
+                      }
                     }}
                   >
                     <svg
@@ -289,20 +310,27 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
           }`}
           shippingCost={shippingCost}
           onClickFn={(e: any) => {
-            fetch(
-              "/api/shippingCost?brandId=" + brandId + "&state=" + state.id,
-              {
-                method: "POST",
-                body: JSON.stringify(e),
-              },
-            ).then(async (data) => {
-              if (data.status === 200) {
-                setUpdate(true);
-              } else {
-                let json = await data.json();
-                showErrorDialog(json.error, json.errorMM, router.locale);
-              }
-            });
+            if (getHeaders(session)) {
+              fetch(
+                "/api/shippingCost?brandId=" + brandId + "&state=" + state.id,
+                {
+                  method: "POST",
+                  body: JSON.stringify(e),
+                  headers: getHeaders(session),
+                }
+              ).then(async (data) => {
+                if (data.status === 200) {
+                  setUpdate(true);
+                } else {
+                  let json = await data.json();
+                  showErrorDialog(json.error, json.errorMM, router.locale);
+                }
+              });
+            } else {
+              showUnauthorizedDialog(router.locale, () => {
+                router.push("/login");
+              });
+            }
           }}
         />
       </>

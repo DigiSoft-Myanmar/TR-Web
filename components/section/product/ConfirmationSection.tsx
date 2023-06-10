@@ -1,8 +1,13 @@
 import Map from "@/components/card/Map";
 import { useProduct } from "@/context/ProductContext";
 import { fileUrl } from "@/types/const";
+import { getHeaders } from "@/util/authHelper";
 import { getPricing, getPricingSingle } from "@/util/pricing";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { formatAmount, getText } from "@/util/textHelper";
 import {
   AttrType,
@@ -12,6 +17,7 @@ import {
   StockType,
 } from "@prisma/client";
 import _ from "lodash";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -34,14 +40,15 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
   const { t } = useTranslation("common");
   const { product } = useProduct();
   const router = useRouter();
+  const { data: session }: any = useSession();
   const { locale } = router;
   const [isSubmit, setSubmit] = React.useState(false);
 
   const [currentVariation, setCurrentVariation] = React.useState(
-    product.type === ProductType.Fixed ? undefined : product.variations[0],
+    product.type === ProductType.Fixed ? undefined : product.variations[0]
   );
   const [attributes, setAttributes] = React.useState<any>(
-    product.type === ProductType.Fixed ? [] : product.variations[0].attributes,
+    product.type === ProductType.Fixed ? [] : product.variations[0].attributes
   );
 
   const [pricingInfo, setPricingInfo] = React.useState(getPricing(product));
@@ -51,10 +58,10 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
   const additionalInfoElement = useRef<HTMLDivElement | null>(null);
 
   const [availableVariationList, setAvailableVariationList] = React.useState(
-    product && product.type === ProductType.Variable ? product.variations : [],
+    product && product.type === ProductType.Variable ? product.variations : []
   );
   const [imgList, setImgList] = React.useState(
-    product && product.imgList ? [...product.imgList] : [],
+    product && product.imgList ? [...product.imgList] : []
   );
 
   React.useEffect(() => {
@@ -63,7 +70,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
       for (let i = 0; i < product.variations.length; i++) {
         let variationAttributes = _.sortBy(
           product.variations[i].attributes,
-          (o) => o.attributeId,
+          (o) => o.attributeId
         );
         let currentAttributes = _.sortBy(attributes, (o) => o.attributeId);
         let exists = true;
@@ -73,7 +80,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
             variationAttributes.find(
               (a) =>
                 a.attributeId === c.attributeId &&
-                (a.name === c.name || a.name === "Any"),
+                (a.name === c.name || a.name === "Any")
             )
           ) {
           } else {
@@ -106,8 +113,8 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
       let variation = product.variations.find((e: any) =>
         _.isEqual(
           _.sortBy(e.attributes, (o) => o.attributeId),
-          _.sortBy(attributes, (o) => o.attributeId),
-        ),
+          _.sortBy(attributes, (o) => o.attributeId)
+        )
       );
 
       if (variation) {
@@ -118,7 +125,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
         }
       } else {
         let allAnyIndex = product.variations.findIndex((e: any) =>
-          e.attributes.every((z: any) => z.name === "Any"),
+          e.attributes.every((z: any) => z.name === "Any")
         );
         let variations = [...product.variations];
         if (allAnyIndex >= 0) {
@@ -127,14 +134,14 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
         let v = undefined;
         for (let i = 0; i < variations.length && v === undefined; i++) {
           let otherAttribute = variations[i].attributes.filter(
-            (e: any) => e.name !== "Any",
+            (e: any) => e.name !== "Any"
           );
           let attr = attributes.filter((e: any) =>
-            otherAttribute.find((o: any) => o.attributeId === e.attributeId),
+            otherAttribute.find((o: any) => o.attributeId === e.attributeId)
           );
           let isEqual = _.isEqual(
             _.sortBy(otherAttribute, (o) => o.attributeId),
-            _.sortBy(attr, (o) => o.attributeId),
+            _.sortBy(attr, (o) => o.attributeId)
           );
           if (isEqual === true) {
             v = variations[i];
@@ -168,7 +175,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
       let parser = new DOMParser();
       let shortDescriptionContent = parser.parseFromString(
         getText(product.shortDescription, product.shortDescriptionMM, locale),
-        "text/html",
+        "text/html"
       );
       shortDescriptionElement.current.innerHTML = "";
       shortDescriptionElement.current.appendChild(shortDescriptionContent.body);
@@ -180,7 +187,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
       let parser = new DOMParser();
       let descriptionContent = parser.parseFromString(
         getText(product.description, product.descriptionMM, locale),
-        "text/html",
+        "text/html"
       );
       descriptionElement.current.innerHTML = "";
       descriptionElement.current.appendChild(descriptionContent.body);
@@ -194,9 +201,9 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
         getText(
           product.shippingInformation,
           product.shippingInformationMM,
-          locale,
+          locale
         ),
-        "text/html",
+        "text/html"
       );
       shippingInfoElement.current.innerHTML = "";
       shippingInfoElement.current.appendChild(shippingContent.body);
@@ -211,9 +218,9 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
         getText(
           product.additionalInformation,
           product.additionalInformationMM,
-          locale,
+          locale
         ),
-        "text/html",
+        "text/html"
       );
       additionalInfoElement.current.innerHTML = "";
       additionalInfoElement.current.appendChild(additionalContent.body);
@@ -266,7 +273,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                   typeof product.variations[i].saleStartDate === "string"
                 ) {
                   p.variations[i].saleStartDate = new Date(
-                    p.variations[i].saleStartDate,
+                    p.variations[i].saleStartDate
                   );
                 }
                 if (
@@ -274,60 +281,74 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                   typeof product.variations[i].saleEndDate === "string"
                 ) {
                   p.variations[i].saleEndDate = new Date(
-                    p.variations[i].saleEndDate,
+                    p.variations[i].saleEndDate
                   );
                 }
               }
           }
 
           if (product.id) {
-            fetch("/api/products?id=" + encodeURIComponent(product.id), {
-              method: "PUT",
-              body: JSON.stringify(p),
-            }).then(async (data) => {
-              setSubmit(false);
-              if (data.status === 200) {
-                showSuccessDialog(
-                  t("submit") + " " + t("success"),
-                  "",
-                  router.locale,
-                  () => {
-                    router.push("/products");
-                  },
-                );
-              } else {
-                let json = await data.json();
-                if (data.status === 413) {
-                  showErrorDialog(t("fileTooLarge"));
+            if (getHeaders(session)) {
+              fetch("/api/products?id=" + encodeURIComponent(product.id), {
+                method: "PUT",
+                body: JSON.stringify(p),
+                headers: getHeaders(session),
+              }).then(async (data) => {
+                setSubmit(false);
+                if (data.status === 200) {
+                  showSuccessDialog(
+                    t("submit") + " " + t("success"),
+                    "",
+                    router.locale,
+                    () => {
+                      router.push("/products");
+                    }
+                  );
                 } else {
-                  showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  let json = await data.json();
+                  if (data.status === 413) {
+                    showErrorDialog(t("fileTooLarge"));
+                  } else {
+                    showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  }
                 }
-              }
-            });
+              });
+            } else {
+              showUnauthorizedDialog(locale, () => {
+                router.push("/login");
+              });
+            }
           } else {
-            fetch("/api/products/", {
-              method: "POST",
-              body: JSON.stringify(p),
-            }).then(async (data) => {
-              setSubmit(false);
-              if (data.status === 200) {
-                showSuccessDialog(
-                  t("submit") + " " + t("success"),
-                  "",
-                  router.locale,
-                  () => {
-                    router.push("/products");
-                  },
-                );
-              } else {
-                let json = await data.json();
-                if (data.status === 413) {
-                  showErrorDialog(t("fileTooLarge"));
+            if (getHeaders(session)) {
+              fetch("/api/products/", {
+                method: "POST",
+                body: JSON.stringify(p),
+                headers: getHeaders(session),
+              }).then(async (data) => {
+                setSubmit(false);
+                if (data.status === 200) {
+                  showSuccessDialog(
+                    t("submit") + " " + t("success"),
+                    "",
+                    router.locale,
+                    () => {
+                      router.push("/products");
+                    }
+                  );
                 } else {
-                  showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  let json = await data.json();
+                  if (data.status === 413) {
+                    showErrorDialog(t("fileTooLarge"));
+                  } else {
+                    showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  }
                 }
-              }
-            });
+              });
+            } else {
+              showUnauthorizedDialog(locale, () => {
+                router.push("/login");
+              });
+            }
           }
         }}
       >
@@ -477,13 +498,12 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                                       attributes && attributes.length > 0
                                         ? attributes.find(
                                             (e: any) =>
-                                              e.attributeId === el.attributeId,
+                                              e.attributeId === el.attributeId
                                           )
                                           ? attributes.find(
                                               (e: any) =>
                                                 e.name === el.name &&
-                                                e.attributeId ===
-                                                  el.attributeId,
+                                                e.attributeId === el.attributeId
                                             )
                                             ? "border-primary bg-primary text-white"
                                             : "bg-gray-200"
@@ -494,8 +514,8 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                                                     a.attributeId ===
                                                       el.attributeId &&
                                                     (a.name === el.name ||
-                                                      a.name === "Any"),
-                                                ),
+                                                      a.name === "Any")
+                                                )
                                             )
                                           ? "bg-white hover:bg-primary hover:text-white"
                                           : "bg-gray-200"
@@ -524,25 +544,23 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                                                   a.attributeId ===
                                                     el.attributeId &&
                                                   (a.name === el.name ||
-                                                    a.name === "Any"),
-                                              ),
+                                                    a.name === "Any")
+                                              )
                                           ) ||
                                           attr.find(
                                             (a: any) =>
-                                              a.attributeId === el.attributeId,
+                                              a.attributeId === el.attributeId
                                           )
                                         ) {
                                           if (
                                             attr.find(
                                               (a: any) =>
-                                                a.attributeId ===
-                                                el.attributeId,
+                                                a.attributeId === el.attributeId
                                             )
                                           ) {
                                             attr = attr.filter(
                                               (a: any) =>
-                                                a.attributeId !==
-                                                el.attributeId,
+                                                a.attributeId !== el.attributeId
                                             );
                                             attr.push(el);
                                           } else {
@@ -601,7 +619,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                             {formatAmount(
                               pricingInfo.regularPrice,
                               locale,
-                              true,
+                              true
                             )}
                           </span>
                         </p>

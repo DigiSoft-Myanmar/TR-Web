@@ -1,6 +1,11 @@
 import { useProfile } from "@/context/ProfileContext";
 import { authErrors } from "@/types/authErrors";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import { getHeaders } from "@/util/authHelper";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -49,64 +54,75 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
           }
           form.append(
             "data",
-            JSON.stringify({ user: profile, brand: brand, img: imgList }),
+            JSON.stringify({ user: profile, brand: brand, img: imgList })
           );
           setSubmit(true);
-          fetch("/api/user/" + encodeURIComponent(profile.phoneNum!), {
-            method: "POST",
-            body: form,
-          }).then(async (data) => {
-            setSubmit(false);
-            if (data.status === 200) {
-              showSuccessDialog(
-                t("submit") + " " + t("success"),
-                "",
-                router.locale,
-                () => {
-                  if (
-                    session &&
-                    (session.role === Role.Admin ||
-                      session.role === Role.Staff ||
-                      session.role === Role.SuperAdmin)
-                  ) {
-                    router.push("/");
-                  } else {
-                    router.reload();
+          if (getHeaders(session)) {
+            fetch("/api/user/" + encodeURIComponent(profile.phoneNum!), {
+              method: "POST",
+              body: form,
+              headers: getHeaders(session),
+            }).then(async (data) => {
+              setSubmit(false);
+              if (data.status === 200) {
+                showSuccessDialog(
+                  t("submit") + " " + t("success"),
+                  "",
+                  router.locale,
+                  () => {
+                    if (
+                      session &&
+                      (session.role === Role.Admin ||
+                        session.role === Role.Staff ||
+                        session.role === Role.SuperAdmin)
+                    ) {
+                      router.push("/");
+                    } else {
+                      router.reload();
+                    }
                   }
-                },
-              );
-            } else {
-              if (data.status === 413) {
-                showErrorDialog(t("fileTooLarge"));
+                );
               } else {
-                let json = await data.json();
-                if (json.error) {
-                  let errText = "";
-                  if (json.error.code) {
-                    let errCode = json.error.code.replace("auth/", "");
-                    if (errCode in authErrors) {
-                      errText = authErrors[errCode];
-                    } else {
-                      errText = "Something went wrong. Please try again.";
-                    }
-                    showErrorDialog(errText, "", router.locale);
-                  } else {
-                    if (json.error) {
-                      showErrorDialog(json.error, json.errorMM, router.locale);
-                    } else {
-                      showErrorDialog(
-                        "Something went wrong. Please try again.",
-                        "",
-                        router.locale,
-                      );
-                    }
-                  }
+                if (data.status === 413) {
+                  showErrorDialog(t("fileTooLarge"));
                 } else {
-                  showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  let json = await data.json();
+                  if (json.error) {
+                    let errText = "";
+                    if (json.error.code) {
+                      let errCode = json.error.code.replace("auth/", "");
+                      if (errCode in authErrors) {
+                        errText = authErrors[errCode];
+                      } else {
+                        errText = "Something went wrong. Please try again.";
+                      }
+                      showErrorDialog(errText, "", router.locale);
+                    } else {
+                      if (json.error) {
+                        showErrorDialog(
+                          json.error,
+                          json.errorMM,
+                          router.locale
+                        );
+                      } else {
+                        showErrorDialog(
+                          "Something went wrong. Please try again.",
+                          "",
+                          router.locale
+                        );
+                      }
+                    }
+                  } else {
+                    showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  }
                 }
               }
-            }
-          });
+            });
+          } else {
+            showUnauthorizedDialog(router.locale, () => {
+              router.push("/login");
+            });
+          }
         }}
       >
         <span className="mt-5 flex justify-end divide-x overflow-hidden">

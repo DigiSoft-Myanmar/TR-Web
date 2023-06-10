@@ -19,8 +19,13 @@ import { useQuery } from "react-query";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
 import { useSession } from "next-auth/react";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { RoleNav } from "@/types/role";
+import { getHeaders } from "@/util/authHelper";
 
 export type RegisterSeller = {
   username: string;
@@ -52,7 +57,7 @@ function Default() {
     fetch("/api/memberships").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
 
   const registerSchema = z.object(
@@ -75,7 +80,7 @@ function Default() {
           email: z.string().email({ message: t("inputValidEmailError") }),
           password: z.string().min(1, { message: t("inputError") }),
           confirmPassword: z.string().min(1, { message: t("inputError") }),
-        },
+        }
   );
 
   const [isSubmit, setSubmit] = React.useState(false);
@@ -127,39 +132,46 @@ function Default() {
     if (role === Role.Staff) {
       body.userDefinedId = customRole;
     }
-    fetch("/api/user", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((data) => {
-      setSubmit(false);
-      console.log(data);
-      if (data.status === 200) {
-        showSuccessDialog(
-          "New " + role + " created successfully.",
-          "",
-          locale,
-          () => {
-            if (role === Role.Buyer) {
-              router.push("/users/" + RoleNav.Buyers);
-            } else if (role === Role.Seller) {
-              router.push("/users/" + RoleNav.Sellers);
-            } else if (role === Role.Staff) {
-              router.push("/users/" + RoleNav.Staff);
-            } else if (role === Role.Admin) {
-              router.push("/users/" + RoleNav.Admin);
-            } else {
-              router.push("/users");
+    if (getHeaders(session)) {
+      fetch("/api/user", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: getHeaders(session),
+      }).then((data) => {
+        setSubmit(false);
+        console.log(data);
+        if (data.status === 200) {
+          showSuccessDialog(
+            "New " + role + " created successfully.",
+            "",
+            locale,
+            () => {
+              if (role === Role.Buyer) {
+                router.push("/users/" + RoleNav.Buyers);
+              } else if (role === Role.Seller) {
+                router.push("/users/" + RoleNav.Sellers);
+              } else if (role === Role.Staff) {
+                router.push("/users/" + RoleNav.Staff);
+              } else if (role === Role.Admin) {
+                router.push("/users/" + RoleNav.Admin);
+              } else {
+                router.push("/users");
+              }
             }
-          },
-        );
-      } else {
-        showErrorDialog(
-          "User already exists.",
-          "ဤဖုန်းတွင် အသုံးပြုသူရှိနှင့်ပြီးဖြစ်သည်။",
-          locale,
-        );
-      }
-    });
+          );
+        } else {
+          showErrorDialog(
+            "User already exists.",
+            "ဤဖုန်းတွင် အသုံးပြုသူရှိနှင့်ပြီးဖြစ်သည်။",
+            locale
+          );
+        }
+      });
+    } else {
+      showUnauthorizedDialog(locale, () => {
+        router.push("/login");
+      });
+    }
   }
 
   return session &&
@@ -446,7 +458,7 @@ function Default() {
                                     </>
                                   )}
                                 </Listbox.Option>
-                              ),
+                              )
                             )}
                         </Listbox.Options>
                       </Transition>

@@ -2,10 +2,11 @@ import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { showErrorDialog } from "@/util/swalFunction";
+import { showErrorDialog, showUnauthorizedDialog } from "@/util/swalFunction";
 import ProductImg from "@/components/card/ProductImg";
 import { ImgType } from "@/types/orderTypes";
 import { useSession } from "next-auth/react";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -27,6 +28,7 @@ function SingleUploadModal({
   const [uploadingImg, setUploadingImg] = React.useState(false);
   const dropZone = React.useRef<HTMLDivElement | null>(null);
   const { data: session }: any = useSession();
+  const { locale } = router;
 
   React.useEffect(() => {
     if (uploadingImg === false) {
@@ -60,36 +62,36 @@ function SingleUploadModal({
     }
 
     setUploadingImg(true);
-    fetch("/api/gallery?type=" + type, {
-      method: "POST",
-      body: form,
-      headers: session
-        ? {
-            appid: session.email,
-            appsecret: session.id,
-            apptype: "email",
-          }
-        : {},
-    })
-      .then((data) => {
-        if (data.status === 200) {
-          return data.json();
-        } else {
-          if (data.status === 413) {
-            showErrorDialog(t("fileTooLarge"));
-          } else {
-            showErrorDialog(data.statusText);
-          }
-        }
+    if (getHeaders(session)) {
+      fetch("/api/gallery?type=" + type, {
+        method: "POST",
+        body: form,
+        headers: getHeaders(session),
       })
-      .then((json) => {
-        if (json && json.filesData) {
-          let filesData = [...json.filesData];
-          let imgArr = filesData.map((elem) => `${elem.filename}`);
-          setFileSrc(imgArr[0]);
-          setUploadingImg(false);
-        }
+        .then((data) => {
+          if (data.status === 200) {
+            return data.json();
+          } else {
+            if (data.status === 413) {
+              showErrorDialog(t("fileTooLarge"));
+            } else {
+              showErrorDialog(data.statusText);
+            }
+          }
+        })
+        .then((json) => {
+          if (json && json.filesData) {
+            let filesData = [...json.filesData];
+            let imgArr = filesData.map((elem) => `${elem.filename}`);
+            setFileSrc(imgArr[0]);
+            setUploadingImg(false);
+          }
+        });
+    } else {
+      showUnauthorizedDialog(locale, () => {
+        router.push("/login");
       });
+    }
   }
 
   React.useEffect(() => {

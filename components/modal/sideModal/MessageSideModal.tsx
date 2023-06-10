@@ -3,8 +3,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { FaPlus } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { formatDate } from "@/util/textHelper";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   currentMessage: any;
@@ -23,6 +29,7 @@ function MessageSideModal({
   const { locale } = useRouter();
   const { t } = useTranslation("common");
   const [data, setData] = React.useState<any>({});
+  const { data: session }: any = useSession();
 
   React.useEffect(() => {
     if (e) {
@@ -218,31 +225,42 @@ function MessageSideModal({
                       type="button"
                       className="rounded-md bg-primary px-7 py-3 text-sm text-white hover:bg-primary/50"
                       onClick={() => {
-                        fetch("/api/feedbacks?id=" + e?.id, {
-                          method: "PUT",
-                          body: JSON.stringify(data),
-                        }).then(async (d) => {
-                          if (d.status === 200) {
-                            showSuccessDialog(
-                              t("submit") + " " + t("success"),
-                              "",
-                              locale,
-                            );
-                            updateFn();
-                          } else {
-                            let json = await d.json();
-                            if (json.error) {
-                              showErrorDialog(json.error, json.errorMM, locale);
-                            } else {
-                              showErrorDialog(
-                                t("somethingWentWrong"),
+                        if (getHeaders(session)) {
+                          fetch("/api/feedbacks?id=" + e?.id, {
+                            method: "PUT",
+                            body: JSON.stringify(data),
+                            headers: getHeaders(session),
+                          }).then(async (d) => {
+                            if (d.status === 200) {
+                              showSuccessDialog(
+                                t("submit") + " " + t("success"),
                                 "",
-                                locale,
+                                locale
                               );
+                              updateFn();
+                            } else {
+                              let json = await d.json();
+                              if (json.error) {
+                                showErrorDialog(
+                                  json.error,
+                                  json.errorMM,
+                                  locale
+                                );
+                              } else {
+                                showErrorDialog(
+                                  t("somethingWentWrong"),
+                                  "",
+                                  locale
+                                );
+                              }
                             }
-                          }
-                          setModalOpen(false);
-                        });
+                            setModalOpen(false);
+                          });
+                        } else {
+                          showUnauthorizedDialog(locale, () => {
+                            router.push("/login");
+                          });
+                        }
                       }}
                     >
                       {t("submit")}

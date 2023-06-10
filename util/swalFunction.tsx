@@ -4,7 +4,7 @@ export function showErrorDialog(
   error?: string,
   errorMM?: string,
   locale?: string,
-  confirmFn?: Function,
+  confirmFn?: Function
 ) {
   Swal.fire({
     icon: "error",
@@ -19,11 +19,25 @@ export function showErrorDialog(
   });
 }
 
+export function showUnauthorizedDialog(locale?: string, confirmFn?: Function) {
+  Swal.fire({
+    icon: "error",
+    text: locale === "mm" ? "လော့အင်မ၀င်ရသေးပါ။" : "Please login and continue",
+    background: "#fff",
+    color: "#262630",
+    confirmButtonColor: "#DE711B",
+  }).then((result) => {
+    if (confirmFn) {
+      confirmFn();
+    }
+  });
+}
+
 export function showInfoDialog(
   text?: string,
   textMM?: string,
   locale?: string,
-  confirmFn?: Function,
+  confirmFn?: Function
 ) {
   Swal.fire({
     icon: "info",
@@ -44,7 +58,7 @@ export function showSuccessDialog(
   text?: string,
   textMM?: string,
   locale?: string,
-  confirmFn?: Function,
+  confirmFn?: Function
 ) {
   Swal.fire({
     icon: "success",
@@ -97,7 +111,7 @@ export function showWarningDialog(
   text?: string,
   textMM?: string,
   locale?: string,
-  confirmFn?: Function,
+  confirmFn?: Function
 ) {
   Swal.fire({
     icon: "warning",
@@ -119,7 +133,7 @@ export function showConfirmationDialog(
   text?: string,
   textMM?: string,
   locale?: string,
-  confirmFn?: Function,
+  confirmFn?: Function
 ) {
   Swal.fire({
     icon: "question",
@@ -143,7 +157,7 @@ export function showConfirmationDialog(
 export async function showInputDialog(
   text?: string,
   textMM?: string,
-  locale?: string,
+  locale?: string
 ) {
   const { value } = await Swal.fire({
     text:

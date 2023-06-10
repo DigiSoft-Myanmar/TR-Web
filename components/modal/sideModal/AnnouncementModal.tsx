@@ -11,7 +11,13 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@/components/presentational/FormInput";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   isModalOpen: boolean;
@@ -54,34 +60,49 @@ function AnnouncementModal({
   });
   const { errors } = formState;
   const watchFields = watch();
+  const { data: session }: any = useSession();
 
   function submitAnnouncement(data: any) {
     setSubmit(true);
     if (parentAnnounce && (parentAnnounce.id || parentAnnounce._id)) {
       let id = parentAnnounce.id ? parentAnnounce.id : parentAnnounce._id;
-      fetch("/api/siteManagement/banner?id=" + id, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/siteManagement/banner?id=" + id, {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     } else {
-      fetch("/api/siteManagement/banner", {
-        method: "POST",
-        body: JSON.stringify(data),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/siteManagement/banner", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     }
   }
 

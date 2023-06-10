@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 
 export function isInternal(session: any, isDisableStaff?: boolean) {
   if (session) {
@@ -15,4 +15,25 @@ export function isInternal(session: any, isDisableStaff?: boolean) {
     return false;
   }
   return false;
+}
+
+export function getHeaders(session: User) {
+  if (session) {
+    if (session.email) {
+      return {
+        appid: session.email,
+        appsecret: session.id,
+        apptype: "email",
+      };
+    }
+    if (session.phoneNum) {
+      return {
+        appid: session.phoneNum,
+        appsecret: session.id,
+        apptype: "phone",
+      };
+    }
+  } else {
+    return null;
+  }
 }

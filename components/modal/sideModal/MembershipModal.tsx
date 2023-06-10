@@ -9,8 +9,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@/components/presentational/FormInput";
 import { Membership } from "@/models/contents";
-import { showSuccessDialog } from "@/util/swalFunction";
+import { showSuccessDialog, showUnauthorizedDialog } from "@/util/swalFunction";
 import FormInputTextArea from "@/components/presentational/FormInputTextArea";
+import { useSession } from "next-auth/react";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -92,6 +94,7 @@ function MembershipModal({
 
   const { errors } = formState;
   const watchFields = watch();
+  const { data: session }: any = useSession();
 
   React.useEffect(() => {
     console.log(errors);
@@ -100,26 +103,43 @@ function MembershipModal({
   function submitMembership(data: any) {
     setSubmit(true);
     if (membership && membership.id) {
-      fetch("/api/memberships?id=" + membership.id, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/memberships?id=" + membership.id, {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     } else {
-      fetch("/api/memberships", { method: "POST", body: JSON.stringify(data) })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/memberships", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     }
   }
 

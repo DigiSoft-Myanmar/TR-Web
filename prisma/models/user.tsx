@@ -7,14 +7,6 @@ import prisma from "../prisma";
 
 export const getAllUser = async (type?: any) => {
   let include: any = {
-    brand: {
-      include: {
-        state: true,
-        township: true,
-        district: true,
-        currentMembership: true,
-      },
-    },
     state: true,
     district: true,
     township: true,

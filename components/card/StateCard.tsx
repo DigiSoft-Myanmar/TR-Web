@@ -2,6 +2,7 @@ import {
   showConfirmationDialog,
   showErrorDialog,
   showSuccessDialog,
+  showUnauthorizedDialog,
 } from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
 import { useTranslation } from "next-i18next";
@@ -10,6 +11,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import ColorDialog from "../modal/dialog/ColorDialog";
 import DistrictCard from "./DistrictCard";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   name?: string;
@@ -40,6 +43,8 @@ function StateCard({
   const [isExpanded, setExpanded] = React.useState(false);
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [township, setTownship] = React.useState<any>();
+  const { data: session }: any = useSession();
+  const router = useRouter();
   return (
     <>
       <div
@@ -197,20 +202,27 @@ function StateCard({
         setModalOpen={setModalOpen}
         label="Color"
         onClickFn={(e: string) => {
-          fetch("/api/townships?stateId=" + township.id, {
-            method: "PUT",
-            body: JSON.stringify({ color: e }),
-          }).then(async (data) => {
-            if (data.status === 200) {
-              showSuccessDialog("Update successful", "", locale, () => {
-                setModalOpen(false);
-                updateFn();
-              });
-            } else {
-              let json = await data.json();
-              showErrorDialog(json.error, json.errorMM, locale);
-            }
-          });
+          if (getHeaders(session)) {
+            fetch("/api/townships?stateId=" + township.id, {
+              method: "PUT",
+              body: JSON.stringify({ color: e }),
+              headers: getHeaders(session),
+            }).then(async (data) => {
+              if (data.status === 200) {
+                showSuccessDialog("Update successful", "", locale, () => {
+                  setModalOpen(false);
+                  updateFn();
+                });
+              } else {
+                let json = await data.json();
+                showErrorDialog(json.error, json.errorMM, locale);
+              }
+            });
+          } else {
+            showUnauthorizedDialog(locale, () => {
+              router.push("/login");
+            });
+          }
         }}
         title="Update Color"
         value={township?.color ? township.color : "#DE711B"}

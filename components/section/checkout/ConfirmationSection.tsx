@@ -1,5 +1,11 @@
 import { useMarketplace } from "@/context/MarketplaceContext";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import { getHeaders } from "@/util/authHelper";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -14,6 +20,7 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
   const router = useRouter();
   const { locale } = router;
   const { promoCode } = useMarketplace();
+  const { data: session }: any = useSession();
   return (
     <div className="flex flex-col">
       <h3 className="text-sm font-semibold text-gray-500">
@@ -48,25 +55,32 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
             title="Next"
             type="button"
             onClick={() => {
-              fetch("api/cart?type=Order", {
-                method: "POST",
-                body: JSON.stringify({ promoCodeId: promoCode?.id }),
-              }).then(async (data) => {
-                if (data.status === 200) {
-                  showSuccessDialog(
-                    "Order placed successfully.",
-                    "",
-                    locale,
-                    () => {
-                      router.push("/orders");
-                    },
-                  );
-                } else {
-                  let json = await data.json();
-                  console.log(json);
-                  showErrorDialog(t("somethingWentWrong"), "", router.locale);
-                }
-              });
+              if (getHeaders(session)) {
+                fetch("api/cart?type=Order", {
+                  method: "POST",
+                  body: JSON.stringify({ promoCodeId: promoCode?.id }),
+                  headers: getHeaders(session),
+                }).then(async (data) => {
+                  if (data.status === 200) {
+                    showSuccessDialog(
+                      "Order placed successfully.",
+                      "",
+                      locale,
+                      () => {
+                        router.push("/orders");
+                      }
+                    );
+                  } else {
+                    let json = await data.json();
+                    console.log(json);
+                    showErrorDialog(t("somethingWentWrong"), "", router.locale);
+                  }
+                });
+              } else {
+                showUnauthorizedDialog(locale, () => {
+                  router.push("/login");
+                });
+              }
             }}
           >
             Place Order

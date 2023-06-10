@@ -11,6 +11,8 @@ import React from "react";
 import AttributeModal from "../modal/sideModal/AttributeModal";
 import TermModal from "../modal/sideModal/TermModal";
 import TermCard from "./TermCard";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 function AttributeCard({
   id,
@@ -27,6 +29,7 @@ function AttributeCard({
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [isTermModalOpen, setIsTermModalOpen] = React.useState(false);
   const [title, setTitle] = React.useState(t("newTerm"));
+  const { data: session }: any = useSession();
   return (
     <>
       <div
@@ -107,21 +110,22 @@ function AttributeCard({
                       `/api/products/attributes?id=${encodeURIComponent(id)}`,
                       {
                         method: "DELETE",
-                      },
+                        headers: getHeaders(session),
+                      }
                     ).then(async (data) => {
                       if (data.status === 200) {
                         setUpdate(true);
                         showSuccessDialog(
                           t("delete") + " " + t("success"),
                           "",
-                          locale,
+                          locale
                         );
                       } else {
                         let json = await data.json();
                         showErrorDialog(json.error, json.errorMM, locale);
                       }
                     });
-                  },
+                  }
                 );
               }}
             >

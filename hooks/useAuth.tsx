@@ -5,7 +5,8 @@ import { NextApiRequest } from "next";
 import { getSession } from "next-auth/react";
 
 export default async function useAuth(req: NextApiRequest) {
-  const session = await getSession({ req });
+  let session = await getSession({ req });
+
   if (session) {
     return session;
   } else {

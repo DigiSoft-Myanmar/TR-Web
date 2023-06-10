@@ -10,7 +10,9 @@ import { useForm } from "react-hook-form";
 import FormInput from "@/components/presentational/FormInput";
 import { AttrType } from "@prisma/client";
 import { Attribute } from "@/models/product";
-import { showSuccessDialog } from "@/util/swalFunction";
+import { showSuccessDialog, showUnauthorizedDialog } from "@/util/swalFunction";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   isModalOpen: boolean;
@@ -45,6 +47,7 @@ function AttributeModal({
   const { errors } = formState;
   const watchFields = watch();
   const [isSubmit, setSubmit] = React.useState(false);
+  const { data: session }: any = useSession();
 
   React.useEffect(() => {
     if (attribute) {
@@ -57,29 +60,43 @@ function AttributeModal({
   function submitAttribute(data: Attribute) {
     setSubmit(true);
     if (attribute && attribute.id) {
-      fetch("/api/products/attributes?id=" + attribute.id, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/products/attributes?id=" + attribute.id, {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     } else {
-      fetch("/api/products/attributes", {
-        method: "POST",
-        body: JSON.stringify(data),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
+      if (getHeaders(session)) {
+        fetch("/api/products/attributes", {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        showUnauthorizedDialog(router.locale, () => {
+          router.push("/login");
         });
+      }
     }
   }
 

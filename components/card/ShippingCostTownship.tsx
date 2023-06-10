@@ -1,10 +1,16 @@
-import { showConfirmationDialog, showErrorDialog } from "@/util/swalFunction";
+import {
+  showConfirmationDialog,
+  showErrorDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
 import { useTranslation } from "next-i18next";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
 import React from "react";
 import ShippingCostDialog from "../modal/dialog/ShippingCostDialog";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   township: any;
@@ -26,6 +32,7 @@ function ShippingCostTownship({
   const [shippingCost, setShippingCost] = React.useState<any>();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const { theme } = useTheme();
+  const { data: session }: any = useSession();
 
   function update() {
     if (township && township.name) {
@@ -37,7 +44,7 @@ function ShippingCostTownship({
           "&parentState=" +
           state +
           "&parentDistrict=" +
-          district,
+          district
       ).then(async (data) => {
         if (data.status === 200) {
           let json = await data.json();
@@ -50,7 +57,7 @@ function ShippingCostTownship({
               state +
               "&parentDistrict=" +
               district,
-            township.name,
+            township.name
           );
           setShippingCost(json);
         }
@@ -110,7 +117,7 @@ function ShippingCostTownship({
                           {formatAmount(
                             shippingCost.shippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       ) : (
@@ -119,7 +126,7 @@ function ShippingCostTownship({
                           {formatAmount(
                             shippingCost.defaultShippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       )}
@@ -132,7 +139,7 @@ function ShippingCostTownship({
                           {formatAmount(
                             shippingCost.freeShippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       ) : (
@@ -180,30 +187,37 @@ function ShippingCostTownship({
                             " အတွက်ပို့ဆောင်မှုရပ်တန့်ခြင်းသေချာပါသလား။",
                           router.locale,
                           () => {
-                            fetch(
-                              "/api/shippingCost?brandId=" +
-                                brandId +
-                                "&township=" +
-                                township.name,
-                              {
-                                method: "POST",
-                                body: JSON.stringify({
-                                  shippingIncluded: false,
-                                }),
-                              },
-                            ).then(async (data) => {
-                              if (data.status === 200) {
-                                update();
-                              } else {
-                                let json = await data.json();
-                                showErrorDialog(
-                                  json.error,
-                                  json.errorMM,
-                                  router.locale,
-                                );
-                              }
-                            });
-                          },
+                            if (getHeaders(session)) {
+                              fetch(
+                                "/api/shippingCost?brandId=" +
+                                  brandId +
+                                  "&township=" +
+                                  township.name,
+                                {
+                                  method: "POST",
+                                  body: JSON.stringify({
+                                    shippingIncluded: false,
+                                  }),
+                                  headers: getHeaders(session),
+                                }
+                              ).then(async (data) => {
+                                if (data.status === 200) {
+                                  update();
+                                } else {
+                                  let json = await data.json();
+                                  showErrorDialog(
+                                    json.error,
+                                    json.errorMM,
+                                    router.locale
+                                  );
+                                }
+                              });
+                            } else {
+                              showUnauthorizedDialog(router.locale, () => {
+                                router.push("/login");
+                              });
+                            }
+                          }
                         );
                       }}
                     >
@@ -229,27 +243,34 @@ function ShippingCostTownship({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      fetch(
-                        "/api/shippingCost?brandId=" +
-                          brandId +
-                          "&township=" +
-                          township.name,
-                        {
-                          method: "POST",
-                          body: JSON.stringify({ shippingIncluded: true }),
-                        },
-                      ).then(async (data) => {
-                        if (data.status === 200) {
-                          update();
-                        } else {
-                          let json = await data.json();
-                          showErrorDialog(
-                            json.error,
-                            json.errorMM,
-                            router.locale,
-                          );
-                        }
-                      });
+                      if (getHeaders(session)) {
+                        fetch(
+                          "/api/shippingCost?brandId=" +
+                            brandId +
+                            "&township=" +
+                            township.name,
+                          {
+                            method: "POST",
+                            body: JSON.stringify({ shippingIncluded: true }),
+                            headers: getHeaders(session),
+                          }
+                        ).then(async (data) => {
+                          if (data.status === 200) {
+                            update();
+                          } else {
+                            let json = await data.json();
+                            showErrorDialog(
+                              json.error,
+                              json.errorMM,
+                              router.locale
+                            );
+                          }
+                        });
+                      } else {
+                        showUnauthorizedDialog(router.locale, () => {
+                          router.push("/login");
+                        });
+                      }
                     }}
                   >
                     <svg
@@ -288,23 +309,30 @@ function ShippingCostTownship({
           }`}
           shippingCost={shippingCost}
           onClickFn={(e: any) => {
-            fetch(
-              "/api/shippingCost?brandId=" +
-                brandId +
-                "&township=" +
-                township.id,
-              {
-                method: "POST",
-                body: JSON.stringify(e),
-              },
-            ).then(async (data) => {
-              if (data.status === 200) {
-                update();
-              } else {
-                let json = await data.json();
-                showErrorDialog(json.error, json.errorMM, router.locale);
-              }
-            });
+            if (getHeaders(session)) {
+              fetch(
+                "/api/shippingCost?brandId=" +
+                  brandId +
+                  "&township=" +
+                  township.id,
+                {
+                  method: "POST",
+                  body: JSON.stringify(e),
+                  headers: getHeaders(session),
+                }
+              ).then(async (data) => {
+                if (data.status === 200) {
+                  update();
+                } else {
+                  let json = await data.json();
+                  showErrorDialog(json.error, json.errorMM, router.locale);
+                }
+              });
+            } else {
+              showUnauthorizedDialog(router.locale, () => {
+                router.push("/login");
+              });
+            }
           }}
         />
       </>

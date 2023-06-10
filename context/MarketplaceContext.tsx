@@ -1,6 +1,7 @@
 import { CartItem, ShippingFee } from "@/prisma/models/cartItems";
 import { OutOfStockError } from "@/types/ApiResponseTypes";
 import { DeliveryType } from "@/types/orderTypes";
+import { getHeaders } from "@/util/authHelper";
 import { fetcher } from "@/util/fetcher";
 import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
@@ -85,15 +86,8 @@ const MarketplaceContext = createContext<MarketplaceType>({
   addPromotion: () => {},
   removePromotion: () => {},
   setFile: () => {},
-  setWishedItems: (data: WishedItems[]) => {
-    fetch("/api/wished", { method: "POST", body: JSON.stringify(data) });
-  },
-  changeDeliveryType: (data: CartItem[]) => {
-    fetch("/api/cart", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
+  setWishedItems: (data: WishedItems[]) => {},
+  changeDeliveryType: (data: CartItem[]) => {},
   modifyCount: () => {},
   addCart: () => {},
   modifyAddress: () => {},
@@ -107,7 +101,7 @@ export const MarketplaceProvider = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session }: any = useSession();
   const { locale } = useRouter();
   const [isPromoLoading, setPromoLoading] = React.useState(false);
   const [promoCode, setPromoCode] = React.useState<PromoCode | undefined>(
@@ -241,7 +235,11 @@ export const MarketplaceProvider = ({
   }, [subTotal, shippingFee, promoTotal]);
 
   function setWishedItems(data: WishedItems) {
-    fetch("/api/wished", { method: "POST", body: JSON.stringify(data) });
+    fetch("/api/wished", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: getHeaders(session),
+    });
   }
 
   function changeDeliveryType(
@@ -283,6 +281,7 @@ export const MarketplaceProvider = ({
         shippingAddress: shippingAddress,
         isAddressDiff: isAddressDiff,
       }),
+      headers: getHeaders(session),
     }).then((data) => {
       if (data.status === 200) {
         if (showDialog === true) {

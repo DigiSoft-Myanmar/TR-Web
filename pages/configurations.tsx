@@ -13,9 +13,11 @@ import { z } from "zod";
 import prisma from "@/prisma/prisma";
 import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 import SubmitBtn from "@/components/presentational/SubmitBtn";
-import { showSuccessDialog } from "@/util/swalFunction";
+import { showSuccessDialog, showUnauthorizedDialog } from "@/util/swalFunction";
 import { useSession } from "next-auth/react";
 import ErrorScreen from "@/components/screen/ErrorScreen";
+import { getHeaders } from "@/util/authHelper";
+import { useRouter } from "next/router";
 
 function Configurations({
   lowStockLimit,
@@ -32,6 +34,7 @@ function Configurations({
 }: any) {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
+  const router = useRouter();
 
   const schema = z.object({
     lowStockLimit: z
@@ -106,15 +109,22 @@ function Configurations({
 
   function submitConfiguration(data: Configuration) {
     setSubmit(true);
-    fetch("/api/configurations", {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
-      .then((data) => data.json())
-      .then((json) => {
-        setSubmit(false);
-        showSuccessDialog(t("submitSuccess"));
+    if (getHeaders(session)) {
+      fetch("/api/configurations", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: getHeaders(session),
+      })
+        .then((data) => data.json())
+        .then((json) => {
+          setSubmit(false);
+          showSuccessDialog(t("submitSuccess"));
+        });
+    } else {
+      showUnauthorizedDialog(router.locale, () => {
+        router.push("/login");
       });
+    }
   }
 
   return session &&

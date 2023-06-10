@@ -2,6 +2,7 @@ import {
   showConfirmationDialog,
   showErrorDialog,
   showSuccessDialog,
+  showUnauthorizedDialog,
 } from "@/util/swalFunction";
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -11,6 +12,7 @@ import React from "react";
 import { IconPickerItem } from "react-fa-icon-picker";
 import FAQGroupModal from "../modal/sideModal/FAQGroupModal";
 import FAQModal from "../modal/sideModal/FAQModal";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   id: string;
@@ -35,6 +37,7 @@ function FAQCard({
   currentGroup,
   onClickFn,
 }: Props) {
+  const router = useRouter();
   const { locale } = useRouter();
   const { t } = useTranslation("common");
   const [isHover, setHover] = React.useState(false);
@@ -113,6 +116,7 @@ function FAQCard({
                     () => {
                       fetch(`/api/faqs/group?id=${encodeURIComponent(id!)}`, {
                         method: "DELETE",
+                        headers: getHeaders(session),
                       }).then(async (data) => {
                         if (data.status === 200) {
                           updateFn();
@@ -184,28 +188,35 @@ function FAQCard({
               }
               onClickFn={(data: any, setSubmit: Function) => {
                 setSubmit(true);
-                fetch("/api/faqs/group?id=" + id, {
-                  method: "PUT",
-                  body: JSON.stringify(data),
-                }).then(async (data) => {
-                  setSubmit(false);
-                  if (data.status === 200) {
-                    showSuccessDialog(
-                      t("submit") + " " + t("success"),
-                      "",
-                      locale
-                    );
-                    updateFn();
-                  } else {
-                    let json = await data.json();
-                    if (json.error) {
-                      showErrorDialog(json.error, json.errorMM, locale);
+                if (getHeaders(session)) {
+                  fetch("/api/faqs/group?id=" + id, {
+                    method: "PUT",
+                    body: JSON.stringify(data),
+                    headers: getHeaders(session),
+                  }).then(async (data) => {
+                    setSubmit(false);
+                    if (data.status === 200) {
+                      showSuccessDialog(
+                        t("submit") + " " + t("success"),
+                        "",
+                        locale
+                      );
+                      updateFn();
                     } else {
-                      showErrorDialog(t("somethingWentWrong"), "", locale);
+                      let json = await data.json();
+                      if (json.error) {
+                        showErrorDialog(json.error, json.errorMM, locale);
+                      } else {
+                        showErrorDialog(t("somethingWentWrong"), "", locale);
+                      }
                     }
-                  }
-                  setModalOpen(false);
-                });
+                    setModalOpen(false);
+                  });
+                } else {
+                  showUnauthorizedDialog(locale, () => {
+                    router.push("/login");
+                  });
+                }
               }}
             />
             <FAQModal
@@ -215,28 +226,35 @@ function FAQCard({
               isModalOpen={isFAQModalopen}
               onClickFn={(data: any, setSubmit: Function) => {
                 setSubmit(true);
-                fetch("/api/faqs?groupId=" + id, {
-                  method: "POST",
-                  body: JSON.stringify(data),
-                }).then(async (data) => {
-                  setSubmit(false);
-                  if (data.status === 200) {
-                    showSuccessDialog(
-                      t("submit") + " " + t("success"),
-                      "",
-                      locale
-                    );
-                    updateFn();
-                  } else {
-                    let json = await data.json();
-                    if (json.error) {
-                      showErrorDialog(json.error, json.errorMM, locale);
+                if (getHeaders(session)) {
+                  fetch("/api/faqs?groupId=" + id, {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: getHeaders(session),
+                  }).then(async (data) => {
+                    setSubmit(false);
+                    if (data.status === 200) {
+                      showSuccessDialog(
+                        t("submit") + " " + t("success"),
+                        "",
+                        locale
+                      );
+                      updateFn();
                     } else {
-                      showErrorDialog(t("somethingWentWrong"), "", locale);
+                      let json = await data.json();
+                      if (json.error) {
+                        showErrorDialog(json.error, json.errorMM, locale);
+                      } else {
+                        showErrorDialog(t("somethingWentWrong"), "", locale);
+                      }
                     }
-                  }
-                  setFAQModalOpen(false);
-                });
+                    setFAQModalOpen(false);
+                  });
+                } else {
+                  showUnauthorizedDialog(locale, () => {
+                    router.push("/login");
+                  });
+                }
               }}
               setModalOpen={setFAQModalOpen}
               title={locale === "mm" ? "FAQ အသစ်ထည့်ရန်" : "Create FAQ"}

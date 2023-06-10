@@ -11,10 +11,16 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@/components/presentational/FormInput";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { ImgType } from "@/types/orderTypes";
 import Image from "next/image";
 import { fileUrl } from "@/types/const";
+import { useSession } from "next-auth/react";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -50,6 +56,7 @@ function CategoryModal({
   });
   const { errors } = formState;
   const watchFields = watch();
+  const { data: session }: any = useSession();
 
   function submitCategory(data: any) {
     if (category.icon && category.color) {
@@ -57,29 +64,43 @@ function CategoryModal({
       let d = { ...category, ...data };
 
       if (parentCategory && parentCategory.id) {
-        fetch("/api/products/categories?id=" + parentCategory.id, {
-          method: "PUT",
-          body: JSON.stringify(d),
-        })
-          .then((data) => data.json())
-          .then((json) => {
-            setSubmit(false);
-            setUpdate(true);
-            setModalOpen(false);
-            showSuccessDialog(t("submitSuccess"));
+        if (getHeaders(session)) {
+          fetch("/api/products/categories?id=" + parentCategory.id, {
+            method: "PUT",
+            body: JSON.stringify(d),
+            headers: getHeaders(session),
+          })
+            .then((data) => data.json())
+            .then((json) => {
+              setSubmit(false);
+              setUpdate(true);
+              setModalOpen(false);
+              showSuccessDialog(t("submitSuccess"));
+            });
+        } else {
+          showUnauthorizedDialog(router.locale, () => {
+            router.push("/login");
           });
+        }
       } else {
-        fetch("/api/products/categories", {
-          method: "POST",
-          body: JSON.stringify(d),
-        })
-          .then((data) => data.json())
-          .then((json) => {
-            setSubmit(false);
-            setUpdate(true);
-            setModalOpen(false);
-            showSuccessDialog(t("submitSuccess"));
+        if (getHeaders(session)) {
+          fetch("/api/products/categories", {
+            method: "POST",
+            body: JSON.stringify(d),
+            headers: getHeaders(session),
+          })
+            .then((data) => data.json())
+            .then((json) => {
+              setSubmit(false);
+              setUpdate(true);
+              setModalOpen(false);
+              showSuccessDialog(t("submitSuccess"));
+            });
+        } else {
+          showUnauthorizedDialog(router.locale, () => {
+            router.push("/login");
           });
+        }
       }
     } else {
       showErrorDialog(t("fillInformation"));

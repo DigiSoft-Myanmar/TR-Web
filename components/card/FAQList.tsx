@@ -13,11 +13,13 @@ import {
   showConfirmationDialog,
   showErrorDialog,
   showSuccessDialog,
+  showUnauthorizedDialog,
 } from "@/util/swalFunction";
 import FAQCard from "./FAQCard";
 import FAQModal from "../modal/sideModal/FAQModal";
 import { FAQ, FAQGroup, Role } from "@prisma/client";
 import useMaxProd from "@/hooks/useMaxProd";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   data: any;
@@ -30,6 +32,7 @@ function FAQList({ data, updateFn }: Props) {
   const [currentGroup, setCurrentGroup] = React.useState(data[0].id);
   const { data: session }: any = useSession();
   const { locale } = useRouter();
+  const router = useRouter();
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [FAQ, setFAQ] = React.useState<any>({});
 
@@ -131,29 +134,30 @@ function FAQList({ data, updateFn }: Props) {
                                       () => {
                                         fetch(
                                           `/api/faqs?groupId=${encodeURIComponent(
-                                            currentGroup,
+                                            currentGroup
                                           )}&id=${encodeURIComponent(e.id)}`,
                                           {
                                             method: "DELETE",
-                                          },
+                                            headers: getHeaders(session),
+                                          }
                                         ).then(async (data) => {
                                           if (data.status === 200) {
                                             updateFn();
                                             showSuccessDialog(
                                               t("delete") + " " + t("success"),
                                               "",
-                                              locale,
+                                              locale
                                             );
                                           } else {
                                             let json = await data.json();
                                             showErrorDialog(
                                               json.error,
                                               json.errorMM,
-                                              locale,
+                                              locale
                                             );
                                           }
                                         });
-                                      },
+                                      }
                                     );
                                   }}
                                 >
@@ -258,28 +262,35 @@ function FAQList({ data, updateFn }: Props) {
             setModalOpen={setModalOpen}
             onClickFn={(data: any, setSubmit: Function) => {
               setSubmit(true);
-              fetch("/api/faqs?groupId=" + currentGroup + "&id=" + FAQ.id, {
-                method: "PUT",
-                body: JSON.stringify(data),
-              }).then(async (data) => {
-                setSubmit(false);
-                if (data.status === 200) {
-                  showSuccessDialog(
-                    t("submit") + " " + t("success"),
-                    "",
-                    locale,
-                  );
-                  updateFn();
-                } else {
-                  let json = await data.json();
-                  if (json.error) {
-                    showErrorDialog(json.error, json.errorMM, locale);
+              if (getHeaders(session)) {
+                fetch("/api/faqs?groupId=" + currentGroup + "&id=" + FAQ.id, {
+                  method: "PUT",
+                  body: JSON.stringify(data),
+                  headers: getHeaders(session),
+                }).then(async (data) => {
+                  setSubmit(false);
+                  if (data.status === 200) {
+                    showSuccessDialog(
+                      t("submit") + " " + t("success"),
+                      "",
+                      locale
+                    );
+                    updateFn();
                   } else {
-                    showErrorDialog(t("somethingWentWrong"), "", locale);
+                    let json = await data.json();
+                    if (json.error) {
+                      showErrorDialog(json.error, json.errorMM, locale);
+                    } else {
+                      showErrorDialog(t("somethingWentWrong"), "", locale);
+                    }
                   }
-                }
-                setModalOpen(false);
-              });
+                  setModalOpen(false);
+                });
+              } else {
+                showUnauthorizedDialog(locale, () => {
+                  router.push("/login");
+                });
+              }
             }}
             title={locale === "mm" ? "FAQ ပြင်ဆင်ရန်" : "Edit FAQ"}
           />

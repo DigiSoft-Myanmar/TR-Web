@@ -58,6 +58,7 @@ import {
 } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
 import { getPricing } from "@/util/pricing";
+import { getHeaders } from "@/util/authHelper";
 
 interface CellType {
   row: any;
@@ -242,6 +243,7 @@ const UGCReportTbl = ({
                           )}`,
                           {
                             method: "DELETE",
+                            headers: getHeaders(session),
                           }
                         ).then(async (data) => {
                           if (data.status === 200) {

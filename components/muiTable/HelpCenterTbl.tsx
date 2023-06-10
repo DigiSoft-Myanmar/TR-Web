@@ -51,6 +51,7 @@ import {
 import StatsCard from "../card/StatsCard";
 import { getPricing } from "@/util/pricing";
 import MessageSideModal from "../modal/sideModal/MessageSideModal";
+import { getHeaders } from "@/util/authHelper";
 
 interface CellType {
   row: any;
@@ -260,6 +261,7 @@ const HelpCenterTbl = ({
                           `/api/feedbacks?id=${encodeURIComponent(row.id)}`,
                           {
                             method: "DELETE",
+                            headers: getHeaders(session),
                           }
                         ).then(async (data) => {
                           if (data.status === 200) {

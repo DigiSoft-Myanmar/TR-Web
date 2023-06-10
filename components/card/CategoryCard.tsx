@@ -11,6 +11,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 import CategoryModal from "../modal/sideModal/CategoryModal";
+import { useSession } from "next-auth/react";
+import { getHeaders } from "@/util/authHelper";
 
 type Props = {
   id: string;
@@ -47,6 +49,7 @@ function CategoryCard({
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [title, setTitle] = React.useState(t("newCategory"));
   const [category, setCategory] = React.useState<any>();
+  const { data: session }: any = useSession();
   return (
     <>
       <div
@@ -156,21 +159,22 @@ function CategoryCard({
                       `/api/products/categories?id=${encodeURIComponent(id)}`,
                       {
                         method: "DELETE",
-                      },
+                        headers: getHeaders(session),
+                      }
                     ).then(async (data) => {
                       if (data.status === 200) {
                         setUpdate(true);
                         showSuccessDialog(
                           t("delete") + " " + t("success"),
                           "",
-                          locale,
+                          locale
                         );
                       } else {
                         let json = await data.json();
                         showErrorDialog(json.error, json.errorMM, locale);
                       }
                     });
-                  },
+                  }
                 );
               }}
             >

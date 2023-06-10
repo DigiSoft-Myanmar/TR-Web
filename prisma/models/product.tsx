@@ -76,10 +76,8 @@ export const getAllProducts = async (id: string, session: any) => {
       filter = {};
     } else {
       filter = {
-        brand: {
-          user: {
-            sellAllow: true,
-          },
+        user: {
+          sellAllow: true,
         },
       };
     }

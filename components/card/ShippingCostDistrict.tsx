@@ -1,4 +1,8 @@
-import { showConfirmationDialog, showErrorDialog } from "@/util/swalFunction";
+import {
+  showConfirmationDialog,
+  showErrorDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
 import { useTranslation } from "next-i18next";
 import { useTheme } from "next-themes";
@@ -6,6 +10,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import ShippingCostDialog from "../modal/dialog/ShippingCostDialog";
 import ShippingCostTownship from "./ShippingCostTownship";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 interface Props {
   district: any;
@@ -21,6 +27,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [detailOpen, setDetailOpen] = React.useState(false);
   const [shippingCost, setShippingCost] = React.useState<any>();
+  const { data: session }: any = useSession();
 
   function update() {
     if (district && district.name) {
@@ -30,7 +37,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
           "&district=" +
           district.id +
           "&parentState=" +
-          state,
+          state
       ).then(async (data) => {
         if (data.status === 200) {
           let json = await data.json();
@@ -40,7 +47,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
               "&district=" +
               district.id +
               "&parentState=" +
-              state,
+              state
           );
           console.log(json);
           setShippingCost(json);
@@ -103,7 +110,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                           {formatAmount(
                             shippingCost.shippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       ) : (
@@ -112,7 +119,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                           {formatAmount(
                             shippingCost.defaultShippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       )}
@@ -125,7 +132,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                           {formatAmount(
                             shippingCost.freeShippingCost,
                             router.locale,
-                            true,
+                            true
                           )}{" "}
                         </span>
                       ) : (
@@ -173,30 +180,37 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                             " အတွက်ပို့ဆောင်မှုရပ်တန့်ခြင်းသေချာပါသလား။",
                           router.locale,
                           () => {
-                            fetch(
-                              "/api/shippingCost?brandId=" +
-                                brandId +
-                                "&district=" +
-                                district.name,
-                              {
-                                method: "POST",
-                                body: JSON.stringify({
-                                  shippingIncluded: false,
-                                }),
-                              },
-                            ).then(async (data) => {
-                              if (data.status === 200) {
-                                update();
-                              } else {
-                                let json = await data.json();
-                                showErrorDialog(
-                                  json.error,
-                                  json.errorMM,
-                                  router.locale,
-                                );
-                              }
-                            });
-                          },
+                            if (getHeaders(session)) {
+                              fetch(
+                                "/api/shippingCost?brandId=" +
+                                  brandId +
+                                  "&district=" +
+                                  district.name,
+                                {
+                                  method: "POST",
+                                  body: JSON.stringify({
+                                    shippingIncluded: false,
+                                  }),
+                                  headers: getHeaders(session),
+                                }
+                              ).then(async (data) => {
+                                if (data.status === 200) {
+                                  update();
+                                } else {
+                                  let json = await data.json();
+                                  showErrorDialog(
+                                    json.error,
+                                    json.errorMM,
+                                    router.locale
+                                  );
+                                }
+                              });
+                            } else {
+                              showUnauthorizedDialog(router.locale, () => {
+                                router.push("/login");
+                              });
+                            }
+                          }
                         );
                       }}
                     >
@@ -222,27 +236,34 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      fetch(
-                        "/api/shippingCost?brandId=" +
-                          brandId +
-                          "&district=" +
-                          district.name,
-                        {
-                          method: "POST",
-                          body: JSON.stringify({ shippingIncluded: true }),
-                        },
-                      ).then(async (data) => {
-                        if (data.status === 200) {
-                          update();
-                        } else {
-                          let json = await data.json();
-                          showErrorDialog(
-                            json.error,
-                            json.errorMM,
-                            router.locale,
-                          );
-                        }
-                      });
+                      if (getHeaders(session)) {
+                        fetch(
+                          "/api/shippingCost?brandId=" +
+                            brandId +
+                            "&district=" +
+                            district.name,
+                          {
+                            method: "POST",
+                            body: JSON.stringify({ shippingIncluded: true }),
+                            headers: getHeaders(session),
+                          }
+                        ).then(async (data) => {
+                          if (data.status === 200) {
+                            update();
+                          } else {
+                            let json = await data.json();
+                            showErrorDialog(
+                              json.error,
+                              json.errorMM,
+                              router.locale
+                            );
+                          }
+                        });
+                      } else {
+                        showUnauthorizedDialog(router.locale, () => {
+                          router.push("/login");
+                        });
+                      }
                     }}
                   >
                     <svg
@@ -310,23 +331,30 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
           }`}
           shippingCost={shippingCost}
           onClickFn={(e: any) => {
-            fetch(
-              "/api/shippingCost?brandId=" +
-                brandId +
-                "&district=" +
-                district.id,
-              {
-                method: "POST",
-                body: JSON.stringify(e),
-              },
-            ).then(async (data) => {
-              if (data.status === 200) {
-                update();
-              } else {
-                let json = await data.json();
-                showErrorDialog(json.error, json.errorMM, router.locale);
-              }
-            });
+            if (getHeaders(session)) {
+              fetch(
+                "/api/shippingCost?brandId=" +
+                  brandId +
+                  "&district=" +
+                  district.id,
+                {
+                  method: "POST",
+                  body: JSON.stringify(e),
+                  headers: getHeaders(session),
+                }
+              ).then(async (data) => {
+                if (data.status === 200) {
+                  update();
+                } else {
+                  let json = await data.json();
+                  showErrorDialog(json.error, json.errorMM, router.locale);
+                }
+              });
+            } else {
+              showUnauthorizedDialog(router.locale, () => {
+                router.push("/login");
+              });
+            }
           }}
         />
       </>

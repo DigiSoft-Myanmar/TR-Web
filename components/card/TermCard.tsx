@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import AttributeModal from "../modal/sideModal/AttributeModal";
 import TermModal from "../modal/sideModal/TermModal";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 function TermCard({
   name,
@@ -23,6 +25,7 @@ function TermCard({
   const { t } = useTranslation("common");
   const [isModalOpen, setModalOpen] = React.useState(false);
   const { locale } = useRouter();
+  const { data: session }: any = useSession();
   return (
     <>
       <div
@@ -70,20 +73,21 @@ function TermCard({
                   () => {
                     fetch(`/api/products/terms?id=${encodeURIComponent(id)}`, {
                       method: "DELETE",
+                      headers: getHeaders(session),
                     }).then(async (data) => {
                       if (data.status === 200) {
                         setUpdate(true);
                         showSuccessDialog(
                           t("delete") + " " + t("success"),
                           "",
-                          locale,
+                          locale
                         );
                       } else {
                         let json = await data.json();
                         showErrorDialog(json.error, json.errorMM, locale);
                       }
                     });
-                  },
+                  }
                 );
               }}
             >

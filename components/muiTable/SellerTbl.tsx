@@ -51,6 +51,7 @@ import {
 import { getPercentage } from "@/util/compareHelper";
 import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
+import { getHeaders } from "@/util/authHelper";
 
 interface CellType {
   row: any;
@@ -318,6 +319,7 @@ const SellerTbl = ({
                           `/api/user?id=${encodeURIComponent(row.accInfo.id)}`,
                           {
                             method: "DELETE",
+                            headers: getHeaders(session),
                           }
                         ).then(async (data) => {
                           if (data.status === 200) {

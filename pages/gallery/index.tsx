@@ -19,6 +19,7 @@ import { ImgType } from "@/types/orderTypes";
 import { useSession } from "next-auth/react";
 import { Role } from "@prisma/client";
 import ErrorScreen from "@/components/screen/ErrorScreen";
+import { getHeaders } from "@/util/authHelper";
 
 function GalleryPage() {
   const { t } = useTranslation("common");
@@ -35,7 +36,7 @@ function GalleryPage() {
     fetch(path).then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   const { data: session }: any = useSession();
 
@@ -68,7 +69,7 @@ function GalleryPage() {
                       <SelectImage
                         src={`/api/files/${elem.filename}`}
                         isChecked={selectedImage.find(
-                          (e: any) => e.filename === elem.filename,
+                          (e: any) => e.filename === elem.filename
                         )}
                         setChecked={() =>
                           setSelectedImage((prevValue: any) => {
@@ -77,7 +78,7 @@ function GalleryPage() {
                               d.find((e: any) => e.filename === elem.filename)
                             ) {
                               d = d.filter(
-                                (e: any) => e.filename !== elem.filename,
+                                (e: any) => e.filename !== elem.filename
                               );
                             } else {
                               d.push(elem);
@@ -172,7 +173,7 @@ function GalleryPage() {
               if (isExists === true) {
                 showErrorDialog(
                   "Cannot performed this action since these images are used.",
-                  "",
+                  ""
                 );
               } else {
                 showConfirmationDialog(
@@ -183,6 +184,7 @@ function GalleryPage() {
                     fetch("/api/gallery/manage", {
                       method: "DELETE",
                       body: JSON.stringify(selectedImage),
+                      headers: getHeaders(session),
                     }).then(async (data) => {
                       if (data.status === 200) {
                         let json = await data.json();
@@ -192,14 +194,14 @@ function GalleryPage() {
                           locale,
                           () => {
                             refetch();
-                          },
+                          }
                         );
                       } else {
                         let json = await data.json();
                         showErrorDialog(json.error, json.errorMM, locale);
                       }
                     });
-                  },
+                  }
                 );
               }
             }}

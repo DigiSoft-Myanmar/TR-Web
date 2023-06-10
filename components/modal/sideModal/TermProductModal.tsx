@@ -14,6 +14,8 @@ import { AttrType } from "@prisma/client";
 import ColorPicker from "@/components/presentational/ColorPicker";
 import SingleGalleryModal from "./SingleGalleryModal";
 import { ImgType } from "@/types/orderTypes";
+import { useSession } from "next-auth/react";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -54,6 +56,7 @@ function TermProductModal({
   });
   const { errors } = formState;
   const watchFields = watch();
+  const { data: session }: any = useSession();
 
   async function uploadFile(file: FileList) {
     const FormData = require("form-data");
@@ -61,8 +64,12 @@ function TermProductModal({
     for (let i = 0; i < file!.length; i++) {
       form.append("theFiles", file![i]);
     }
-    return fetch("/api/gallery", { method: "POST", body: form }).then(
-      async (data) => {
+    if (getHeaders(session)) {
+      return fetch("/api/gallery", {
+        method: "POST",
+        body: form,
+        headers: getHeaders(session),
+      }).then(async (data) => {
         if (data.status === 200) {
           let json = await data.json();
           return { isSuccess: true, fileName: json.filesData[0].filename };
@@ -74,8 +81,10 @@ function TermProductModal({
           }
           return { isSuccess: false };
         }
-      },
-    );
+      });
+    } else {
+      return { isSuccess: false };
+    }
   }
 
   React.useEffect(() => {
@@ -294,7 +303,7 @@ function TermProductModal({
                                             showErrorDialog(
                                               t("fileTooLarge"),
                                               "",
-                                              router.locale,
+                                              router.locale
                                             );
                                           } else {
                                             setFile(e.currentTarget.files);

@@ -7,6 +7,7 @@ import useAuth from "@/hooks/useAuth";
 import { Role } from "@prisma/client";
 import { ImgType } from "@/types/orderTypes";
 import prisma from "@/prisma/prisma";
+import { getSession, useSession } from "next-auth/react";
 
 export interface NextConnectApiRequest extends NextApiRequest {
   files: Express.Multer.File[];
@@ -32,10 +33,9 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
   }
   const { type } = req.query;
 
-  const session = await useAuth(req);
+  const session: any = await useAuth(req);
 
   if (session) {
-    console.log(session);
     let filesData = req.files;
     try {
       const db = (await clientPromise).db();

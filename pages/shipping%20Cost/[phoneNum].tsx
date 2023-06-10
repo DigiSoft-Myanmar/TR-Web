@@ -8,13 +8,18 @@ import { useSession } from "next-auth/react";
 import { Brand, Role, State, User } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import {
+  showErrorDialog,
+  showSuccessDialog,
+  showUnauthorizedDialog,
+} from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
 import useSWR from "swr";
 import { useQuery } from "react-query";
 import ShippingCostCard from "@/components/card/ShippingCostCard";
 import ShippingCostDialog from "@/components/modal/dialog/ShippingCostDialog";
 import ErrorScreen from "@/components/screen/ErrorScreen";
+import { getHeaders } from "@/util/authHelper";
 
 function Edit(data: any) {
   const router = useRouter();
@@ -73,28 +78,38 @@ function Edit(data: any) {
               onClick={(evt) => {
                 evt.preventDefault();
                 evt.stopPropagation();
-                fetch("/api/shippingCost?isDisable=false&brandId=" + brand.id, {
-                  body: JSON.stringify({}),
-                  method: "POST",
-                }).then(async (data) => {
-                  if (data.status === 200) {
-                    showSuccessDialog(
-                      "Enable shipping success.",
-                      "",
-                      locale,
-                      () => {
-                        router.reload();
-                      }
-                    );
-                  } else {
-                    let json = await data.json();
-                    if (json.error) {
-                      showErrorDialog(json.error, json.errorMM, locale);
-                    } else {
-                      showErrorDialog(t("somethingWentWrong"));
+                if (getHeaders(session)) {
+                  fetch(
+                    "/api/shippingCost?isDisable=false&brandId=" + brand.id,
+                    {
+                      body: JSON.stringify({}),
+                      method: "POST",
+                      headers: getHeaders(session),
                     }
-                  }
-                });
+                  ).then(async (data) => {
+                    if (data.status === 200) {
+                      showSuccessDialog(
+                        "Enable shipping success.",
+                        "",
+                        locale,
+                        () => {
+                          router.reload();
+                        }
+                      );
+                    } else {
+                      let json = await data.json();
+                      if (json.error) {
+                        showErrorDialog(json.error, json.errorMM, locale);
+                      } else {
+                        showErrorDialog(t("somethingWentWrong"));
+                      }
+                    }
+                  });
+                } else {
+                  showUnauthorizedDialog(locale, () => {
+                    router.push("/login");
+                  });
+                }
               }}
             >
               Enable
@@ -147,30 +162,38 @@ function Edit(data: any) {
                     onClick={(evt) => {
                       evt.preventDefault();
                       evt.stopPropagation();
-                      fetch(
-                        "/api/shippingCost?isDisable=true&brandId=" + brand.id,
-                        {
-                          method: "POST",
-                        }
-                      ).then(async (data) => {
-                        if (data.status === 200) {
-                          showSuccessDialog(
-                            "Disable shipping success.",
-                            "",
-                            locale,
-                            () => {
-                              router.reload();
-                            }
-                          );
-                        } else {
-                          let json = await data.json();
-                          if (json.error) {
-                            showErrorDialog(json.error, json.errorMM, locale);
-                          } else {
-                            showErrorDialog(t("somethingWentWrong"));
+                      if (getHeaders(session)) {
+                        fetch(
+                          "/api/shippingCost?isDisable=true&brandId=" +
+                            brand.id,
+                          {
+                            method: "POST",
+                            headers: getHeaders(session),
                           }
-                        }
-                      });
+                        ).then(async (data) => {
+                          if (data.status === 200) {
+                            showSuccessDialog(
+                              "Disable shipping success.",
+                              "",
+                              locale,
+                              () => {
+                                router.reload();
+                              }
+                            );
+                          } else {
+                            let json = await data.json();
+                            if (json.error) {
+                              showErrorDialog(json.error, json.errorMM, locale);
+                            } else {
+                              showErrorDialog(t("somethingWentWrong"));
+                            }
+                          }
+                        });
+                      } else {
+                        showUnauthorizedDialog(locale, () => {
+                          router.push("/login");
+                        });
+                      }
                     }}
                   >
                     Disable Shipping
@@ -224,32 +247,43 @@ function Edit(data: any) {
                       onClick={(evt) => {
                         evt.preventDefault();
                         evt.stopPropagation();
-                        fetch(
-                          "/api/shippingCost?isFreeShipping=true&brandId=" +
-                            brand.id,
-                          {
-                            body: JSON.stringify({}),
-                            method: "POST",
-                          }
-                        ).then(async (data) => {
-                          if (data.status === 200) {
-                            showSuccessDialog(
-                              "Enable free shipping success.",
-                              "",
-                              locale,
-                              () => {
-                                router.reload();
-                              }
-                            );
-                          } else {
-                            let json = await data.json();
-                            if (json.error) {
-                              showErrorDialog(json.error, json.errorMM, locale);
-                            } else {
-                              showErrorDialog(t("somethingWentWrong"));
+                        if (getHeaders(session)) {
+                          fetch(
+                            "/api/shippingCost?isFreeShipping=true&brandId=" +
+                              brand.id,
+                            {
+                              body: JSON.stringify({}),
+                              method: "POST",
+                              headers: getHeaders(session),
                             }
-                          }
-                        });
+                          ).then(async (data) => {
+                            if (data.status === 200) {
+                              showSuccessDialog(
+                                "Enable free shipping success.",
+                                "",
+                                locale,
+                                () => {
+                                  router.reload();
+                                }
+                              );
+                            } else {
+                              let json = await data.json();
+                              if (json.error) {
+                                showErrorDialog(
+                                  json.error,
+                                  json.errorMM,
+                                  locale
+                                );
+                              } else {
+                                showErrorDialog(t("somethingWentWrong"));
+                              }
+                            }
+                          });
+                        } else {
+                          showUnauthorizedDialog(locale, () => {
+                            router.push("/login");
+                          });
+                        }
                       }}
                     >
                       Enable Free Shipping
@@ -289,31 +323,42 @@ function Edit(data: any) {
                       onClick={(evt) => {
                         evt.preventDefault();
                         evt.stopPropagation();
-                        fetch(
-                          "/api/shippingCost?isFreeShipping=true&brandId=" +
-                            brand.id,
-                          {
-                            method: "POST",
-                          }
-                        ).then(async (data) => {
-                          if (data.status === 200) {
-                            showSuccessDialog(
-                              "Disable free shipping success.",
-                              "",
-                              locale,
-                              () => {
-                                router.reload();
-                              }
-                            );
-                          } else {
-                            let json = await data.json();
-                            if (json.error) {
-                              showErrorDialog(json.error, json.errorMM, locale);
-                            } else {
-                              showErrorDialog(t("somethingWentWrong"));
+                        if (getHeaders(session)) {
+                          fetch(
+                            "/api/shippingCost?isFreeShipping=true&brandId=" +
+                              brand.id,
+                            {
+                              method: "POST",
+                              headers: getHeaders(session),
                             }
-                          }
-                        });
+                          ).then(async (data) => {
+                            if (data.status === 200) {
+                              showSuccessDialog(
+                                "Disable free shipping success.",
+                                "",
+                                locale,
+                                () => {
+                                  router.reload();
+                                }
+                              );
+                            } else {
+                              let json = await data.json();
+                              if (json.error) {
+                                showErrorDialog(
+                                  json.error,
+                                  json.errorMM,
+                                  locale
+                                );
+                              } else {
+                                showErrorDialog(t("somethingWentWrong"));
+                              }
+                            }
+                          });
+                        } else {
+                          showUnauthorizedDialog(locale, () => {
+                            router.push("/login");
+                          });
+                        }
                       }}
                     >
                       Disable Free Shipping
@@ -353,17 +398,24 @@ function Edit(data: any) {
         }}
         isCarGateInclue={true}
         onClickFn={(e: any) => {
-          fetch("/api/brands?brandId=" + brand.id, {
-            method: "PUT",
-            body: JSON.stringify(e),
-          }).then(async (data) => {
-            if (data.status === 200) {
-              router.reload();
-            } else {
-              let json = await data.json();
-              showErrorDialog(json.error, json.errorMM, router.locale);
-            }
-          });
+          if (getHeaders(session)) {
+            fetch("/api/brands?brandId=" + brand.id, {
+              method: "PUT",
+              body: JSON.stringify(e),
+              headers: getHeaders(session),
+            }).then(async (data) => {
+              if (data.status === 200) {
+                router.reload();
+              } else {
+                let json = await data.json();
+                showErrorDialog(json.error, json.errorMM, router.locale);
+              }
+            });
+          } else {
+            showUnauthorizedDialog(locale, () => {
+              router.push("/login");
+            });
+          }
         }}
       />
     </div>

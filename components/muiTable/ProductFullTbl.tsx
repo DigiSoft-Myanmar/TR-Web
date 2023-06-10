@@ -46,9 +46,11 @@ import {
   showConfirmationDialog,
   showErrorDialog,
   showSuccessDialog,
+  showUnauthorizedDialog,
   showWarningDialog,
 } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
+import { getHeaders } from "@/util/authHelper";
 
 interface CellType {
   row: any;
@@ -537,6 +539,7 @@ const ProductFullTbl = ({
                           )}`,
                           {
                             method: "DELETE",
+                            headers: getHeaders(session),
                           }
                         ).then(async (data) => {
                           if (data.status === 200) {
@@ -752,6 +755,12 @@ const ProductFullTbl = ({
                     <button
                       className="rounded-md bg-white px-3 py-2 text-sm hover:bg-gray-300"
                       onClick={() => {
+                        if (!getHeaders(session)) {
+                          showUnauthorizedDialog(locale, () => {
+                            router.push("/login");
+                          });
+                          return;
+                        }
                         switch (action) {
                           case ProductAction.IncreaseRegularPrice:
                             setModifyPriceModalOpen(true);
@@ -792,6 +801,7 @@ const ProductFullTbl = ({
                                 {
                                   method: "PUT",
                                   body: JSON.stringify({ isUpdate: true }),
+                                  headers: getHeaders(session),
                                 }
                               )
                                 .then((data) => data.json())
@@ -898,6 +908,7 @@ const ProductFullTbl = ({
                   amount: e,
                   isPercent: isPercent,
                 }),
+                headers: getHeaders(session),
               }
             )
               .then((data) => data.json())
@@ -938,6 +949,7 @@ const ProductFullTbl = ({
                   amount: e,
                   isPercent: isPercent,
                 }),
+                headers: getHeaders(session),
               }
             )
               .then((data) => data.json())
@@ -977,6 +989,7 @@ const ProductFullTbl = ({
                   saleStartDate: startDate,
                   saleEndDate: endDate,
                 }),
+                headers: getHeaders(session),
               }
             )
               .then((data) => data.json())
@@ -1018,6 +1031,7 @@ const ProductFullTbl = ({
                   stockType: stockType,
                   stockLevel: stockLevel,
                 }),
+                headers: getHeaders(session),
               }
             )
               .then((data) => data.json())

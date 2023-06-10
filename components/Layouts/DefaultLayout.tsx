@@ -12,7 +12,7 @@ import AuthHeader from "../navbar/AuthHeader";
 import Footer from "../navbar/Footer";
 import Header from "../navbar/Header";
 import LoadingScreen from "../screen/LoadingScreen";
-import { isInternal } from "@/util/authHelper";
+import { getHeaders, isInternal } from "@/util/authHelper";
 
 declare global {
   interface Window {
@@ -50,17 +50,35 @@ function DefaultLayout({ children }: LayoutProps) {
         fetch("https://api.ipify.org/?format=json")
           .then((data) => data.json())
           .then((json) => {
-            fetch("/api/siteVisit?ip=" + json.ip, {
-              method: "POST",
-              body: JSON.stringify(device),
-            });
+            let headers = getHeaders(session);
+            if (headers) {
+              fetch("/api/siteVisit?ip=" + json.ip, {
+                method: "POST",
+                body: JSON.stringify(device),
+                headers: headers,
+              });
+            } else {
+              fetch("/api/siteVisit?ip=" + json.ip, {
+                method: "POST",
+                body: JSON.stringify(device),
+              });
+            }
           })
           .catch((e) => {});
       } catch (err) {
-        fetch("/api/siteVisit", {
-          method: "POST",
-          body: JSON.stringify(device),
-        });
+        let headers = getHeaders(session);
+        if (headers) {
+          fetch("/api/siteVisit", {
+            method: "POST",
+            body: JSON.stringify(device),
+            headers: headers,
+          });
+        } else {
+          fetch("/api/siteVisit", {
+            method: "POST",
+            body: JSON.stringify(device),
+          });
+        }
       }
     }
   }, [device]);
