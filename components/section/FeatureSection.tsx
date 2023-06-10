@@ -18,13 +18,13 @@ function FeatureSection({
         disableMarginBottom === true ? "" : "mb-5"
       } grid w-full grid-cols-2 place-items-stretch gap-5 overflow-x-auto bg-white py-3 shadow-md lg:grid-cols-5`}
     >
-      {features?.map((e: FeatureType, index: number) => (
+      {features?.map((e: any, index: number) => (
         <div
           className="flex flex-row items-center space-x-3 rounded-md px-3 py-2"
           key={index}
         >
           <span className="rounded-full bg-primary/20 p-2">
-            {/* <IconPickerItem icon={e.icon} size={24} color={"#DE711B"} /> */}
+            <IconPickerItem icon={e.icon} size={24} color={"#E71D2A"} />
           </span>
           <div className="flex flex-col space-y-1">
             <h3 className="text-primaryText whitespace-nowrap text-sm font-semibold">

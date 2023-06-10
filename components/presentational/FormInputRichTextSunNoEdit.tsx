@@ -3,9 +3,10 @@ import React from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
-/* const SunEditor = dynamic(() => import("suneditor-react"), {
+const SunEditor: any = dynamic(() => import("suneditor-react"), {
   ssr: false,
-}); */
+  loading: () => <p>Loading ...</p>,
+});
 
 type Props = {
   content: string;
@@ -15,7 +16,7 @@ function FormInputRichTextSun({ content }: Props) {
     <div className="w-full">
       <div className="p-5 bg-white">
         <div className="se-empty">
-          {/* <SunEditor
+          <SunEditor
             setContents={content}
             disable={true}
             hideToolbar={true}
@@ -23,7 +24,7 @@ function FormInputRichTextSun({ content }: Props) {
             height="100%"
             readOnly={true}
             setOptions={{ resizingBar: false, showPathLabel: false }}
-          /> */}
+          />
         </div>
       </div>
     </div>

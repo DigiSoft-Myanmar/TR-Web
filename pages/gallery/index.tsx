@@ -50,7 +50,7 @@ function GalleryPage() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>{imgType} Gallery | Pyi Twin Phyit</title>
+        <title>{imgType} Gallery | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

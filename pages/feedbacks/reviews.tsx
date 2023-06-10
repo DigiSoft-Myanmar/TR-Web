@@ -15,12 +15,12 @@ function ReviewPage() {
     fetch("/api/products/reviews").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   return (
     <div>
       <Head>
-        <title>Reviews | Pyi Twin Phyit</title>
+        <title>Reviews | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

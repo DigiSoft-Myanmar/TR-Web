@@ -112,7 +112,7 @@ function MembershipCard({
                   y2="172"
                   gradientUnits="userSpaceOnUse"
                 >
-                  <stop stopColor="#DE711B" stopOpacity="0.09" />
+                  <stop stopColor="#E71D2A" stopOpacity="0.09" />
                   <stop offset="1" stopColor="#C4C4C4" stopOpacity="0" />
                 </linearGradient>
               </defs>
@@ -131,224 +131,224 @@ function MembershipCard({
                 cy="87.4849"
                 r="1.42021"
                 transform="rotate(180 38.9138 87.4849)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="74.9871"
                 r="1.42021"
                 transform="rotate(180 38.9138 74.9871)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="62.4892"
                 r="1.42021"
                 transform="rotate(180 38.9138 62.4892)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="38.3457"
                 r="1.42021"
                 transform="rotate(180 38.9138 38.3457)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="13.634"
                 r="1.42021"
                 transform="rotate(180 38.9138 13.634)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="50.2754"
                 r="1.42021"
                 transform="rotate(180 38.9138 50.2754)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="26.1319"
                 r="1.42021"
                 transform="rotate(180 38.9138 26.1319)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="38.9138"
                 cy="1.42021"
                 r="1.42021"
                 transform="rotate(180 38.9138 1.42021)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="87.4849"
                 r="1.42021"
                 transform="rotate(180 26.4157 87.4849)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="74.9871"
                 r="1.42021"
                 transform="rotate(180 26.4157 74.9871)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="62.4892"
                 r="1.42021"
                 transform="rotate(180 26.4157 62.4892)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="38.3457"
                 r="1.42021"
                 transform="rotate(180 26.4157 38.3457)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="13.634"
                 r="1.42021"
                 transform="rotate(180 26.4157 13.634)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="50.2754"
                 r="1.42021"
                 transform="rotate(180 26.4157 50.2754)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="26.1319"
                 r="1.42021"
                 transform="rotate(180 26.4157 26.1319)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="26.4157"
                 cy="1.4202"
                 r="1.42021"
                 transform="rotate(180 26.4157 1.4202)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="87.4849"
                 r="1.42021"
                 transform="rotate(180 13.9177 87.4849)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="74.9871"
                 r="1.42021"
                 transform="rotate(180 13.9177 74.9871)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="62.4892"
                 r="1.42021"
                 transform="rotate(180 13.9177 62.4892)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="38.3457"
                 r="1.42021"
                 transform="rotate(180 13.9177 38.3457)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="13.634"
                 r="1.42021"
                 transform="rotate(180 13.9177 13.634)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="50.2754"
                 r="1.42021"
                 transform="rotate(180 13.9177 50.2754)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="26.1319"
                 r="1.42021"
                 transform="rotate(180 13.9177 26.1319)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="13.9177"
                 cy="1.42019"
                 r="1.42021"
                 transform="rotate(180 13.9177 1.42019)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="87.4849"
                 r="1.42021"
                 transform="rotate(180 1.41963 87.4849)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="74.9871"
                 r="1.42021"
                 transform="rotate(180 1.41963 74.9871)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="62.4892"
                 r="1.42021"
                 transform="rotate(180 1.41963 62.4892)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="38.3457"
                 r="1.42021"
                 transform="rotate(180 1.41963 38.3457)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="13.634"
                 r="1.42021"
                 transform="rotate(180 1.41963 13.634)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="50.2754"
                 r="1.42021"
                 transform="rotate(180 1.41963 50.2754)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="26.1319"
                 r="1.42021"
                 transform="rotate(180 1.41963 26.1319)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
               <circle
                 cx="1.41963"
                 cy="1.4202"
                 r="1.42021"
                 transform="rotate(180 1.41963 1.4202)"
-                fill="#DE711B"
+                fill="#E71D2A"
               />
             </svg>
           </span>

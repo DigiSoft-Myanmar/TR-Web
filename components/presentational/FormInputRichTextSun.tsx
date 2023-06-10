@@ -2,9 +2,10 @@ import "suneditor/dist/css/suneditor.min.css";
 import React from "react";
 import dynamic from "next/dynamic";
 
-/* const SunEditor = dynamic(() => import("suneditor-react"), {
+const SunEditor: any = dynamic(() => import("suneditor-react"), {
   ssr: false,
-}); */
+  loading: () => <p>Loading ...</p>,
+});
 
 type Props = {
   label: string;
@@ -17,7 +18,7 @@ function FormInputRichTextSun({ label, content, setContent, maxCount }: Props) {
     <div className="w-full">
       <label className={`text-sm font-medium text-gray-400`}>{label}</label>
       <div className="mb-14 h-64">
-        {/* <SunEditor
+        <SunEditor
           height="250"
           onChange={(e) => {
             setContent(e);
@@ -45,7 +46,7 @@ function FormInputRichTextSun({ label, content, setContent, maxCount }: Props) {
               ["fullScreen"],
             ],
           }}
-        /> */}
+        />
       </div>
     </div>
   );

@@ -70,7 +70,7 @@ function FAQCard({
           <IconPickerItem
             icon={icon}
             size={24}
-            color={currentGroup === id ? "#DE711B" : "#2b2b2b"}
+            color={currentGroup === id ? "#E71D2A" : "#2b2b2b"}
           />
         </div>
         <p

@@ -24,7 +24,7 @@ function MyanmarTiltedMap({
     } else if (count < 75) {
       return "#DE8E1B";
     }
-    return "#DE711B";
+    return "#E71D2A";
   }
 
   return (

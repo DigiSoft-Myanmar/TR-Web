@@ -43,7 +43,7 @@ function Index() {
       session.role === Role.SuperAdmin) ? (
     <div className="relative min-h-screen">
       <Head>
-        <title>Buyers | Pyi Twin Phyit</title>
+        <title>Buyers | Treasure Rush</title>
       </Head>
       <div>
         <BuyerTbl data={data} refetch={() => refetch()} />

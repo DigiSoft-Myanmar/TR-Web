@@ -82,7 +82,7 @@ function Legal({ legalInfo }: { legalInfo: Legal }) {
             : type
             ? type.toString()
             : "Terms & Conditions"}
-          | Pyi Twin Phyit
+          | Treasure Rush
         </title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />

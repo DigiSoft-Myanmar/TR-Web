@@ -16,12 +16,12 @@ function UGCPage() {
     fetch("/api/feedbacks/ugcReports").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   return (
     <div>
       <Head>
-        <title>UGC Reports | Pyi Twin Phyit</title>
+        <title>UGC Reports | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

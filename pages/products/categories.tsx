@@ -19,7 +19,7 @@ function Categories() {
     fetch("/api/products/categories").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   const [isModalOpen, setModalOpen] = React.useState(false);
   const { t } = useTranslation("common");
@@ -39,7 +39,7 @@ function Categories() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Categories | Pyi Twin Phyit</title>
+        <title>Categories | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

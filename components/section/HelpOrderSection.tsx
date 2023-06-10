@@ -26,10 +26,10 @@ function HelpOrderSection({ howToOrder }: { howToOrder: any }) {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-8 md:mt-16 md:grid-cols-2 md:gap-12 lg:grid-cols-3">
-          {howToOrder.map((e: FeatureType, index: number) => (
+          {howToOrder.map((e: any, index: number) => (
             <div className="flex items-start" key={index}>
               <span className="flex-shrink-0 rounded-lg bg-primary p-4">
-                {/* <IconPickerItem icon={e.icon} size={24} color={"#FFF"} /> */}
+                <IconPickerItem icon={e.icon} size={24} color={"#FFF"} />
               </span>
 
               <div className="ml-4">

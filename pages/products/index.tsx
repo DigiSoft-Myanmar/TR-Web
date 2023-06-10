@@ -25,7 +25,7 @@ function Index() {
     fetch("/api/products").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
 
   return session &&
@@ -35,7 +35,7 @@ function Index() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Products | Pyi Twin Phyit</title>
+        <title>Products | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -180,7 +180,7 @@ function Default() {
       session.role === Role.Staff) ? (
     <div>
       <Head>
-        <title>Create {role} | Pyi Twin Phyit</title>
+        <title>Create {role} | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

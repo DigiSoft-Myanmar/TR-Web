@@ -14,12 +14,12 @@ function FAQs() {
     fetch("/api/faqs").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   return (
     <div className="flex min-h-screen flex-col px-5 pb-10 pt-10 lg:px-10">
       <Head>
-        <title>FAQs | Pyi Twin Phyit</title>
+        <title>FAQs | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

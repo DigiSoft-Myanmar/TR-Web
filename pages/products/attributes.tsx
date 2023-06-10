@@ -25,7 +25,7 @@ function Attributes() {
     fetch("/api/products/attributes").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
 
   React.useEffect(() => {
@@ -41,7 +41,7 @@ function Attributes() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Attributes | Pyi Twin Phyit</title>
+        <title>Attributes | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

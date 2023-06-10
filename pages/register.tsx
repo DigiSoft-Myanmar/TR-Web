@@ -114,7 +114,7 @@ function Register({
   return (
     <div>
       <Head>
-        <title>Register | Pyi Twin Phyit</title>
+        <title>Register | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

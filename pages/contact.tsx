@@ -39,7 +39,7 @@ function Contact() {
   return (
     <div>
       <Head>
-        <title>Contact | Pyi Twin Phyit</title>
+        <title>Contact | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

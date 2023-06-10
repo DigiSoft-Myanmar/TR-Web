@@ -12,7 +12,13 @@ import ShippingCostDistrinct from "./ShippingCostDistrict";
 import { getHeaders } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 
-function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
+function ShippingCostCard({
+  state,
+  sellerId,
+}: {
+  state: any;
+  sellerId: string;
+}) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -23,23 +29,23 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
 
   React.useEffect(() => {
     if (state && state.name && isUpdate === true) {
-      fetch("/api/shippingCost?brandId=" + brandId + "&state=" + state.id).then(
-        async (data) => {
-          if (data.status === 200) {
-            let json = await data.json();
-            console.log(
-              json,
-              state.name,
-              "/api/shippingCost?brandId=" + brandId + "&state=" + state.id
-            );
-            setShippingCost(json);
-            setUpdate(false);
-          } else {
-          }
+      fetch(
+        "/api/shippingCost?sellerId=" + sellerId + "&state=" + state.id
+      ).then(async (data) => {
+        if (data.status === 200) {
+          let json = await data.json();
+          console.log(
+            json,
+            state.name,
+            "/api/shippingCost?sellerId=" + sellerId + "&state=" + state.id
+          );
+          setShippingCost(json);
+          setUpdate(false);
+        } else {
         }
-      );
+      });
     }
-  }, [isUpdate, brandId, state]);
+  }, [isUpdate, sellerId, state]);
 
   return (
     shippingCost && (
@@ -162,8 +168,8 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                           () => {
                             if (getHeaders(session)) {
                               fetch(
-                                "/api/shippingCost?brandId=" +
-                                  brandId +
+                                "/api/shippingCost?sellerId=" +
+                                  sellerId +
                                   "&state=" +
                                   state.id,
                                 {
@@ -218,8 +224,8 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                       e.stopPropagation();
                       if (getHeaders(session)) {
                         fetch(
-                          "/api/shippingCost?brandId=" +
-                            brandId +
+                          "/api/shippingCost?sellerId=" +
+                            sellerId +
                             "&state=" +
                             state.id,
                           {
@@ -291,7 +297,7 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
                   district={e}
                   isUpdate={isUpdate}
                   state={state.id}
-                  brandId={brandId}
+                  sellerId={sellerId}
                 />
               ))}
           </div>
@@ -312,7 +318,7 @@ function ShippingCostCard({ state, brandId }: { state: any; brandId: string }) {
           onClickFn={(e: any) => {
             if (getHeaders(session)) {
               fetch(
-                "/api/shippingCost?brandId=" + brandId + "&state=" + state.id,
+                "/api/shippingCost?sellerId=" + sellerId + "&state=" + state.id,
                 {
                   method: "POST",
                   body: JSON.stringify(e),

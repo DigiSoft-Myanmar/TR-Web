@@ -20,7 +20,7 @@ function Default() {
     fetch("/api/user?type=" + Role.Seller).then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
 
   React.useEffect(() => {
@@ -32,7 +32,7 @@ function Default() {
   return session && session.role !== Role.Buyer ? (
     <div>
       <Head>
-        <title>Shipping Cost | Pyi Twin Phyit</title>
+        <title>Shipping Cost | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

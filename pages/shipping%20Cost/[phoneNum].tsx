@@ -5,7 +5,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { defaultDescription } from "@/types/const";
 import prisma from "@/prisma/prisma";
 import { useSession } from "next-auth/react";
-import { Brand, Role, State, User } from "@prisma/client";
+import { Role, State, User } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import {
@@ -29,21 +29,21 @@ function Edit(data: any) {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const { data: session }: any = useSession();
 
-  const { brand, stateList }: { brand: User; stateList: State[] } = data.data;
+  const { seller, stateList }: { seller: User; stateList: State[] } = data.data;
 
   return session && session.role !== Role.Buyer ? (
     <div>
       <Head>
-        <title>Edit Shipping Cost | Pyi Twin Phyit</title>
+        <title>Edit Shipping Cost | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex min-h-screen flex-col gap-3 p-5">
         <h1 className="font-bold">
-          {brand?.displayName ? brand?.displayName : brand?.username} Shipping
-          Cost
+          {seller?.displayName ? seller?.displayName : seller?.username}{" "}
+          Shipping Cost
         </h1>
-        {brand.shippingIncluded === false ? (
+        {seller.shippingIncluded === false ? (
           <div
             role="alert"
             className="w-fit rounded border-l-4 border-red-500 bg-red-50 py-4 px-6 shadow-md"
@@ -80,7 +80,7 @@ function Edit(data: any) {
                 evt.stopPropagation();
                 if (getHeaders(session)) {
                   fetch(
-                    "/api/shippingCost?isDisable=false&brandId=" + brand.id,
+                    "/api/shippingCost?isDisable=false&sellerId=" + seller.id,
                     {
                       body: JSON.stringify({}),
                       method: "POST",
@@ -143,10 +143,10 @@ function Edit(data: any) {
                       />
                     </svg>
                     <span className="text-sm">
-                      {brand.defaultShippingCost
+                      {seller.defaultShippingCost
                         ? formatAmount(
-                            brand.defaultShippingCost
-                              ? brand.defaultShippingCost
+                            seller.defaultShippingCost
+                              ? seller.defaultShippingCost
                               : 0,
                             locale,
                             true
@@ -164,8 +164,8 @@ function Edit(data: any) {
                       evt.stopPropagation();
                       if (getHeaders(session)) {
                         fetch(
-                          "/api/shippingCost?isDisable=true&brandId=" +
-                            brand.id,
+                          "/api/shippingCost?isDisable=true&sellerId=" +
+                            seller.id,
                           {
                             method: "POST",
                             headers: getHeaders(session),
@@ -211,7 +211,7 @@ function Edit(data: any) {
                   </button>
                 </div>
               </div>
-              {brand.isOfferFreeShipping === false ? (
+              {seller.isOfferFreeShipping === false ? (
                 <div
                   role="alert"
                   className="flex-1 rounded border-l-4 border-yellow-500 bg-yellow-50 py-4 px-6 shadow-md"
@@ -249,8 +249,8 @@ function Edit(data: any) {
                         evt.stopPropagation();
                         if (getHeaders(session)) {
                           fetch(
-                            "/api/shippingCost?isFreeShipping=true&brandId=" +
-                              brand.id,
+                            "/api/shippingCost?isFreeShipping=true&sellerId=" +
+                              seller.id,
                             {
                               body: JSON.stringify({}),
                               method: "POST",
@@ -300,10 +300,10 @@ function Edit(data: any) {
                       {" "}
                       Free Shipping Cost (for all region)
                     </strong>
-                    {brand.freeShippingCost ? (
+                    {seller.freeShippingCost ? (
                       <p className="font-semibold text-primary">
                         {formatAmount(
-                          brand.freeShippingCost ? brand.freeShippingCost : 0,
+                          seller.freeShippingCost ? seller.freeShippingCost : 0,
                           locale,
                           true
                         )}
@@ -325,8 +325,8 @@ function Edit(data: any) {
                         evt.stopPropagation();
                         if (getHeaders(session)) {
                           fetch(
-                            "/api/shippingCost?isFreeShipping=true&brandId=" +
-                              brand.id,
+                            "/api/shippingCost?isFreeShipping=true&sellerId=" +
+                              seller.id,
                             {
                               method: "POST",
                               headers: getHeaders(session),
@@ -380,7 +380,7 @@ function Edit(data: any) {
             </div>
             <div className="mt-5 space-y-4">
               {stateList.map((e: any, index: number) => (
-                <ShippingCostCard key={index} state={e} brandId={brand.id} />
+                <ShippingCostCard key={index} state={e} sellerId={seller.id} />
               ))}
             </div>
           </div>
@@ -392,14 +392,14 @@ function Edit(data: any) {
         setModalOpen={setDialogOpen}
         title={`${t("shippingCost")}`}
         shippingCost={{
-          isOfferFreeShipping: brand.isOfferFreeShipping,
-          shippingCost: brand.defaultShippingCost,
-          freeShippingCost: brand.freeShippingCost,
+          isOfferFreeShipping: seller.isOfferFreeShipping,
+          shippingCost: seller.defaultShippingCost,
+          freeShippingCost: seller.freeShippingCost,
         }}
         isCarGateInclue={true}
         onClickFn={(e: any) => {
           if (getHeaders(session)) {
-            fetch("/api/brands?brandId=" + brand.id, {
+            fetch("/api/users?sellerId=" + seller.id, {
               method: "PUT",
               body: JSON.stringify(e),
               headers: getHeaders(session),
@@ -435,9 +435,9 @@ export async function getServerSideProps({ query, locale }: any) {
     },
   });
 
-  let brand: any = null;
+  let seller: any = null;
   if (user) {
-    brand = await prisma.user.findFirst({
+    seller = await prisma.user.findFirst({
       where: { id: user.id },
       include: {
         state: true,
@@ -445,15 +445,15 @@ export async function getServerSideProps({ query, locale }: any) {
         township: true,
       },
     });
-    if (brand) {
-      if (!brand.isOfferFreeShipping) {
-        brand.isOfferFreeShipping = false;
-        brand.freeShippingCost = 0;
+    if (seller) {
+      if (!seller.isOfferFreeShipping) {
+        seller.isOfferFreeShipping = false;
+        seller.freeShippingCost = 0;
       }
-      if (!brand.shippingIncluded) {
-        brand.shippingIncluded = false;
-        brand.defaultShippingCost = 0;
-        brand.carGateShippingCost = 0;
+      if (!seller.shippingIncluded) {
+        seller.shippingIncluded = false;
+        seller.defaultShippingCost = 0;
+        seller.carGateShippingCost = 0;
       }
     }
   }
@@ -469,12 +469,12 @@ export async function getServerSideProps({ query, locale }: any) {
   });
 
   let u = JSON.parse(JSON.stringify(user));
-  let b = brand ? JSON.parse(JSON.stringify(brand)) : null;
+  let b = seller ? JSON.parse(JSON.stringify(seller)) : null;
   let s = JSON.parse(JSON.stringify(stateList));
 
   return {
     props: {
-      data: { user: u, brand: b, stateList: s },
+      data: { user: u, seller: b, stateList: s },
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };

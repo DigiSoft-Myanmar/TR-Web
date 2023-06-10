@@ -729,3 +729,12 @@ model UserAddress {
   townshipId       String?   @db.ObjectId
   isBillingAddress Boolean   @default(false)
 }
+
+model Banner {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  bannerText   String
+  bannerTextMM String
+  index        Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

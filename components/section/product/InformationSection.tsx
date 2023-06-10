@@ -18,14 +18,6 @@ import ProductCategoryModal from "@/components/modal/sideModal/ProductCategoryMo
 import StateSelectBox from "@/components/presentational/StateSelectBox";
 import { ImgType } from "@/types/orderTypes";
 import { showErrorDialog } from "@/util/swalFunction";
-import dynamic from "next/dynamic";
-
-const FormInputRichText = dynamic(
-  () => import("@/components/presentational/FormInputRichTextSun"),
-  {
-    ssr: false,
-  }
-);
 
 type Props = {
   nextFn: Function;

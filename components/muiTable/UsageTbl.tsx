@@ -19,7 +19,7 @@ import Icon from "@/components/presentational/Icon";
 const StyledTableCell = styled(TableCell)<TableCellProps>(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     color: theme.palette.common.white,
-    backgroundColor: "#DE711B",
+    backgroundColor: "#E71D2A",
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,

@@ -311,7 +311,7 @@ function CategoryModal({
                       </div>
 
                       <ColorPicker
-                        color={category?.color ? category?.color : "#DE711B"}
+                        color={category?.color ? category?.color : "#E71D2A"}
                         setColor={(color: any) => {
                           setCategory((prevValue: any) => {
                             return {

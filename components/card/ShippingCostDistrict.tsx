@@ -17,10 +17,10 @@ interface Props {
   district: any;
   isUpdate: boolean;
   state: string;
-  brandId: string;
+  sellerId: string;
 }
 
-function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
+function ShippingCostDistrinct({ district, isUpdate, state, sellerId }: Props) {
   const { t: accountT } = useTranslation("common");
   const router = useRouter();
 
@@ -32,8 +32,8 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
   function update() {
     if (district && district.name) {
       fetch(
-        "/api/shippingCost?brandId=" +
-          brandId +
+        "/api/shippingCost?sellerId=" +
+          sellerId +
           "&district=" +
           district.id +
           "&parentState=" +
@@ -42,8 +42,8 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
         if (data.status === 200) {
           let json = await data.json();
           console.log(
-            "/api/shippingCost?brandId=" +
-              brandId +
+            "/api/shippingCost?sellerId=" +
+              sellerId +
               "&district=" +
               district.id +
               "&parentState=" +
@@ -182,8 +182,8 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                           () => {
                             if (getHeaders(session)) {
                               fetch(
-                                "/api/shippingCost?brandId=" +
-                                  brandId +
+                                "/api/shippingCost?sellerId=" +
+                                  sellerId +
                                   "&district=" +
                                   district.name,
                                 {
@@ -238,8 +238,8 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                       e.stopPropagation();
                       if (getHeaders(session)) {
                         fetch(
-                          "/api/shippingCost?brandId=" +
-                            brandId +
+                          "/api/shippingCost?sellerId=" +
+                            sellerId +
                             "&district=" +
                             district.name,
                           {
@@ -312,7 +312,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
                   isUpdate={isUpdate}
                   district={district.id}
                   state={state}
-                  brandId={brandId}
+                  sellerId={sellerId}
                 />
               ))}
           </div>
@@ -333,8 +333,8 @@ function ShippingCostDistrinct({ district, isUpdate, state, brandId }: Props) {
           onClickFn={(e: any) => {
             if (getHeaders(session)) {
               fetch(
-                "/api/shippingCost?brandId=" +
-                  brandId +
+                "/api/shippingCost?sellerId=" +
+                  sellerId +
                   "&district=" +
                   district.id,
                 {

@@ -3,8 +3,6 @@ import { isMaintainence } from "@/types/const";
 import { getDevice } from "@/util/getDevice";
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 import AdminSidebar from "../navbar/AdminSidebar";
@@ -177,7 +175,7 @@ function DefaultLayout({ children }: LayoutProps) {
           }  flex-grow flex-col`}
         >
           <AuthHeader />
-          {children}
+          <main className="m-5">{children}</main>
         </div>
       </div>
     </div>

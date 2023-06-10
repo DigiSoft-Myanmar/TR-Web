@@ -9,7 +9,7 @@ type Props = {
   currentStep: number;
 };
 
-const FormInputRichText = dynamic(
+const FormInputRichText: any = dynamic(
   () => import("@/components/presentational/FormInputRichTextSun"),
   {
     ssr: false,
@@ -34,7 +34,7 @@ function DetailSection({ backFn, nextFn, currentStep }: Props) {
           nextFn();
         }}
       >
-        {/*   <FormInputRichText
+        <FormInputRichText
           content={product.description}
           label={t("description")}
           setContent={(e: string) => {
@@ -100,7 +100,7 @@ function DetailSection({ backFn, nextFn, currentStep }: Props) {
                 });
               }}
             />
-          )} */}
+          )}
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button
             className={`inline-block rounded-l-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}

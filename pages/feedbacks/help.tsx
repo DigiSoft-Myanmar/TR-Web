@@ -16,12 +16,12 @@ function HelpPage() {
     fetch("/api/feedbacks").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   return (
     <div>
       <Head>
-        <title>Help Center | Pyi Twin Phyit</title>
+        <title>Help Center | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

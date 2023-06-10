@@ -150,7 +150,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
     <>
       <div>
         <Head>
-          <title>Member | Pyi Twin Phyit</title>
+          <title>Member | Treasure Rush</title>
           <meta name="description" content={defaultDescription} />
           <link rel="icon" href="/favicon.ico" />
         </Head>
@@ -253,7 +253,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
 
               <p className="mx-auto mt-4 max-w-md text-center text-gray-600">
                 {getText(
-                  "Sell smarter, not harder. Join Pyi Twin Phyit to maximize your sales potential and grow your business with ease.",
+                  "Sell smarter, not harder. Join Treasure Rush to maximize your sales potential and grow your business with ease.",
                   "စမတ်ကျကျရောင်းချရန်၊ သင်၏ရောင်းအားကို မြှင့်တင်ရန်နှင့် သင့်လုပ်ငန်းကို လွယ်ကူစွာ ကြီးထွားစေရန် ပြည်တွင်းဖြစ်ဖြင့် ပူးပေါင်းလိုက်ပါ။",
                   locale
                 )}
@@ -558,7 +558,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
                   </h2>
                   <p className="text-body-color text-base">
                     {getText(
-                      "Ready to take your business to the next level? Join Pyi Twin Phyit and watch your earnings grow.",
+                      "Ready to take your business to the next level? Join Treasure Rush and watch your earnings grow.",
                       "သင့်လုပ်ငန်းကို နောက်တစ်ဆင့်တက်လှမ်းရန်နှင့် သင့်စီးပွားရေးတိုးတက်မှုကို စောင့်ကြည့်ရန် ပြည်တွင်းဖြစ်ဖြင့် လက်တွဲလိုက်ပါ။",
                       locale
                     )}

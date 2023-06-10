@@ -49,7 +49,7 @@ function StateCard({
     <>
       <div
         className={`relative flex flex-1 cursor-pointer flex-col space-y-5 rounded-sm border-t-4 bg-white p-8 shadow-xl`}
-        style={color ? { borderColor: color } : { borderColor: "#DE711B" }}
+        style={color ? { borderColor: color } : { borderColor: "#E71D2A" }}
         onClick={(e) => setExpanded(!isExpanded)}
       >
         <div className="flex">
@@ -225,7 +225,7 @@ function StateCard({
           }
         }}
         title="Update Color"
-        value={township?.color ? township.color : "#DE711B"}
+        value={township?.color ? township.color : "#E71D2A"}
       />
     </>
   );

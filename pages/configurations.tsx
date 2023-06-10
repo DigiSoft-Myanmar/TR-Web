@@ -133,7 +133,7 @@ function Configurations({
       session.role === Role.Staff) ? (
     <div>
       <Head>
-        <title>Configurations | Pyi Twin Phyit</title>
+        <title>Configurations | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

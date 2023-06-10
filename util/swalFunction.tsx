@@ -11,7 +11,7 @@ export function showErrorDialog(
     text: locale === "mm" && errorMM && errorMM.length > 0 ? errorMM : error,
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (confirmFn) {
       confirmFn();
@@ -25,7 +25,7 @@ export function showUnauthorizedDialog(locale?: string, confirmFn?: Function) {
     text: locale === "mm" ? "လော့အင်မ၀င်ရသေးပါ။" : "Please login and continue",
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (confirmFn) {
       confirmFn();
@@ -44,7 +44,7 @@ export function showInfoDialog(
     text: locale === "mm" && textMM && textMM.length > 0 ? textMM : text,
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (result.isConfirmed) {
       if (confirmFn) {
@@ -65,7 +65,7 @@ export function showSuccessDialog(
     text: locale === "mm" && textMM && textMM.length > 0 ? textMM : text,
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (result.isConfirmed) {
       if (confirmFn) {
@@ -81,7 +81,7 @@ export function showSuccessHTMLDialog(html?: string, confirmFn?: Function) {
     html: html,
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (result.isConfirmed) {
       if (confirmFn) {
@@ -97,7 +97,7 @@ export function showErrorHTMLDialog(html?: string, confirmFn?: Function) {
     html: html,
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (result.isConfirmed) {
       if (confirmFn) {
@@ -119,7 +119,7 @@ export function showWarningDialog(
       locale && locale === "mm" && textMM && textMM.length > 0 ? textMM : text,
     background: "#fff",
     color: "#262630",
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
   }).then((result) => {
     if (result.isConfirmed) {
       if (confirmFn) {
@@ -142,7 +142,7 @@ export function showConfirmationDialog(
     background: "#fff",
     color: "#262630",
     reverseButtons: true,
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
     confirmButtonText: "Ok",
     showCancelButton: true,
   }).then((result) => {
@@ -166,7 +166,7 @@ export async function showInputDialog(
     background: "#fff",
     color: "#262630",
     reverseButtons: true,
-    confirmButtonColor: "#DE711B",
+    confirmButtonColor: "#E71D2A",
     confirmButtonText: locale === "mm" ? "ရှေ့ဆက်ရန်" : "Continue",
     showCancelButton: true,
   });

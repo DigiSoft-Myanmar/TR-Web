@@ -47,7 +47,7 @@ function Index() {
     fetch("/api/user?type=" + userType).then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
 
   React.useEffect(() => {
@@ -74,7 +74,7 @@ function Index() {
       session.role === Role.SuperAdmin) ? (
     <div className="relative min-h-screen">
       <Head>
-        <title>{type} | Pyi Twin Phyit</title>
+        <title>{type} | Treasure Rush</title>
       </Head>
       <div>
         {type === RoleNav.Buyers ? (
@@ -119,7 +119,7 @@ function Index() {
                 ? Role.Admin
                 : type === RoleNav.Staff
                 ? Role.Staff
-                : Role.Buyer),
+                : Role.Buyer)
           );
         }}
       >

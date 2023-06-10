@@ -17,7 +17,7 @@ interface Props {
   isUpdate: boolean;
   district: string;
   state: string;
-  brandId: string;
+  sellerId: string;
 }
 
 function ShippingCostTownship({
@@ -25,7 +25,7 @@ function ShippingCostTownship({
   isUpdate,
   district,
   state,
-  brandId,
+  sellerId,
 }: Props) {
   const { t: accountT } = useTranslation("common");
   const router = useRouter();
@@ -37,8 +37,8 @@ function ShippingCostTownship({
   function update() {
     if (township && township.name) {
       fetch(
-        "/api/shippingCost?brandId=" +
-          brandId +
+        "/api/shippingCost?sellerId=" +
+          sellerId +
           "&township=" +
           township.id +
           "&parentState=" +
@@ -49,8 +49,8 @@ function ShippingCostTownship({
         if (data.status === 200) {
           let json = await data.json();
           console.log(
-            "/api/shippingCost?brandId=" +
-              brandId +
+            "/api/shippingCost?sellerId=" +
+              sellerId +
               "&township=" +
               township.id +
               "&parentState=" +
@@ -189,8 +189,8 @@ function ShippingCostTownship({
                           () => {
                             if (getHeaders(session)) {
                               fetch(
-                                "/api/shippingCost?brandId=" +
-                                  brandId +
+                                "/api/shippingCost?sellerId=" +
+                                  sellerId +
                                   "&township=" +
                                   township.name,
                                 {
@@ -245,8 +245,8 @@ function ShippingCostTownship({
                       e.stopPropagation();
                       if (getHeaders(session)) {
                         fetch(
-                          "/api/shippingCost?brandId=" +
-                            brandId +
+                          "/api/shippingCost?sellerId=" +
+                            sellerId +
                             "&township=" +
                             township.name,
                           {
@@ -311,8 +311,8 @@ function ShippingCostTownship({
           onClickFn={(e: any) => {
             if (getHeaders(session)) {
               fetch(
-                "/api/shippingCost?brandId=" +
-                  brandId +
+                "/api/shippingCost?sellerId=" +
+                  sellerId +
                   "&township=" +
                   township.id,
                 {
