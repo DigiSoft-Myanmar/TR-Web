@@ -25,7 +25,7 @@ function ProductCategoryModal({
   const { data } = useSWR("/api/products/categories", fetcher);
   const { data: catOriginal } = useSWR(
     "/api/products/categories?isOriginal=true",
-    fetcher,
+    fetcher
   );
   const { t } = useTranslation("common");
 
@@ -56,7 +56,7 @@ function ProductCategoryModal({
       showWarningDialog(
         "Cannot change parent category",
         "မိခင်အမျိုးအစားကို ပြောင်းလဲ၍မရပါ။",
-        router.locale,
+        router.locale
       );
     }
   }
@@ -122,7 +122,7 @@ function ProductCategoryModal({
                     </button>
                   </Dialog.Title>
                   <div className="mt-2">
-                    <div className="flex flex-col px-4 py-2">
+                    <div className="flex flex-col py-2">
                       {data ? (
                         data.map((elem: any, index: number) => (
                           <Disclosure key={index}>
@@ -133,13 +133,13 @@ function ProductCategoryModal({
                                     <div className="flex h-5 items-center">
                                       <input
                                         type="checkbox"
-                                        className={`accent-brand`}
+                                        className="checkbox-primary checkbox"
                                         onChange={(e) => {
                                           check(e.currentTarget.checked, elem);
                                         }}
                                         checked={
                                           chooseCategories.find(
-                                            (e) => e === elem.id,
+                                            (e) => e === elem.id
                                           )
                                             ? true
                                             : false
@@ -151,7 +151,7 @@ function ProductCategoryModal({
                                       onClick={(e) => {
                                         if (
                                           chooseCategories.find(
-                                            (e) => e === elem.id,
+                                            (e) => e === elem.id
                                           )
                                         ) {
                                           check(false, elem);
@@ -200,7 +200,7 @@ function ProductCategoryModal({
                                         }
                                         allowChangeParent={allowChangeParent}
                                       />
-                                    ),
+                                    )
                                   )}
                               </>
                             )}
@@ -303,7 +303,7 @@ function SubCategories({
       let choosen = [...chooseCategories, ...r];
       let unique = Array.from(new Set(choosen));
       let parentsList = reducedCategories.filter(
-        (e: any) => unique && unique.includes(e.id),
+        (e: any) => unique && unique.includes(e.id)
       );
 
       if (parentsList.length > 1) {
@@ -314,7 +314,7 @@ function SubCategories({
             showWarningDialog(
               "Cannot change parent category",
               "မိခင်အမျိုးအစားကို ပြောင်းလဲ၍မရပါ။",
-              locale,
+              locale
             );
           }
         }
@@ -327,8 +327,8 @@ function SubCategories({
       setChooseCategories(
         chooseCategories.filter((e: any) => r && !r.includes(e)),
         getCategoryList(
-          chooseCategories.filter((e: any) => r && !r.includes(e)),
-        ),
+          chooseCategories.filter((e: any) => r && !r.includes(e))
+        )
       );
     }
   }
@@ -343,7 +343,7 @@ function SubCategories({
                 <div className="flex h-5 items-center">
                   <input
                     type="checkbox"
-                    className={`accent-brand`}
+                    className="checkbox-primary checkbox"
                     onChange={(e) => {
                       check(e.currentTarget.checked, subDetail);
                     }}

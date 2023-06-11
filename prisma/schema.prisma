@@ -273,32 +273,39 @@ model UserDefinedRole {
 }
 
 model Membership {
-  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
-  name                     String   @unique
-  nameMM                   String?
-  adsDetails               String?
-  adsDetailsMM             String?
-  saleReportDetails        String?
-  saleReportDetailsMM      String?
-  topSearchDetails         String?
-  topSearchDetailsMM       String?
-  extraAdsPricing          Int?
-  extraSKUPricing          Int?
-  price                    Int?
-  validity                 Int?
-  onBoardingLimit          Int?
-  topSearchStart           Int?
-  SKUListing               Int?
-  subCategoryReport        Int?
-  freeAdsLimit             Int?
-  adsValidity              Int?
-  adsLifeTime              Int?
-  percentagePerTransaction Float?
-  productLimit             Int?
-  isInfinity               Boolean
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
-  User                     User[]
+  id                           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name                         String   @unique
+  nameMM                       String?
+  price                        Int?
+  validity                     Int?
+  onBoardingLimit              Int?
+  allowDelicatedAccountManager Boolean? @default(false)
+
+  topSearchStart     Int?
+  topSearchEnd       Int?
+  topSearchDetails   String?
+  topSearchDetailsMM String?
+
+  SKUListing      Int?
+  extraSKUPricing Int?
+  SKUDetails      String?
+  SKUDetailsMM    String?
+
+  subCategoryReport       Int?
+  allowBuyerProfileReport Boolean @default(false)
+  saleReportDetails       String?
+  saleReportDetailsMM     String?
+
+  freeAdsLimit    Int?
+  adsValidity     Int?
+  adsLifeTime     Int?
+  extraAdsPricing Int?
+  adsDetails      String?
+  adsDetailsMM    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User[]
 }
 
 model Product {
@@ -332,6 +339,8 @@ model Product {
 
   attributes              Json[]
   variations              Json[]
+  shortDescription        String?
+  shortDescriptionMM      String?
   description             String?
   descriptionMM           String?
   additionalInformation   String?
@@ -514,10 +523,6 @@ model Subscribe {
 
 model Legal {
   id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  accessibility      String?
-  accessibilityMM    String?
-  returnPolicy       String?
-  returnPolicyMM     String?
   refundPolicy       String?
   refundPolicyMM     String?
   privacyPoliy       String?
@@ -655,35 +660,49 @@ model Content {
   aboutTitleMM       String?
   aboutDescription   String?
   aboutDescriptionMM String?
-  homeBannerImg      String?
-  sellBannerImg      String?
-  sellRegisterImg    String?
-  loginImg           String?
-  registerImg        String?
 
   playStoreURL   String?
   appStoreURL    String?
   facebookPlugin String?
 
-  homeTitle         String?
-  homeTitleMM       String?
-  homeDescription   String?
-  homeDescriptionMM String?
+  homeHeroImg       String?
+  auctionHeroImg    String?
+  featureHeroImg    String?
+  promotionHeroImg  String?
+  membershipHeroImg String?
+  mobileImg         String?
+  forgotPwdImg      String?
 
-  mobileImg           String?
-  mobileTitle         String?
-  mobileTitleMM       String?
-  mobileDescription   String?
-  mobileDescriptionMM String?
+  homeHeroSectionDescription   String?
+  homeHeroSectionDescriptionMM String?
 
-  sellTitle         String?
-  sellTitleMM       String?
-  sellDescription   String?
-  sellDescriptionMM String?
+  auctionHeroSectionTitle         String?
+  auctionHeroSectionTitleMM       String?
+  auctionHeroSectionDescription   String?
+  auctionHeroSectionDescriptionMM String?
 
-  homeFeatures Json[]
-  howToOrder   Json[]
-  sellFeatures Json[]
+  featuredHeroSectionTitle         String?
+  featuredHeroSectionTitleMM       String?
+  featuredHeroSectionDescription   String?
+  featuredHeroSectionDescriptionMM String?
+
+  promotionHeroSectionTitle         String?
+  promotionHeroSectionTitleMM       String?
+  promotionHeroSectionDescription   String?
+  promotionHeroSectionDescriptionMM String?
+
+  membershipTitle         String?
+  membershipTitleMM       String?
+  membershipDescription   String?
+  membershipDescriptionMM String?
+
+  membershipFeatures Json[]
+  credentialFeatures Json[]
+
+  mobileHeroSectionTitle         String?
+  mobileHeroSectionTitleMM       String?
+  mobileHeroSectionDescription   String?
+  mobileHeroSectionDescriptionMM String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

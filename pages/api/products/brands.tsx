@@ -32,7 +32,6 @@ export default async function handler(
       if (isInternal(session)) {
         includeData = {
           Product: true,
-          users: true,
         };
       }
       let manufacture: any = await prisma.brand.findMany({

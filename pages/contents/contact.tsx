@@ -39,8 +39,16 @@ function ContactPage({ data }: { data: any }) {
   const [updateIndex, setUpdateIndex] = React.useState(-1);
 
   const schema = z.object({
-    googleMapUrl: z.string().min(1, { message: t("inputError") }),
-    googleMapUrl1: z.string().min(1, { message: t("inputError") }),
+    googleMapUrl: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
+    googleMapUrl1: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
     lat: z
       .number({
         invalid_type_error: t("inputValidNumber"),
@@ -59,8 +67,16 @@ function ContactPage({ data }: { data: any }) {
     phone: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
       message: t("inputValidPhoneError"),
     }),
-    address: z.string().min(1, { message: t("inputError") }),
-    addressMM: z.string().min(1, { message: t("inputError") }),
+    address: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
+    addressMM: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
     facebookPlugin: z.string().min(1, { message: t("inputError") }),
   });
 
@@ -101,7 +117,7 @@ function ContactPage({ data }: { data: any }) {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Contact | Pyi Twin Phyit</title>
+        <title>Contact | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

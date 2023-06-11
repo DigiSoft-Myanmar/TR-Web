@@ -41,16 +41,6 @@ function TextModal({
       .min(1, { message: t("inputError") })
       .optional()
       .or(z.literal("")),
-    description: z
-      .string()
-      .min(1, { message: t("inputError") })
-      .optional()
-      .or(z.literal("")),
-    descriptionMM: z
-      .string()
-      .min(1, { message: t("inputError") })
-      .optional()
-      .or(z.literal("")),
   });
   const { register, handleSubmit, watch, formState, reset } = useForm<any>({
     mode: "onChange",
@@ -70,8 +60,6 @@ function TextModal({
       reset({
         name: "",
         nameMM: "",
-        description: "",
-        descriptionMM: "",
       });
       setColor("");
     }
@@ -123,12 +111,7 @@ function TextModal({
       fetch(apiPath, {
         method: "POST",
         body: JSON.stringify(submitData),
-        headers: session
-          ? {
-              appid: session.username,
-              appsecret: session.id,
-            }
-          : {},
+        headers: getHeaders(session),
       }).then(async (data) => {
         setSubmit(false);
 
@@ -234,6 +217,7 @@ function TextModal({
                         defaultValue={data?.nameMM}
                         formControl={{ ...register("nameMM") }}
                         currentValue={watchFields.nameMM}
+                        optional={true}
                       />
 
                       {isColor === true && (
@@ -245,25 +229,6 @@ function TextModal({
                           }}
                         />
                       )}
-                      <FormInputTextArea
-                        label={t("description") + " " + t("eng")}
-                        error={errors.description?.message}
-                        formControl={{ ...register("description") }}
-                        placeHolder=""
-                        currentValue={watchFields.description}
-                        defaultValue={data?.description}
-                        optional={true}
-                      />
-
-                      <FormInputTextArea
-                        label={t("description") + " " + t("mm")}
-                        error={errors.descriptionMM?.message}
-                        formControl={{ ...register("descriptionMM") }}
-                        placeHolder=""
-                        currentValue={watchFields.descriptionMM}
-                        defaultValue={data?.descriptionMM}
-                        optional={true}
-                      />
                     </div>
 
                     <div className="mt-4 flex w-full justify-end ">

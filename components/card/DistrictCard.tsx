@@ -14,7 +14,7 @@ interface Props {
   name?: string;
   nameMM?: string;
   buyerCount?: number;
-  brandCount?: number;
+  sellerCount?: number;
   township?: any;
   parentState?: string;
   parentDistrict?: number;
@@ -25,7 +25,7 @@ function DistrictCard({
   name,
   nameMM,
   buyerCount,
-  brandCount,
+  sellerCount,
   township: parentTownship,
   parentState,
   parentDistrict,
@@ -120,7 +120,7 @@ function DistrictCard({
             </svg>
 
             <h5 className="font-semibold">
-              {formatAmount(brandCount ? brandCount : 0, locale)}
+              {formatAmount(sellerCount ? sellerCount : 0, locale)}
             </h5>
           </div>
         </div>

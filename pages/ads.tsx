@@ -42,7 +42,7 @@ function AdsPage() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Ads | Pyi Twin Phyit</title>
+        <title>Ads | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

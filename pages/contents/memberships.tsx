@@ -4,6 +4,7 @@ import EmptyScreen from "@/components/screen/EmptyScreen";
 import ErrorScreen from "@/components/screen/ErrorScreen";
 import nextI18nextConfig from "@/next-i18next.config";
 import { defaultDescription } from "@/types/const";
+import { getHeaders } from "@/util/authHelper";
 import {
   showConfirmationDialog,
   showErrorDialog,
@@ -24,7 +25,7 @@ function MembershipPage() {
     fetch("/api/memberships").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
   const [isModalOpen, setModalOpen] = React.useState(false);
   const { t } = useTranslation("common");
@@ -39,7 +40,7 @@ function MembershipPage() {
     <>
       <div>
         <Head>
-          <title>Memberships | Pyi Twin Phyit</title>
+          <title>Memberships | Treasure Rush</title>
           <meta name="description" content={defaultDescription} />
           <link rel="icon" href="/favicon.ico" />
         </Head>
@@ -94,29 +95,30 @@ function MembershipPage() {
                                 () => {
                                   fetch(
                                     `/api/memberships?id=${encodeURIComponent(
-                                      e.id!,
+                                      e.id!
                                     )}`,
                                     {
                                       method: "DELETE",
-                                    },
+                                      headers: getHeaders(session),
+                                    }
                                   ).then(async (data) => {
                                     if (data.status === 200) {
                                       refetch();
                                       showSuccessDialog(
                                         "Delete Success",
                                         "",
-                                        locale,
+                                        locale
                                       );
                                     } else {
                                       let json = await data.json();
                                       showErrorDialog(
                                         json.error,
                                         json.errorMM,
-                                        locale,
+                                        locale
                                       );
                                     }
                                   });
-                                },
+                                }
                               );
                             }}
                           >
@@ -153,8 +155,6 @@ function MembershipPage() {
           <button
             className="fixed right-3 bottom-3 rounded-full bg-primary p-3 text-white"
             onClick={() => {
-              setModalOpen(true);
-              setMembership(undefined);
               setTitle(t("New Membership"));
             }}
           >
@@ -169,15 +169,6 @@ function MembershipPage() {
           </button>
         </div>
       </div>
-      <MembershipModal
-        isModalOpen={isModalOpen}
-        setModalOpen={setModalOpen}
-        membership={membership}
-        title={title}
-        setUpdate={() => {
-          refetch();
-        }}
-      />
     </>
   ) : (
     <ErrorScreen statusCode={401} />

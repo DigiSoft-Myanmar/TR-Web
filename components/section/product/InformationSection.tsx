@@ -18,6 +18,15 @@ import ProductCategoryModal from "@/components/modal/sideModal/ProductCategoryMo
 import StateSelectBox from "@/components/presentational/StateSelectBox";
 import { ImgType } from "@/types/orderTypes";
 import { showErrorDialog } from "@/util/swalFunction";
+import { isInternal } from "@/util/authHelper";
+import dynamic from "next/dynamic";
+
+const FormInputRichText: any = dynamic(
+  () => import("@/components/presentational/FormInputRichTextSun"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   nextFn: Function;
@@ -50,23 +59,53 @@ function InformationSection({ nextFn, infoRef }: Props) {
   const [categoryModalOpen, setCategoryModalOpen] = React.useState(false);
   const [uploadModalOpen, setUploadModalOpen] = React.useState(false);
   const [chooseModalOpen, setChooseModalOpen] = React.useState(false);
-  const schema = z.object({
-    name: z.string().min(1, { message: t("inputError") }),
-    nameMM: z
-      .string()
-      .min(1, { message: t("inputError") })
-      .optional()
-      .or(z.literal("")),
-    slug: z
-      .string()
-      .min(1, { message: t("inputError") })
-      .optional()
-      .or(z.literal("")),
-    SKU: z.string().min(1, { message: t("inputError") }),
-  });
+  const schema = z.object(
+    product.type === ProductType.Variable
+      ? {
+          name: z.string().min(1, { message: t("inputError") }),
+          nameMM: z
+            .string()
+            .min(1, { message: t("inputError") })
+            .optional()
+            .or(z.literal("")),
+          shortDescription: z
+            .string()
+            .min(1, { message: t("inputError") })
+            .optional()
+            .or(z.literal("")),
+          shortDescriptionMM: z
+            .string()
+            .min(1, { message: t("inputError") })
+            .optional()
+            .or(z.literal("")),
+        }
+      : {
+          name: z.string().min(1, { message: t("inputError") }),
+          nameMM: z
+            .string()
+            .min(1, { message: t("inputError") })
+            .optional()
+            .or(z.literal("")),
+          SKU: z.string().min(1, { message: t("inputError") }),
+          shortDescription: z
+            .string()
+            .min(1, { message: t("inputError") })
+            .optional()
+            .or(z.literal("")),
+          shortDescriptionMM: z
+            .string()
+            .min(1, { message: t("inputError") })
+            .optional()
+            .or(z.literal("")),
+        }
+  );
   const [isChecking, setChecking] = React.useState(false);
   const [isVerified, setVerified] = React.useState(false);
-  const productType = [ProductType.Fixed, ProductType.Variable];
+  const productType = [
+    ProductType.Fixed,
+    ProductType.Variable,
+    ProductType.Auction,
+  ];
 
   const { register, handleSubmit, watch, formState } = useForm<Information>({
     mode: "onChange",
@@ -360,117 +399,128 @@ function InformationSection({ nextFn, infoRef }: Props) {
             currentValue={watchFields.nameMM}
             optional={true}
           />
-
-          {isAdmin && (
-            <FormInput
-              label={t("slug") + " (" + t("autoGenerate") + ")"}
-              placeHolder={t("enter") + " " + t("slug")}
-              error={errors.slug?.message}
-              type="text"
-              defaultValue={product?.slug}
-              formControl={{ ...register("slug") }}
-              currentValue={watchFields.slug}
-            />
-          )}
-
-          <div className="flex flex-row flex-wrap items-center gap-3">
-            <FormInput
-              label={t("SKU")}
-              placeHolder={t("enter") + " " + t("SKU")}
-              error={SKUError ? SKUError : errors.SKU?.message}
-              type="text"
-              defaultValue={product?.SKU}
-              formControl={{ ...register("SKU") }}
-              currentValue={watchFields.SKU}
-            />
-            <button
-              type="button"
-              className={`${
-                SKUError || errors.SKU?.message ? "" : "mt-7"
-              } rounded-md bg-primary px-3 py-2 text-sm text-white hover:bg-primary-focus`}
-              onClick={() => {
-                if (watchFields.SKU && product.brandId) {
-                  setChecking(true);
-                  let url =
-                    "/api/products/checkSKU?SKU=" +
-                    watchFields.SKU +
-                    "&brandId=" +
-                    product.brandId;
-                  if (product.id) {
-                    url += "&id=" + encodeURIComponent(product.id);
-                  }
-                  fetch(url).then((data) => {
-                    if (data.status === 404) {
-                      setVerified(true);
-                      setSKUError("");
-                    } else {
-                      setVerified(false);
-                      setSKUError("SKU Exists");
+          {product.type !== ProductType.Variable ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row flex-wrap items-center gap-3">
+                <FormInput
+                  label={t("SKU")}
+                  placeHolder={t("enter") + " " + t("SKU")}
+                  error={SKUError ? SKUError : errors.SKU?.message}
+                  type="text"
+                  defaultValue={product?.SKU}
+                  formControl={{ ...register("SKU") }}
+                  currentValue={watchFields.SKU}
+                />
+                <button
+                  type="button"
+                  className={`${
+                    SKUError || errors.SKU?.message ? "" : "mt-7"
+                  } rounded-md bg-primary px-3 py-2 text-sm text-white hover:bg-primary-focus`}
+                  onClick={() => {
+                    if (watchFields.SKU && product.brandId) {
+                      setChecking(true);
+                      let url =
+                        "/api/products/checkSKU?SKU=" +
+                        watchFields.SKU +
+                        "&brandId=" +
+                        product.brandId;
+                      if (product.id) {
+                        url += "&id=" + encodeURIComponent(product.id);
+                      }
+                      fetch(url).then((data) => {
+                        if (data.status === 404) {
+                          setVerified(true);
+                          setSKUError("");
+                        } else {
+                          setVerified(false);
+                          setSKUError("SKU Exists");
+                        }
+                      });
+                      setChecking(false);
+                    } else if (!watchFields.SKU) {
+                      showErrorDialog(
+                        "Please input SKU first.",
+                        "SKU အားဖြည့်စွက်ပေးပါ။",
+                        locale
+                      );
+                    } else if (!product.brandId) {
+                      showErrorDialog(
+                        "Please input brand first.",
+                        "Brand အားဖြည့်စွက်ပေးပါ။",
+                        locale
+                      );
                     }
-                  });
-                  setChecking(false);
-                } else if (!watchFields.SKU) {
-                  showErrorDialog(
-                    "Please input SKU first.",
-                    "SKU အားဖြည့်စွက်ပေးပါ။",
-                    locale
-                  );
-                } else if (!product.brandId) {
-                  showErrorDialog(
-                    "Please input brand first.",
-                    "Brand အားဖြည့်စွက်ပေးပါ။",
-                    locale
-                  );
-                }
-              }}
-            >
-              {isChecking ? (
-                <>
-                  <svg
-                    role="status"
-                    className="mr-3 inline h-4 w-4 animate-spin"
-                    viewBox="0 0 100 101"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                      fill="#E5E7EB"
-                    />
-                    <path
-                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <span>{"Loading"}</span>
-                </>
+                  }}
+                >
+                  {isChecking ? (
+                    <>
+                      <svg
+                        role="status"
+                        className="mr-3 inline h-4 w-4 animate-spin"
+                        viewBox="0 0 100 101"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                          fill="#E5E7EB"
+                        />
+                        <path
+                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                      <span>{"Loading"}</span>
+                    </>
+                  ) : (
+                    <span>Check SKU</span>
+                  )}
+                </button>
+              </div>
+              {(product.id && product.SKU === watchFields.SKU) ||
+              isVerified === true ? (
+                <p className={`text-sm font-medium text-success`}>
+                  SKU verified
+                </p>
               ) : (
-                <span>Check SKU</span>
+                !SKUError &&
+                !errors.SKU?.message && (
+                  <p className={`ml-1 text-sm font-medium text-warning`}>
+                    SKU is not verified
+                  </p>
+                )
               )}
-            </button>
-          </div>
-          {(product.id && product.SKU === watchFields.SKU) ||
-          isVerified === true ? (
-            <p className={`text-sm font-medium text-success`}>SKU verified</p>
+            </div>
           ) : (
-            !SKUError &&
-            !errors.SKU?.message && (
-              <p className={`text-sm font-medium text-warning`}>
-                SKU is not verified
-              </p>
-            )
+            <></>
           )}
-          {session &&
-            (session.role === Role.Admin ||
-              session.role === Role.Staff ||
-              session.role === Role.SuperAdmin) && (
-              <div>
-                <label className={`text-sm font-medium text-gray-400`}>
-                  {t("brand")}
-                  <span className="text-primary">*</span>
-                </label>
 
-                {/* <BrandSelectBox
+          {isInternal(session) ? (
+            <div>
+              <label className={`text-sm font-medium text-gray-400`}>
+                {t("seller")}
+                <span className="text-primary">*</span>
+              </label>
+              {/* <BrandSelectBox
+                selected={product?.brand}
+                setSelected={(e: Brand) => {
+                  setProduct((prevValue: any) => {
+                    return { ...prevValue, brand: e, brandId: e.id };
+                  });
+                }}
+              /> */}
+            </div>
+          ) : (
+            <></>
+          )}
+
+          <div>
+            <label className={`text-sm font-medium text-gray-400`}>
+              {t("brand")}
+              <span className="text-primary">*</span>
+            </label>
+
+            {/* <BrandSelectBox
                   selected={product?.brand}
                   setSelected={(e: Brand) => {
                     setProduct((prevValue: any) => {
@@ -478,30 +528,24 @@ function InformationSection({ nextFn, infoRef }: Props) {
                     });
                   }}
                 /> */}
-              </div>
-            )}
+          </div>
+
           <div>
             <label className={`text-sm font-medium text-gray-400`}>
-              Regional Origin of Product (eg., Choose{" "}
-              <span className="text-primary">Shan State</span> for Inle cotton
-              product.)
+              {t("condition")}
               <span className="text-primary">*</span>
             </label>
 
-            <StateSelectBox
-              isNPTDisabled={true}
-              selected={product?.stateIds}
-              setSelected={(e: State[]) => {
-                setProduct((prevValue: any) => {
-                  return {
-                    ...prevValue,
-                    state: e,
-                    stateIds: e.map((a) => a.id),
-                  };
-                });
-              }}
-            />
+            {/* <BrandSelectBox
+                  selected={product?.brand}
+                  setSelected={(e: Brand) => {
+                    setProduct((prevValue: any) => {
+                      return { ...prevValue, brand: e, brandId: e.id };
+                    });
+                  }}
+                /> */}
           </div>
+
           <div>
             <label className={`text-sm font-medium text-gray-400`}>
               {t("category")}
@@ -530,7 +574,7 @@ function InformationSection({ nextFn, infoRef }: Props) {
             </label>
 
             <div className="mt-3 flex flex-row items-center">
-              <div className={`relative mt-1 flex-grow`}>
+              <div className={`relative mt-1`}>
                 <input
                   type={"text"}
                   className={`w-full rounded-lg border-gray-200 px-4 py-2 pr-12 text-sm leading-6 shadow-sm`}
@@ -602,6 +646,30 @@ function InformationSection({ nextFn, infoRef }: Props) {
               </div>
             )}
           </div>
+
+          <FormInputRichText
+            content={product.shortDescription}
+            label={t("shortDescription")}
+            maxCount={200}
+            setContent={(e: string) => {
+              setProduct((prevValue: any) => {
+                return { ...prevValue, shortDescription: e };
+              });
+            }}
+          />
+
+          {product.shortDescription && product.shortDescription.length > 0 && (
+            <FormInputRichText
+              content={product.shortDescriptionMM}
+              label={t("shortDescription") + " " + t("mm")}
+              maxCount={200}
+              setContent={(e: string) => {
+                setProduct((prevValue: any) => {
+                  return { ...prevValue, shortDescriptionMM: e };
+                });
+              }}
+            />
+          )}
 
           <span className="mt-5 flex justify-end divide-x overflow-hidden">
             <button

@@ -45,7 +45,7 @@ function PromoCodePage() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Promo Codes | Pyi Twin Phyit</title>
+        <title>Promo Codes | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

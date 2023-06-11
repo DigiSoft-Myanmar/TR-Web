@@ -22,36 +22,22 @@ export default async function handler(
     let { id } = req.query;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session: any = await useAuth(req);
-    if (!session) {
-      return res.status(401).json(Unauthorized);
-    }
-    if (req.method === "GET") {
-      let includeData: any = {
-        Product: true,
-      };
-      if (isInternal(session)) {
-        includeData = {
-          Product: true,
-        };
-      }
-      let manufacture: any = await prisma.condition.findMany({
-        include: includeData,
-      });
-      for (let i = 0; i < manufacture.length; i++) {
-        manufacture[i].prodCount = manufacture[i].Product.length;
-      }
-
-      return res.status(200).json(manufacture);
-    }
 
     if (
       session &&
       (session.role === Role.Admin || session.role === Role.SuperAdmin)
     ) {
       switch (req.method) {
+        case "GET":
+          let users = await prisma.userDefinedRole.findMany({
+            include: {
+              User: true,
+            },
+          });
+          return res.status(200).json(users);
         case "POST":
           let newData = JSON.parse(req.body);
-          let exists = await prisma.condition.findFirst({
+          let exists = await prisma.userDefinedRole.findFirst({
             where: {
               name: newData.name,
             },
@@ -59,7 +45,7 @@ export default async function handler(
           if (exists) {
             return res.status(400).json(AlreadyExists);
           } else {
-            let term = await prisma.condition.create({
+            let term = await prisma.userDefinedRole.create({
               data: newData,
             });
             return res.status(200).json(term);
@@ -70,7 +56,7 @@ export default async function handler(
             delete data.id;
           }
           if (id) {
-            let newTerm = await prisma.condition.update({
+            let newTerm = await prisma.userDefinedRole.update({
               where: {
                 id: id.toString(),
               },
@@ -82,19 +68,19 @@ export default async function handler(
           }
         case "DELETE":
           if (id) {
-            let manufacture = await prisma.condition.findFirst({
+            let manufacture = await prisma.userDefinedRole.findFirst({
               where: {
                 id: id.toString(),
               },
               include: {
-                Product: true,
+                User: true,
               },
             });
             if (manufacture) {
-              if (manufacture.Product.length > 0) {
+              if (manufacture.User.length > 0) {
                 return res.status(400).json(Exists);
               } else {
-                await prisma.condition.delete({
+                await prisma.userDefinedRole.delete({
                   where: {
                     id: id.toString(),
                   },

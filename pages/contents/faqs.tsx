@@ -41,7 +41,7 @@ function FAQs() {
     <>
       <div className="flex min-h-screen flex-col pb-10 pt-10 lg:pt-0">
         <Head>
-          <title>FAQs | Pyi Twin Phyit</title>
+          <title>FAQs | Treasure Rush</title>
           <meta name="description" content={defaultDescription} />
           <link rel="icon" href="/favicon.ico" />
         </Head>

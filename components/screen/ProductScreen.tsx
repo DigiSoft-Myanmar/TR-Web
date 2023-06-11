@@ -36,7 +36,7 @@ function ProductScreen() {
   const submitPricingRef = useRef<HTMLButtonElement | null>();
   const submitStatusRef = useRef<HTMLButtonElement | null>();
 
-  const [isFullScreen, setFullScreen] = React.useState(false);
+  const [isFullScreen, setFullScreen] = React.useState(true);
 
   const stepList =
     isVariable === true
@@ -246,7 +246,7 @@ function ProductScreen() {
           }
         >
           <div className="flex flex-row justify-end">
-            <button
+            {/*  <button
               type="button"
               onClick={() => {
                 setFullScreen((prevValue) => !prevValue);
@@ -284,7 +284,7 @@ function ProductScreen() {
                   />
                 </svg>
               )}
-            </button>
+            </button> */}
           </div>
           <div className="mt-3">
             {isFullScreen === false && (
@@ -294,7 +294,7 @@ function ProductScreen() {
                   height={48}
                   className="object-contain"
                   alt="logo"
-                  src="/assets/icon/pdp_white.png"
+                  src="/assets/icon/logo_full.png"
                 />
 
                 <p className="mt-5 text-sm text-gray-100">

@@ -13,6 +13,7 @@ type Props = {
   disableRoundedRight?: boolean;
   enableZero?: boolean;
   disabled?: boolean;
+  focusFn?: Function;
 };
 
 function FormInput({
@@ -28,6 +29,7 @@ function FormInput({
   disableRoundedRight,
   enableZero,
   disabled,
+  focusFn,
 }: Props) {
   return (
     <div>
@@ -65,6 +67,11 @@ function FormInput({
           onWheelCapture={(e) => e.currentTarget.blur()}
           disabled={disabled === true ? true : false}
           step={"any"}
+          onFocus={() => {
+            if (focusFn) {
+              focusFn();
+            }
+          }}
           {...formControl}
         />
         {icon && (

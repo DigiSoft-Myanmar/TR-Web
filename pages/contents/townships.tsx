@@ -21,22 +21,23 @@ function LegalPage() {
     fetch("/api/townships?isAll=true").then((res) => {
       let json = res.json();
       return json;
-    }),
+    })
   );
+
   return session &&
     (session.role === Role.Admin ||
       session.role === Role.Staff ||
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Townships | Pyi Twin Phyit</title>
+        <title>Townships | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="relative mx-auto max-w-screen-xl px-4 py-8">
         {data ? (
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-4 gap-3 place-items-stretch">
             {data?.map((e: any, index: number) => (
               <StateCard
                 key={index}
@@ -46,7 +47,7 @@ function LegalPage() {
                 districts={e.districts}
                 color={e.color}
                 prodCount={e.prodCount}
-                brandCount={e.brandCount}
+                sellerCount={e.sellerCount}
                 buyerCount={e.buyerCount}
                 updateFn={() => {
                   refetch();

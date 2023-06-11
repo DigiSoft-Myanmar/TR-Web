@@ -43,7 +43,7 @@ function AnnouncementPage() {
       session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
-        <title>Announcement | Pyi Twin Phyit</title>
+        <title>Announcement | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -28,34 +28,37 @@ async function getTownships(req: NextApiRequest, res: NextApiResponse<any>) {
     ) {
       if (isAll === "true") {
         for (let i = 0; i < data.length; i++) {
-          data[i].prodCount = await prisma.product.count({
+          data[i].sellerCount = await prisma.user.count({
             where: {
-              stateIds: {
-                has: data[i].id,
+              role: {
+                in: [Role.Seller, Role.Trader],
               },
-            },
-          });
-          data[i].brandCount = await prisma.brand.count({
-            where: {
               stateId: data[i].id,
             },
           });
           data[i].buyerCount = await prisma.user.count({
             where: {
-              role: Role.Buyer,
+              role: {
+                in: [Role.Buyer, Role.Trader],
+              },
               stateId: data[i].id,
             },
           });
           if (data[i].districts) {
             for (let j = 0; j < data[i].districts.length; j++) {
-              data[i].districts[j].brandCount = await prisma.brand.count({
+              data[i].districts[j].sellerCount = await prisma.user.count({
                 where: {
+                  role: {
+                    in: [Role.Seller, Role.Trader],
+                  },
                   districtId: data[i].districts[j].id,
                 },
               });
               data[i].districts[j].buyerCount = await prisma.user.count({
                 where: {
-                  role: Role.Buyer,
+                  role: {
+                    in: [Role.Buyer, Role.Trader],
+                  },
                   districtId: data[i].districts[j].id,
                 },
               });
@@ -66,15 +69,20 @@ async function getTownships(req: NextApiRequest, res: NextApiResponse<any>) {
                   k++
                 ) {
                   data[i].districts[j].townships[k].brandCount =
-                    await prisma.brand.count({
+                    await prisma.user.count({
                       where: {
+                        role: {
+                          in: [Role.Seller, Role.Trader],
+                        },
                         townshipId: data[i].districts[j].townships[k].id,
                       },
                     });
                   data[i].districts[j].townships[k].buyerCount =
                     await prisma.user.count({
                       where: {
-                        role: Role.Buyer,
+                        role: {
+                          in: [Role.Buyer, Role.Trader],
+                        },
                         townshipId: data[i].districts[j].townships[k].id,
                       },
                     });
@@ -127,7 +135,7 @@ async function updateTownships(req: NextApiRequest, res: NextApiResponse<any>) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);

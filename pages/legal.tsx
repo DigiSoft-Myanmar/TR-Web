@@ -23,13 +23,6 @@ function Legal({ legalInfo }: { legalInfo: Legal }) {
     if (legalInfo) {
       let info = "";
       switch (type) {
-        case PrivacyType.accessibility:
-          info = getText(
-            legalInfo.accessibility,
-            legalInfo.accessibilityMM,
-            locale
-          );
-          break;
         case PrivacyType.cookie:
           info = getText(legalInfo.cookie, legalInfo.cookieMM, locale);
           break;
@@ -49,13 +42,7 @@ function Legal({ legalInfo }: { legalInfo: Legal }) {
             locale
           );
           break;
-        case PrivacyType.return:
-          info = getText(
-            legalInfo.returnPolicy,
-            legalInfo.returnPolicyMM,
-            locale
-          );
-          break;
+
         default:
           info = getText(
             legalInfo.termsNConditions,
@@ -77,12 +64,7 @@ function Legal({ legalInfo }: { legalInfo: Legal }) {
     <div>
       <Head>
         <title>
-          {type === PrivacyType.return
-            ? "Return & Refund Policy"
-            : type
-            ? type.toString()
-            : "Terms & Conditions"}
-          | Treasure Rush
+          {type ? type.toString() : "Terms & Conditions"}| Treasure Rush
         </title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
@@ -92,9 +74,7 @@ function Legal({ legalInfo }: { legalInfo: Legal }) {
         <div className="mx-auto flex max-w-screen-xl flex-col items-center px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
           <div className="max-w-3xl">
             <h2 className="text-3xl font-bold sm:text-4xl">
-              {type === PrivacyType.return
-                ? "Return & Refund Policy"
-                : type === PrivacyType.termsNConditions
+              {type === PrivacyType.termsNConditions
                 ? "Terms & Conditions"
                 : type
                 ? type.toString()

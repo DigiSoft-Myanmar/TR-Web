@@ -92,10 +92,10 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                   >
                     <div className="flex flex-grow items-center space-x-3">
                       <Image
-                        src="/assets/pdp_orange.png"
+                        src="/assets/logo_full.png"
                         height={50}
                         width={120}
-                        className="h-[50px] object-cover"
+                        className="h-[50px] object-contain"
                         alt="logo"
                       />
                     </div>
@@ -148,7 +148,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                       onSubmit={(event: any) => {
                         const search = event.target.search.value;
                         router.push(
-                          "/marketplace?search=" + encodeURIComponent(search),
+                          "/marketplace?search=" + encodeURIComponent(search)
                         );
                         event.preventDefault();
                       }}
@@ -336,7 +336,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                                     className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
                                       router.asPath.includes(
                                         "/marketplace?categories=" +
-                                          encodeURIComponent(e.slug),
+                                          encodeURIComponent(e.slug)
                                       )
                                         ? "bg-gray-100"
                                         : "hover:bg-gray-100 hover:text-gray-700"
@@ -370,7 +370,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
                                     router.asPath.includes(
                                       "/account/" +
-                                        encodeURIComponent(session.phoneNum),
+                                        encodeURIComponent(session.phoneNum)
                                     )
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
@@ -441,7 +441,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                             {getText(
                               "Helpful Links",
                               "အသုံးဝင်သောလင့်ခ်များ",
-                              locale,
+                              locale
                             )}
                           </strong>
 
@@ -558,7 +558,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                                   {getText(
                                     `Don't have an account? `,
                                     "အကောင့်မရှိပါသဖြင့်",
-                                    locale,
+                                    locale
                                   )}
                                 </strong>
 
@@ -573,7 +573,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                                   {getText(
                                     "Register",
                                     "အကောင့်အသစ်ပြုလုပ်ရန်",
-                                    locale,
+                                    locale
                                   )}
                                 </Link>
                               </p>

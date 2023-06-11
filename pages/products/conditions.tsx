@@ -22,7 +22,7 @@ import {
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import ErrorScreen from "@/components/screen/ErrorScreen";
-import { isInternal } from "@/util/authHelper";
+import { getHeaders, isInternal } from "@/util/authHelper";
 import TextModal from "@/components/modal/sideModal/TextModal";
 
 interface CellType {
@@ -128,12 +128,7 @@ function Default() {
                       )}`,
                       {
                         method: "DELETE",
-                        headers: session
-                          ? {
-                              appid: session.username,
-                              appsecret: session.id,
-                            }
-                          : {},
+                        headers: getHeaders(session),
                       }
                     ).then(async (data) => {
                       if (data.status === 200) {

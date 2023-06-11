@@ -20,10 +20,8 @@ import prisma from "@/prisma/prisma";
 import { getHeaders } from "@/util/authHelper";
 
 export enum PrivacyType {
-  accessibility = "Accessibility",
   cookie = "Cookie",
   privacy = "Privacy Policy",
-  return = "Return & Refund Policy",
   termsNConditions = "Terms & Conditions",
 }
 
@@ -38,7 +36,7 @@ function LegalPage({ data }: { data: Legal }) {
   const router = useRouter();
   const { locale } = router;
   const [currentType, setCurrentType] = React.useState<PrivacyType>(
-    PrivacyType.accessibility
+    PrivacyType.privacy
   );
   const [content, setContent] = React.useState("");
   const [contentMM, setContentMM] = React.useState("");
@@ -55,18 +53,10 @@ function LegalPage({ data }: { data: Legal }) {
         setCurrentType(type);
         setContent(data?.privacyPoliy ? data?.privacyPoliy : "");
         setContentMM(data?.privacyPoliyMM ? data?.privacyPoliyMM : "");
-      } else if (type === PrivacyType.accessibility) {
-        setCurrentType(type);
-        setContent(data?.accessibility ? data?.accessibility : "");
-        setContentMM(data?.accessibilityMM ? data?.accessibilityMM : "");
       } else if (type === PrivacyType.cookie) {
         setCurrentType(type);
         setContent(data?.cookie ? data?.cookie : "");
         setContentMM(data?.cookieMM ? data?.cookieMM : "");
-      } else if (type === PrivacyType.return) {
-        setCurrentType(type);
-        setContent(data?.returnPolicy ? data?.returnPolicy : "");
-        setContentMM(data?.returnPolicyMM ? data?.returnPolicyMM : "");
       } else if (type === PrivacyType.termsNConditions) {
         setCurrentType(type);
         setContent(data?.termsNConditions ? data?.termsNConditions : "");
@@ -84,7 +74,7 @@ function LegalPage({ data }: { data: Legal }) {
     return (
       <div className="flex flex-col space-y-5 rounded-md bg-white">
         <Head>
-          <title>{t(currentType)} | Pyi Twin Phyit</title>
+          <title>{t(currentType)} | Treasure Rush</title>
           <meta name="description" content={defaultDescription} />
           <link rel="icon" href="/favicon.ico" />
         </Head>
@@ -142,10 +132,6 @@ function LegalPage({ data }: { data: Legal }) {
                   setSubmit(true);
                   let updateBody: any = {};
                   switch (currentType) {
-                    case PrivacyType.accessibility:
-                      updateBody.accessibility = content;
-                      updateBody.accessibilityMM = contentMM;
-                      break;
                     case PrivacyType.cookie:
                       updateBody.cookie = content;
                       updateBody.cookieMM = contentMM;
@@ -153,10 +139,6 @@ function LegalPage({ data }: { data: Legal }) {
                     case PrivacyType.privacy:
                       updateBody.privacyPoliy = content;
                       updateBody.privacyPoliyMM = contentMM;
-                      break;
-                    case PrivacyType.return:
-                      updateBody.returnPolicy = content;
-                      updateBody.returnPolicyMM = contentMM;
                       break;
                     case PrivacyType.termsNConditions:
                       updateBody.termsNConditions = content;

@@ -180,20 +180,7 @@ apiRoute.get(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
 
         case ImgType.SiteManagement:
           for (let i = 0; i < gallery.length; i++) {
-            let fileName = gallery[i].filename;
-            let products = await prisma.content.count({
-              where: {
-                OR: [
-                  {
-                    homeBannerImg: fileName,
-                  },
-                  {
-                    sellBannerImg: fileName,
-                  },
-                ],
-              },
-            });
-            gallery[i].usage = products;
+            gallery[i].usage = [];
           }
           break;
         case ImgType.Others:

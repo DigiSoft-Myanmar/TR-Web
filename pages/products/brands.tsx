@@ -21,7 +21,7 @@ import {
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import ErrorScreen from "@/components/screen/ErrorScreen";
-import { isInternal } from "@/util/authHelper";
+import { getHeaders, isInternal } from "@/util/authHelper";
 import TextModal from "@/components/modal/sideModal/TextModal";
 
 interface CellType {
@@ -36,7 +36,7 @@ function Default() {
   const [value, setValue] = useState<string>("");
   const { t }: any = useTranslation("common");
   const { data: parentData, refetch } = useQuery("brandData", () =>
-    fetch("/api/products/brand").then((res) => {
+    fetch("/api/products/brands").then((res) => {
       let json = res.json();
       return json;
     })
@@ -87,15 +87,6 @@ function Default() {
     },
     {
       flex: 0.15,
-      minWidth: 80,
-      field: "users",
-      headerName: "# of Users",
-      renderCell: ({ row }: any) => (
-        <Typography>{`${row.users.length}`}</Typography>
-      ),
-    },
-    {
-      flex: 0.15,
       minWidth: 100,
       field: "id",
       headerName: "Action",
@@ -109,9 +100,6 @@ function Default() {
                   id: row.id,
                   name: row.name,
                   nameMM: row.nameMM,
-                  description: row.description,
-                  descriptionMM: row.descriptionMM,
-                  color: row.color,
                 });
                 setModalOpen(true);
               }}
@@ -133,12 +121,7 @@ function Default() {
                       `/api/products/brand?id=${encodeURIComponent(row.id)}`,
                       {
                         method: "DELETE",
-                        headers: session
-                          ? {
-                              appid: session.username,
-                              appsecret: session.id,
-                            }
-                          : {},
+                        headers: getHeaders(session),
                       }
                     ).then(async (data) => {
                       if (data.status === 200) {
@@ -215,7 +198,7 @@ function Default() {
         )}
       </div>
       <TextModal
-        isColor={true}
+        isColor={false}
         isModalOpen={isModalOpen}
         setModalOpen={setModalOpen}
         data={brand}

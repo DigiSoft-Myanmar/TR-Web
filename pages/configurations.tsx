@@ -4,7 +4,7 @@ import Head from "next/head";
 import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { defaultDescription } from "@/types/const";
+import { appName, defaultDescription } from "@/types/const";
 import FormInput from "@/components/presentational/FormInput";
 import { useForm } from "react-hook-form";
 import { Configuration, Role } from "@prisma/client";
@@ -13,30 +13,39 @@ import { z } from "zod";
 import prisma from "@/prisma/prisma";
 import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 import SubmitBtn from "@/components/presentational/SubmitBtn";
-import { showSuccessDialog, showUnauthorizedDialog } from "@/util/swalFunction";
+import { showSuccessDialog } from "@/util/swalFunction";
 import { useSession } from "next-auth/react";
 import ErrorScreen from "@/components/screen/ErrorScreen";
-import { getHeaders } from "@/util/authHelper";
 import { useRouter } from "next/router";
+import { decrypt, encrypt } from "@/util/encrypt";
+import { getHeaders } from "@/util/authHelper";
 
 function Configurations({
-  lowStockLimit,
-  logClearDuration,
-  pointPerMMK,
-  pointPerReview,
-  isMaintenence,
-  accessKey,
   senderEmail,
   senderEmailHost,
   senderEmailPassword,
   senderEmailPort,
   senderEmailTSL,
+  lowStockLimit,
+  maximumAuctionPeriod,
 }: any) {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
-  const router = useRouter();
 
   const schema = z.object({
+    senderEmail: z.string().min(1, { message: t("inputError") }),
+    senderEmailPassword: z.string().min(1, { message: t("inputError") }),
+    senderEmailHost: z.string().min(1, { message: t("inputError") }),
+    senderEmailPort: z.string().min(1, { message: t("inputError") }),
+    maximumAuctionPeriod: z
+      .number({
+        invalid_type_error: t("inputValidNumber"),
+        required_error: "",
+      })
+      .min(0, {
+        message: t("inputValidAmount"),
+      })
+      .nonnegative({ message: t("inputValidAmount") }),
     lowStockLimit: z
       .number({
         invalid_type_error: t("inputValidNumber"),
@@ -46,43 +55,6 @@ function Configurations({
         message: t("inputValidAmount"),
       })
       .nonnegative({ message: t("inputValidAmount") }),
-    logClearDuration: z
-      .number({
-        invalid_type_error: t("inputValidNumber"),
-        required_error: "",
-      })
-      .min(0, {
-        message: t("inputValidAmount"),
-      })
-      .nonnegative({ message: t("inputValidAmount") }),
-    pointPerMMK: z
-      .number({
-        invalid_type_error: t("inputValidNumber"),
-        required_error: "",
-      })
-      .min(0, {
-        message: t("inputValidAmount"),
-      })
-      .nonnegative({ message: t("inputValidAmount") }),
-    pointPerReview: z
-      .number({
-        invalid_type_error: t("inputValidNumber"),
-        required_error: "",
-      })
-      .min(0, {
-        message: t("inputValidAmount"),
-      })
-      .nonnegative({ message: t("inputValidAmount") }),
-    isMaintenence: z.boolean(),
-    accessKey: z
-      .string()
-      .min(1, { message: t("inputError") })
-      .optional()
-      .or(z.literal("")),
-    senderEmail: z.string().min(1, { message: t("inputError") }),
-    senderEmailPassword: z.string().min(1, { message: t("inputError") }),
-    senderEmailHost: z.string().min(1, { message: t("inputError") }),
-    senderEmailPort: z.string().min(1, { message: t("inputError") }),
     senderEmailTSL: z.boolean(),
   });
 
@@ -91,250 +63,136 @@ function Configurations({
       mode: "onChange",
       resolver: zodResolver(schema),
       defaultValues: {
-        accessKey: accessKey,
-        isMaintenence: isMaintenence,
-        logClearDuration: logClearDuration,
-        lowStockLimit: lowStockLimit,
-        pointPerMMK: pointPerMMK,
-        pointPerReview: pointPerReview,
         senderEmail: senderEmail,
         senderEmailHost: senderEmailHost,
         senderEmailPort: senderEmailPort,
         senderEmailTSL: senderEmailTSL,
+        senderEmailPassword: senderEmailPassword,
       },
     });
   const { errors } = formState;
   const watchFields = watch();
   const [isSubmit, setSubmit] = React.useState(false);
+  const router = useRouter();
+  const { locale } = useRouter();
 
   function submitConfiguration(data: Configuration) {
     setSubmit(true);
-    if (getHeaders(session)) {
-      fetch("/api/configurations", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: getHeaders(session),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          showSuccessDialog(t("submitSuccess"));
+    fetch("/api/configurations", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: getHeaders(session),
+    })
+      .then((data) => data.json())
+      .then((json) => {
+        setSubmit(false);
+        showSuccessDialog(t("submitSuccess"), "", locale, () => {
+          router.reload();
         });
-    } else {
-      showUnauthorizedDialog(router.locale, () => {
-        router.push("/login");
       });
-    }
   }
 
-  return session &&
-    (session.role === Role.Admin ||
-      session.role === Role.SuperAdmin ||
-      session.role === Role.Staff) ? (
+  return session && session.role === Role.SuperAdmin ? (
     <div>
       <Head>
-        <title>Configurations | Treasure Rush</title>
+        <title>Configurations | {appName}</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <form onSubmit={handleSubmit(submitConfiguration)}>
-        <div className="flex flex-col divide-y bg-white">
-          <details className="group flex flex-col gap-3">
-            <summary
-              className={`flex items-center bg-primary px-10 py-5 text-lg font-medium text-white`}
-            >
-              <span className="flex-grow">Purchase Configuration</span>
-              <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </span>
-            </summary>
-            <div className="flex flex-col gap-3 px-10 py-5">
-              <FormInput
-                label={"Low Stock Limit"}
-                placeHolder={t("enter") + " " + "Low Stock Limit"}
-                error={errors.lowStockLimit?.message}
-                type="number"
-                defaultValue={lowStockLimit}
-                formControl={{
-                  ...register("lowStockLimit", {
-                    valueAsNumber: true,
-                  }),
-                }}
-                currentValue={watchFields.lowStockLimit}
-              />
+        <div className="flex flex-col bg-white">
+          <h3 className="px-10 text-lg font-semibold mt-10">
+            Product Settings
+          </h3>
+          <div className="flex flex-col gap-3 px-10 py-5 pb-10">
+            <FormInput
+              label={"Low Stock Limit"}
+              placeHolder={t("enter") + " " + "Low Stock Limit"}
+              error={errors.lowStockLimit?.message}
+              type="number"
+              defaultValue={lowStockLimit}
+              formControl={{
+                ...register("lowStockLimit", {
+                  setValueAs: (v) => (v ? parseInt(v) : 0),
+                }),
+              }}
+              currentValue={watchFields.lowStockLimit}
+            />
 
-              <FormInput
-                label={"Log Clear Duration (in Days)"}
-                placeHolder={t("enter") + " " + "Log Clear Duration"}
-                error={errors.logClearDuration?.message}
-                type="number"
-                defaultValue={logClearDuration}
-                formControl={{
-                  ...register("logClearDuration", {
-                    valueAsNumber: true,
-                  }),
-                }}
-                currentValue={watchFields.logClearDuration}
-              />
+            <FormInput
+              label={"Maximum Auction Period (Days)"}
+              placeHolder={t("enter") + " " + "Maximum Auction Period (Days)"}
+              error={errors.maximumAuctionPeriod?.message}
+              type="number"
+              defaultValue={maximumAuctionPeriod}
+              formControl={{
+                ...register("maximumAuctionPeriod", {
+                  setValueAs: (v) => (v ? parseInt(v) : 0),
+                }),
+              }}
+              currentValue={watchFields.maximumAuctionPeriod}
+            />
+          </div>
+        </div>
 
-              <FormInput
-                label={"Point per MMK"}
-                placeHolder={t("enter") + " " + "Point per MMK"}
-                error={errors.pointPerMMK?.message}
-                type="number"
-                defaultValue={pointPerMMK}
-                formControl={{
-                  ...register("pointPerMMK", {
-                    valueAsNumber: true,
-                  }),
-                }}
-                currentValue={watchFields.pointPerMMK}
-              />
+        <div className="flex flex-col bg-white border-t">
+          <h3 className="px-10 text-lg font-semibold mt-10">
+            Email Configurations
+          </h3>
+          <div className="flex flex-col gap-3 px-10 py-5">
+            <FormInput
+              label={"Sender Email"}
+              placeHolder={t("enter") + " " + "Sender Email"}
+              error={errors.senderEmail?.message}
+              type="text"
+              defaultValue={senderEmail}
+              formControl={{
+                ...register("senderEmail"),
+              }}
+              currentValue={watchFields.senderEmail}
+            />
 
-              <FormInput
-                label={"Point per Review"}
-                placeHolder={t("enter") + " " + "Point per Review"}
-                error={errors.pointPerReview?.message}
-                type="number"
-                defaultValue={pointPerReview}
-                formControl={{
-                  ...register("pointPerReview", {
-                    valueAsNumber: true,
-                  }),
-                }}
-                currentValue={watchFields.pointPerReview}
-              />
-            </div>
-          </details>
+            <FormInput
+              label={"Sender Email Password"}
+              placeHolder={t("enter") + " " + "Sender Email Password"}
+              error={errors.senderEmailPassword?.message}
+              type="password"
+              formControl={{
+                ...register("senderEmailPassword"),
+              }}
+              currentValue={""}
+            />
 
-          <details className="group flex flex-col gap-3">
-            <summary
-              className={`flex items-center bg-primary px-10 py-5 text-lg font-medium text-white`}
-            >
-              <span className="flex-grow">Maintenance Configuration</span>
-              <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </span>
-            </summary>
-            <div className="flex flex-col gap-3 px-10 py-5">
-              <FormInputCheckbox
-                formControl={{ ...register("isMaintenence") }}
-                label="Maintenance Mode"
-                defaultValue={isMaintenence}
-              />
-              <FormInput
-                label={"Access Key"}
-                placeHolder={t("enter") + " " + "Access Key"}
-                error={errors.accessKey?.message}
-                type="text"
-                defaultValue={accessKey}
-                formControl={{
-                  ...register("accessKey"),
-                }}
-                optional={true}
-                currentValue={watchFields.accessKey}
-              />
-            </div>
-          </details>
+            <FormInput
+              label={"Sender Email Host"}
+              placeHolder={t("enter") + " " + "Sender Email Host"}
+              error={errors.senderEmailHost?.message}
+              type="text"
+              defaultValue={senderEmailHost}
+              formControl={{
+                ...register("senderEmailHost"),
+              }}
+              currentValue={watchFields.senderEmailHost}
+            />
 
-          <details className="group flex flex-col gap-3">
-            <summary
-              className={`flex items-center bg-primary px-10 py-5 text-lg font-medium text-white`}
-            >
-              <span className="flex-grow">Email Configuration</span>
-              <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </span>
-            </summary>
-            <div className="flex flex-col gap-3 px-10 py-5">
-              <FormInput
-                label={"Sender Email"}
-                placeHolder={t("enter") + " " + "Sender Email"}
-                error={errors.senderEmail?.message}
-                type="text"
-                defaultValue={senderEmail}
-                formControl={{
-                  ...register("senderEmail"),
-                }}
-                currentValue={watchFields.senderEmail}
-              />
+            <FormInput
+              label={"Sender Email Port"}
+              placeHolder={t("enter") + " " + "Sender Email Port"}
+              error={errors.senderEmailPort?.message}
+              type="text"
+              defaultValue={senderEmailPort}
+              formControl={{
+                ...register("senderEmailPort"),
+              }}
+              currentValue={watchFields.senderEmailPort}
+            />
 
-              <FormInput
-                label={"Sender Password"}
-                placeHolder={t("enter") + " " + "Sender Password"}
-                error={errors.senderEmailPassword?.message}
-                type="password"
-                defaultValue={senderEmailPassword}
-                formControl={{
-                  ...register("senderEmailPassword"),
-                }}
-                currentValue={""}
-              />
-
-              <FormInput
-                label={"Sender Email Host"}
-                placeHolder={t("enter") + " " + "Sender Email Host"}
-                error={errors.senderEmailHost?.message}
-                type="text"
-                defaultValue={senderEmailHost}
-                formControl={{
-                  ...register("senderEmailHost"),
-                }}
-                currentValue={watchFields.senderEmailHost}
-              />
-
-              <FormInput
-                label={"Sender Email Port"}
-                placeHolder={t("enter") + " " + "Sender Email Port"}
-                error={errors.senderEmailPort?.message}
-                type="text"
-                defaultValue={senderEmailPort}
-                formControl={{
-                  ...register("senderEmailPort"),
-                }}
-                currentValue={watchFields.senderEmailPort}
-              />
-
-              <FormInputCheckbox
-                formControl={{ ...register("senderEmailTSL") }}
-                label={"Is TSL ?"}
-                value={senderEmailTSL}
-              />
-            </div>
-          </details>
+            <FormInputCheckbox
+              formControl={{ ...register("senderEmailTSL") }}
+              label={"Is TSL ?"}
+              defaultValue={senderEmailTSL}
+            />
+          </div>
 
           <div className="flex items-center justify-end px-10 py-5">
             <div>
@@ -361,6 +219,13 @@ export async function getServerSideProps({ locale }: any) {
   if (configuration?.updatedAt) {
     delete configuration.updatedAt;
   }
+
+  if (configuration?.senderEmailPassword) {
+    configuration.senderEmailPassword = decrypt(
+      configuration?.senderEmailPassword
+    );
+  }
+
   return {
     props: {
       ...configuration,
