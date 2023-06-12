@@ -6,21 +6,23 @@ const ProfileContext = createContext<any>({});
 export const useProfile = () => React.useContext(ProfileContext);
 
 export const ProfileProvider = ({
-  user,
-  brandData,
+  user: parentUser,
   children,
 }: {
   user: User;
-  brandData?: Brand;
   children: React.ReactNode;
 }) => {
-  const [profile, setProfile] = React.useState<User | undefined>(user);
+  const [user, setUser] = React.useState<User | undefined>(parentUser);
+
+  React.useEffect(() => {
+    setUser(parentUser);
+  }, [parentUser]);
 
   return (
     <ProfileContext.Provider
       value={{
-        profile,
-        setProfile,
+        user,
+        setUser,
       }}
     >
       {children}

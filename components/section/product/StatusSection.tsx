@@ -41,12 +41,12 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
 
   const { data: membershipData } = useSWR("/api/memberships", fetcher);
   const { data: usedSKU } = useSWR(
-    "/api/user/SKUUsage?brandId=" + product.brand.id,
-    fetcher,
+    "/api/user/SKUUsage?brandId=" + product.sellerId,
+    fetcher
   );
   const { data: memberPayment } = useSWR(
-    "/api/user/payment?brandId=" + product.brand.id,
-    fetcher,
+    "/api/user/payment?brandId=" + product.sellerId,
+    fetcher
   );
 
   const now = moment();
@@ -78,7 +78,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
         {membershipData &&
         membershipData.find(
-          (e: Membership) => e.id === product.brand.membershipId,
+          (e: Membership) => e.id === product.brand?.membershipId
         ) ? (
           <>
             <FormInputCheckbox
@@ -118,12 +118,12 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                   <strong className="rounded border border-primary bg-primary px-3 py-1.5 text-[10px] font-medium text-white">
                     {getText(
                       membershipData.find(
-                        (e: Membership) => e.id === product.brand.membershipId,
+                        (e: Membership) => e.id === product.brand.membershipId
                       ).name,
                       membershipData.find(
-                        (e: Membership) => e.id === product.brand.membershipId,
+                        (e: Membership) => e.id === product.brand.membershipId
                       ).nameMM,
-                      locale,
+                      locale
                     )}
                   </strong>
 
@@ -143,7 +143,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                           {
                             membershipData.find(
                               (e: Membership) =>
-                                e.id === product.brand.membershipId,
+                                e.id === product.brand.membershipId
                             ).productLimit
                           }
                         </td>
@@ -170,7 +170,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                           <p className="text-sm font-medium text-gray-500">
                             Membership Start Date -{" "}
                             {new Date(
-                              memberPayment[0].memberStartDate,
+                              memberPayment[0].memberStartDate
                             ).toLocaleDateString("en-CA", {
                               year: "numeric",
                               month: "long",

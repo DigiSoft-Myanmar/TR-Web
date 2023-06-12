@@ -39,10 +39,14 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
 
   const { locale } = useRouter();
   const headTitle = getHighlightText(
-    getText(siteInfo?.sellTitle, siteInfo?.sellTitleMM, locale)
+    getText(siteInfo?.membershipTitle, siteInfo?.membershipTitleMM, locale)
   );
   const headDescription = getHighlightText(
-    getText(siteInfo?.sellDescription, siteInfo?.sellDescriptionMM, locale)
+    getText(
+      siteInfo?.membershipDescription,
+      siteInfo?.membershipDescriptionMM,
+      locale
+    )
   );
 
   const { isLoading, error, data } = useQuery("membershipsData", () =>
@@ -158,7 +162,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
         <section className={`relative min-h-[500px] w-full`}>
           <div className="absolute top-0 bottom-0 left-0 right-0">
             <Image
-              src={fileUrl + siteInfo?.sellBannerImg}
+              src={fileUrl + siteInfo?.mobileImg}
               width={1080}
               height={500}
               alt="banner"
@@ -230,7 +234,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
         <section className={`relative min-h-full w-full`}>
           <div className="absolute top-0 bottom-0 left-0 right-0">
             <Image
-              src={fileUrl + siteInfo?.sellRegisterImg}
+              src={fileUrl + siteInfo?.membershipHeroImg}
               width={1080}
               height={500}
               alt="banner"

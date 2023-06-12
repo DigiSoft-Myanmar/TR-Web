@@ -185,7 +185,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, sellerId }: Props) {
                                 "/api/shippingCost?sellerId=" +
                                   sellerId +
                                   "&district=" +
-                                  district.name,
+                                  district.id,
                                 {
                                   method: "POST",
                                   body: JSON.stringify({

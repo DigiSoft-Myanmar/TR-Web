@@ -66,7 +66,7 @@ export const getAllProducts = async (id: string, session: any) => {
         },
       },
       where: {
-        brandId: id,
+        sellerId: id,
       },
     });
     return products;
@@ -144,7 +144,7 @@ export const createProduct = async (data: Product) => {
   }
   if (d.slug) {
   } else {
-    d.slug = d.brand.brandName + "-" + d.SKU;
+    d.slug = d.seller.username + "-" + d.SKU;
   }
   let prodCount = await prisma.product.count({
     where: {
@@ -155,8 +155,20 @@ export const createProduct = async (data: Product) => {
     d.slug = d.slug + "_" + (prodCount + 1);
   }
 
-  if (d.brand) {
-    delete d.brand;
+  if (d.brandId) {
+    delete d.Brand;
+  } else {
+    let brand = await prisma.brand.create({
+      data: d.Brand,
+    });
+    d.brandId = brand.id;
+    delete d.Brand;
+  }
+  if (d.Condition) {
+    delete d.Condition;
+  }
+  if (d.seller) {
+    delete d.seller;
   }
 
   const product = await prisma.product.create({
@@ -167,13 +179,12 @@ export const createProduct = async (data: Product) => {
 
 export const updateProduct = async (id: string, data: Product) => {
   let d: any = { ...data };
-  console.log(data);
   if (d.categories) {
     delete d.categories;
   }
   if (d.slug) {
   } else {
-    d.slug = d.brand.brandName + "-" + d.SKU;
+    d.slug = d.seller.username + "-" + d.SKU;
   }
   let prodCount = await prisma.product.count({
     where: {
@@ -186,8 +197,22 @@ export const updateProduct = async (id: string, data: Product) => {
   if (prodCount > 0) {
     d.slug = d.slug + "_" + (prodCount + 1);
   }
-  if (d.brand) {
-    delete d.brand;
+  if (d.brandId) {
+    delete d.Brand;
+  } else {
+    let brand = await prisma.brand.create({
+      data: {
+        name: d.Brand.name,
+      },
+    });
+    d.brandId = brand.id;
+    delete d.Brand;
+  }
+  if (d.Condition) {
+    delete d.Condition;
+  }
+  if (d.seller) {
+    delete d.seller;
   }
   if (d.type === ProductType.Variable) {
     if (d.saleStartDate) {

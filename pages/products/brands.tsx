@@ -118,7 +118,7 @@ function Default() {
                   locale,
                   () => {
                     fetch(
-                      `/api/products/brand?id=${encodeURIComponent(row.id)}`,
+                      `/api/products/brands?id=${encodeURIComponent(row.id)}`,
                       {
                         method: "DELETE",
                         headers: getHeaders(session),

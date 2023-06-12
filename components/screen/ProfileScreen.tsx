@@ -13,56 +13,62 @@ import ConfirmationSection from "../section/product/ConfirmationSection";
 import StatusSection from "../section/product/StatusSection";
 import VariationSection from "../section/product/VariationSection";
 import { Role } from "@prisma/client";
+import { useProfile } from "@/context/ProfileContext";
+import LocationPickerFull from "../presentational/LocationPickerFull";
 
 enum Step {
-  Information,
-  Attribute,
-  Pricing,
-  Details,
+  Profile,
+  NRC,
+  MailPassword,
+  PreferredCategories,
+  SellerInformation,
   Status,
   Confirmation,
 }
 
-function ProductScreen() {
+function ProfileScreen() {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
 
-  const { infoValid, attributeValid, pricingValid, product, infoCheck } =
-    useProduct();
-
-  const isVariable = product.type === ProductType.Variable ? true : false;
-
-  const submitInfoRef = useRef<HTMLButtonElement | null>();
-  const submitPricingRef = useRef<HTMLButtonElement | null>();
-  const submitStatusRef = useRef<HTMLButtonElement | null>();
+  const { user, setUser } = useProfile();
 
   const [isFullScreen, setFullScreen] = React.useState(false);
 
   const stepList =
-    isVariable === true
+    user.role === Role.Seller || user.role === Role.Trader
       ? [
-          Step.Information,
-          Step.Attribute,
-          Step.Pricing,
-          Step.Details,
+          Step.Profile,
+          Step.NRC,
+          Step.MailPassword,
+          Step.PreferredCategories,
+          Step.SellerInformation,
+          Step.Status,
+          Step.Confirmation,
+        ]
+      : user.role === Role.Buyer
+      ? [
+          Step.Profile,
+          Step.NRC,
+          Step.MailPassword,
+          Step.PreferredCategories,
           Step.Status,
           Step.Confirmation,
         ]
       : [
-          Step.Information,
-          Step.Pricing,
-          Step.Details,
+          Step.Profile,
+          Step.NRC,
+          Step.MailPassword,
           Step.Status,
           Step.Confirmation,
         ];
 
-  const [currentStep, setCurrentStep] = React.useState(Step.Information);
+  const [currentStep, setCurrentStep] = React.useState(Step.Profile);
 
   const stepDetails = [
     {
-      step: Step.Information,
-      title: t("information"),
-      description: t("fillInformation"),
+      step: Step.Profile,
+      title: t("profileInfo"),
+      description: t("fillProfileInfo"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -81,9 +87,9 @@ function ProductScreen() {
       ),
     },
     {
-      step: Step.Attribute,
-      title: t("attributes"),
-      description: t("fillAttributes"),
+      step: Step.NRC,
+      title: t("nrcInfo"),
+      description: t("fillNRCInfo"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -91,20 +97,20 @@ function ProductScreen() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="w-6 h-6"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
+            d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z"
           />
         </svg>
       ),
     },
     {
-      step: Step.Pricing,
-      title: t("pricing"),
-      description: t("fillPricing"),
+      step: Step.MailPassword,
+      title: t("mailInfo"),
+      description: t("fillMillInfo"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -112,21 +118,21 @@ function ProductScreen() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="w-6 h-6"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
+            d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
           />
         </svg>
       ),
     },
 
     {
-      step: Step.Details,
-      title: t("details"),
-      description: t("fillDetails"),
+      step: Step.PreferredCategories,
+      title: t("categoriesInfo"),
+      description: t("fillCategoriesInfo"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -134,12 +140,33 @@ function ProductScreen() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="w-6 h-6"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+            d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+          />
+        </svg>
+      ),
+    },
+    {
+      step: Step.SellerInformation,
+      title: t("sellerInfo"),
+      description: t("fillSellerInfo"),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"
           />
         </svg>
       ),
@@ -147,7 +174,7 @@ function ProductScreen() {
     {
       step: Step.Status,
       title: t("status"),
-      description: t("fillProductStatus"),
+      description: t("fillProfileStatus"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -192,28 +219,6 @@ function ProductScreen() {
       ),
     },
   ];
-
-  function verify(newStep: Step) {
-    if (newStep === Step.Information) {
-      return true;
-    }
-    if (newStep === Step.Attribute) {
-      return infoValid;
-    }
-    if (newStep === Step.Pricing) {
-      return infoValid && attributeValid;
-    }
-    if (newStep === Step.Details) {
-      return infoValid && attributeValid && pricingValid;
-    }
-    if (newStep === Step.Status) {
-      return infoValid && attributeValid && pricingValid;
-    }
-    if (newStep === Step.Confirmation) {
-      return infoValid && attributeValid && pricingValid;
-    }
-    return true;
-  }
 
   function nextFn() {
     setCurrentStep((prevValue) => {
@@ -295,7 +300,7 @@ function ProductScreen() {
             </button>
           </div>
           <div className="mt-3">
-            {!product.id ? (
+            {!user.id ? (
               <>
                 <div
                   className={`flex flex-row items-center text-white gap-3 ${
@@ -313,17 +318,18 @@ function ProductScreen() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M12 3.75v16.5M2.25 12h19.5M6.375 17.25a4.875 4.875 0 004.875-4.875V12m6.375 5.25a4.875 4.875 0 01-4.875-4.875V12m-9 8.25h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5zm12.621-9.44c-1.409 1.41-4.242 1.061-4.242 1.061s-.349-2.833 1.06-4.242a2.25 2.25 0 013.182 3.182zM10.773 7.63c1.409 1.409 1.06 4.242 1.06 4.242S9 12.22 7.592 10.811a2.25 2.25 0 113.182-3.182z"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                     />
                   </svg>
-                  <h3 className="text-lg font-semibold">{t("addProduct")}</h3>
+
+                  <h3 className="text-lg font-semibold">{t("addUser")}</h3>
                 </div>
                 <p
                   className={`mt-5 text-sm text-gray-100 ${
                     isFullScreen ? "text-center" : ""
                   }`}
                 >
-                  {t("addProductDescription")}
+                  {t("addUserDescription")}
                 </p>
               </>
             ) : (
@@ -344,19 +350,18 @@ function ProductScreen() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M12 3.75v16.5M2.25 12h19.5M6.375 17.25a4.875 4.875 0 004.875-4.875V12m6.375 5.25a4.875 4.875 0 01-4.875-4.875V12m-9 8.25h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5zm12.621-9.44c-1.409 1.41-4.242 1.061-4.242 1.061s-.349-2.833 1.06-4.242a2.25 2.25 0 013.182 3.182zM10.773 7.63c1.409 1.409 1.06 4.242 1.06 4.242S9 12.22 7.592 10.811a2.25 2.25 0 113.182-3.182z"
+                      d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                     />
                   </svg>
-                  <h3 className="text-lg font-semibold">
-                    {t("updateProduct")}
-                  </h3>
+
+                  <h3 className="text-lg font-semibold">{t("updateUser")}</h3>
                 </div>
                 <p
                   className={`mt-5 text-sm text-gray-100 ${
                     isFullScreen ? "text-center" : ""
                   }`}
                 >
-                  {t("updateProductDescription")}
+                  {t("updateUserDescription")}
                 </p>
               </>
             )}
@@ -379,39 +384,7 @@ function ProductScreen() {
             }
           >
             {stepList.map((e, index) => (
-              <div
-                key={index}
-                className="flex cursor-pointer flex-row items-center gap-3"
-                onClick={() => {
-                  if (verify(e)) {
-                    if (currentStep < e) {
-                      if (isVariable === false) {
-                        if (currentStep === Step.Information) {
-                          submitInfoRef.current?.click();
-                        } else if (currentStep === Step.Status) {
-                          submitStatusRef.current?.click();
-                        } else if (currentStep === Step.Pricing) {
-                          submitPricingRef.current?.click();
-                        } else {
-                          setCurrentStep(e);
-                        }
-                      } else {
-                        if (currentStep === Step.Information) {
-                          submitInfoRef.current?.click();
-                        } else if (currentStep === Step.Status) {
-                          submitStatusRef.current?.click();
-                        } else {
-                          setCurrentStep(e);
-                        }
-                      }
-                    } else {
-                      setCurrentStep(e);
-                    }
-                  } else {
-                    showErrorDialog(t("fillInformation"));
-                  }
-                }}
-              >
+              <div key={index} className="flex flex-row items-center gap-3">
                 <div
                   className={`${
                     currentStep === e
@@ -445,7 +418,24 @@ function ProductScreen() {
             }`}
           >
             <div className={"w-full p-10"}>
-              {currentStep === Step.Information ? (
+              <LocationPickerFull
+                selected={{
+                  stateId: user?.stateId,
+                  districtId: user?.districtId,
+                  townshipId: user?.townshipId,
+                }}
+                setSelected={(data) => {
+                  setUser((prevValue) => {
+                    return {
+                      ...prevValue,
+                      stateId: data.stateId,
+                      districtId: data.districtId,
+                      townshipId: data.townshipId,
+                    };
+                  });
+                }}
+              />
+              {/* {currentStep === Step.P ? (
                 <InformationSection nextFn={nextFn} infoRef={submitInfoRef} />
               ) : currentStep === Step.Attribute ? (
                 <AttributeSection backFn={backFn} nextFn={nextFn} />
@@ -482,7 +472,7 @@ function ProductScreen() {
                   backFn={backFn}
                   currentStep={stepList.findIndex((e) => e === currentStep) + 1}
                 />
-              )}
+              )} */}
             </div>
           </div>
           <div className="absolute bottom-10 left-10 right-10">
@@ -515,4 +505,4 @@ function ProductScreen() {
   );
 }
 
-export default ProductScreen;
+export default ProfileScreen;

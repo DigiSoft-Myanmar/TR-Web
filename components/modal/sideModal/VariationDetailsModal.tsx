@@ -144,7 +144,7 @@ function VariationDetailsModal({
                   .nonnegative({ message: t("inputValidAmount") })
                   .optional()
                   .or(z.literal("")),
-        },
+        }
   );
 
   const { register, handleSubmit, watch, formState, reset } =
@@ -189,15 +189,15 @@ function VariationDetailsModal({
           product.variations.find((e: any) =>
             _.isEqual(
               _.sortBy(e.attributes, (o) => o._id),
-              _.sortBy(variation.attributes, (o) => o._id),
-            ),
+              _.sortBy(variation.attributes, (o) => o._id)
+            )
           )
         ) {
           let id = product.variations.findIndex((e: any) =>
             _.isEqual(
               _.sortBy(e.attributes, (o) => o._id),
-              _.sortBy(variation.attributes, (o) => o._id),
-            ),
+              _.sortBy(variation.attributes, (o) => o._id)
+            )
           );
           if (currentIndex !== -1) {
             if (currentIndex !== id) {
@@ -246,15 +246,15 @@ function VariationDetailsModal({
           product.variations.find((e: any) =>
             _.isEqual(
               _.sortBy(e.attributes, (o) => o._id),
-              _.sortBy(variation.attributes, (o) => o._id),
-            ),
+              _.sortBy(variation.attributes, (o) => o._id)
+            )
           )
         ) {
           let id = product.variations.findIndex((e: any) =>
             _.isEqual(
               _.sortBy(e.attributes, (o) => o._id),
-              _.sortBy(variation.attributes, (o) => o._id),
-            ),
+              _.sortBy(variation.attributes, (o) => o._id)
+            )
           );
           if (currentIndex !== -1) {
             if (currentIndex !== id) {
@@ -446,10 +446,10 @@ function VariationDetailsModal({
                                 value={
                                   variation && variation.attributes
                                     ? variation.attributes.find(
-                                        (e: any) => e.attributeId === elem.id,
+                                        (e: any) => e.attributeId === elem.id
                                       )
                                       ? variation.attributes.find(
-                                          (e: any) => e.attributeId === elem.id,
+                                          (e: any) => e.attributeId === elem.id
                                         )
                                       : { name: "Any", attributeId: elem.id }
                                     : { name: "Any", attributeId: elem.id }
@@ -458,7 +458,7 @@ function VariationDetailsModal({
                                   if (variation.attributes) {
                                     let existsIndex =
                                       variation.attributes.findIndex(
-                                        (e: any) => e.attributeId === elem.id,
+                                        (e: any) => e.attributeId === elem.id
                                       );
                                     if (existsIndex >= 0) {
                                       let attr = [...variation.attributes];
@@ -486,31 +486,31 @@ function VariationDetailsModal({
                               >
                                 <div className="relative mt-1">
                                   <Listbox.Button
-                                    className={`relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm`}
+                                    className={`relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left border border-gray-300 focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm`}
                                   >
                                     <span className="block truncate">
                                       {variation &&
                                       variation.attributes &&
                                       variation.attributes.find(
-                                        (e: any) => e.attributeId === elem.id,
+                                        (e: any) => e.attributeId === elem.id
                                       )
                                         ? router.locale &&
                                           router.locale === "mm" &&
                                           variation.attributes.find(
                                             (e: any) =>
-                                              e.attributeId === elem.id,
+                                              e.attributeId === elem.id
                                           ).nameMM &&
                                           variation.attributes.find(
                                             (e: any) =>
-                                              e.attributeId === elem.id,
+                                              e.attributeId === elem.id
                                           ).nameMM.length > 0
                                           ? variation.attributes.find(
                                               (e: any) =>
-                                                e.attributeId === elem.id,
+                                                e.attributeId === elem.id
                                             ).nameMM
                                           : variation.attributes.find(
                                               (e: any) =>
-                                                e.attributeId === elem.id,
+                                                e.attributeId === elem.id
                                             ).name
                                         : "-"}
                                     </span>
@@ -560,7 +560,7 @@ function VariationDetailsModal({
                                               variation.attributes &&
                                               variation.attributes.find(
                                                 (e: any) =>
-                                                  e.attributeId === elem.id,
+                                                  e.attributeId === elem.id
                                               )
                                                 ? "font-medium"
                                                 : "font-normal"
@@ -575,13 +575,13 @@ function VariationDetailsModal({
                                           variation.attributes &&
                                           variation.attributes.find(
                                             (e: any) =>
-                                              e.attributeId === elem.id,
+                                              e.attributeId === elem.id
                                           ) &&
                                           variation &&
                                           variation.attributes &&
                                           variation.attributes.find(
                                             (e: any) =>
-                                              e.attributeId === elem.id,
+                                              e.attributeId === elem.id
                                           ).name === "Any" ? (
                                             <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
                                               <svg
@@ -623,7 +623,7 @@ function VariationDetailsModal({
                                                   variation.attributes &&
                                                   variation.attributes.find(
                                                     (e: any) =>
-                                                      e.attributeId === elem.id,
+                                                      e.attributeId === elem.id
                                                   )
                                                     ? "font-medium"
                                                     : "font-normal"
@@ -640,13 +640,13 @@ function VariationDetailsModal({
                                               variation.attributes &&
                                               variation.attributes.find(
                                                 (e: any) =>
-                                                  e.attributeId === elem.id,
+                                                  e.attributeId === elem.id
                                               ) &&
                                               variation &&
                                               variation.attributes &&
                                               variation.attributes.find(
                                                 (e: any) =>
-                                                  e.attributeId === elem.id,
+                                                  e.attributeId === elem.id
                                               ).name === data.name ? (
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
                                                   <svg
@@ -668,14 +668,14 @@ function VariationDetailsModal({
                                               ) : null}
                                             </>
                                           </Listbox.Option>
-                                        ),
+                                        )
                                       )}
                                     </Listbox.Options>
                                   </Transition>
                                 </div>
                               </Listbox>
                             </div>
-                          ),
+                          )
                         )}
                         {variationError && (
                           <ErrorText

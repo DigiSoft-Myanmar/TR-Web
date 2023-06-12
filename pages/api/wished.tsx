@@ -24,7 +24,7 @@ async function getWishedItems(req: NextApiRequest, res: NextApiResponse<any>) {
       include: {
         products: {
           include: {
-            brand: true,
+            Brand: true,
             categories: true,
           },
         },
@@ -42,7 +42,7 @@ async function getWishedItems(req: NextApiRequest, res: NextApiResponse<any>) {
 
 async function modifyWishedList(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
@@ -68,7 +68,7 @@ async function modifyWishedList(
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   switch (req.method) {
     case "GET": {

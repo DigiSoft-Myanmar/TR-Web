@@ -29,6 +29,8 @@ function Index() {
       ? Role.Buyer
       : type === RoleNav.Sellers
       ? Role.Seller
+      : type === RoleNav.Traders
+      ? Role.Trader
       : type === RoleNav.Admin
       ? Role.Admin
       : type === RoleNav.Staff
@@ -79,7 +81,7 @@ function Index() {
       <div>
         {type === RoleNav.Buyers ? (
           <BuyerTbl data={data} refetch={() => refetch()} />
-        ) : type === RoleNav.Sellers ? (
+        ) : type === RoleNav.Sellers || type === RoleNav.Traders ? (
           <SellerTbl data={data} refetch={() => refetch()} />
         ) : type === RoleNav.Staff ? (
           <StaffTbl data={data} refetch={() => refetch()} />

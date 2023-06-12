@@ -17,7 +17,7 @@ function Default() {
   const router = useRouter();
   const { data: session }: any = useSession();
   const { isLoading, error, data, refetch } = useQuery("usersData", () =>
-    fetch("/api/user?type=" + Role.Seller).then((res) => {
+    fetch("/api/user?isSeller=true").then((res) => {
       let json = res.json();
       return json;
     })

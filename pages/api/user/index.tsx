@@ -19,11 +19,44 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { RoleNav } from "@/types/role";
-import { Role } from "@prisma/client";
+import { Gender, Role, User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+async function addShippingInfo(user: any) {
+  if (user.role === Role.Seller || user.role === Role.Trader) {
+    const shippingFees = await prisma.shippingCost.findMany({
+      where: {
+        sellerId: user.id,
+        shippingCost: {
+          not: user.defaultShippingCost ? user.defaultShippingCost : 0,
+        },
+      },
+    });
+    user.shippingInfo = {
+      shippingIncluded: user.shippingIncluded,
+      defaultShippingCost: user.defaultShippingCost,
+      isDiff: shippingFees.length > 0 ? true : false,
+    };
+    const freeShippingFees = await prisma.shippingCost.findMany({
+      where: {
+        sellerId: user.id,
+        freeShippingCost: {
+          not: user.freeShippingCost ? user.freeShippingCost : 0,
+        },
+      },
+    });
+    user.freeShippingInfo = {
+      shippingIncluded: user.shippingIncluded,
+      isOfferFreeShipping: user.isOfferFreeShipping,
+      freeShippingCost: user.freeShippingCost,
+      isDiff: freeShippingFees.length > 0 ? true : false,
+    };
+  }
+  return user;
+}
+
 async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
-  const { isLogin, phone, type, email } = req.query;
+  const { isLogin, phone, type, email, isSeller } = req.query;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
   if (isLogin && phone) {
@@ -46,9 +79,24 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
       session.role === Role.Staff ||
       session.role === Role.SuperAdmin)
   ) {
-    let user: any = await getAllUser(type?.toString());
+    if (isSeller?.toString() === "true") {
+      let user = await prisma.user.findMany({
+        where: {
+          role: {
+            in: [Role.Seller, Role.Trader],
+          },
+        },
+      });
+      for (let i = 0; i < user.length; i++) {
+        let shippingInfo = await addShippingInfo(user[i]);
+        user[i] = { ...user[i], ...shippingInfo };
+      }
+      return res.status(200).json(user);
+    } else {
+      let user: any = await getAllUser(type?.toString());
 
-    return res.status(200).json(user);
+      return res.status(200).json(user);
+    }
   } else {
     return res.status(400).json(BadRequest);
   }
@@ -77,13 +125,12 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
           if (b.confirmPassword) {
             delete b.confirmPassword;
           }
-          if (data.role === Role.Seller) {
-            user = await createSeller(data);
-          } else {
-            user = await prisma.user.create({
-              data: b,
-            });
+          if (!b.gender) {
+            b.gender = Gender.Male;
           }
+          user = await prisma.user.create({
+            data: b,
+          });
           return { isError: false, data: user };
         })
         .catch((err) => {
@@ -94,10 +141,6 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
       } else {
         return res.status(200).json(Success);
       }
-    } else if (data.brandName) {
-      const user = await createSeller(data);
-    } else {
-      const user = await createBuyer(data);
     }
     return res.status(200).json(data);
   } catch (err) {
@@ -117,8 +160,30 @@ export default async function Handler(
       return getUser(req, res);
     case "POST":
       return addUser(req, res);
-    /*   case "PUT":
-        return res.status(404).json(NotAvailable); */
+    case "PUT":
+      let { id } = req.query;
+      let data = JSON.parse(req.body);
+      if (id) {
+        let user = await prisma.user.findFirst({
+          where: {
+            id: id.toString(),
+          },
+        });
+        if (user) {
+          let u = await prisma.user.update({
+            where: {
+              id: user.id,
+            },
+            data: data,
+          });
+          return res.status(200).json(Success);
+        } else {
+          return res.status(404).json(NotAvailable);
+        }
+      } else {
+        return res.status(400).json(BadRequest);
+      }
+
     case "DELETE":
       if (
         session &&

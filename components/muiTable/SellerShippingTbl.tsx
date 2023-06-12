@@ -15,7 +15,12 @@ import { PaymentStatus } from "@/types/orderTypes";
 // ** Type Imports
 import { Category, Product, Role, StockType } from "@prisma/client";
 import { fileUrl } from "@/types/const";
-import { formatAmount, formatDate, getText } from "@/util/textHelper";
+import {
+  formatAmount,
+  formatDate,
+  getInitials,
+  getText,
+} from "@/util/textHelper";
 import { useRouter } from "next/router";
 import {
   Button,
@@ -115,31 +120,32 @@ const SellerShippingTbl = ({
     {
       flex: 0.2,
       minWidth: 120,
-      field: "brand",
-      headerName: "Brand",
+      field: "Profile",
+      headerName: "Profile",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img
-            src={fileUrl + row.brand?.brandLogo}
-            alt={`${row.brand?.brandName}`}
-          />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Tooltip title={row.brand?.brandName}>
-              <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-                {row.brand?.brandName}
-              </Typography>
-            </Tooltip>
+          {row.profile ? (
+            <Img src={fileUrl + row.profile} alt={`${row.profile}`} />
+          ) : (
+            <div className="avatar">
+              <div className="avatar placeholder">
+                <div className="bg-neutral-focus text-neutral-content rounded-full w-8 h-8 min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px]">
+                  <span>{getInitials(row.username)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 1 }}>
             <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {row.brand?.sellAllow === true ? (
-                <span className="mt-2 rounded-md bg-success/20 px-3 py-1 text-xs text-success">
-                  Active
-                </span>
-              ) : (
-                <span className="mt-2 rounded-md bg-error/20 px-3 py-1 text-xs text-error">
-                  Disabled
-                </span>
-              )}
+              {row.username}
             </Typography>
+            {row.displayName ? (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                {row.displayName}
+              </Typography>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       ),
@@ -148,7 +154,7 @@ const SellerShippingTbl = ({
       flex: 0.3,
       minWidth: 100,
       headerName: "Contact",
-      field: "contact",
+      field: "Contact",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box
@@ -157,16 +163,14 @@ const SellerShippingTbl = ({
               flexDirection: "column",
             }}
           >
-            <Tooltip
-              title={row.contact?.username + " | " + row.contact?.phoneNum}
-            >
-              <Typography variant="caption">
-                {row.contact?.username} | {row.contact?.phoneNum}
+            <Typography variant="caption">{row?.phoneNum}</Typography>
+            {row?.email ? (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                {row?.email}
               </Typography>
-            </Tooltip>
-            <Typography variant="caption" sx={{ color: "text.disabled" }}>
-              {row.contact?.email}
-            </Typography>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       ),
@@ -220,7 +224,7 @@ const SellerShippingTbl = ({
     {
       flex: 0.4,
       minWidth: 100,
-      headerName: "Shipping Info",
+      headerName: "Shipping Cost",
       field: "shippingInfo",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -239,53 +243,13 @@ const SellerShippingTbl = ({
                 gap: 3,
               }}
             >
-              <div className="flex flex-row items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
-                  />
-                </svg>
-                <span className="text-xs">
-                  {formatAmount(
-                    row.shippingInfo?.defaultShippingCost,
-                    locale,
-                    true
-                  )}
-                </span>
-              </div>
-              <div className="flex flex-row items-center gap-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-6 w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                  />
-                </svg>
-
-                <span className="text-xs">
-                  {formatAmount(
-                    row.shippingInfo?.carGateShippingCost,
-                    locale,
-                    true
-                  )}
-                </span>
-              </div>
+              <span className="text-xs">
+                {formatAmount(
+                  row.shippingInfo?.defaultShippingCost,
+                  locale,
+                  true
+                )}
+              </span>
             </Box>
           )}
         </Box>
@@ -350,7 +314,29 @@ const SellerShippingTbl = ({
     {
       flex: 0.15,
       minWidth: 100,
-      field: "accInfo",
+      headerName: "Sell Allow",
+      field: "sellAllow",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">
+          {row.sellAllow !== true ? (
+            <span className="rounded-md bg-error/20 px-3 py-1 text-error">
+              Disable
+            </span>
+          ) : (
+            <span className="rounded-md bg-success/20 px-3 py-1 text-success">
+              Active
+            </span>
+          )}
+        </Typography>
+      ),
+    },
+    {
+      flex: 0.15,
+      minWidth: 100,
+      field: "Actions",
+      valueGetter(params: any) {
+        return params.row;
+      },
       headerName: "Action",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -358,7 +344,7 @@ const SellerShippingTbl = ({
             <IconButton
               size="small"
               component={Link}
-              href={`/account/${row.accInfo.phone}?action=view`}
+              href={`/account/${encodeURIComponent(row.phoneNum)}?action=view`}
             >
               <Icon icon="mdi:eye-outline" fontSize={20} />
             </IconButton>
@@ -366,13 +352,12 @@ const SellerShippingTbl = ({
           {session &&
             (session.role === Role.Admin ||
               session.role === Role.Staff ||
-              session.role === Role.SuperAdmin ||
-              session.role === Role.Seller) && (
+              session.role === Role.SuperAdmin) && (
               <Tooltip title="Edit">
                 <IconButton
                   size="small"
                   component={Link}
-                  href={`/shipping%20Cost/${row.accInfo.phone}`}
+                  href={`/shipping%20Cost/${encodeURIComponent(row.phoneNum)}`}
                 >
                   <Icon icon="mdi:edit" fontSize={20} />
                 </IconButton>
@@ -381,8 +366,7 @@ const SellerShippingTbl = ({
           {session &&
             (session.role === Role.Admin ||
               session.role === Role.Staff ||
-              session.role === Role.SuperAdmin ||
-              session.role === Role.Seller) && (
+              session.role === Role.SuperAdmin) && (
               <Tooltip title="Delete">
                 <IconButton
                   size="small"
@@ -392,13 +376,10 @@ const SellerShippingTbl = ({
                       "",
                       locale,
                       () => {
-                        fetch(
-                          `/api/user?id=${encodeURIComponent(row.accInfo.id)}`,
-                          {
-                            method: "DELETE",
-                            headers: getHeaders(session),
-                          }
-                        ).then(async (data) => {
+                        fetch(`/api/user?id=${encodeURIComponent(row.id)}`, {
+                          method: "DELETE",
+                          headers: getHeaders(session),
+                        }).then(async (data) => {
                           if (data.status === 200) {
                             showSuccessDialog(
                               t("delete") + " " + t("success"),

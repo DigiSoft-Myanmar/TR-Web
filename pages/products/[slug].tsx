@@ -61,34 +61,22 @@ function ProductDetails(param: any) {
 
 export async function getServerSideProps({ locale, params }: any) {
   let product: any = await prisma.product.findFirst({
-    where: { slug: params.slug },
+    where: { slug: decodeURIComponent(params.slug) },
     include: {
       Brand: true,
       categories: true,
+      Condition: true,
+      seller: true,
     },
   });
-  if (product?.Brand.createdAt) {
-    delete product.Brand.createdAt;
+
+  if (!product.shortDescription) {
+    product.shortDescription = "";
   }
-  if (product?.Brand.updatedAt) {
-    delete product.Brand.updatedAt;
+  if (!product.shortDescriptionMM) {
+    product.shortDescriptionMM = "";
   }
-  if (product?.categories) {
-    for (let i = 0; i < product.categories.length; i++) {
-      if (product.categories[i].createdAt) {
-        delete product.categories[i].createdAt;
-      }
-      if (product.categories[i].updatedAt) {
-        delete product.categories[i].updatedAt;
-      }
-    }
-  }
-  if (product?.createdAt) {
-    delete product.createdAt;
-  }
-  if (product?.updatedAt) {
-    delete product.updatedAt;
-  }
+
   if (product?.saleStartDate) {
     product.saleStartDate = new Date(product.saleStartDate).toLocaleDateString(
       "en-ca"
@@ -113,19 +101,10 @@ export async function getServerSideProps({ locale, params }: any) {
       }
     }
   }
-  if (product.state) {
-    for (let i = 0; i < product.state.length; i++) {
-      if (product.state[i].createdAt) {
-        delete product.state[i].createdAt;
-      }
-      if (product.state[i].updatedAt) {
-        delete product.state[i].updatedAt;
-      }
-    }
-  }
+
   return {
     props: {
-      product,
+      product: JSON.parse(JSON.stringify(product)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };

@@ -1,7 +1,14 @@
 import FormInput from "@/components/presentational/FormInput";
 import FormInputTextArea from "@/components/presentational/FormInputTextArea";
 import { useProduct } from "@/context/ProductContext";
-import { Brand, Category, ProductType, State } from "@prisma/client";
+import {
+  Brand,
+  Category,
+  Condition,
+  ProductType,
+  State,
+  User,
+} from "@prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -20,6 +27,10 @@ import { ImgType } from "@/types/orderTypes";
 import { showErrorDialog } from "@/util/swalFunction";
 import { isInternal } from "@/util/authHelper";
 import dynamic from "next/dynamic";
+import SellerSelectBox from "@/components/presentational/SellerSelectBox";
+import BrandAutoCompleteBox from "@/components/presentational/BrandAutoCompleteBox";
+import SelectBox from "@/components/presentational/SelectBox";
+import { useQuery } from "react-query";
 
 const FormInputRichText: any = dynamic(
   () => import("@/components/presentational/FormInputRichTextSun"),
@@ -51,11 +62,14 @@ function InformationSection({ nextFn, infoRef }: Props) {
   const { product, setProduct, setInfoCheck } = useProduct();
   const { data: session }: any = useSession();
   const tagInput = React.useRef<HTMLInputElement | null>(null);
-  const isAdmin =
-    session &&
-    (session.role === Role.Admin ||
-      session.role === Role.Staff ||
-      session.role === Role.SuperAdmin);
+
+  const { data: conditionData, refetch } = useQuery("conditionsData", () =>
+    fetch("/api/products/conditions").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
+
   const [categoryModalOpen, setCategoryModalOpen] = React.useState(false);
   const [uploadModalOpen, setUploadModalOpen] = React.useState(false);
   const [chooseModalOpen, setChooseModalOpen] = React.useState(false);
@@ -128,30 +142,35 @@ function InformationSection({ nextFn, infoRef }: Props) {
     });
   }
 
+  React.useEffect(() => {
+    console.log(errors);
+  }, [errors]);
+
   function submit(data: Information) {
     setProduct((prevValue: any) => {
       return { ...prevValue, ...data };
     });
-
     if (
       product &&
       product.imgList &&
       product.imgList.length > 0 &&
-      product.brandId &&
+      product.sellerId &&
       product.categories &&
       product.categories.length > 0
     ) {
-      if (data.SKU && product.brandId) {
+      if (data.SKU && product.sellerId) {
         setChecking(true);
         let url =
           "/api/products/checkSKU?SKU=" +
           data.SKU +
           "&brandId=" +
-          product.brandId;
+          product.sellerId;
         if (product.id) {
           url += "&id=" + encodeURIComponent(product.id);
         }
+        console.log(url);
         fetch(url).then((data) => {
+          console.log(data.status);
           if (data.status === 404) {
             setVerified(true);
             setSKUError("");
@@ -277,10 +296,10 @@ function InformationSection({ nextFn, infoRef }: Props) {
                   type="button"
                   className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:relative"
                   onClick={() => {
-                    if (product.brandId) {
+                    if (product.sellerId) {
                       setUploadModalOpen(true);
                     } else {
-                      showErrorDialog("Please select brand first.");
+                      showErrorDialog("Please select seller first.");
                     }
                   }}
                 >
@@ -307,10 +326,10 @@ function InformationSection({ nextFn, infoRef }: Props) {
                   className="flex items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-50 focus:relative"
                   title="Choose"
                   onClick={() => {
-                    if (product.brandId) {
+                    if (product.sellerId) {
                       setChooseModalOpen(true);
                     } else {
-                      showErrorDialog("Please select brand first.");
+                      showErrorDialog("Please select seller first.");
                     }
                   }}
                 >
@@ -417,13 +436,13 @@ function InformationSection({ nextFn, infoRef }: Props) {
                     SKUError || errors.SKU?.message ? "" : "mt-7"
                   } rounded-md bg-primary px-3 py-2 text-sm text-white hover:bg-primary-focus`}
                   onClick={() => {
-                    if (watchFields.SKU && product.brandId) {
+                    if (watchFields.SKU && product.sellerId) {
                       setChecking(true);
                       let url =
                         "/api/products/checkSKU?SKU=" +
                         watchFields.SKU +
                         "&brandId=" +
-                        product.brandId;
+                        product.sellerId;
                       if (product.id) {
                         url += "&id=" + encodeURIComponent(product.id);
                       }
@@ -443,10 +462,10 @@ function InformationSection({ nextFn, infoRef }: Props) {
                         "SKU အားဖြည့်စွက်ပေးပါ။",
                         locale
                       );
-                    } else if (!product.brandId) {
+                    } else if (!product.sellerId) {
                       showErrorDialog(
-                        "Please input brand first.",
-                        "Brand အားဖြည့်စွက်ပေးပါ။",
+                        "Please input seller first.",
+                        "ရောင်းချသူ အားဖြည့်စွက်ပေးပါ။",
                         locale
                       );
                     }
@@ -501,14 +520,14 @@ function InformationSection({ nextFn, infoRef }: Props) {
                 {t("seller")}
                 <span className="text-primary">*</span>
               </label>
-              {/* <BrandSelectBox
-                selected={product?.brand}
-                setSelected={(e: Brand) => {
+              <SellerSelectBox
+                selected={product?.seller}
+                setSelected={(e: User) => {
                   setProduct((prevValue: any) => {
-                    return { ...prevValue, brand: e, brandId: e.id };
+                    return { ...prevValue, seller: e, sellerId: e.id };
                   });
                 }}
-              /> */}
+              />
             </div>
           ) : (
             <></>
@@ -520,14 +539,33 @@ function InformationSection({ nextFn, infoRef }: Props) {
               <span className="text-primary">*</span>
             </label>
 
-            {/* <BrandSelectBox
-                  selected={product?.brand}
-                  setSelected={(e: Brand) => {
-                    setProduct((prevValue: any) => {
-                      return { ...prevValue, brand: e, brandId: e.id };
-                    });
-                  }}
-                /> */}
+            <BrandAutoCompleteBox
+              setSelected={(e: any) => {
+                setProduct((prevValue: any) => {
+                  if (e.id) {
+                    let d = { ...prevValue };
+                    if (d.brandName) {
+                      delete d.brandName;
+                    }
+                    return {
+                      ...d,
+                      brandId: e.id,
+                      Brand: e,
+                    };
+                  } else {
+                    let d = { ...prevValue };
+                    if (d.brandId) {
+                      delete d.brandId;
+                    }
+                    return {
+                      ...d,
+                      Brand: e,
+                    };
+                  }
+                });
+              }}
+              selected={{ name: product?.Brand?.name, id: product.brandId }}
+            />
           </div>
 
           <div>
@@ -536,14 +574,36 @@ function InformationSection({ nextFn, infoRef }: Props) {
               <span className="text-primary">*</span>
             </label>
 
-            {/* <BrandSelectBox
-                  selected={product?.brand}
-                  setSelected={(e: Brand) => {
-                    setProduct((prevValue: any) => {
-                      return { ...prevValue, brand: e, brandId: e.id };
-                    });
-                  }}
-                /> */}
+            <SelectBox
+              isSearch={true}
+              list={
+                conditionData
+                  ? conditionData.map((z: Condition) => {
+                      return {
+                        name: z.name,
+                        nameMM: z.nameMM,
+                        value: z.id,
+                      };
+                    })
+                  : []
+              }
+              selected={
+                product.Condition
+                  ? {
+                      name: product?.Condition?.name,
+                      value: product?.conditionId,
+                      nameMM: product?.Condition?.nameMM,
+                    }
+                  : undefined
+              }
+              setSelected={(e: any) => {
+                if (e) {
+                  setProduct((prevValue: any) => {
+                    return { ...prevValue, Condition: e, conditionId: e.id };
+                  });
+                }
+              }}
+            />
           </div>
 
           <div>
@@ -700,9 +760,10 @@ function InformationSection({ nextFn, infoRef }: Props) {
         isModalOpen={uploadModalOpen}
         setModalOpen={setUploadModalOpen}
         sellerId={
-          session && session.role === Role.Seller
-            ? session.brand.id
-            : product.brandId
+          session &&
+          (session.role === Role.Seller || session.role === Role.Trader)
+            ? session.id
+            : product.sellerId
         }
         setFileSrc={(e: string[]) => {
           setProduct((prevValue: any) => {
@@ -725,9 +786,10 @@ function InformationSection({ nextFn, infoRef }: Props) {
         fileSrc={product && product.imgList ? product.imgList : []}
         isSeller={true}
         sellerId={
-          session && session.role === Role.Seller
-            ? session.brand.id
-            : product.brandId
+          session &&
+          (session.role === Role.Seller || session.role === Role.Trader)
+            ? session.id
+            : product.sellerId
         }
         setFileSrc={(e: string[]) => {
           setProduct((prevValue: any) => {

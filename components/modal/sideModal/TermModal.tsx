@@ -253,7 +253,7 @@ function TermModal({
                   <form onSubmit={handleSubmit(submitTerm)}>
                     <div className="mt-2 flex flex-col gap-3">
                       <FormInput
-                        label={t("name") + " " + t("en")}
+                        label={t("name") + " " + t("eng")}
                         placeHolder={t("enter") + " " + t("name")}
                         error={errors.name?.message}
                         type="text"

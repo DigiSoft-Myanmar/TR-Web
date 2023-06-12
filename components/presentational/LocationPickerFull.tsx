@@ -1,72 +1,90 @@
-import React, { Fragment, useState } from "react";
+import { fetcher } from "@/util/fetcher";
+import { getText } from "@/util/textHelper";
 import { Listbox, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
-
-export interface SelectType {
-  name: string;
-  nameMM?: string;
-  value: string;
-}
+import React, { Fragment } from "react";
+import useSWR from "swr";
 
 interface Props {
-  list: SelectType[];
-  selected?: SelectType;
+  selected?: any;
   setSelected: Function;
-  isSearch: boolean;
-  disabled?: boolean;
 }
 
-export default function SelectBox({
-  list,
-  selected,
-  setSelected,
-  isSearch,
-  disabled,
-}: Props) {
-  const { locale } = useRouter();
-  const [showList, setShowList] = React.useState<SelectType[]>(list);
-  const [searchQry, setSearchQry] = React.useState<string>("");
+function LocationPickerFull({ selected, setSelected }: Props) {
+  const { data } = useSWR("/api/townships?allow=true", fetcher);
+  const router = useRouter();
+  const { locale } = router;
+  const [locationList, setLocationList] = React.useState([]);
+  const [showList, setShowList] = React.useState([]);
+  const [qry, setQry] = React.useState("");
 
-  React.useEffect(() => {
-    if (!selected) {
-      setSelected(list[0]);
+  const generateLocationStrings = (data) => {
+    const result = [];
+
+    for (const city of data) {
+      const cityName = city.name;
+
+      for (const district of city.districts) {
+        const districtName = district.name;
+
+        for (const township of district.townships) {
+          const townshipName = township.name;
+
+          const locationString = `${cityName} / ${districtName} / ${townshipName}`;
+          result.push({
+            locationString: locationString,
+            locationStringMM: `${city.nameMM} / ${district.nameMM} / ${township.nameMM}`,
+            stateId: city.id,
+            districtId: district.id,
+            townshipId: township.id,
+          });
+        }
+      }
     }
-  }, [selected]);
+
+    return result;
+  };
 
   React.useEffect(() => {
-    if (searchQry && searchQry.length > 0) {
+    if (data) {
+      setLocationList(generateLocationStrings(data));
+    }
+  }, [data]);
+
+  React.useEffect(() => {
+    if (qry) {
       setShowList(
-        list.filter(
-          (e) =>
-            e.name.toLowerCase().includes(searchQry.toLowerCase()) ||
-            (e.nameMM &&
-              e.nameMM.toLowerCase().includes(searchQry.toLowerCase()))
+        locationList.filter(
+          (z) =>
+            z.locationString.toLowerCase().includes(qry) ||
+            z.locationStringMM.toLowerCase().includes(qry)
         )
       );
     } else {
-      setShowList(list);
+      setShowList(locationList);
     }
-  }, [list, searchQry]);
+  }, [qry, locationList]);
 
   return (
-    <Listbox
-      value={selected}
-      onChange={(e) => setSelected(e)}
-      disabled={disabled === true ? true : false}
-    >
+    <Listbox value={selected} onChange={(e) => setSelected(e)}>
       <div className="relative mt-1">
         <Listbox.Button
           className={`relative w-full cursor-pointer rounded-lg
-          py-2 pl-3 pr-10 text-left text-primaryText focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300`}
+      py-2 pl-3 pr-10 text-left text-primaryText border border-gray-300 focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm`}
         >
           <span className="block truncate">
-            {selected
-              ? locale &&
-                locale === "mm" &&
-                selected.nameMM &&
-                selected.nameMM.length > 0
-                ? selected.nameMM
-                : selected.name
+            {locationList.find(
+              (z) =>
+                z.stateId === selected.stateId &&
+                z.districtId === selected.districtId &&
+                z.townshipId === selected.townshipId
+            )
+              ? locationList.find(
+                  (z) =>
+                    z.stateId === selected.stateId &&
+                    z.districtId === selected.districtId &&
+                    z.townshipId === selected.townshipId
+                )?.locationString
               : "-"}
           </span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -102,12 +120,12 @@ export default function SelectBox({
                   className="peer block w-full appearance-none border-0 border-b-2 border-opacity-30 bg-transparent py-2.5 px-0 text-sm focus:border-primary focus:outline-none focus:ring-0"
                   placeholder="Search....."
                   autoComplete="false"
-                  value={searchQry}
-                  onChange={(e) => setSearchQry(e.currentTarget.value)}
+                  value={qry}
+                  onChange={(e) => setQry(e.currentTarget.value)}
                 />
               </div>
             </div>
-            {showList?.map((data, index) => (
+            {showList.map((data, index) => (
               <Listbox.Option
                 key={index}
                 className={({ active }) =>
@@ -123,14 +141,15 @@ export default function SelectBox({
                       selected ? "font-medium" : "font-normal"
                     }`}
                   >
-                    {locale &&
-                    locale === "mm" &&
-                    data.nameMM &&
-                    data.nameMM.length > 0
-                      ? data.nameMM
-                      : data.name}
+                    {getText(
+                      data.locationString,
+                      data.locationStringMM,
+                      locale
+                    )}
                   </span>
-                  {selected && selected.value === data.value ? (
+                  {data.stateId === selected.stateId &&
+                  data.districtId === selected.districtId &&
+                  data.townshipId === selected.townshipId ? (
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -158,3 +177,5 @@ export default function SelectBox({
     </Listbox>
   );
 }
+
+export default LocationPickerFull;

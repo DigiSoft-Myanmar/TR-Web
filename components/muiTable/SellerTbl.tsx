@@ -15,9 +15,15 @@ import { PaymentStatus } from "@/types/orderTypes";
 // ** Type Imports
 import { Category, Product, Role, StockType } from "@prisma/client";
 import { fileUrl } from "@/types/const";
-import { formatAmount, formatDate, getText } from "@/util/textHelper";
+import {
+  formatAmount,
+  formatDate,
+  getInitials,
+  getText,
+} from "@/util/textHelper";
 import { useRouter } from "next/router";
 import {
+  Avatar,
   Button,
   Checkbox,
   FormControl,
@@ -78,6 +84,7 @@ const SellerTbl = ({
   const [pageSize, setPageSize] = useState<number>(7);
   const [data, setData] = React.useState<any>();
   const router = useRouter();
+  const { type } = router.query;
   const { locale } = router;
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
@@ -115,51 +122,42 @@ const SellerTbl = ({
     {
       flex: 0.2,
       minWidth: 120,
-      field: "brand",
-      headerName: "Brand",
+      field: "profile",
+      headerName: "Profile",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img
-            src={fileUrl + row.brand?.brandLogo}
-            alt={`${row.brand?.brandName}`}
-          />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          {row.profile ? (
+            <Img src={fileUrl + row.profile} alt={`${row.profile}`} />
+          ) : (
+            <div className="avatar">
+              <div className="avatar placeholder">
+                <div className="bg-neutral-focus text-neutral-content rounded-full w-8 h-8 min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px]">
+                  <span>{getInitials(row.username)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 1 }}>
             <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {row.brand?.brandName}
+              {row.username}
             </Typography>
-            <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {row.brand?.sellAllow === true ? (
-                <span className="mt-2 rounded-md bg-success/20 px-3 py-1 text-xs text-success">
-                  Active
-                </span>
-              ) : (
-                <span className="mt-2 rounded-md bg-error/20 px-3 py-1 text-xs text-error">
-                  Disabled
-                </span>
-              )}
-            </Typography>
+            {row.displayName ? (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                {row.displayName}
+              </Typography>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       ),
     },
-    {
-      flex: 0.2,
-      minWidth: 100,
-      headerName: "Owner",
-      field: "username",
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-            {row.username}
-          </Typography>
-        </Box>
-      ),
-    },
+
     {
       flex: 0.3,
       minWidth: 100,
       headerName: "Contact",
-      field: "contact",
+      field: "Contact",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box
@@ -168,10 +166,14 @@ const SellerTbl = ({
               flexDirection: "column",
             }}
           >
-            <Typography variant="caption">{row.contact?.phoneNum}</Typography>
-            <Typography variant="caption" sx={{ color: "text.disabled" }}>
-              {row.contact?.email}
-            </Typography>
+            <Typography variant="caption">{row?.phoneNum}</Typography>
+            {row?.email ? (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                {row?.email}
+              </Typography>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       ),
@@ -232,6 +234,45 @@ const SellerTbl = ({
       ),
     },
     {
+      flex: 0.15,
+      minWidth: 100,
+      headerName: "State",
+      field: "State",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">
+          {row?.state?.name
+            ? getText(row?.state?.name, row?.state?.nameMM, locale)
+            : "-"}
+        </Typography>
+      ),
+    },
+    {
+      flex: 0.15,
+      minWidth: 100,
+      headerName: "District",
+      field: "District",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">
+          {row?.district?.name
+            ? getText(row?.district?.name, row?.district?.nameMM, locale)
+            : "-"}
+        </Typography>
+      ),
+    },
+    {
+      flex: 0.15,
+      minWidth: 100,
+      headerName: "Township",
+      field: "Township",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">
+          {row?.township?.name
+            ? getText(row?.township?.name, row?.township?.nameMM, locale)
+            : "-"}
+        </Typography>
+      ),
+    },
+    {
       flex: 0.25,
       minWidth: 100,
       headerName: "Last Login",
@@ -273,7 +314,29 @@ const SellerTbl = ({
     {
       flex: 0.15,
       minWidth: 100,
-      field: "accInfo",
+      headerName: "Sell Allow",
+      field: "sellAllow",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">
+          {row.sellAllow !== true ? (
+            <span className="rounded-md bg-error/20 px-3 py-1 text-error">
+              Disable
+            </span>
+          ) : (
+            <span className="rounded-md bg-success/20 px-3 py-1 text-success">
+              Active
+            </span>
+          )}
+        </Typography>
+      ),
+    },
+    {
+      flex: 0.15,
+      minWidth: 100,
+      field: "Actions",
+      valueGetter(params: any) {
+        return params.row;
+      },
       headerName: "Action",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -281,7 +344,7 @@ const SellerTbl = ({
             <IconButton
               size="small"
               component={Link}
-              href={`/account/${row.accInfo.phone}?action=view`}
+              href={`/account/${encodeURIComponent(row.phoneNum)}?action=view`}
             >
               <Icon icon="mdi:eye-outline" fontSize={20} />
             </IconButton>
@@ -289,13 +352,14 @@ const SellerTbl = ({
           {session &&
             (session.role === Role.Admin ||
               session.role === Role.Staff ||
-              session.role === Role.SuperAdmin ||
-              session.role === Role.Seller) && (
+              session.role === Role.SuperAdmin) && (
               <Tooltip title="Edit">
                 <IconButton
                   size="small"
                   component={Link}
-                  href={`/account/${row.accInfo.phone}?action=edit`}
+                  href={`/account/${encodeURIComponent(
+                    row.phoneNum
+                  )}?action=edit`}
                 >
                   <Icon icon="mdi:edit" fontSize={20} />
                 </IconButton>
@@ -304,8 +368,7 @@ const SellerTbl = ({
           {session &&
             (session.role === Role.Admin ||
               session.role === Role.Staff ||
-              session.role === Role.SuperAdmin ||
-              session.role === Role.Seller) && (
+              session.role === Role.SuperAdmin) && (
               <Tooltip title="Delete">
                 <IconButton
                   size="small"
@@ -315,13 +378,10 @@ const SellerTbl = ({
                       "",
                       locale,
                       () => {
-                        fetch(
-                          `/api/user?id=${encodeURIComponent(row.accInfo.id)}`,
-                          {
-                            method: "DELETE",
-                            headers: getHeaders(session),
-                          }
-                        ).then(async (data) => {
+                        fetch(`/api/user?id=${encodeURIComponent(row.id)}`, {
+                          method: "DELETE",
+                          headers: getHeaders(session),
+                        }).then(async (data) => {
                           if (data.status === 200) {
                             showSuccessDialog(
                               t("delete") + " " + t("success"),
@@ -355,7 +415,7 @@ const SellerTbl = ({
         <Card>
           <div className="flex w-full flex-row flex-wrap items-center px-5 pt-5">
             <div className="flex flex-grow flex-row items-end gap-3">
-              <h3 className="text-xl font-semibold">Sellers / Traders</h3>
+              <h3 className="text-xl font-semibold">{type}</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
               <button
@@ -409,7 +469,7 @@ const SellerTbl = ({
           </div>
           <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
             <StatsCard
-              label="Total Sellers"
+              label={`Total ${type}`}
               currentCount={
                 data.filter((e: any) => e.createdAt > prevYear.toISOString())
                   .length
@@ -425,7 +485,7 @@ const SellerTbl = ({
             />
 
             <StatsCard
-              label={"Pending Sellers"}
+              label={`Pending ${type}`}
               currentCount={
                 data.filter(
                   (e: any) =>
@@ -493,7 +553,7 @@ const SellerTbl = ({
             />
 
             <StatsCard
-              label={"Active Sellers (" + new Date().getFullYear() + ")"}
+              label={`Active ${type} (${new Date().getFullYear()})`}
               currentCount={
                 data.filter(
                   (e: any) =>

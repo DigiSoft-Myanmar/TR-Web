@@ -21,6 +21,7 @@ import { useQuery } from "react-query";
 
 function MembershipPage() {
   const { locale } = useRouter();
+  const router = useRouter();
   const { isLoading, error, data, refetch } = useQuery("membershipsData", () =>
     fetch("/api/memberships").then((res) => {
       let json = res.json();
@@ -63,9 +64,10 @@ function MembershipPage() {
                             className="hover:text-primary"
                             onClick={(evt) => {
                               evt.stopPropagation();
-                              setTitle(t("Update Membership"));
-                              setModalOpen(true);
-                              setMembership(e);
+                              router.push(
+                                "/contents/memberships/" +
+                                  encodeURIComponent(e.name)
+                              );
                             }}
                           >
                             <span className="sr-only">Edit</span>
@@ -147,7 +149,7 @@ function MembershipPage() {
             ) : (
               <EmptyScreen
                 onClickFn={() => {
-                  setModalOpen(true);
+                  router.push("/contents/memberships/new");
                 }}
               />
             )}
@@ -155,7 +157,7 @@ function MembershipPage() {
           <button
             className="fixed right-3 bottom-3 rounded-full bg-primary p-3 text-white"
             onClick={() => {
-              setTitle(t("New Membership"));
+              router.push("/contents/memberships/new");
             }}
           >
             <svg

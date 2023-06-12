@@ -192,9 +192,9 @@ function AnnouncementModal({
                   <form onSubmit={handleSubmit(submitAnnouncement)}>
                     <div className="mt-2 flex flex-col gap-3">
                       <FormInput
-                        label={t("announcement") + " " + t("en")}
+                        label={t("announcement") + " " + t("eng")}
                         placeHolder={
-                          t("enter") + " " + t("announcement") + " " + t("en")
+                          t("enter") + " " + t("announcement") + " " + t("eng")
                         }
                         error={errors.bannerText?.message}
                         type="text"

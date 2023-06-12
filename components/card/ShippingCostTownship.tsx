@@ -192,7 +192,7 @@ function ShippingCostTownship({
                                 "/api/shippingCost?sellerId=" +
                                   sellerId +
                                   "&township=" +
-                                  township.name,
+                                  township.id,
                                 {
                                   method: "POST",
                                   body: JSON.stringify({

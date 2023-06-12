@@ -105,7 +105,10 @@ export default async function handler(
         }
 
         let products: any = await getAllProducts(
-          session && session.role === Role.Seller ? session.brand.id : "",
+          session &&
+            (session.role === Role.Seller || session.role === Role.Trader)
+            ? session.id
+            : "",
           session
         );
         for (let i = 0; i < products.length; i++) {
@@ -118,13 +121,13 @@ export default async function handler(
           products[i].totalSales = 0;
           products[i].status = {
             isFeatured: products[i].isFeatured,
-            isPublished: products[i].brand.user
-              ? products[i].brand.user.sellAllow === true
+            isPublished: products[i].seller
+              ? products[i].seller.sellAllow === true
                 ? products[i].isPublished
                 : false
               : false,
-            sellAllow: products[i].brand.user
-              ? products[i].brand.user.sellAllow
+            sellAllow: products[i].seller
+              ? products[i].seller.sellAllow
               : false,
           };
 
@@ -182,7 +185,7 @@ export default async function handler(
             img: products[i].imgList[0],
             name: products[i].name,
             nameMM: products[i].nameMM,
-            brandName: products[i].brand.brandName,
+            brandName: products[i].brand?.name,
           };
           products[i].stock = stock;
 
@@ -252,5 +255,6 @@ export default async function handler(
     }
   } catch (err) {
     console.log(err);
+    return res.status(400).json(err);
   }
 }

@@ -228,13 +228,13 @@ function Login({ siteInfo }: { siteInfo: Content }) {
         </Head>
         <section className="relative flex w-full flex-row flex-wrap items-stretch justify-start bg-red-600">
           <div className="absolute top-0 bottom-0 left-0 right-0">
-            <Image
+            {/* <Image
               src={fileUrl + siteInfo?.loginImg}
               width={1080}
               height={500}
               alt="banner"
               className="h-full min-h-[500px] w-full bg-cover bg-center bg-no-repeat"
-            />
+            /> */}
             <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25 lg:hidden"></div>
           </div>
           {/* <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25"></div> */}

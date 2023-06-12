@@ -1,68 +1,55 @@
-import { useProduct } from "@/context/ProductContext";
-import { ProductType } from "@prisma/client";
 import { showErrorDialog } from "@/util/swalFunction";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
 import React, { useRef } from "react";
-import AttributeSection from "../section/product/AttributeSection";
-import DetailSection from "../section/product/DetailSection";
-import InformationSection from "../section/product/InformationSection";
-import PricingSection from "../section/product/PricingSection";
-import ConfirmationSection from "../section/product/ConfirmationSection";
-import StatusSection from "../section/product/StatusSection";
-import VariationSection from "../section/product/VariationSection";
-import { Role } from "@prisma/client";
+import { useMembership } from "@/context/MemberContext";
+import InformationSection from "../section/membership/InformationSection";
+import SearchSection from "../section/membership/SearchSection";
+import SKUSection from "../section/membership/SKUSection";
+import ReportSection from "../section/membership/ReportSection";
+import AdsSection from "../section/membership/AdsSection";
+import ConfirmationSection from "../section/membership/ConfirmationSection";
 
 enum Step {
   Information,
-  Attribute,
-  Pricing,
-  Details,
-  Status,
+  TopSearch,
+  SKUListing,
+  Reports,
+  Advertisements,
   Confirmation,
 }
 
-function ProductScreen() {
+function MembershipScreen() {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
 
-  const { infoValid, attributeValid, pricingValid, product, infoCheck } =
-    useProduct();
-
-  const isVariable = product.type === ProductType.Variable ? true : false;
-
-  const submitInfoRef = useRef<HTMLButtonElement | null>();
-  const submitPricingRef = useRef<HTMLButtonElement | null>();
-  const submitStatusRef = useRef<HTMLButtonElement | null>();
+  const {
+    membership,
+    infoValid,
+    SKUValid,
+    adsValid,
+    reportValid,
+    topSearchValid,
+  } = useMembership();
 
   const [isFullScreen, setFullScreen] = React.useState(false);
 
-  const stepList =
-    isVariable === true
-      ? [
-          Step.Information,
-          Step.Attribute,
-          Step.Pricing,
-          Step.Details,
-          Step.Status,
-          Step.Confirmation,
-        ]
-      : [
-          Step.Information,
-          Step.Pricing,
-          Step.Details,
-          Step.Status,
-          Step.Confirmation,
-        ];
+  const stepList = [
+    Step.Information,
+    Step.TopSearch,
+    Step.SKUListing,
+    Step.Reports,
+    Step.Advertisements,
+    Step.Confirmation,
+  ];
 
   const [currentStep, setCurrentStep] = React.useState(Step.Information);
 
   const stepDetails = [
     {
       step: Step.Information,
-      title: t("information"),
-      description: t("fillInformation"),
+      title: t("memberInfo"),
+      description: t("fillMemberInfo"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -81,73 +68,9 @@ function ProductScreen() {
       ),
     },
     {
-      step: Step.Attribute,
-      title: t("attributes"),
-      description: t("fillAttributes"),
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="h-6 w-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"
-          />
-        </svg>
-      ),
-    },
-    {
-      step: Step.Pricing,
-      title: t("pricing"),
-      description: t("fillPricing"),
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="h-6 w-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
-          />
-        </svg>
-      ),
-    },
-
-    {
-      step: Step.Details,
-      title: t("details"),
-      description: t("fillDetails"),
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="h-6 w-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-          />
-        </svg>
-      ),
-    },
-    {
-      step: Step.Status,
-      title: t("status"),
-      description: t("fillProductStatus"),
+      step: Step.TopSearch,
+      title: t("topSearchMember"),
+      description: t("fillTopSearchMember"),
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -160,12 +83,71 @@ function ProductScreen() {
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+            d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
+        </svg>
+      ),
+    },
+    {
+      step: Step.SKUListing,
+      title: t("skuListingMember"),
+      description: t("fillSKUListingMember"),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            d="M12 3.75v16.5M2.25 12h19.5M6.375 17.25a4.875 4.875 0 004.875-4.875V12m6.375 5.25a4.875 4.875 0 01-4.875-4.875V12m-9 8.25h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5zm12.621-9.44c-1.409 1.41-4.242 1.061-4.242 1.061s-.349-2.833 1.06-4.242a2.25 2.25 0 013.182 3.182zM10.773 7.63c1.409 1.409 1.06 4.242 1.06 4.242S9 12.22 7.592 10.811a2.25 2.25 0 113.182-3.182z"
+          />
+        </svg>
+      ),
+    },
+
+    {
+      step: Step.Reports,
+      title: t("reportsMember"),
+      description: t("fillReportsMember"),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
+          />
+        </svg>
+      ),
+    },
+    {
+      step: Step.Advertisements,
+      title: t("adsMember"),
+      description: t("fillAdsMember"),
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46"
           />
         </svg>
       ),
@@ -193,31 +175,33 @@ function ProductScreen() {
     },
   ];
 
+  console.log(stepList);
+
   function verify(newStep: Step) {
     if (newStep === Step.Information) {
       return true;
     }
-    if (newStep === Step.Attribute) {
+    if (newStep === Step.TopSearch) {
       return infoValid;
     }
-    if (newStep === Step.Pricing) {
-      return infoValid && attributeValid;
+    if (newStep === Step.SKUListing) {
+      return infoValid && topSearchValid;
     }
-    if (newStep === Step.Details) {
-      return infoValid && attributeValid && pricingValid;
+    if (newStep === Step.Reports) {
+      return infoValid && topSearchValid && SKUValid;
     }
-    if (newStep === Step.Status) {
-      return infoValid && attributeValid && pricingValid;
+    if (newStep === Step.Advertisements) {
+      return infoValid && topSearchValid && SKUValid && reportValid;
     }
     if (newStep === Step.Confirmation) {
-      return infoValid && attributeValid && pricingValid;
+      return infoValid && topSearchValid && SKUValid && reportValid && adsValid;
     }
     return true;
   }
 
   function nextFn() {
     setCurrentStep((prevValue) => {
-      let nextStep = prevValue;
+      let nextStep: any = prevValue;
       let index = stepList.findIndex((e) => e === nextStep);
       if (index < stepList.length - 1) {
         nextStep = stepList[index + 1];
@@ -228,7 +212,7 @@ function ProductScreen() {
 
   function backFn() {
     setCurrentStep((prevValue) => {
-      let prevStep = prevValue;
+      let prevStep: any = prevValue;
       let index = stepList.findIndex((e) => e === prevStep);
       if (index - 1 >= 0) {
         prevStep = stepList[index - 1];
@@ -295,7 +279,7 @@ function ProductScreen() {
             </button>
           </div>
           <div className="mt-3">
-            {!product.id ? (
+            {!membership?.id ? (
               <>
                 <div
                   className={`flex flex-row items-center text-white gap-3 ${
@@ -313,17 +297,20 @@ function ProductScreen() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M12 3.75v16.5M2.25 12h19.5M6.375 17.25a4.875 4.875 0 004.875-4.875V12m6.375 5.25a4.875 4.875 0 01-4.875-4.875V12m-9 8.25h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5zm12.621-9.44c-1.409 1.41-4.242 1.061-4.242 1.061s-.349-2.833 1.06-4.242a2.25 2.25 0 013.182 3.182zM10.773 7.63c1.409 1.409 1.06 4.242 1.06 4.242S9 12.22 7.592 10.811a2.25 2.25 0 113.182-3.182z"
+                      d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
                     />
                   </svg>
-                  <h3 className="text-lg font-semibold">{t("addProduct")}</h3>
+
+                  <h3 className="text-lg font-semibold">
+                    {t("addMembership")}
+                  </h3>
                 </div>
                 <p
                   className={`mt-5 text-sm text-gray-100 ${
                     isFullScreen ? "text-center" : ""
                   }`}
                 >
-                  {t("addProductDescription")}
+                  {t("addMembershipDescription")}
                 </p>
               </>
             ) : (
@@ -344,11 +331,12 @@ function ProductScreen() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M12 3.75v16.5M2.25 12h19.5M6.375 17.25a4.875 4.875 0 004.875-4.875V12m6.375 5.25a4.875 4.875 0 01-4.875-4.875V12m-9 8.25h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5zm12.621-9.44c-1.409 1.41-4.242 1.061-4.242 1.061s-.349-2.833 1.06-4.242a2.25 2.25 0 013.182 3.182zM10.773 7.63c1.409 1.409 1.06 4.242 1.06 4.242S9 12.22 7.592 10.811a2.25 2.25 0 113.182-3.182z"
+                      d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
                     />
                   </svg>
+
                   <h3 className="text-lg font-semibold">
-                    {t("updateProduct")}
+                    {t("updateMembership")}
                   </h3>
                 </div>
                 <p
@@ -356,7 +344,7 @@ function ProductScreen() {
                     isFullScreen ? "text-center" : ""
                   }`}
                 >
-                  {t("updateProductDescription")}
+                  {t("updateMembershipDescription")}
                 </p>
               </>
             )}
@@ -379,39 +367,7 @@ function ProductScreen() {
             }
           >
             {stepList.map((e, index) => (
-              <div
-                key={index}
-                className="flex cursor-pointer flex-row items-center gap-3"
-                onClick={() => {
-                  if (verify(e)) {
-                    if (currentStep < e) {
-                      if (isVariable === false) {
-                        if (currentStep === Step.Information) {
-                          submitInfoRef.current?.click();
-                        } else if (currentStep === Step.Status) {
-                          submitStatusRef.current?.click();
-                        } else if (currentStep === Step.Pricing) {
-                          submitPricingRef.current?.click();
-                        } else {
-                          setCurrentStep(e);
-                        }
-                      } else {
-                        if (currentStep === Step.Information) {
-                          submitInfoRef.current?.click();
-                        } else if (currentStep === Step.Status) {
-                          submitStatusRef.current?.click();
-                        } else {
-                          setCurrentStep(e);
-                        }
-                      }
-                    } else {
-                      setCurrentStep(e);
-                    }
-                  } else {
-                    showErrorDialog(t("fillInformation"));
-                  }
-                }}
-              >
+              <div key={index} className="flex flex-row items-center gap-3">
                 <div
                   className={`${
                     currentStep === e
@@ -446,42 +402,22 @@ function ProductScreen() {
           >
             <div className={"w-full p-10"}>
               {currentStep === Step.Information ? (
-                <InformationSection nextFn={nextFn} infoRef={submitInfoRef} />
-              ) : currentStep === Step.Attribute ? (
-                <AttributeSection backFn={backFn} nextFn={nextFn} />
-              ) : currentStep === Step.Pricing &&
-                product.type === ProductType.Fixed ? (
-                <PricingSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                  pricingRef={submitPricingRef}
-                />
-              ) : currentStep === Step.Pricing &&
-                product.type === ProductType.Variable ? (
-                <VariationSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                />
-              ) : currentStep === Step.Details ? (
-                <DetailSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                />
-              ) : currentStep === Step.Status ? (
-                <StatusSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                  submitRef={submitStatusRef}
-                />
-              ) : (
+                <InformationSection nextFn={nextFn} />
+              ) : currentStep === Step.TopSearch ? (
+                <SearchSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.SKUListing ? (
+                <SKUSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.Reports ? (
+                <ReportSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.Advertisements ? (
+                <AdsSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.Confirmation ? (
                 <ConfirmationSection
                   backFn={backFn}
                   currentStep={stepList.findIndex((e) => e === currentStep) + 1}
                 />
+              ) : (
+                <></>
               )}
             </div>
           </div>
@@ -515,4 +451,4 @@ function ProductScreen() {
   );
 }
 
-export default ProductScreen;
+export default MembershipScreen;

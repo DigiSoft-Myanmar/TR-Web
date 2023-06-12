@@ -396,12 +396,18 @@ function Edit(data: any) {
           shippingCost: seller.defaultShippingCost,
           freeShippingCost: seller.freeShippingCost,
         }}
-        isCarGateInclue={true}
+        isCarGateInclue={false}
         onClickFn={(e: any) => {
+          let d = {
+            defaultShippingCost: e.shippingCost,
+            freeShippingCost: e.freeShippingCost,
+            isOfferFreeShipping: e.isOfferFreeShipping,
+            shippingIncluded: e.shippingIncluded,
+          };
           if (getHeaders(session)) {
-            fetch("/api/users?sellerId=" + seller.id, {
+            fetch("/api/user?id=" + seller.id, {
               method: "PUT",
-              body: JSON.stringify(e),
+              body: JSON.stringify(d),
               headers: getHeaders(session),
             }).then(async (data) => {
               if (data.status === 200) {
