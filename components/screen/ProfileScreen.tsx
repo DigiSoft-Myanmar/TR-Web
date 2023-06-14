@@ -1,20 +1,16 @@
-import { useProduct } from "@/context/ProductContext";
-import { ProductType } from "@prisma/client";
-import { showErrorDialog } from "@/util/swalFunction";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
 import React, { useRef } from "react";
-import AttributeSection from "../section/product/AttributeSection";
-import DetailSection from "../section/product/DetailSection";
-import InformationSection from "../section/product/InformationSection";
-import PricingSection from "../section/product/PricingSection";
-import ConfirmationSection from "../section/product/ConfirmationSection";
-import StatusSection from "../section/product/StatusSection";
-import VariationSection from "../section/product/VariationSection";
 import { Role } from "@prisma/client";
 import { useProfile } from "@/context/ProfileContext";
 import LocationPickerFull from "../presentational/LocationPickerFull";
+import ProfileSection from "../section/profile/ProfileSection";
+import NRCSection from "../section/profile/NRCSection";
+import PasswordSection from "../section/profile/PasswordSection";
+import CategoriesSection from "../section/profile/CategoriesSection";
+import SellerInfoSection from "../section/profile/SellerInfoSection";
+import StatusSection from "../section/profile/StatusSection";
+import ConfirmationSection from "../section/profile/ConfirmationSection";
 
 enum Step {
   Profile,
@@ -418,61 +414,28 @@ function ProfileScreen() {
             }`}
           >
             <div className={"w-full p-10"}>
-              <LocationPickerFull
-                selected={{
-                  stateId: user?.stateId,
-                  districtId: user?.districtId,
-                  townshipId: user?.townshipId,
-                }}
-                setSelected={(data) => {
-                  setUser((prevValue) => {
-                    return {
-                      ...prevValue,
-                      stateId: data.stateId,
-                      districtId: data.districtId,
-                      townshipId: data.townshipId,
-                    };
-                  });
-                }}
-              />
-              {/* {currentStep === Step.P ? (
-                <InformationSection nextFn={nextFn} infoRef={submitInfoRef} />
-              ) : currentStep === Step.Attribute ? (
-                <AttributeSection backFn={backFn} nextFn={nextFn} />
-              ) : currentStep === Step.Pricing &&
-                product.type === ProductType.Fixed ? (
-                <PricingSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                  pricingRef={submitPricingRef}
-                />
-              ) : currentStep === Step.Pricing &&
-                product.type === ProductType.Variable ? (
-                <VariationSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                />
-              ) : currentStep === Step.Details ? (
-                <DetailSection
-                  backFn={backFn}
-                  nextFn={nextFn}
-                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                />
+              {currentStep === Step.Profile ? (
+                <ProfileSection nextFn={nextFn} />
+              ) : currentStep === Step.NRC ? (
+                <NRCSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.MailPassword ? (
+                <PasswordSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.PreferredCategories ? (
+                <CategoriesSection backFn={backFn} nextFn={nextFn} />
+              ) : currentStep === Step.SellerInformation ? (
+                <SellerInfoSection backFn={backFn} nextFn={nextFn} />
               ) : currentStep === Step.Status ? (
                 <StatusSection
                   backFn={backFn}
                   nextFn={nextFn}
                   currentStep={stepList.findIndex((e) => e === currentStep) + 1}
-                  submitRef={submitStatusRef}
                 />
               ) : (
                 <ConfirmationSection
                   backFn={backFn}
                   currentStep={stepList.findIndex((e) => e === currentStep) + 1}
                 />
-              )} */}
+              )}
             </div>
           </div>
           <div className="absolute bottom-10 left-10 right-10">

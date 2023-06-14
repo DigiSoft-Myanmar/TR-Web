@@ -13,7 +13,14 @@ import CardContent from "@mui/material/CardContent";
 import LinearProgress from "@mui/material/LinearProgress";
 
 // ** Type Imports
-import { Category, Product, Review, Role, StockType } from "@prisma/client";
+import {
+  Category,
+  Product,
+  ProductType,
+  Review,
+  Role,
+  StockType,
+} from "@prisma/client";
 import { fileUrl } from "@/types/const";
 import { formatAmount, formatDate, getText } from "@/util/textHelper";
 import { useRouter } from "next/router";
@@ -179,7 +186,11 @@ const ProductFullTbl = ({
       field: "pricing",
       headerName: "Pricing",
       renderCell: ({ row }: CellType) => {
-        return (
+        return row.type === ProductType.Auction ? (
+          <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
+            Auction
+          </div>
+        ) : (
           <>
             {row.pricing.isPromotion === true ? (
               <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
@@ -289,9 +300,12 @@ const ProductFullTbl = ({
       minWidth: 100,
       field: "stock",
       headerName: "Stock",
-      renderCell: ({ row }: CellType) => (
-        <Typography variant="body2">{t(row.stock)}</Typography>
-      ),
+      renderCell: ({ row }: CellType) =>
+        row.type === ProductType.Auction ? (
+          <Typography variant="body2">Auction Stock</Typography>
+        ) : (
+          <Typography variant="body2">{t(row.stock)}</Typography>
+        ),
     },
     {
       flex: 0.15,

@@ -45,10 +45,12 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
   const [isSubmit, setSubmit] = React.useState(false);
 
   const [currentVariation, setCurrentVariation] = React.useState(
-    product.type === ProductType.Fixed ? undefined : product.variations[0]
+    product.type !== ProductType.Variable ? undefined : product.variations[0]
   );
   const [attributes, setAttributes] = React.useState<any>(
-    product.type === ProductType.Fixed ? [] : product.variations[0].attributes
+    product.type !== ProductType.Variable
+      ? []
+      : product.variations[0].attributes
   );
 
   const [pricingInfo, setPricingInfo] = React.useState(getPricing(product));

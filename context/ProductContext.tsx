@@ -1,5 +1,7 @@
+import { fetcher } from "@/util/fetcher";
 import { Product, ProductType, Role } from "@prisma/client";
 import React, { createContext } from "react";
+import useSWR from "swr";
 
 const ProductContext = createContext<any>({});
 
@@ -12,6 +14,8 @@ export const ProductProvider = ({
   productDetail?: any;
   children: React.ReactNode;
 }) => {
+  const { data: settingsData } = useSWR("/api/configurations", fetcher);
+  const [maxAuctionPeriod, setMaxAuctionPeriod] = React.useState(14);
   const [product, setProduct] = React.useState<any>(productDetail);
 
   const infoValid = React.useMemo(() => verifyInfo(product), [product]);
@@ -62,6 +66,12 @@ export const ProductProvider = ({
     return true;
   }
 
+  React.useEffect(() => {
+    if (settingsData && settingsData.maxAuctionPeriod) {
+      setMaxAuctionPeriod(parseInt(settingsData.maxAuctionPeriod));
+    }
+  }, [settingsData]);
+
   return (
     <ProductContext.Provider
       value={{
@@ -70,6 +80,7 @@ export const ProductProvider = ({
         infoValid,
         pricingValid,
         attributeValid,
+        maxAuctionPeriod,
       }}
     >
       {children}

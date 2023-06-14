@@ -3,6 +3,7 @@ import { getText } from "@/util/textHelper";
 import { Listbox, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import React, { Fragment } from "react";
+import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 interface Props {
@@ -17,6 +18,7 @@ function LocationPickerFull({ selected, setSelected }: Props) {
   const [locationList, setLocationList] = React.useState([]);
   const [showList, setShowList] = React.useState([]);
   const [qry, setQry] = React.useState("");
+  const { t } = useTranslation("common");
 
   const generateLocationStrings = (data) => {
     const result = [];
@@ -67,7 +69,20 @@ function LocationPickerFull({ selected, setSelected }: Props) {
 
   return (
     <Listbox value={selected} onChange={(e) => setSelected(e)}>
-      <div className="relative mt-1">
+      <label
+        className={`text-sm font-medium ${
+          selected &&
+          selected.stateId &&
+          selected.districtId &&
+          selected.townshipId
+            ? "text-success"
+            : "text-error"
+        }`}
+      >
+        {t("location")} <span className="text-primary">*</span>
+      </label>
+
+      <div className={`relative mt-1`}>
         <Listbox.Button
           className={`relative w-full cursor-pointer rounded-lg
       py-2 pl-3 pr-10 text-left text-primaryText border border-gray-300 focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm`}

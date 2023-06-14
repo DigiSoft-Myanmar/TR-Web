@@ -13,6 +13,7 @@ import ConfirmationSection from "../section/product/ConfirmationSection";
 import StatusSection from "../section/product/StatusSection";
 import VariationSection from "../section/product/VariationSection";
 import { Role } from "@prisma/client";
+import AuctionPricingSection from "../section/product/AuctionPricingSection";
 
 enum Step {
   Information,
@@ -462,6 +463,14 @@ function ProductScreen() {
                 <VariationSection
                   backFn={backFn}
                   nextFn={nextFn}
+                  currentStep={stepList.findIndex((e) => e === currentStep) + 1}
+                />
+              ) : currentStep === Step.Pricing &&
+                product.type === ProductType.Auction ? (
+                <AuctionPricingSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  pricingRef={submitPricingRef}
                   currentStep={stepList.findIndex((e) => e === currentStep) + 1}
                 />
               ) : currentStep === Step.Details ? (

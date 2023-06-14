@@ -24,27 +24,51 @@ type Status = {
   isDeleted?: boolean;
   sellAllow?: boolean;
 
-  membershipId?: string;
+  memberStartDate?: Date;
   adminNote?: string;
-  paymentList?: string[];
 };
 
 function StatusSection({ backFn, nextFn, currentStep }: Props) {
   const { t } = useTranslation("common");
-  const { profile, setProfile, brand } = useProfile();
+  const { user: profile, setUser: setProfile, membership } = useProfile();
   const { locale } = useRouter();
   const { data: session }: any = useSession();
-  const { data } = useSWR(
-    brand ? "/api/memberships?id=" + brand.membershipId : "",
-    fetcher
-  );
 
-  const { register, handleSubmit, watch, formState } = useForm<Status>({
+  const schema = z.object({
+    isBlocked: z.boolean(),
+    isDeleted: z.boolean(),
+    sellAllow: z.boolean(),
+    adminNote: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
+    memberStartDate: z.date(),
+  });
+
+  const { register, handleSubmit, watch, formState, reset } = useForm<Status>({
     mode: "onChange",
-    defaultValues: profile,
+    defaultValues: {
+      adminNote: profile.adminNote,
+      isBlocked: profile.isBlocked,
+      isDeleted: profile.isDeleted,
+      memberStartDate: profile.memberStartDate,
+      sellAllow: profile.sellAllow,
+    },
+    resolver: zodResolver(schema),
   });
   const { errors } = formState;
   const watchFields = watch();
+
+  React.useEffect(() => {
+    reset({
+      adminNote: profile.adminNote,
+      isBlocked: profile.isBlocked,
+      isDeleted: profile.isDeleted,
+      memberStartDate: new Date(),
+      sellAllow: profile.sellAllow,
+    });
+  }, [profile]);
 
   function submit(data: Status) {
     setProfile((prevValue: any) => {
@@ -62,18 +86,46 @@ function StatusSection({ backFn, nextFn, currentStep }: Props) {
       <span className="mb-10 text-sm">{t("fillStatus")}</span>
 
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
-        {profile && profile.role === Role.Seller && (
-          <FormInputCheckbox
-            formControl={{ ...register("sellAllow") }}
-            label={t("sellAllow")}
-            value={
-              watchFields.isBlocked === true || watchFields.isDeleted === true
-                ? false
-                : watchFields.sellAllow
-            }
-            disabled={session && session.role === Role.Seller}
-          />
-        )}
+        {profile &&
+          (profile.role === Role.Seller || profile.role === Role.Trader) && (
+            <>
+              {/* //TODO check date */}
+              <FormInput
+                label={t("memberStartDate")}
+                placeHolder={t("enter") + " " + t("memberStartDate")}
+                error={errors.memberStartDate?.message}
+                type="date"
+                defaultValue={
+                  profile?.memberStartDate
+                    ? profile?.memberStartDate.toISOString().substring(0, 10)
+                    : ""
+                }
+                formControl={{
+                  ...register("memberStartDate", {
+                    setValueAs: (v) => (v ? new Date(v) : ""),
+                  }),
+                }}
+                currentValue={
+                  watchFields.memberStartDate
+                    ? new Date(watchFields.memberStartDate)
+                        ?.toISOString()
+                        .substring(0, 10)
+                    : ""
+                }
+              />
+              <FormInputCheckbox
+                formControl={{ ...register("sellAllow") }}
+                label={t("sellAllow")}
+                value={
+                  watchFields.isBlocked === true ||
+                  watchFields.isDeleted === true
+                    ? false
+                    : watchFields.sellAllow
+                }
+                disabled={session && session.role === Role.Seller}
+              />
+            </>
+          )}
         <FormInputCheckbox
           formControl={{ ...register("isBlocked") }}
           label={t("isBlocked")}

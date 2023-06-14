@@ -2,7 +2,7 @@ import FormInput from "@/components/presentational/FormInput";
 import FormSaleDatePicker from "@/components/presentational/FormSaleDatePicker";
 import { useProduct } from "@/context/ProductContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { StockType } from "@prisma/client";
+import { ProductType, StockType } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -26,6 +26,11 @@ type Pricing = {
   saleEndDate?: Date;
 };
 
+type AuctionPricing = {
+  estimatedPrice?: number;
+  openingBid?: number;
+};
+
 function PricingSection({ backFn, nextFn, currentStep, pricingRef }: Props) {
   const { t } = useTranslation("common");
   const stockList = [
@@ -36,7 +41,28 @@ function PricingSection({ backFn, nextFn, currentStep, pricingRef }: Props) {
   const { product, setProduct } = useProduct();
   const [error, setError] = React.useState("");
   const schema = z.object(
-    product.stockType === StockType.StockLevel
+    product.type === ProductType.Auction
+      ? {
+          estimatedPrice: z
+            .number({
+              invalid_type_error: t("inputValidNumber"),
+              required_error: "",
+            })
+            .min(1, {
+              message: t("inputValidAmount"),
+            })
+            .nonnegative({ message: t("inputValidAmount") }),
+          openingBid: z
+            .number({
+              invalid_type_error: t("inputValidNumber"),
+              required_error: "",
+            })
+            .min(1, {
+              message: t("inputValidAmount"),
+            })
+            .nonnegative({ message: t("inputValidAmount") }),
+        }
+      : product.stockType === StockType.StockLevel
       ? {
           regularPrice: z
             .number({
@@ -121,7 +147,7 @@ function PricingSection({ backFn, nextFn, currentStep, pricingRef }: Props) {
                   .nonnegative({ message: t("inputValidAmount") })
                   .optional()
                   .or(z.literal("")),
-        },
+        }
   );
 
   const { register, handleSubmit, watch, formState } = useForm<Pricing>({

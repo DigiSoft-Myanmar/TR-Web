@@ -171,6 +171,8 @@ model Category {
   productIds     String[]   @db.ObjectId
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+  users          User[]     @relation(fields: [userIds], references: [id])
+  userIds        String[]   @db.ObjectId
 }
 
 model Attribute {
@@ -207,9 +209,15 @@ model User {
   displayName     String?
   dob             DateTime?
   gender          Gender           @default(Male)
-  nrcFront        String?
-  nrcBack         String?
-  profile         String?
+
+  nrcState    String?
+  nrcTownship String?
+  nrcType     String?
+  nrcNumber   String?
+  nrcFront    String?
+  nrcBack     String?
+
+  profile String?
 
   houseNo     String?
   street      String?
@@ -224,6 +232,9 @@ model User {
   township    Township? @relation(fields: [townshipId], references: [id])
   townshipId  String?   @db.ObjectId
 
+  preferCategoryIDs String[]   @db.ObjectId
+  preferCategories  Category[] @relation(fields: [preferCategoryIDs], references: [id])
+
   isBlocked Boolean? @default(false)
   isDeleted Boolean? @default(false)
   sellAllow Boolean? @default(false)
@@ -234,12 +245,16 @@ model User {
   ShippingCost      ShippingCost[]
   currentMembership Membership?    @relation(fields: [membershipId], references: [id])
   membershipId      String?        @db.ObjectId
+  memberStartDate   DateTime?
 
-  isOfferFreeShipping Boolean? @default(false)
-  shippingIncluded    Boolean  @default(false)
-  defaultShippingCost Int?
-  freeShippingCost    Int?
-  shippingCost        Int?
+  isOfferFreeShipping   Boolean? @default(false)
+  shippingIncluded      Boolean  @default(false)
+  defaultShippingCost   Int?
+  freeShippingCost      Int?
+  shippingCost          Int?
+  isDefaultShippingInfo Boolean? @default(false)
+  defaultShippingInfo   String?
+  defaultShippingInfoMM String?
 
   lastLogin    DateTime?
   lastNotiOpen DateTime?

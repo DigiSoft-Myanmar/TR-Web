@@ -1,5 +1,6 @@
 import FormInput from "@/components/presentational/FormInput";
 import LocationPicker from "@/components/presentational/LocationPicker";
+import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { useProfile } from "@/context/ProfileContext";
 import { fileUrl } from "@/types/const";
 import { showErrorDialog } from "@/util/swalFunction";
@@ -26,12 +27,18 @@ type Profile = {
   districtId?: string;
   townshipId?: string;
   profile?: string;
+  dob?: Date;
 };
 
 function ProfileSection({ nextFn }: Props) {
   const { t } = useTranslation("common");
   const genderList = ["male", "female"];
-  const { profile, setProfile, profileImg, setProfileImg } = useProfile();
+  const {
+    user: profile,
+    setUser: setProfile,
+    profileImg,
+    setProfileImg,
+  } = useProfile();
 
   const schema = z.object({
     username: z.string().min(1, { message: t("inputError") }),
@@ -41,6 +48,7 @@ function ProfileSection({ nextFn }: Props) {
     }),
     houseNo: z.string().min(1, { message: t("inputError") }),
     street: z.string().min(1, { message: t("inputError") }),
+    dob: z.date(),
   });
 
   const { register, handleSubmit, watch, formState } = useForm<Profile>({
@@ -57,14 +65,16 @@ function ProfileSection({ nextFn }: Props) {
       return { ...prevValue, ...data };
     });
 
-    if (profile && (profile.profile || profileImg)) {
-      if (profile.role !== Role.Seller) {
-        if (profile.stateId && profile.districtId && profile.townshipId) {
-          nextFn();
-        }
-      } else {
-        nextFn();
-      }
+    if (
+      profile &&
+      (profile.profile || profileImg) &&
+      profile.stateId &&
+      profile.districtId &&
+      profile.townshipId
+    ) {
+      nextFn();
+    } else {
+      showErrorDialog(t("fillInformation"));
     }
   }
 
@@ -304,6 +314,27 @@ function ProfileSection({ nextFn }: Props) {
           }
         />
 
+        {/* //TODO check date */}
+        <FormInput
+          label={t("dob")}
+          placeHolder={t("enter") + " " + t("dob")}
+          error={errors.dob?.message}
+          type="date"
+          defaultValue={
+            profile?.dob ? profile?.dob.toISOString().substring(0, 10) : ""
+          }
+          formControl={{
+            ...register("dob", {
+              setValueAs: (v) => (v ? new Date(v) : ""),
+            }),
+          }}
+          currentValue={
+            watchFields.dob
+              ? new Date(watchFields.dob)?.toISOString().substring(0, 10)
+              : ""
+          }
+        />
+
         <FormInput
           label={t("houseNo")}
           placeHolder={t("enter") + " " + t("houseNo")}
@@ -355,23 +386,23 @@ function ProfileSection({ nextFn }: Props) {
             </svg>
           }
         />
-        {profile.role !== Role.Seller && (
-          <LocationPicker
-            stateId={profile?.stateId}
-            districtId={profile?.districtId}
-            townshipId={profile?.townshipId}
-            setLocation={(e: any) => {
-              setProfile((prevValue: any) => {
-                return {
-                  ...prevValue,
-                  stateId: e.state,
-                  districtId: e.district,
-                  townshipId: e.township,
-                };
-              });
-            }}
-          />
-        )}
+        <LocationPickerFull
+          selected={{
+            stateId: profile?.stateId,
+            districtId: profile?.districtId,
+            townshipId: profile?.townshipId,
+          }}
+          setSelected={(data) => {
+            setProfile((prevValue) => {
+              return {
+                ...prevValue,
+                stateId: data.stateId,
+                districtId: data.districtId,
+                townshipId: data.townshipId,
+              };
+            });
+          }}
+        />
 
         <div className="flex flex-wrap items-center justify-center gap-3">
           {genderList.map((elem, index) => (

@@ -19,7 +19,7 @@ type Password = {
 
 function PasswordSection({ backFn, nextFn }: Props) {
   const { t } = useTranslation("common");
-  const { profile, setProfile } = useProfile();
+  const { user: profile, setUser: setProfile } = useProfile();
   const { locale } = useRouter();
 
   const schema = z.object({
@@ -35,11 +35,16 @@ function PasswordSection({ backFn, nextFn }: Props) {
       .or(z.literal("")),
   });
 
-  const { register, handleSubmit, watch, formState } = useForm<Password>({
-    mode: "onChange",
-    defaultValues: profile,
-    resolver: zodResolver(schema),
-  });
+  const { register, handleSubmit, watch, formState, reset } = useForm<Password>(
+    {
+      mode: "onChange",
+      defaultValues: {
+        password: "",
+        confirmPassword: "",
+      },
+      resolver: zodResolver(schema),
+    }
+  );
   const { errors } = formState;
   const watchFields = watch();
 
@@ -52,7 +57,7 @@ function PasswordSection({ backFn, nextFn }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 2</h3>
+      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 3</h3>
       <p className="my-1 text-xl font-bold">{t("mailPassword")}</p>
       <span className="mb-10 text-sm">{t("fillPassword")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>

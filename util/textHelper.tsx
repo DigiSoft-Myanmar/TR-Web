@@ -351,3 +351,22 @@ export function getInitials(name: string) {
     return `${name.charAt(0).toUpperCase()}${name.charAt(1).toUpperCase()}`;
   }
 }
+
+export function padTo2Digits(num: number) {
+  return num.toString().padStart(2, "0");
+}
+
+export function toDateTimeLocal(isoString: string) {
+  let date = new Date(isoString);
+  return (
+    date.getFullYear() +
+    "-" +
+    padTo2Digits(date.getMonth() + 1) +
+    "-" +
+    padTo2Digits(date.getDate()) +
+    "T" +
+    padTo2Digits(date.getHours()) +
+    ":" +
+    padTo2Digits(date.getMinutes())
+  );
+}

@@ -16,7 +16,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 async function modifyMembership(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     let data = JSON.parse(req.body);
@@ -35,7 +35,7 @@ async function modifyMembership(
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     if (req.method === "GET") {
