@@ -6,21 +6,23 @@ import { showErrorDialog, showUnauthorizedDialog } from "@/util/swalFunction";
 import ProductImg from "@/components/card/ProductImg";
 import { ImgType } from "@/types/orderTypes";
 import { useSession } from "next-auth/react";
-import { getHeaders } from "@/util/authHelper";
+import { getHeaders, isInternal } from "@/util/authHelper";
+import {
+  getImageResolutionFromFile,
+  getImageSizeFromFileInput,
+} from "@/util/adsHelper";
+import { Ads, AdsPlacement, User } from "@prisma/client";
+import SellerSelectBox from "@/components/presentational/SellerSelectBox";
 
 interface Props {
   isModalOpen: boolean;
   setModalOpen: Function;
-  setFileSrc: Function;
-  type: ImgType;
+  refetch: Function;
+  title: String;
 }
 
-function SingleUploadModal({
-  isModalOpen,
-  setModalOpen,
-  setFileSrc,
-  type,
-}: Props) {
+function AdsModal({ isModalOpen, setModalOpen, refetch, title }: Props) {
+  const type = ImgType.Ads;
   const router = useRouter();
   const { t } = useTranslation("common");
   const [uploadFiles, setUploadFiles] = React.useState<FileList>();
@@ -29,10 +31,31 @@ function SingleUploadModal({
   const dropZone = React.useRef<HTMLDivElement | null>(null);
   const { data: session }: any = useSession();
   const { locale } = router;
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
+  const [ratio, setRatio] = React.useState<AdsPlacement>(AdsPlacement.Unknown);
+  const [seller, setSeller] = React.useState<User | undefined>(undefined);
+
+  React.useEffect(() => {
+    let ratio = width / height;
+    if (ratio >= 4) {
+      setRatio(AdsPlacement.OneCol);
+    } else if (ratio >= 2.3) {
+      setRatio(AdsPlacement.TwoCols);
+    } else if (ratio >= 1) {
+      setRatio(AdsPlacement.ThreeCols);
+    } else {
+      setRatio(AdsPlacement.Unknown);
+    }
+  }, [width, height]);
 
   React.useEffect(() => {
     if (uploadingImg === false) {
+      setWidth(0);
+      setHeight(0);
       setUploadFiles(undefined);
+      setSeller(undefined);
+      setRatio("Unknown");
     }
   }, [isModalOpen, uploadingImg]);
 
@@ -54,12 +77,20 @@ function SingleUploadModal({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   }
 
-  function upload() {
+  async function upload() {
     const FormData = require("form-data");
     let form = new FormData();
     for (let i = 0; i < uploadFiles!.length; i++) {
       form.append("theFiles", uploadFiles![i]);
     }
+    console.log("WTF");
+    getImageResolutionFromFile(uploadFiles[0])
+      .then((resolution) => {
+        console.log("Image resolution:", resolution);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 
     setUploadingImg(true);
     if (getHeaders(session)) {
@@ -83,8 +114,28 @@ function SingleUploadModal({
           if (json && json.filesData) {
             let filesData = [...json.filesData];
             let imgArr = filesData.map((elem) => `${elem.filename}`);
-            setFileSrc(imgArr[0]);
-            setUploadingImg(false);
+
+            let adInfo: any = {
+              adsHeight: height,
+              adsImg: imgArr[0],
+              adsPlacement: ratio,
+              adsWidth: width,
+              sellerId: seller?.id,
+            };
+
+            fetch("/api/siteManagement/ads", {
+              method: "POST",
+              body: JSON.stringify(adInfo),
+              headers: getHeaders(session),
+            }).then((data) => {
+              setWidth(0);
+              setHeight(0);
+              setUploadFiles(undefined);
+              setSeller(undefined);
+              setRatio("Unknown");
+              refetch();
+              setUploadingImg(false);
+            });
           }
         });
     } else {
@@ -154,7 +205,7 @@ function SingleUploadModal({
                     as="div"
                     className="text-darkShade flex items-center text-lg font-medium leading-6"
                   >
-                    <h3 className="flex-grow">Upload Image</h3>
+                    <h3 className="flex-grow">{title}</h3>
                     <button
                       className="bg-lightShade flex rounded-md p-2 focus:outline-none"
                       onClick={() => setModalOpen(false)}
@@ -169,7 +220,18 @@ function SingleUploadModal({
                       </svg>
                     </button>
                   </Dialog.Title>
-                  <div className="mt-2">
+                  <div className="mt-2 flex flex-col gap-3">
+                    {isInternal(session) ? (
+                      <SellerSelectBox
+                        selected={seller}
+                        setSelected={(e: User) => {
+                          setSeller(e);
+                        }}
+                      />
+                    ) : (
+                      <></>
+                    )}
+
                     {uploadFiles && uploadFiles.length > 0 ? (
                       <div className="flex flex-col space-y-5">
                         <div className="flex">
@@ -192,8 +254,8 @@ function SingleUploadModal({
                             <button
                               type="button"
                               className="rounded-md bg-primary px-7 py-3 text-sm text-white hover:bg-primary-focus"
-                              onClick={() => {
-                                upload();
+                              onClick={async () => {
+                                await upload();
                               }}
                             >
                               {t("upload")}
@@ -225,6 +287,9 @@ function SingleUploadModal({
                                   <p className="text-sm">
                                     {formatBytes(uploadFiles[i].size)}
                                   </p>
+                                  <p className="text-xs">
+                                    {width}px x {height}px - {ratio}
+                                  </p>
                                 </div>
                               </div>
                             ))}
@@ -241,25 +306,34 @@ function SingleUploadModal({
                             ref={dropZone}
                             onDragOver={(e) => e.preventDefault()}
                             onDrop={(e) => {
-                              let fileList = e.dataTransfer.files;
-                              let f: any = [];
-                              let size = 0;
-                              if (fileList.length > 1) {
-                                setTotalSize(0);
-                                setUploadFiles(undefined);
-                                setFileSrc("");
-                                showErrorDialog(t("tooManyFiles"));
-                              } else {
-                                for (let i = 0; i < fileList.length; i++) {
-                                  if (fileList[i].type.includes("image/")) {
-                                    size += fileList[i].size;
-                                    f.push(fileList[i]);
-                                  }
-                                }
-                                setTotalSize(size);
-                                setUploadFiles(f);
-                              }
                               e.preventDefault();
+                              let fileList = e.dataTransfer.files;
+                              getImageSizeFromFileInput(e.dataTransfer)
+                                .then((size: any) => {
+                                  let fileSize = 0;
+                                  if (fileList) {
+                                    if (fileList.length > 1) {
+                                      setTotalSize(0);
+                                      setUploadFiles(undefined);
+                                      showErrorDialog(t("tooManyFiles"));
+                                    } else {
+                                      for (
+                                        let i = 0;
+                                        i < fileList.length;
+                                        i++
+                                      ) {
+                                        fileSize += fileList[i].size;
+                                      }
+                                      setWidth(size.width);
+                                      setHeight(size.height);
+                                      setTotalSize(fileSize);
+                                      setUploadFiles(fileList);
+                                    }
+                                  }
+                                })
+                                .catch((error) => {
+                                  console.error("Error:", error);
+                                });
                             }}
                           >
                             <svg
@@ -286,6 +360,10 @@ function SingleUploadModal({
                             <p className="text-xs text-gray-500">
                               PNG, JPG or GIF (MAX. 2MB)
                             </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Preferred Image Size - [1200 x 300, 700 x 300, 300
+                              x 300]
+                            </p>
                           </div>
                           <input
                             id="dropzone-file"
@@ -293,23 +371,35 @@ function SingleUploadModal({
                             className="hidden"
                             multiple={true}
                             accept="image/*"
-                            onChange={(e) => {
+                            onChange={async (e) => {
                               let fileList = e.currentTarget.files;
-                              let size = 0;
-                              if (fileList) {
-                                if (fileList.length > 1) {
-                                  setTotalSize(0);
-                                  setUploadFiles(undefined);
-                                  setFileSrc("");
-                                  showErrorDialog(t("tooManyFiles"));
-                                } else {
-                                  for (let i = 0; i < fileList.length; i++) {
-                                    size += fileList[i].size;
+
+                              getImageSizeFromFileInput(e.currentTarget)
+                                .then((size: any) => {
+                                  let fileSize = 0;
+                                  if (fileList) {
+                                    if (fileList.length > 1) {
+                                      setTotalSize(0);
+                                      setUploadFiles(undefined);
+                                      showErrorDialog(t("tooManyFiles"));
+                                    } else {
+                                      for (
+                                        let i = 0;
+                                        i < fileList.length;
+                                        i++
+                                      ) {
+                                        fileSize += fileList[i].size;
+                                      }
+                                      setWidth(size.width);
+                                      setHeight(size.height);
+                                      setTotalSize(fileSize);
+                                      setUploadFiles(fileList);
+                                    }
                                   }
-                                  setTotalSize(size);
-                                  setUploadFiles(fileList);
-                                }
-                              }
+                                })
+                                .catch((error) => {
+                                  console.error("Error:", error);
+                                });
                             }}
                           />
                         </label>
@@ -340,4 +430,4 @@ function SingleUploadModal({
   );
 }
 
-export default SingleUploadModal;
+export default AdsModal;

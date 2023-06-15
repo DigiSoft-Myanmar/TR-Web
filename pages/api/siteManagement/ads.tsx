@@ -14,12 +14,19 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     if (req.method === "GET") {
-      let ads = await prisma.ads.findMany({});
-      console.log(ads);
+      let ads = await prisma.ads.findMany({
+        include: {
+          seller: {
+            include: {
+              currentMembership: true,
+            },
+          },
+        },
+      });
       return res.status(200).json(ads);
     }
     // eslint-disable-next-line react-hooks/rules-of-hooks

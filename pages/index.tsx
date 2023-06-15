@@ -11,6 +11,15 @@ export function IndexPage() {
   const router = useRouter();
   return (
     <div>
+      <form
+        method="POST"
+        onSubmit={(e) => {
+          e.preventDefault();
+          fetch("/api/testar").then((data) => console.log(data));
+        }}
+      >
+        <button type="submit">Hello</button>
+      </form>
       {/* <button
         className="bg-sellerBg/50 backdrop-blur  border border-primary rounded-md p-3 hover:bg-primary hover:text-primaryText transition text-gray-300"
         onClick={() => {

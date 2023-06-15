@@ -7,19 +7,15 @@ import Link from "next/link";
 // ** MUI Imports
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import Menu from "@mui/material/Menu";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import { DataGrid } from "@mui/x-data-grid";
-import MenuItem from "@mui/material/MenuItem";
 import { styled } from "@mui/material/styles";
-import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 
 // ** Icon Imports
 import Icon from "@/components/presentational/Icon";
-import { Order, PromoCode, Role } from "@prisma/client";
+import { Ads, Role } from "@prisma/client";
 import { formatAmount, getInitials } from "@/util/textHelper";
 import { useRouter } from "next/router";
 import { OrderStatus } from "@/types/orderTypes";
@@ -46,10 +42,6 @@ const Img = styled("img")(({ theme }) => ({
   marginRight: theme.spacing(3),
 }));
 
-interface Props {
-  invoiceData: PromoCode[];
-}
-
 interface InvoiceStatusObj {
   [key: string]: {
     icon: string;
@@ -57,14 +49,14 @@ interface InvoiceStatusObj {
   };
 }
 interface CellType {
-  row: PromoCode;
+  row: Ads;
 }
 
-const PromoTbl = ({
+const AdsTable = ({
   data: parentData,
   refetch,
 }: {
-  data: PromoCode[];
+  data: Ads[];
   refetch: Function;
 }) => {
   // ** State
@@ -73,7 +65,7 @@ const PromoTbl = ({
   // ** Var
   const open = Boolean(anchorEl);
   const [value, setValue] = useState<string>("");
-  const [data, setData] = React.useState<PromoCode[]>();
+  const [data, setData] = React.useState<Ads[]>();
   const router = useRouter();
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
@@ -88,7 +80,7 @@ const PromoTbl = ({
   React.useEffect(() => {
     if (parentData) {
       if (value) {
-        setData(
+        /* setData(
           parentData.filter(
             (e) =>
               e.promoCode.toLowerCase().includes(value.toLowerCase()) ||
@@ -109,7 +101,7 @@ const PromoTbl = ({
                   })
                   .includes(value.toLowerCase()))
           )
-        );
+        ); */
       } else {
         setData(parentData);
       }
@@ -123,31 +115,17 @@ const PromoTbl = ({
       flex: 0.2,
       field: "img",
       minWidth: 90,
-      headerName: "Promo Image",
+      headerName: "Ads Image",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img src={fileUrl + row.img} alt={`${row.promoCode}`} />
-          {row.isScheduled === true && row.startDate && row.endDate ? (
-            <>
-              {isTodayBetween(row.startDate, row.endDate) ===
-              PromoType.Active ? (
-                <div className="bg-primary text-white px-2 py-1 rounded-md text-xs font-semibold">
-                  Active
-                </div>
-              ) : isTodayBetween(row.startDate, row.endDate) ===
-                PromoType.Expired ? (
-                <div className="bg-warning text-white px-2 py-1 rounded-md text-xs font-semibold">
-                  Expired
-                </div>
-              ) : (
-                <div className="bg-info text-white px-2 py-1 rounded-md text-xs font-semibold">
-                  Not Started
-                </div>
-              )}
-            </>
-          ) : (
+          <Img src={fileUrl + row.adsImg} alt={`${row.adsImg}`} />
+          {row.adsLocations.length > 0 ? (
             <div className="bg-primary text-white px-2 py-1 rounded-md text-xs font-semibold">
-              Active
+              Placed
+            </div>
+          ) : (
+            <div className="bg-warning text-white px-2 py-1 rounded-md text-xs font-semibold">
+              Not Placed
             </div>
           )}
         </Box>
@@ -155,71 +133,38 @@ const PromoTbl = ({
     },
     {
       flex: 0.2,
-      field: "promoCode",
+      field: "dimensions",
       minWidth: 90,
-      headerName: "Promo Code",
+      headerName: "Dimensions",
       renderCell: ({ row }: CellType) => (
-        <Typography>{`${row.promoCode.toUpperCase()}`}</Typography>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+            {row.adsPlacement}
+          </Typography>
+          <Typography variant="caption" sx={{ color: "text.disabled" }}>
+            {row.adsWidth}px x {row.adsHeight}px
+          </Typography>
+        </Box>
       ),
     },
+
     {
       flex: 0.2,
-      field: "Orders",
+      field: "membership",
       minWidth: 90,
-      headerName: "Used Count",
-      renderCell: ({ row }: any) => (
-        <Typography>{`${formatAmount(row.usage, locale)}`}</Typography>
-      ),
-    },
-    {
-      flex: 0.2,
-      field: "discount",
-      minWidth: 90,
-      headerName: "Discount",
+      headerName: "Membership",
       renderCell: ({ row }: CellType) => (
-        <Typography>{`${
-          row.isPercent === true
-            ? row.discount + "%"
-            : formatAmount(row.discount, locale, true)
-        }`}</Typography>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          {/* <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+          
+          </Typography>
+          <Typography variant="caption" sx={{ color: "text.disabled" }}>
+            {row.adsWidth}px x {row.adsHeight}px
+          </Typography> */}
+        </Box>
       ),
     },
-    {
-      flex: 0.2,
-      field: "usage",
-      minWidth: 90,
-      headerName: "Usage",
-      renderCell: ({ row }: any) => (
-        <Typography>{`${
-          row.isCouponUsageInfinity === true
-            ? "Infinity"
-            : row.couponUsage - row.usage
-        }`}</Typography>
-      ),
-    },
-    {
-      flex: 0.2,
-      field: "isScheduled",
-      minWidth: 90,
-      headerName: "Schedule",
-      renderCell: ({ row }: CellType) => (
-        <Typography typography={"caption"}>{`${
-          row.isScheduled === true && row.startDate && row.endDate
-            ? new Date(row.startDate).toLocaleDateString("en-ca", {
-                year: "2-digit",
-                month: "short",
-                day: "2-digit",
-              }) +
-              " to " +
-              new Date(row.endDate).toLocaleDateString("en-ca", {
-                year: "2-digit",
-                month: "short",
-                day: "2-digit",
-              })
-            : "No Duration"
-        }`}</Typography>
-      ),
-    },
+
     {
       flex: 0.2,
       field: "seller",
@@ -263,6 +208,24 @@ const PromoTbl = ({
             </Box>
           </Box>
         </div>
+      ),
+    },
+
+    {
+      flex: 0.2,
+      field: "createdAt",
+      minWidth: 90,
+      headerName: "Upload Date",
+      renderCell: ({ row }: CellType) => (
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+            {new Date(row.createdAt).toLocaleDateString("en-ca", {
+              year: "numeric",
+              month: "short",
+              day: "2-digit",
+            })}
+          </Typography>
+        </Box>
       ),
     },
     {
@@ -334,7 +297,7 @@ const PromoTbl = ({
     <Card>
       <div className="flex w-full flex-row flex-wrap items-center px-5 pt-5">
         <div className="flex flex-grow flex-row items-end gap-3">
-          <h3 className="text-xl font-semibold">Promo Codes</h3>
+          <h3 className="text-xl font-semibold">Ads</h3>
         </div>
         <div className="flex flex-row items-center gap-3">
           <button
@@ -388,7 +351,7 @@ const PromoTbl = ({
       </div>
       <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
         <StatsCard
-          label="Total Promo Code"
+          label="Total Ads"
           currentCount={
             data.filter((e: any) => e.createdAt > prevYear.toISOString()).length
           }
@@ -402,63 +365,23 @@ const PromoTbl = ({
           totalCount={data.length}
         />
         <StatsCard
-          label={"Used Promo Code"}
+          label={"Ads Placed"}
           currentCount={
-            data.filter(
-              (e: any) =>
-                e.isCouponUsageInfinity === false && e.usage === e.couponUsage
-            ).length
+            data.filter((e: Ads) => e.adsLocations.length > 0).length
           }
-          prevCount={
-            data.filter(
-              (e: any) =>
-                e.isCouponUsageInfinity === false && e.usage === e.couponUsage
-            ).length
-          }
-          totalCount={
-            data.filter(
-              (e: any) =>
-                e.isCouponUsageInfinity === false && e.usage === e.couponUsage
-            ).length
-          }
+          prevCount={data.filter((e: any) => e.adsLocations.length > 0).length}
+          totalCount={data.filter((e: any) => e.adsLocations.length > 0).length}
         />
         <StatsCard
-          label={"Expired Promo Code"}
+          label={"Ads not placed"}
           currentCount={
-            data.filter(
-              (e: PromoCode) =>
-                e.isScheduled === true &&
-                e.startDate &&
-                e.endDate &&
-                isBetween(
-                  new Date(e.startDate).toLocaleDateString("en-ca"),
-                  new Date(e.endDate).toLocaleDateString("en-ca")
-                )
-            ).length
+            data.filter((e: Ads) => e.adsLocations.length === 0).length
           }
           prevCount={
-            data.filter(
-              (e: PromoCode) =>
-                e.isScheduled === true &&
-                e.startDate &&
-                e.endDate &&
-                isBetween(
-                  new Date(e.startDate).toLocaleDateString("en-ca"),
-                  new Date(e.endDate).toLocaleDateString("en-ca")
-                )
-            ).length
+            data.filter((e: Ads) => e.adsLocations.length === 0).length
           }
           totalCount={
-            data.filter(
-              (e: PromoCode) =>
-                e.isScheduled === true &&
-                e.startDate &&
-                e.endDate &&
-                isBetween(
-                  new Date(e.startDate).toLocaleDateString("en-ca"),
-                  new Date(e.endDate).toLocaleDateString("en-ca")
-                ) === false
-            ).length
+            data.filter((e: Ads) => e.adsLocations.length === 0).length
           }
         />
       </div>
@@ -483,7 +406,7 @@ const PromoTbl = ({
               </Typography>
               <TextField
                 size="small"
-                placeholder={"Search Promo Codes"}
+                placeholder={"Search Ads"}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 className="rounded-md border-0 bg-white"
@@ -516,4 +439,4 @@ const PromoTbl = ({
   );
 };
 
-export default PromoTbl;
+export default AdsTable;

@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 //import PromotionModal from "@/components/modal/sideModal/PromotionModal";
 import LoadingScreen from "@/components/screen/LoadingScreen";
 import PromoTbl from "@/components/muiTable/PromoTbl";
+import PromotionModal from "@/components/modal/sideModal/PromotionModal";
 
 function PromoCodePage() {
   const { isLoading, error, data, refetch } = useQuery("promoData", () =>
@@ -30,9 +31,7 @@ function PromoCodePage() {
   const { data: session }: any = useSession();
   const [title, setTitle] = React.useState("Create Promo Code");
   const [promotion, setPromotion] = React.useState<any>({
-    isAllowAllBrand: true,
-    isAllowAllBuyers: true,
-    brandIds: [],
+    sellerId: undefined,
     isPercent: false,
     isCouponUsagePerUserInfinity: true,
     isCouponUsageInfinity: true,
@@ -106,7 +105,7 @@ function PromoCodePage() {
         </button>
       </div>
 
-      {/*  <PromotionModal
+      <PromotionModal
         title={title}
         isModalOpen={isModalOpen}
         setModalOpen={setModalOpen}
@@ -114,7 +113,7 @@ function PromoCodePage() {
         setUpdate={() => {
           refetch();
         }}
-      /> */}
+      />
     </div>
   ) : (
     <ErrorScreen statusCode={401} />

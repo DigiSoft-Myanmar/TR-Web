@@ -204,11 +204,7 @@ function MultiUploadModal({
                               type="button"
                               className="rounded-md bg-primary px-7 py-3 text-sm text-white hover:bg-primary-focus"
                               onClick={() => {
-                                if (totalSize > 2000000) {
-                                  showErrorDialog(t("fileTooLarge"));
-                                } else {
-                                  upload();
-                                }
+                                upload();
                               }}
                             >
                               {t("upload")}
@@ -274,16 +270,8 @@ function MultiUploadModal({
                                     f.push(fileList[i]);
                                   }
                                 }
-                                if (size > 2000000) {
-                                  setTotalSize(size);
-                                  setUploadFiles(undefined);
-                                  setFileSrc([]);
-
-                                  showErrorDialog(t("fileTooLarge"));
-                                } else {
-                                  setTotalSize(size);
-                                  setUploadFiles(f);
-                                }
+                                setTotalSize(size);
+                                setUploadFiles(f);
                               }
                               e.preventDefault();
                             }}
@@ -335,15 +323,8 @@ function MultiUploadModal({
                                   for (let i = 0; i < fileList.length; i++) {
                                     size += fileList[i].size;
                                   }
-                                  if (size > 2000000) {
-                                    setTotalSize(0);
-                                    setUploadFiles(undefined);
-                                    setFileSrc("");
-                                    showErrorDialog(t("fileTooLarge"));
-                                  } else {
-                                    setTotalSize(size);
-                                    setUploadFiles(fileList);
-                                  }
+                                  setTotalSize(size);
+                                  setUploadFiles(fileList);
                                 }
                               }
                             }}

@@ -27,7 +27,7 @@ var storage = new GridFsStorage({
 
     return {
       bucketName: process.env.NEXT_PUBLIC_IMG_BUCKET,
-      filename: `${Date.now()}-${file.originalname}`,
+      filename: `${Date.now()}`,
     };
   },
 });

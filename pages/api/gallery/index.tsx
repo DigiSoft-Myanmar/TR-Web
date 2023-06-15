@@ -39,7 +39,6 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
     let filesData = req.files;
     try {
       const db = (await clientPromise).db();
-      console.log(filesData);
 
       filesData.forEach(async (element) => {
         let data: any = { ...element };
@@ -52,7 +51,6 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
         if (type) {
           data.type = type;
         }
-        console.log(data);
         await db.collection("gallery").insertOne(data);
       });
       res.status(200).json({ filesData });

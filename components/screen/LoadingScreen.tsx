@@ -13,7 +13,7 @@ function LoadingScreen() {
       </Head>
       <div className="relative">
         <div className="relative z-30 flex flex-col items-center justify-center">
-          <div className="z-50 flex h-[200px] w-[200px] lg:w-auto lg:h-auto flex-col items-center justify-center rounded-full bg-[#FFF] p-5">
+          <div className="z-50 flex h-[200px] w-[200px] lg:w-auto lg:h-auto flex-col items-center justify-center rounded-full p-5">
             <Image
               src={"/assets/logo_full.png"}
               className="object-cover"

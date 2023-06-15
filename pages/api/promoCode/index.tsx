@@ -44,7 +44,7 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
     let data: any = await prisma.promoCode.findMany({
       where: filter,
       include: {
-        users: true,
+        seller: true,
         Order: true,
       },
     });
@@ -70,9 +70,8 @@ async function addPromotion(req: NextApiRequest, res: NextApiResponse<any>) {
     let promo = await prisma.promoCode.findFirst({
       where: { promoCode: data.promoCode },
     });
-    if (data.brandIds && data.brandIds.length === 0) {
-      delete data.brandIds;
-    }
+
+    console.log(data);
     if (promo) {
       return res.status(400).json(BadPromoCode);
     } else {

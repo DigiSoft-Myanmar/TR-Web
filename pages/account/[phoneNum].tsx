@@ -43,7 +43,7 @@ function Default({ user }: { user: any }) {
         session.userDefinedRole.permission &&
         session.userDefinedRole.permission.find(
           (z: any) =>
-            (action.toString().toLowerCase() === "edit" &&
+            (action?.toString().toLowerCase() === "edit" &&
               ((user.role === Role.Buyer &&
                 z === BuyerPermission.buyerUpdateAllow) ||
                 (user.role === Role.Seller &&
@@ -52,7 +52,7 @@ function Default({ user }: { user: any }) {
                   z === TraderPermission.traderUpdateAllow) ||
                 (user.role === Role.Staff &&
                   z === StaffPermission.staffUpdateAllow))) ||
-            (action.toString().toLowerCase() === "view" &&
+            ((action.toString().toLowerCase() === "view" || !action) &&
               ((user.role === Role.Buyer &&
                 z === BuyerPermission.buyerViewAllow) ||
                 (user.role === Role.Seller &&
@@ -70,7 +70,7 @@ function Default({ user }: { user: any }) {
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {action.toString().toLowerCase() === "edit" ? (
+      {action?.toString().toLowerCase() === "edit" ? (
         <ProfileProvider user={user}>
           <ProfileScreen />
         </ProfileProvider>

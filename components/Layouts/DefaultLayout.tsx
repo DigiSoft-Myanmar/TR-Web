@@ -11,6 +11,8 @@ import Footer from "../navbar/Footer";
 import Header from "../navbar/Header";
 import LoadingScreen from "../screen/LoadingScreen";
 import { getHeaders, isInternal } from "@/util/authHelper";
+import useSWR from "swr";
+import { fetcher } from "@/util/fetcher";
 
 declare global {
   interface Window {
@@ -25,8 +27,7 @@ interface LayoutProps {
 
 function DefaultLayout({ children }: LayoutProps) {
   const router = useRouter();
-  //const { data: content } = useSWR("/api/siteManagement", fetcher);
-  const content = {};
+  const { data: content } = useSWR("/api/siteManagement", fetcher);
 
   const { accessKey } = router.query;
   const { data: session, status }: any = useSession();

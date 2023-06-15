@@ -10,8 +10,10 @@ import { signOut, useSession } from "next-auth/react";
 import { Category, Role } from "@prisma/client";
 import { formatAmount, getHighlightText, getText } from "@/util/textHelper";
 import { fileUrl } from "@/types/const";
+import useSWR from "swr";
 //import { useMarketplace } from "@/context/MarketplaceContext";
 import { useTranslation } from "next-i18next";
+import { fetcher } from "@/util/fetcher";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -45,13 +47,155 @@ function Header({ content }: { content: any }) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const [scrollPosition, setScrollPosition] = React.useState(0);
+  const { data: banner } = useSWR("/api/siteManagement/banner", fetcher);
+
+  React.useEffect(() => {
+    if (banner && banner.length > 1) {
+      setInterval(() => {
+        setCurrentIndex((prevValue) => {
+          if (prevValue + 1 >= banner.length) {
+            return 0;
+          } else {
+            return prevValue + 1;
+          }
+        });
+      }, 5000);
+    }
+  }, [banner]);
 
   return (
     <header className="border-b border-gray-100">
-      <div className="bg-primary/10 sm:px-6 lg:px-8 max-w-screen-2xl flex flex-row justify-between py-1 text-xs">
-        <p>Social Icons</p>
-        <p>Banner</p>
-        <p>Language</p>
+      <div className="flex flex-row border-b border-b-neutral py-2 px-3 md:px-10">
+        <div className="hidden flex-row space-x-1 md:flex">
+          {content?.socialUrl?.map((e: string, index: number) => (
+            <SocialIcon url={e} key={index} style={{ width: 20, height: 20 }} />
+          ))}
+        </div>
+        <div className="flex flex-grow flex-row items-center justify-between space-x-3 md:mx-10">
+          {banner && (
+            <>
+              <button
+                className="text-primaryText rounded-full p-1 hover:bg-primary hover:text-white md:flex"
+                type="button"
+                onClick={() => {
+                  setCurrentIndex((prevIndex) => {
+                    if (prevIndex - 1 >= 0) {
+                      return prevIndex - 1;
+                    } else {
+                      return banner.length - 1;
+                    }
+                  });
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.75 19.5L8.25 12l7.5-7.5"
+                  />
+                </svg>
+              </button>
+
+              <p className="text-center text-xs">
+                {locale === "mm"
+                  ? getHighlightText(banner[currentIndex]?.bannerTextMM).map(
+                      (e: any, index: number) => (
+                        <span
+                          className={
+                            e.isHighlight === true
+                              ? "font-semibold text-primary"
+                              : ""
+                          }
+                          key={index}
+                        >
+                          {e.text}
+                        </span>
+                      )
+                    )
+                  : getHighlightText(banner[currentIndex]?.bannerText).map(
+                      (e: any, index: number) => (
+                        <span
+                          className={
+                            e.isHighlight === true
+                              ? "font-semibold text-primary"
+                              : ""
+                          }
+                          key={index}
+                        >
+                          {e.text}
+                        </span>
+                      )
+                    )}
+              </p>
+              <button
+                className="text-primaryText rounded-full p-1 hover:bg-primary hover:text-white md:flex"
+                type="button"
+                onClick={() => {
+                  setCurrentIndex((prevIndex) => {
+                    if (prevIndex + 1 < banner.length) {
+                      return prevIndex + 1;
+                    } else {
+                      return 0;
+                    }
+                  });
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </button>
+            </>
+          )}
+        </div>
+        <div className="hidden md:flex">
+          <div
+            onClick={(e) =>
+              router.push(router.route, router.asPath, {
+                locale: router && router.locale === "mm" ? "en" : "mm",
+              })
+            }
+            className={`flex cursor-pointer flex-row items-center space-x-1 border-b-4 border-transparent`}
+          >
+            {router && router.locale && router.locale === "mm" ? (
+              <Image
+                src="/assets/icon/myanmar.svg"
+                width={16}
+                height={16}
+                className="h-4 w-4"
+                alt="english"
+              />
+            ) : (
+              <Image
+                src="/assets/icon/eng.svg"
+                width={16}
+                height={16}
+                className="h-4 w-4"
+                alt="english"
+              />
+            )}
+            <span className="text-xs">
+              {router.locale === "mm" ? "မြန်မာ" : "English"}
+            </span>
+          </div>
+        </div>
       </div>
       <div className="mx-auto flex h-16 max-w-screen-2xl items-center justify-between sm:px-6 lg:px-8">
         <div className="flex items-center gap-4">

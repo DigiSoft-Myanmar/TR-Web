@@ -4,7 +4,7 @@ export function verifyEmail(emailInput: string | undefined) {
   if (emailInput) {
     if (
       emailInput.match(
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       )
     ) {
       return { isSuccess: true };
@@ -143,7 +143,7 @@ export function getSalePrice(regularPrice: number, salePercent: number) {
 export function verifyPrice(
   regularPrice: number | undefined,
   salePrice: number | undefined,
-  isPercent: boolean,
+  isPercent: boolean
 ) {
   let v = verifyNumber(regularPrice?.toString());
   if (v.isSuccess === true) {
@@ -210,7 +210,7 @@ export function verifyAuctionPeriod(
   startDate: string | null | undefined,
   endDate: string | null | undefined,
   isISO: boolean,
-  maxAuctionPeriod: number,
+  maxAuctionPeriod: number
 ) {
   if (startDate && endDate && startDate.length > 0 && endDate.length > 0) {
     if (startDate >= endDate) {
@@ -270,6 +270,23 @@ export function verifyAuctionPeriod(
   }
 }
 
+export enum PromoType {
+  NotStarted,
+  Active,
+  Expired,
+}
+
+export function isTodayBetween(startDate: Date, endDate: Date): PromoType {
+  const today = new Date();
+  if (today < startDate) {
+    return PromoType.NotStarted;
+  } else if (today >= startDate && today <= endDate) {
+    return PromoType.Active;
+  } else {
+    return PromoType.Expired;
+  }
+}
+
 export function isBetween(startDate: string, endDate: string) {
   let startDateArr = startDate.split("-"); // ex input "2010-01-18"
   let endDateArr = endDate.split("-"); // ex input "2010-01-18"
@@ -278,19 +295,19 @@ export function isBetween(startDate: string, endDate: string) {
   let start = new Date(
     parseInt(startDateArr[0]),
     parseInt(startDateArr[1]) - 1,
-    parseInt(startDateArr[2]),
+    parseInt(startDateArr[2])
   );
   let end = new Date(
     parseInt(endDateArr[0]),
     parseInt(endDateArr[1]) - 1,
-    parseInt(endDateArr[2]),
+    parseInt(endDateArr[2])
   );
   return today >= start && today <= end;
 }
 
 export function verifyPeriod(
   startDate: string | undefined,
-  endDate: string | undefined,
+  endDate: string | undefined
 ) {
   if (startDate && endDate) {
     let startDateArr = startDate.split("-"); // ex input "2010-01-18"
@@ -298,12 +315,12 @@ export function verifyPeriod(
     let start = new Date(
       parseInt(startDateArr[0]),
       parseInt(startDateArr[1]) - 1,
-      parseInt(startDateArr[2]),
+      parseInt(startDateArr[2])
     );
     let end = new Date(
       parseInt(endDateArr[0]),
       parseInt(endDateArr[1]) - 1,
-      parseInt(endDateArr[2]),
+      parseInt(endDateArr[2])
     );
     if (start && end) {
       if (start > end) {
