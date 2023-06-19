@@ -156,7 +156,7 @@ const SubscribeTbl = ({
                         fetch(
                           `/api/user?type=${
                             RoleNav.Subscribe
-                          }&id=${encodeURIComponent(row.accInfo.id)}`,
+                          }&id=${encodeURIComponent(row.id)}`,
                           {
                             method: "DELETE",
                             headers: getHeaders(session),

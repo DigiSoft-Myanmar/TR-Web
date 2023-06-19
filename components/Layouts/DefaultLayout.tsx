@@ -13,6 +13,9 @@ import LoadingScreen from "../screen/LoadingScreen";
 import { getHeaders, isInternal } from "@/util/authHelper";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
+import { useQuery } from "react-query";
+import { MarketplaceProvider } from "@/context/MarketplaceContext";
+import { useScrollDirection } from "react-use-scroll-direction";
 
 declare global {
   interface Window {
@@ -27,7 +30,18 @@ interface LayoutProps {
 
 function DefaultLayout({ children }: LayoutProps) {
   const router = useRouter();
-  const { data: content } = useSWR("/api/siteManagement", fetcher);
+  const { data: content } = useQuery("siteData", () =>
+    fetch("/api/siteManagement").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
+  const { data: categories } = useQuery("categoriesData", () =>
+    fetch("/api/products/categories").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
 
   const { accessKey } = router.query;
   const { data: session, status }: any = useSession();
@@ -181,46 +195,48 @@ function DefaultLayout({ children }: LayoutProps) {
       </div>
     </div>
   ) : (
-    <div
-      className={`${
-        router.locale && router.locale === "en"
-          ? "font-poppins"
-          : "font-myanmarAngoun"
-      }`}
-    >
-      <Header content={content} />
+    <MarketplaceProvider>
+      <div
+        className={`min-h-screen ${
+          router.locale && router.locale === "en"
+            ? "font-poppins"
+            : "font-myanmarAngoun"
+        }`}
+      >
+        <Header content={content} categories={categories} />
 
-      {children}
-      {showBtn === true && (
-        <button
-          className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-primary bg-opacity-60 text-white hover:bg-opacity-100"
-          onClick={() => {
-            if (window) {
-              window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-              });
-            }
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
+        {children}
+        {showBtn === true && (
+          <button
+            className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-primary bg-opacity-60 text-white hover:bg-opacity-100"
+            onClick={() => {
+              if (window) {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }
+            }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7 11l5-5m0 0l5 5m-5-5v12"
-            />
-          </svg>
-        </button>
-      )}
-      <Footer content={content} />
-    </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7 11l5-5m0 0l5 5m-5-5v12"
+              />
+            </svg>
+          </button>
+        )}
+        <Footer content={content} />
+      </div>
+    </MarketplaceProvider>
   );
 }
 

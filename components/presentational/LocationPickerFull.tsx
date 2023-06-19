@@ -9,9 +9,10 @@ import useSWR from "swr";
 interface Props {
   selected?: any;
   setSelected: Function;
+  disableLabel?: boolean;
 }
 
-function LocationPickerFull({ selected, setSelected }: Props) {
+function LocationPickerFull({ selected, setSelected, disableLabel }: Props) {
   const { data } = useSWR("/api/townships?allow=true", fetcher);
   const router = useRouter();
   const { locale } = router;
@@ -69,18 +70,22 @@ function LocationPickerFull({ selected, setSelected }: Props) {
 
   return (
     <Listbox value={selected} onChange={(e) => setSelected(e)}>
-      <label
-        className={`text-sm font-medium ${
-          selected &&
-          selected.stateId &&
-          selected.districtId &&
-          selected.townshipId
-            ? "text-success"
-            : "text-error"
-        }`}
-      >
-        {t("location")} <span className="text-primary">*</span>
-      </label>
+      {disableLabel === true ? (
+        <></>
+      ) : (
+        <label
+          className={`text-sm font-medium ${
+            selected &&
+            selected.stateId &&
+            selected.districtId &&
+            selected.townshipId
+              ? "text-success"
+              : "text-error"
+          }`}
+        >
+          {t("location")} <span className="text-primary">*</span>
+        </label>
+      )}
 
       <div className={`relative mt-1`}>
         <Listbox.Button

@@ -45,6 +45,8 @@ type MarketplaceType = {
   modifyCount: Function;
   addCart: Function;
   modifyAddress: Function;
+  shippingLocation: any;
+  setShippingLocation: Function;
 };
 
 export type BillingAddress = {
@@ -91,6 +93,8 @@ const MarketplaceContext = createContext<MarketplaceType>({
   modifyCount: () => {},
   addCart: () => {},
   modifyAddress: () => {},
+  shippingLocation: null,
+  setShippingLocation: () => {},
 });
 
 export const useMarketplace = () => React.useContext(MarketplaceContext);
@@ -108,6 +112,11 @@ export const MarketplaceProvider = ({
     undefined
   );
   const [file, setFile] = React.useState<FileList | null>(null);
+  const [shippingLocation, setShippingLocation] = React.useState({
+    stateId: "",
+    districtId: "",
+    townshipId: "",
+  });
 
   const { data: cartData, refetch: refetchCart } = useQuery("cartData", () =>
     fetch("/api/cart").then((res) => {
@@ -199,7 +208,7 @@ export const MarketplaceProvider = ({
   const promoTotal = useMemo(() => {
     let totalDiscount = 0;
     if (promoCode) {
-      let brandList = promoCode?.userIds;
+      let brandList = promoCode?.sellerId;
       let subTotal = cartItems
         .filter((e) => brandList === e.brandId)
         .map((e) => e.quantity * e.salePrice)
@@ -487,6 +496,9 @@ export const MarketplaceProvider = ({
         modifyCount,
         modifyAddress,
         addCart,
+
+        shippingLocation,
+        setShippingLocation,
       }}
     >
       {children}

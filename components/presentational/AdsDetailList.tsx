@@ -1,9 +1,17 @@
 import { Ads } from "@prisma/client";
 import React from "react";
 
-function AdsDetailList({ title, ads }: { title: string; ads: Ads[] }) {
+function AdsDetailList({
+  title,
+  ads,
+  currentLocation,
+}: {
+  title: string;
+  ads: Ads[];
+  currentLocation: any;
+}) {
   return (
-    <details>
+    <details open={title === currentLocation}>
       <summary className="flex flex-row cursor-pointer items-end py-3 border-b">
         <div className="flex flex-row items-center justify-between flex-grow">
           <div className={`text-xs font-semibold text-gray-700`}>{title}</div>

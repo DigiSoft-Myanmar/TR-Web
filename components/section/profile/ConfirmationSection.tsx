@@ -20,8 +20,7 @@ type Props = {
 
 function ConfirmationSection({ backFn, currentStep }: Props) {
   const { t } = useTranslation("common");
-  const { profile, brand, profileImg, brandLogoImg, brandBannerImg } =
-    useProfile();
+  const { user: profile, profileImg } = useProfile();
   const [isSubmit, setSubmit] = React.useState(false);
   const router = useRouter();
   const { data: session }: any = useSession();
@@ -44,18 +43,15 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
             form.append("theFiles", profileImg);
             imgList.push({ type: "profile" });
           }
-          if (brandLogoImg) {
+          /* if (brandLogoImg) {
             form.append("theFiles", brandLogoImg);
             imgList.push({ type: "logo" });
           }
           if (brandBannerImg) {
             form.append("theFiles", brandBannerImg);
             imgList.push({ type: "banner" });
-          }
-          form.append(
-            "data",
-            JSON.stringify({ user: profile, brand: brand, img: imgList })
-          );
+          } */
+          form.append("data", JSON.stringify({ user: profile, img: imgList }));
           setSubmit(true);
           if (getHeaders(session)) {
             fetch("/api/user/" + encodeURIComponent(profile.phoneNum!), {

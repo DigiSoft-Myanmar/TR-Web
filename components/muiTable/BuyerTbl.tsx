@@ -132,15 +132,6 @@ const BuyerTbl = ({
         <Typography variant="body2">{row.phoneNum}</Typography>
       ),
     },
-    {
-      flex: 0.1,
-      minWidth: 100,
-      headerName: "Royal Pts",
-      field: "royalPointAvailable",
-      renderCell: ({ row }: CellType) => (
-        <Typography variant="body2">{row.royalPointAvailable}</Typography>
-      ),
-    },
 
     {
       flex: 0.15,
@@ -192,7 +183,7 @@ const BuyerTbl = ({
             <IconButton
               size="small"
               component={Link}
-              href={`/account/${row.accInfo.phone}?action=view`}
+              href={`/account/${row.phoneNum}?action=view`}
             >
               <Icon icon="mdi:eye-outline" fontSize={20} />
             </IconButton>
@@ -206,7 +197,7 @@ const BuyerTbl = ({
                 <IconButton
                   size="small"
                   component={Link}
-                  href={`/account/${row.accInfo.phone}?action=edit`}
+                  href={`/account/${row.phoneNum}?action=edit`}
                 >
                   <Icon icon="mdi:edit" fontSize={20} />
                 </IconButton>
@@ -226,13 +217,10 @@ const BuyerTbl = ({
                       "",
                       locale,
                       () => {
-                        fetch(
-                          `/api/user?id=${encodeURIComponent(row.accInfo.id)}`,
-                          {
-                            method: "DELETE",
-                            headers: getHeaders(session),
-                          }
-                        ).then(async (data) => {
+                        fetch(`/api/user?id=${encodeURIComponent(row.id)}`, {
+                          method: "DELETE",
+                          headers: getHeaders(session),
+                        }).then(async (data) => {
                           if (data.status === 200) {
                             showSuccessDialog(
                               t("delete") + " " + t("success"),

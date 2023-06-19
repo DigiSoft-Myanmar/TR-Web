@@ -189,12 +189,12 @@ const OtherTbl = ({
       headerName: "Action",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {row.accInfo.phone && (
+          {row.phoneNum && (
             <Tooltip title="View">
               <IconButton
                 size="small"
                 component={Link}
-                href={`/account/${row.accInfo.phone}?action=view`}
+                href={`/account/${row.phoneNum}?action=view`}
               >
                 <Icon icon="mdi:eye-outline" fontSize={20} />
               </IconButton>
@@ -205,12 +205,12 @@ const OtherTbl = ({
               session.role === Role.Staff ||
               session.role === Role.SuperAdmin ||
               session.role === Role.Seller) &&
-            row.accInfo.phone && (
+            row.phoneNum && (
               <Tooltip title="Edit">
                 <IconButton
                   size="small"
                   component={Link}
-                  href={`/account/${row.accInfo.phone}?action=edit`}
+                  href={`/account/${row.phoneNum}?action=edit`}
                 >
                   <Icon icon="mdi:edit" fontSize={20} />
                 </IconButton>
@@ -230,13 +230,10 @@ const OtherTbl = ({
                       "",
                       locale,
                       () => {
-                        fetch(
-                          `/api/user?id=${encodeURIComponent(row.accInfo.id)}`,
-                          {
-                            method: "DELETE",
-                            headers: getHeaders(session),
-                          }
-                        ).then(async (data) => {
+                        fetch(`/api/user?id=${encodeURIComponent(row.id)}`, {
+                          method: "DELETE",
+                          headers: getHeaders(session),
+                        }).then(async (data) => {
                           if (data.status === 200) {
                             showSuccessDialog(
                               t("delete") + " " + t("success"),

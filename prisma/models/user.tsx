@@ -171,7 +171,6 @@ export const updateUser = async (id: string, updateData: any) => {
   delete updateData?.state;
   delete updateData?.district;
   delete updateData?.township;
-  delete updateData?.RoyalPointHistory;
   if (firebaseRes.isSuccess === true) {
     const user = await prisma.user.update({
       where: {

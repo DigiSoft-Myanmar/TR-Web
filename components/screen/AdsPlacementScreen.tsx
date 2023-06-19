@@ -1,5 +1,5 @@
 import { Ads, AdsPlacement } from "@prisma/client";
-import React from "react";
+import React, { DetailedReactHTMLElement } from "react";
 import AdsList from "../presentational/AdsList";
 import AdsDetailList from "../presentational/AdsDetailList";
 import { AdsLocation, AdsPage } from "@/util/adsHelper";
@@ -13,6 +13,7 @@ function AdsPlacementScreen({
 }) {
   const [adsLocation, setAdsLocation] = React.useState<any>();
   const [page, setPage] = React.useState<string>(AdsPage.Home);
+
   const [usage, setUsage] = React.useState([
     {
       title: AdsPage.Home,
@@ -33,43 +34,71 @@ function AdsPlacementScreen({
     {
       title: AdsPage.Product,
       placement: [
-        { title: AdsLocation.ProductAds11, ads: [] },
-        { title: AdsLocation.ProductAds12, ads: [] },
-        { title: AdsLocation.ProductAds21, ads: [] },
-        { title: AdsLocation.ProductAds22, ads: [] },
-        { title: AdsLocation.ProductAds23, ads: [] },
-        { title: AdsLocation.ProductAds24, ads: [] },
+        {
+          title: AdsLocation.ProductAds11,
+          ads: [],
+        },
+        {
+          title: AdsLocation.ProductAds12,
+          ads: [],
+        },
+        {
+          title: AdsLocation.ProductAds21,
+          ads: [],
+        },
+        {
+          title: AdsLocation.ProductAds22,
+          ads: [],
+        },
+        {
+          title: AdsLocation.ProductAds23,
+          ads: [],
+        },
+        {
+          title: AdsLocation.ProductAds24,
+          ads: [],
+        },
       ],
     },
     {
       title: AdsPage.Marketplace,
       placement: [
-        { title: AdsLocation.Marketplace1, ads: [] },
-        { title: AdsLocation.Marketplace21, ads: [] },
-        { title: AdsLocation.Marketplace22, ads: [] },
-        { title: AdsLocation.Marketplace23, ads: [] },
-        { title: AdsLocation.Marketplace24, ads: [] },
+        {
+          title: AdsLocation.Marketplace1,
+          ads: [],
+        },
+        {
+          title: AdsLocation.Marketplace21,
+          ads: [],
+        },
+        {
+          title: AdsLocation.Marketplace22,
+          ads: [],
+        },
+        {
+          title: AdsLocation.Marketplace23,
+          ads: [],
+        },
+        {
+          title: AdsLocation.Marketplace24,
+          ads: [],
+        },
       ],
     },
     {
       title: AdsPage.Membership,
-      placement: [{ title: AdsLocation.Memberships1, ads: [] }],
+      placement: [
+        {
+          title: AdsLocation.Memberships1,
+          ads: [],
+        },
+      ],
     },
   ]);
 
   return (
     <div className="flex flex-col lg:flex-row bg-white h-[85vh] max-h-[85vh]">
-      <div className="lg:min-w-[25%] flex flex-col lg:max-w-[25%] order-2 lg:order-1 lg:max-h-[85vh] overflow-y-auto">
-        <h3 className="font-semibold text-sm p-3 border-b">Ads List</h3>
-        <div className="flex flex-col px-3">
-          <AdsList apiURL="" title="Not Placed" />
-          <AdsList apiURL="" title="Placed" />
-          <AdsList apiURL="" title="One Col" />
-          <AdsList apiURL="" title="Two Cols" />
-          <AdsList apiURL="" title="Three / Four Cols" />
-        </div>
-      </div>
-      <div className="lg:min-w-[50%] lg:max-w-[50%] lg:order-1 px-5 py-3 bg-gray-200 lg:max-h-[85vh] overflow-y-auto">
+      <div className="lg:min-w-[75%] lg:max-w-[75%] lg:order-1 px-5 py-3 bg-gray-200 lg:max-h-[85vh] overflow-y-auto">
         <h3 className="font-semibold text-sm py-3 border-b">
           Going to Expired
         </h3>
@@ -719,7 +748,12 @@ function AdsPlacementScreen({
           {usage
             .find((z) => z.title === page)
             ?.placement.map((z, index: number) => (
-              <AdsDetailList title={z.title} ads={[]} key={index} />
+              <AdsDetailList
+                title={z.title}
+                ads={[]}
+                key={index}
+                currentLocation={adsLocation}
+              />
             ))}
         </div>
       </div>

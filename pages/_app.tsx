@@ -10,6 +10,7 @@ import "nprogress/nprogress.css"; //styles of nprogress
 import Router from "next/router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import { MarketplaceProvider } from "@/context/MarketplaceContext";
 //Route Events.
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
