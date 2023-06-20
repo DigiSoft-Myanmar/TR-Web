@@ -16,7 +16,7 @@ function Default() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="relative mx-auto max-w-screen-xl px-4 py-8">
+      <div className="relative max-w-screen-2xl mx-6 px-4 py-8">
         <section className="flex flex-col space-y-5">
           <div className="flex">{t("home")}</div>
         </section>

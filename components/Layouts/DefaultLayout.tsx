@@ -197,7 +197,7 @@ function DefaultLayout({ children }: LayoutProps) {
   ) : (
     <MarketplaceProvider>
       <div
-        className={`min-h-screen ${
+        className={`min-h-screen bg-gray-50 ${
           router.locale && router.locale === "en"
             ? "font-poppins"
             : "font-myanmarAngoun"

@@ -1,0 +1,1175 @@
+[
+  {
+    "_id": "643f5c05482d1aab933d8ac8",
+    "name": "Foods & Drink",
+    "nameMM": "အစားအစာနှင့် အဖျော်ယမကာ",
+    "slug": "Food&Drink",
+    "iconUrl": "1682994415594-download (8).jpg",
+    "prodCount": 34,
+    "subCategories": [
+      {
+        "_id": "645075c0501a51db00a46b17",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Beverage ",
+        "slug": "Beverage ",
+        "nameMM": "ယမကာ",
+        "iconUrl": "1682994620483-download (10).jpg",
+        "prodCount": 3
+      },
+      {
+        "_id": "64507652501a51db00a46b1b",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Snacks",
+        "nameMM": "မုန့်များ",
+        "slug": "Snacks",
+        "iconUrl": "1682994766110-images.jpg",
+        "prodCount": 10
+      },
+      {
+        "_id": "6450769e501a51db00a46b1f",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Bakery",
+        "slug": "Bakery",
+        "nameMM": "ကိတ်မုန့်နှင့်နို့ထွက်ကုန်",
+        "iconUrl": "1682994843906-viber_image_2022-10-13_23-39-47-719.webp",
+        "prodCount": 8,
+        "subCategories": [
+          {
+            "_id": "646f2bb8e47c10d0babf8e8e",
+            "parentId": "6450769e501a51db00a46b1f",
+            "name": "Soy Milk",
+            "nameMM": "ပဲနို့",
+            "slug": "SoyMilk",
+            "prodCount": 1
+          }
+        ]
+      },
+      {
+        "_id": "645076c9501a51db00a46b20",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Energy Drink",
+        "nameMM": "အားဖြည့်အချိုရည်",
+        "slug": "Energy Drink",
+        "prodCount": 15
+      },
+      {
+        "_id": "64507729501a51db00a46b22",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Tobacco",
+        "nameMM": "ဆေးလိပ်",
+        "slug": "Tobacco",
+        "prodCount": 0
+      },
+      {
+        "_id": "64507755501a51db00a46b23",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Frozen Foods",
+        "slug": "Frozen Foods",
+        "nameMM": "အေးခဲထားသောအစားအစာများ",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450778d501a51db00a46b24",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "nameMM": "အသင့်စားစရာ",
+        "name": "Ready to Eat",
+        "slug": "Ready to Eat",
+        "prodCount": 4
+      },
+      {
+        "_id": "645077bd501a51db00a46b25",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Coffee & Tea",
+        "slug": "Coffee & Tea",
+        "nameMM": "ကော်ဖီနှင့်လက်ဖက်ရည်",
+        "prodCount": 2
+      },
+      {
+        "_id": "646eee33913568ad41d6d514",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Soda",
+        "nameMM": "ဆိုဒါ",
+        "slug": "Soda",
+        "prodCount": 1
+      },
+      {
+        "_id": "646f28b4e47c10d0babf8e79",
+        "parentId": "643f5c05482d1aab933d8ac8",
+        "name": "Soy Milk",
+        "nameMM": "ပဲနို့",
+        "slug": "Soy Milk",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "643f5c5b482d1aab933d8acc",
+    "name": " Automotive & Motorbike",
+    "nameMM": "ကား၊ဆိုင်ကယ်ပစ္စည်းများ",
+    "slug": " Automotive & Motorbike",
+    "iconUrl": "1682051531901-Norton_Motorcycle (1).jpg",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "64509986501a51db00a46b49",
+        "parentId": "643f5c5b482d1aab933d8acc",
+        "name": "Automobile",
+        "nameMM": "အော်တိုမိုဘိုင်း",
+        "slug": "Automobile",
+        "prodCount": 0
+      },
+      {
+        "_id": "645099ac501a51db00a46b4a",
+        "parentId": "643f5c5b482d1aab933d8acc",
+        "name": "Car",
+        "nameMM": "ကား",
+        "slug": "Car",
+        "prodCount": 0
+      },
+      {
+        "_id": "645099ca501a51db00a46b4b",
+        "parentId": "643f5c5b482d1aab933d8acc",
+        "name": "E-bike",
+        "nameMM": "E-bike",
+        "slug": "E-bike",
+        "prodCount": 0
+      },
+      {
+        "_id": "645099e7501a51db00a46b4c",
+        "parentId": "643f5c5b482d1aab933d8acc",
+        "name": "Moto Parts & Accessories",
+        "nameMM": "ကားအစိတ်အပိုင်းများ",
+        "slug": "Moto Parts & Accessories",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509a00501a51db00a46b4d",
+        "parentId": "643f5c5b482d1aab933d8acc",
+        "name": "Motorcycle",
+        "nameMM": "ဆိုင်ကယ်",
+        "slug": "Motorcycle",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "643f85bb482d1aab933d8af4",
+    "name": "Health&Beauty",
+    "nameMM": "ကျန်းမာရေးနှင့်အလှအပ",
+    "slug": "Health&Beauty",
+    "iconUrl": "1683020091094-p001.jpg",
+    "prodCount": 27,
+    "subCategories": [
+      {
+        "_id": "64507945501a51db00a46b26",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Beauty Accessories\t",
+        "slug": "Beauty Accessories\t",
+        "nameMM": "အလှကုန်များ",
+        "prodCount": 10
+      },
+      {
+        "_id": "64507963501a51db00a46b27",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Hair Care\t",
+        "slug": "Hair Care\t",
+        "nameMM": "ဆံပင်နှင့်ဆက်စက်ပစ္စည်းများ",
+        "prodCount": 16,
+        "subCategories": [
+          {
+            "_id": "6461afac45b1ca4e751628e7",
+            "parentId": "64507963501a51db00a46b27",
+            "name": "Hair Gel",
+            "nameMM": "ဂျယ်",
+            "slug": "Hair Gel",
+            "prodCount": 3
+          },
+          {
+            "_id": "6461b46945b1ca4e7516290f",
+            "parentId": "64507963501a51db00a46b27",
+            "name": "Gel Spary",
+            "nameMM": "ဂျယ်ဖြန်ဆေး",
+            "slug": "Gel Spary",
+            "prodCount": 2
+          },
+          {
+            "_id": "6461c72445b1ca4e75162960",
+            "parentId": "64507963501a51db00a46b27",
+            "name": "Hair Treatment",
+            "nameMM": "ဆံကေသာထိန်းသိမ်းပစ္စည်း",
+            "slug": "hair care",
+            "prodCount": 13
+          }
+        ]
+      },
+      {
+        "_id": "64507984501a51db00a46b28",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Makeup\t",
+        "slug": "Makeup\t",
+        "nameMM": "မိတ်ကပ်",
+        "prodCount": 1
+      },
+      {
+        "_id": "645079a1501a51db00a46b29",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Medical Supplies",
+        "slug": "Medical Supplies",
+        "nameMM": "ဆေးဝါးအသုံးအဆောင်များ",
+        "prodCount": 1
+      },
+      {
+        "_id": "645079d0501a51db00a46b2a",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Men’s Care\t\t",
+        "slug": "Men’s Care\t\t",
+        "nameMM": "ယောင်္ကျားလေးသုံးအလှကုန်များ",
+        "prodCount": 0
+      },
+      {
+        "_id": "64507a49501a51db00a46b2b",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Skin Care",
+        "slug": "Skin Care",
+        "nameMM": "အရေးပြားနှင့်ဆက်စက်အလှကုန်များ",
+        "prodCount": 26,
+        "subCategories": [
+          {
+            "_id": "6461a7d645b1ca4e751628cb",
+            "parentId": "64507a49501a51db00a46b2b",
+            "name": "Facial Cleanser",
+            "nameMM": "မျက်နှာသစ်ဆေး",
+            "slug": "Facial Cleanser,Face Wash",
+            "prodCount": 8
+          },
+          {
+            "_id": "6461d02945b1ca4e7516297c",
+            "parentId": "64507a49501a51db00a46b2b",
+            "name": " Body Moisturizer",
+            "nameMM": "အရေပြားအစိုဓာတ်ဖြည့် လိမ်းဆေးများ",
+            "slug": " Body Moisturizer,Lotion",
+            "prodCount": 12
+          },
+          {
+            "_id": "6461d6fd45b1ca4e75162994",
+            "parentId": "64507a49501a51db00a46b2b",
+            "name": "Deodorant",
+            "nameMM": "ချွေးနံ့ပျောက်ဆေးများ",
+            "slug": "Deodorant",
+            "prodCount": 4
+          },
+          {
+            "_id": "646335425841a2fdc8608a62",
+            "parentId": "64507a49501a51db00a46b2b",
+            "name": "Scrub",
+            "nameMM": "Scrub",
+            "slug": "Scrub",
+            "prodCount": 2
+          },
+          {
+            "_id": "64648c09e648d1729aa6f084",
+            "parentId": "64507a49501a51db00a46b2b",
+            "name": "Sun Screen",
+            "nameMM": "Sun Screen",
+            "slug": "Sun Screen",
+            "prodCount": 2
+          },
+          {
+            "_id": "646b31b1c7ec93c8bd18c500",
+            "parentId": "64507a49501a51db00a46b2b",
+            "name": "Hand Wash",
+            "nameMM": "လက်ဆေးဆပ်ပြာ",
+            "slug": "Hand Wash",
+            "prodCount": 1
+          }
+        ]
+      },
+      {
+        "_id": "64507a7e501a51db00a46b2c",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Supplements",
+        "slug": "Supplements",
+        "nameMM": "ဖြည့်စွတ်စာများ",
+        "prodCount": 2
+      },
+      {
+        "_id": "64507a9f501a51db00a46b2d",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Personal Care\t",
+        "slug": "Personal Care\t",
+        "nameMM": "တကိုယ်ရေးသုံးအလှကုန်များ",
+        "prodCount": 11
+      },
+      {
+        "_id": "64507ab6501a51db00a46b2e",
+        "parentId": "643f85bb482d1aab933d8af4",
+        "name": "Bath & Body\t",
+        "slug": "Bath & Body\t",
+        "nameMM": "ရေချိုးသုံးအလှကုန်များ",
+        "prodCount": 35,
+        "subCategories": [
+          {
+            "_id": "6461e45c45b1ca4e751629b9",
+            "parentId": "64507ab6501a51db00a46b2e",
+            "name": "Shampoo",
+            "nameMM": "ခေါင်းလျှော်ရည်များ",
+            "slug": "Shampoo",
+            "prodCount": 5
+          },
+          {
+            "_id": "6462f8e1c75067a28d58945a",
+            "parentId": "64507ab6501a51db00a46b2e",
+            "name": "Body Wash",
+            "nameMM": "‌ရေချိုးဆပ်ပြာများ",
+            "slug": "Body Wash",
+            "prodCount": 8
+          },
+          {
+            "_id": "646357d25841a2fdc8608b6f",
+            "parentId": "64507ab6501a51db00a46b2e",
+            "name": "Toothpaste",
+            "nameMM": "သွားတိုက်ဆေးများ",
+            "slug": "Toothpaste",
+            "prodCount": 13
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6440bf6f482d1aab933d8f90",
+    "name": " Babies & Toys",
+    "nameMM": "ကလေးအသုံးဆောင်များ",
+    "slug": " Babies & Toys",
+    "iconUrl": "1683020132138-download (8).jpg",
+    "prodCount": 6,
+    "subCategories": [
+      {
+        "_id": "64509a60501a51db00a46b4e",
+        "parentId": "6440bf6f482d1aab933d8f90",
+        "name": "Baby Personal Care",
+        "nameMM": "ကလေးတကိုယ်ရေးသုံးအထိန်းသိမ်းပစ္စည်းများ",
+        "slug": "Baby Personal Care",
+        "prodCount": 8,
+        "subCategories": [
+          {
+            "_id": "64631f87c75067a28d589502",
+            "parentId": "64509a60501a51db00a46b4e",
+            "nameMM": "ကလေးရေချိုးခန်းသုံးပစ္စည်းများနှင့်အသားရေထိန်းသိမ်းပစ္စည်းများ",
+            "name": "Baby Bathtime & Skincare",
+            "slug": "Baby Bathtime & Skincare",
+            "prodCount": 4
+          },
+          {
+            "_id": "6464603de648d1729aa6f003",
+            "parentId": "64509a60501a51db00a46b4e",
+            "name": "Kid Toothpaste",
+            "nameMM": "ကလေးသွားတိုက်ဆေး",
+            "slug": "Kid Toothpaste",
+            "prodCount": 3
+          },
+          {
+            "_id": "6465f08fe648d1729aa6f433",
+            "parentId": "64509a60501a51db00a46b4e",
+            "name": " Baby Wettissue Wipes",
+            "nameMM": "ကလေးတစ်ရှူးအစို",
+            "slug": "Wettissue",
+            "prodCount": 1
+          }
+        ]
+      },
+      {
+        "_id": "64509a87501a51db00a46b4f",
+        "parentId": "6440bf6f482d1aab933d8f90",
+        "name": "Baby Clothing",
+        "nameMM": "ကလေးဝတ်အင်္ကျီ",
+        "slug": "Baby Clothing",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509aa8501a51db00a46b50",
+        "parentId": "6440bf6f482d1aab933d8f90",
+        "name": "Diapering",
+        "nameMM": "ကလေးဒိုက်ဗာ",
+        "slug": "Diapering\t\t\t\t\t\t\t\t\t",
+        "prodCount": 2
+      },
+      {
+        "_id": "64509aca501a51db00a46b51",
+        "parentId": "6440bf6f482d1aab933d8f90",
+        "name": "Remote Control & Vehicles",
+        "nameMM": "ရီမုတ်ကွန်ထို ကစားစရာများ",
+        "slug": "Remote Control & Vehicles",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509ae4501a51db00a46b52",
+        "parentId": "6440bf6f482d1aab933d8f90",
+        "name": "Toys & Toddler Toys",
+        "nameMM": "ကလေးကစားစရာများ",
+        "slug": "Toys & Toddler Toys",
+        "prodCount": 0
+      },
+      {
+        "_id": "647469ed6dbf7e6d4a5ff6e2",
+        "parentId": "6440bf6f482d1aab933d8f90",
+        "nameMM": " အာဟာရ အစားအစာများ ",
+        "name": "Nutrition",
+        "slug": " Nutrition",
+        "prodCount": 1,
+        "subCategories": [
+          {
+            "_id": "64746a336dbf7e6d4a5ff6e3",
+            "parentId": "647469ed6dbf7e6d4a5ff6e2",
+            "name": "Baby Milk Powder",
+            "nameMM": "ကလေးနို့မှုန့်",
+            "slug": "Baby Milk Powder",
+            "prodCount": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6442082a482d1aab933d903c",
+    "name": "Electronic Devices & Accessories\t",
+    "nameMM": "လျှပ်စစ်ပစ္စည်းများနှင့်ဆက်စက်ပစ္စည်းများ",
+    "slug": "Electronic Devices & Accessories\t",
+    "iconUrl": "1682130658305-download (2).jpg",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "64509b20501a51db00a46b53",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Camera Accessories",
+        "nameMM": "ကင်မရာအပိုပစ္စည်းများ",
+        "slug": "Camera Accessories",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509b3b501a51db00a46b54",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Cameras & Security CCTV",
+        "nameMM": "ကင်မရာနှင့်လုံခြုံရေး CCTV",
+        "slug": "Cameras & Security CCTV",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509b51501a51db00a46b55",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Game & gaming Accessories",
+        "nameMM": "ဂိမ်းနှင့် ဂိမ်းဆက်စက်ပစ္စည်းများ",
+        "slug": "Game & gaming Accessories",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509b6e501a51db00a46b56",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Computer & Accessories ",
+        "nameMM": "ကွန်ပျုတာနှင့်ကွန်ပျုတာဆက်စက်ပစ္စည်းများ",
+        "slug": "Computer & Accessories ",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509b86501a51db00a46b57",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Mobiles & Accessories\t",
+        "nameMM": "မိုဘိုင်းဖုန်းနှင့်မိုဘိုင်းဖုန်းဆက်စက်ပစ္စည်းများ",
+        "slug": "မိုဘိုင်းဖုန်းနှင့်မိုဘိုင်းဖုန်းဆက်စက်ပစ္စည်းများ",
+        "prodCount": 0,
+        "subCategories": [
+          {
+            "_id": "6465c874e648d1729aa6f3c7",
+            "parentId": "64509b86501a51db00a46b57",
+            "name": "Mobile Phone",
+            "nameMM": "Mobile Phone",
+            "slug": "Mobile Phone",
+            "prodCount": 0
+          }
+        ]
+      },
+      {
+        "_id": "64509ba3501a51db00a46b58",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Smoking Accessories\t",
+        "nameMM": "ဆေးလိပ်ဆက်စက်ပစ္စည်းများ",
+        "slug": "Smoking Accessories\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509bb9501a51db00a46b59",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Printers",
+        "nameMM": "ပုံနှိပ်စက်",
+        "slug": "Printers",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509bfd501a51db00a46b5a",
+        "parentId": "6442082a482d1aab933d903c",
+        "name": "Tablets",
+        "nameMM": "Tablets",
+        "slug": "Tablets\t",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "6442159e482d1aab933d906a",
+    "name": "Men’s Fashion\t",
+    "nameMM": "အမျိုးသားဝတ်ဖက်ရှင်",
+    "slug": "Men’s Fashion",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "64509c3e501a51db00a46b5b",
+        "parentId": "6442159e482d1aab933d906a",
+        "name": "Clothing",
+        "nameMM": "အဝတ်အထည်များ",
+        "slug": "Clothing",
+        "prodCount": 0,
+        "subCategories": [
+          {
+            "_id": "6454ba58501a51db00a46ca8",
+            "parentId": "64509c3e501a51db00a46b5b",
+            "name": "Shirt",
+            "slug": "Shirt",
+            "nameMM": "ရှပ်အင်္ကျီ",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454baa0501a51db00a46ca9",
+            "parentId": "64509c3e501a51db00a46b5b",
+            "name": "Pants",
+            "nameMM": "ဘောင်းဘီရှည်",
+            "slug": "Pants",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454bafd501a51db00a46caa",
+            "parentId": "64509c3e501a51db00a46b5b",
+            "name": "Men Outerwear",
+            "nameMM": "အပြင်ဖုံးကုတ်အင်္ကျီများ",
+            "slug": "Men Coats,Jeckets",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454bfa0501a51db00a46cbb",
+            "parentId": "64509c3e501a51db00a46b5b",
+            "name": "Men swimwear",
+            "nameMM": "အမျိုးသားဝတ်ရေကူးဝတ်စုံများ",
+            "slug": "Men Swimwear",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454c00a501a51db00a46cbd",
+            "parentId": "64509c3e501a51db00a46b5b",
+            "name": "Men Sleepwear",
+            "nameMM": "ယောင်္ကျားလေးညအိပ်ဝတ်စုံများ",
+            "slug": "Men Sleepwear",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454c036501a51db00a46cbe",
+            "parentId": "64509c3e501a51db00a46b5b",
+            "name": "Men Suits",
+            "nameMM": "ဝတ်စုံများ",
+            "slug": "Men Suits",
+            "prodCount": 0
+          }
+        ]
+      },
+      {
+        "_id": "64509c54501a51db00a46b5c",
+        "parentId": "6442159e482d1aab933d906a",
+        "name": "Shoes\t",
+        "nameMM": "ဖိနပ်များ",
+        "slug": "Shoes\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509c6e501a51db00a46b5d",
+        "parentId": "6442159e482d1aab933d906a",
+        "name": "Under wears\t",
+        "nameMM": "အတွင်းခံများ",
+        "slug": "Under wears",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "644215b2482d1aab933d906b",
+    "name": "Women’s Fashion",
+    "nameMM": "အမျိုးသမီးဝတ်ဖက်ရှင်",
+    "slug": "Women’s Fashion",
+    "iconUrl": "",
+    "prodCount": 1,
+    "subCategories": [
+      {
+        "_id": "64509caa501a51db00a46b5e",
+        "parentId": "644215b2482d1aab933d906b",
+        "name": " Clothing",
+        "nameMM": "အဝတ်အထည်များ",
+        "slug": " Clothing",
+        "prodCount": 0,
+        "subCategories": [
+          {
+            "_id": "6454bc6f501a51db00a46cae",
+            "parentId": "64509caa501a51db00a46b5e",
+            "name": "Tops",
+            "nameMM": "မိန်းကလေးဝတ်ပေါ်ဖုံးအင်္ကျီများ",
+            "slug": "Tops",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454bce0501a51db00a46caf",
+            "parentId": "64509caa501a51db00a46b5e",
+            "name": "Dresses",
+            "nameMM": "အမျိုးသမီးဝတ်ဝတ်စုံများ",
+            "slug": "Dresses",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454bd64501a51db00a46cb0",
+            "parentId": "64509caa501a51db00a46b5e",
+            "name": "Bottoms",
+            "nameMM": "အမျိုးသမီးအောက်ပိုင်းဝတ်များ",
+            "slug": "Bottoms",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454bdd2501a51db00a46cb1",
+            "parentId": "64509caa501a51db00a46b5e",
+            "name": "Women's Outwear",
+            "nameMM": "အမျိုးသမီးဝတ်အပြင်ဖုံးအင်္ကျီများ",
+            "slug": "Women Coats,Jeckets",
+            "prodCount": 0
+          },
+          {
+            "_id": "6454be56501a51db00a46cb3",
+            "parentId": "64509caa501a51db00a46b5e",
+            "name": "Women Swimwear",
+            "nameMM": "အမျိုးသမီးဝတ်ရေကူးဝတ်စုံများ",
+            "slug": "Women Swimwear",
+            "prodCount": 0
+          }
+        ]
+      },
+      {
+        "_id": "64509cc2501a51db00a46b5f",
+        "parentId": "644215b2482d1aab933d906b",
+        "name": "Shoes",
+        "nameMM": "ဖိနပ်များ",
+        "slug": "Shoes",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509cdd501a51db00a46b60",
+        "parentId": "644215b2482d1aab933d906b",
+        "name": "Under wears\t",
+        "nameMM": "အတွင်းခံများ",
+        "slug": "Under wears\t",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "64434719482d1aab933d914c",
+    "name": "Watches & Accessories",
+    "nameMM": "နာရီနှင့်ဆက်စက်ပစ္စည်းများ",
+    "slug": "Watches & Accessories",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "64509d22501a51db00a46b61",
+        "parentId": "64434719482d1aab933d914c",
+        "name": "Watches\t",
+        "nameMM": "နာရီများ",
+        "slug": "Watches\t",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "6443acab501a51db00a461c5",
+    "name": "Sports wears & Accessories\t",
+    "nameMM": "အားကစားအဝတ်အထည်များနှင့်ဆက်စက်အသုံးဆောင်များ",
+    "slug": "Sports wears & Accessories",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "64509d64501a51db00a46b62",
+        "parentId": "6443acab501a51db00a461c5",
+        "name": "Men’s gym wears",
+        "nameMM": "ယောင်္ကျားလေးအားကစားဝတ်များ",
+        "slug": "Men’s gym wears",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509d7b501a51db00a46b63",
+        "parentId": "6443acab501a51db00a461c5",
+        "name": "Women’s gym wears\t",
+        "nameMM": "မိန်းကလေးအားကစားဝတ်များ",
+        "slug": "Women’s gym wears\t",
+        "prodCount": 0,
+        "subCategories": [
+          {
+            "_id": "6454bf11501a51db00a46cb4",
+            "parentId": "64509d7b501a51db00a46b63",
+            "name": "Women Yoga Suit",
+            "nameMM": "အမျိုးသမီးဝတ်ယောဂဝတ်စုံ",
+            "slug": "Women Yoga Suit",
+            "prodCount": 0
+          }
+        ]
+      },
+      {
+        "_id": "64509da0501a51db00a46b64",
+        "parentId": "6443acab501a51db00a461c5",
+        "name": "Gym Accessories ",
+        "nameMM": "အားကစား အသုံးအဆောင်များ",
+        "slug": "Gym Accessories ",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "64509ddc501a51db00a46b65",
+    "name": "Travel & Luggage",
+    "nameMM": "ခရီးဆောင်အိတ်များနှင့်ဆက်စက်အသုံးဆောင်များ",
+    "slug": "Travel & Luggage",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "64509df3501a51db00a46b66",
+        "parentId": "64509ddc501a51db00a46b65",
+        "name": "Suitcase\t",
+        "nameMM": "ခရီးဆောင်လက်ဆွဲအိတ်",
+        "slug": "Suitcase\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509e0d501a51db00a46b67",
+        "parentId": "64509ddc501a51db00a46b65",
+        "name": "Travel Accessories",
+        "nameMM": "ခရီးဆောင်ဆက်စက်အသုံးဆောင်များ",
+        "slug": "Travel Accessories",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "64509e4f501a51db00a46b68",
+    "name": "Home & Lifestyle",
+    "nameMM": "အိမ်သုံးပစ္စည်းအမျိုးမျိုး",
+    "slug": "Home & Lifestyle",
+    "prodCount": 15,
+    "subCategories": [
+      {
+        "_id": "64509e66501a51db00a46b69",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Towels",
+        "nameMM": "မျက်နှာသုတ်ပဝါများ\t",
+        "slug": "Towels",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509e84501a51db00a46b6a",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Bedding ",
+        "nameMM": "အိပ်ရာခင်း",
+        "slug": "Bedding",
+        "prodCount": 0,
+        "subCategories": [
+          {
+            "_id": "64509ea9501a51db00a46b6b",
+            "parentId": "64509e84501a51db00a46b6a",
+            "name": " Pillow",
+            "nameMM": "ခေါင်းအုံး",
+            "slug": "Pillow",
+            "prodCount": 0
+          },
+          {
+            "_id": "64509ec8501a51db00a46b6c",
+            "parentId": "64509e84501a51db00a46b6a",
+            "name": "Bed Sheet",
+            "nameMM": "အိပ်ယာခင်း",
+            "slug": "Bed Sheet",
+            "prodCount": 0
+          },
+          {
+            "_id": "64509ee7501a51db00a46b6d",
+            "parentId": "64509e84501a51db00a46b6a",
+            "name": "Blanket",
+            "nameMM": "စောင်",
+            "slug": "Blanket",
+            "prodCount": 0
+          }
+        ]
+      },
+      {
+        "_id": "64509f10501a51db00a46b6e",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Decorates",
+        "nameMM": "အိမ်တွင်းအလှဆင်ပစ္စည်းများ",
+        "slug": "Decorates",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509f24501a51db00a46b6f",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Furniture",
+        "nameMM": "ပရိဘောဂ",
+        "slug": "Furniture",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509f3c501a51db00a46b70",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Kitchen & Dining",
+        "nameMM": "မီးဖိုချောင်သုံး",
+        "slug": "Kitchen & Dining",
+        "prodCount": 1
+      },
+      {
+        "_id": "64509f5e501a51db00a46b71",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": " Lighting",
+        "nameMM": "မီးသီး၊ မီးချောင်းများ",
+        "slug": " Lighting",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509f72501a51db00a46b72",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": " Generator\t",
+        "nameMM": "ရေစုပ်စက်",
+        "slug": " Generator\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "64509f85501a51db00a46b73",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Solar\t",
+        "nameMM": "ဆိုလာ",
+        "slug": "Solar\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450d39a501a51db00a46ba8",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Flower Pot",
+        "slug": "Flower Pot",
+        "nameMM": "ပန်းအိုး",
+        "prodCount": 0
+      },
+      {
+        "_id": "645f0afa5de7d6e5a8727c4c",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Laundry Detergent",
+        "nameMM": "အဝတ်လျှော်ဆပ်ပြာ",
+        "slug": "Laundry Detergent",
+        "prodCount": 3
+      },
+      {
+        "_id": "6465abb2e648d1729aa6f32e",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": " Cleaning",
+        "nameMM": "သန့်ရှင်းရေးသုံးပစ္စည်းများ",
+        "slug": " Cleaning",
+        "prodCount": 5,
+        "subCategories": [
+          {
+            "_id": "6465abe9e648d1729aa6f32f",
+            "parentId": "6465abb2e648d1729aa6f32e",
+            "nameMM": " ပန်းကန်သန့်ရှင်းရေးသုံးပစ္စည်းများ ",
+            "name": " Dishwashing ",
+            "slug": " Dishwashing ",
+            "prodCount": 1
+          },
+          {
+            "_id": "6465b194e648d1729aa6f358",
+            "parentId": "6465abb2e648d1729aa6f32e",
+            "name": " Glass Cleaner ",
+            "slug": " Glass Cleaner ",
+            "nameMM": "မှန်သန့်စင်ဆေးရည်များ",
+            "prodCount": 1
+          },
+          {
+            "_id": "6465b26ae648d1729aa6f35d",
+            "parentId": "6465abb2e648d1729aa6f32e",
+            "nameMM": "အိမ်သာနှင့်ရေချိုးခန်း သန့်စင်ဆေးရည်များ",
+            "name": " Bathroom & Toilet Cleaner ",
+            "slug": " Bathroom & Toilet Cleaner",
+            "prodCount": 1
+          }
+        ]
+      },
+      {
+        "_id": "646b3b3bc7ec93c8bd18c546",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Dish Wash",
+        "nameMM": "ပန်းကန်ဆေးဆပ်ပြာ",
+        "slug": "Dish Wash",
+        "prodCount": 1
+      },
+      {
+        "_id": "64744f026dbf7e6d4a5ff663",
+        "parentId": "64509e4f501a51db00a46b68",
+        "name": "Pest Control",
+        "nameMM": "ပိုးမွှားထိန်းချုပ်ရေးဆိုင်ရာထုတ်ကုန်များ",
+        "slug": "Pest Control",
+        "prodCount": 6,
+        "subCategories": [
+          {
+            "_id": "64744f306dbf7e6d4a5ff664",
+            "parentId": "64744f026dbf7e6d4a5ff663",
+            "nameMM": "ခြင်ဆေးခွေနှင့်အခြားအင်းဆက်ပြေးဆေးများ",
+            "name": "Coils & Sprays",
+            "slug": "Coils & Sprays",
+            "prodCount": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "64509faa501a51db00a46b74",
+    "name": "Electronic Appliances\t",
+    "nameMM": "လျှပ်စစ်အသုံးဆောင်များ",
+    "slug": "Electronic Appliances\t",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "6450a021501a51db00a46b75",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "TV\t",
+        "nameMM": "တီဗီ",
+        "slug": "TV\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a037501a51db00a46b76",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "Washing machine",
+        "nameMM": "အဝတ်လျှော်စက်",
+        "slug": "Washing machine",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a04e501a51db00a46b77",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "Refrigerator",
+        "nameMM": "ရေခဲသေတ္တာ",
+        "slug": "Refrigerator",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a064501a51db00a46b78",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "Microwave\t",
+        "nameMM": "မိုက်ခရိုဝေလ့်",
+        "slug": "Microwave\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a07a501a51db00a46b79",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "Aircon",
+        "nameMM": "အဲကွန်း",
+        "slug": "Aircon",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a08f501a51db00a46b7a",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "Fan\t",
+        "nameMM": "လေပန်ကာ",
+        "slug": "Fan\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a0ca501a51db00a46b7b",
+        "parentId": "64509faa501a51db00a46b74",
+        "name": "Air Cooler",
+        "nameMM": "Air Cooler",
+        "slug": "Air Cooler",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "6450a0f7501a51db00a46b7c",
+    "name": "Pet food & Accessories\t",
+    "nameMM": "အိမ်မွေးတိရစ္ဆာန်အစာများနှင့်အသုံးအဆောင်များ",
+    "slug": "Pet food & Accessories\t",
+    "prodCount": 0,
+    "subCategories": [
+      {
+        "_id": "6450a146501a51db00a46b7e",
+        "parentId": "6450a0f7501a51db00a46b7c",
+        "name": "Pet Food\t",
+        "nameMM": "အိမ်မွေးတိရစ္ဆာန်အစာများ",
+        "slug": "Pet Food\t",
+        "prodCount": 0
+      },
+      {
+        "_id": "6450a160501a51db00a46b7f",
+        "parentId": "6450a0f7501a51db00a46b7c",
+        "name": "Pet Accessories",
+        "nameMM": "အိမ်မွေးတိရစ္ဆာန်အသုံးဆောင်များ",
+        "slug": "Pet Accessories",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "646f13bd913568ad41d6d573",
+    "name": "Basic Grocey food & Staple Food",
+    "nameMM": "အခြေခံ စားသောက်ကုန်များ နှင့်အဓိကစားသောက်ကုန်များ",
+    "slug": "အခြေခံ စားသောက်ကုန်များ",
+    "prodCount": 9,
+    "subCategories": [
+      {
+        "_id": "646f13f3913568ad41d6d574",
+        "parentId": "646f13bd913568ad41d6d573",
+        "name": "Cooking Essential",
+        "nameMM": "ဟင်းချက်ဆက်စက်ပစ္စည်းများ",
+        "slug": "Cooking Essentials",
+        "prodCount": 6,
+        "subCategories": [
+          {
+            "_id": "646f16dae47c10d0babf8de4",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Salt",
+            "nameMM": "ဆား",
+            "slug": "Salt",
+            "prodCount": 1
+          },
+          {
+            "_id": "646f175fe47c10d0babf8deb",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Oyster Sauce",
+            "nameMM": "ခရုဆီ",
+            "slug": "Oyster Sauce",
+            "prodCount": 1
+          },
+          {
+            "_id": "646f17c4e47c10d0babf8df2",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Vinegar",
+            "nameMM": "ရှာလကာရည်",
+            "slug": "Vinegar",
+            "prodCount": 0
+          },
+          {
+            "_id": "646f17f4e47c10d0babf8df7",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Coocking Wine",
+            "nameMM": "ဟင်းချက်ဝိုင်",
+            "slug": "Coocking Wine",
+            "prodCount": 0
+          },
+          {
+            "_id": "646f188ce47c10d0babf8dfc",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Chili Sauce & Gralic Sauce",
+            "nameMM": "ငြုတ်ဆော့စ်နှင့်ကြက်သွန်ဆော့စ်များ",
+            "slug": "Chili Sauce & Gralic Sauce",
+            "prodCount": 0
+          },
+          {
+            "_id": "646f190be47c10d0babf8dfd",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Seasoning Pownder",
+            "nameMM": "ဟင်းခတ်အမွှေးအကြိုင်များ",
+            "slug": "Seasoning Pownder",
+            "prodCount": 1
+          },
+          {
+            "_id": "646f195ee47c10d0babf8e04",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Fish Sauce & Soy Sauce",
+            "nameMM": "ငံပြာရည်နှင့်ပဲငံပြာရည်များ",
+            "slug": "Soy Sauce",
+            "prodCount": 2
+          },
+          {
+            "_id": "646f1a16e47c10d0babf8e1b",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Bean Paste",
+            "nameMM": "ပဲငါးပိ",
+            "slug": "Bean Paste",
+            "prodCount": 0
+          },
+          {
+            "_id": "646f3218e47c10d0babf8ea8",
+            "parentId": "646f13f3913568ad41d6d574",
+            "name": "Coconaut Milk",
+            "nameMM": "အုန်းနို့",
+            "slug": "Coconaut Milk",
+            "prodCount": 1
+          }
+        ]
+      },
+      {
+        "_id": "646f1495913568ad41d6d579",
+        "parentId": "646f13bd913568ad41d6d573",
+        "name": "Rice",
+        "nameMM": "ဆန်",
+        "slug": "rice",
+        "prodCount": 0
+      },
+      {
+        "_id": "646f14b4913568ad41d6d57a",
+        "parentId": "646f13bd913568ad41d6d573",
+        "name": "Coocking Oil",
+        "nameMM": "ဟင်းချက်ဆီ",
+        "slug": "Coocking Oil",
+        "prodCount": 0
+      },
+      {
+        "_id": "646f160ae47c10d0babf8dd5",
+        "parentId": "646f13bd913568ad41d6d573",
+        "name": "Noodles&Vermicelli",
+        "nameMM": "ခေါက်ဆွဲနှင့်ကြာဇံ",
+        "slug": "Noodles&Vermicelli",
+        "prodCount": 0
+      },
+      {
+        "_id": "6476e8fe6dbf7e6d4a5ffa71",
+        "parentId": "646f13bd913568ad41d6d573",
+        "name": " Soups-Instant",
+        "nameMM": "အသင့်စားစွတ်ပြုတ်",
+        "slug": " Soups-Instant",
+        "prodCount": 1
+      },
+      {
+        "_id": "6476ee376dbf7e6d4a5ffa98",
+        "parentId": "646f13bd913568ad41d6d573",
+        "name": "Oil",
+        "nameMM": "ဆီ",
+        "slug": " Oil",
+        "prodCount": 2,
+        "subCategories": [
+          {
+            "_id": "6476ee616dbf7e6d4a5ffa9b",
+            "parentId": "6476ee376dbf7e6d4a5ffa98",
+            "name": "Vegetable Oil",
+            "slug": "Vegetable Oil",
+            "nameMM": "ဟင်းသီးဟင်းရွက်ဆီ",
+            "prodCount": 1
+          },
+          {
+            "_id": "6476f1786dbf7e6d4a5ffaa3",
+            "parentId": "6476ee376dbf7e6d4a5ffa98",
+            "name": "Peanut Oil",
+            "nameMM": "ပဲဆီ",
+            "slug": "Peanut Oil",
+            "prodCount": 1
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -5,42 +5,47 @@ import { useRouter } from "next/router";
 import React from "react";
 
 function SubCategoryDropdown({
+  id,
   name,
   subCategory,
+  open,
+  setOpen,
 }: {
+  id: string;
   name: string;
   subCategory: Category[];
+  open: string;
+  setOpen: Function;
 }) {
   const { locale } = useRouter();
   const [isHover, setHover] = React.useState(false);
   const [isDetailHover, setDetailHover] = React.useState(false);
   return (
-    <div className="dropdown dropdown-right group">
+    <div className="group">
       <div
         tabIndex={0}
-        className="min-w-[170px] group-hover:text-primary"
+        className="min-w-[260px] group-hover:text-primary max-w-[288px] text-ellipsis"
         onMouseEnter={() => {
           setHover(true);
-        }}
-        onMouseLeave={() => {
-          setHover(false);
+          setOpen(id);
         }}
       >
         {name}
       </div>
-      {(isHover === true || isDetailHover === true) && (
+      {(isHover === true || isDetailHover === true) && open === id && (
         <div
           tabIndex={0}
-          className="dropdown-content w-96 p-2 -mt-3 bg-base-100 shadow rounded-md grid grid-cols-2"
+          className="fixed top-5 left-[280px] w-[50vw] p-2 -mt-3 bg-base-100 shadow rounded-md grid grid-cols-3 max-h-[65vh] overflow-auto min-h-[65vh] gap-3 overflow-y-auto"
           onMouseEnter={() => {
             setDetailHover(true);
           }}
           onMouseLeave={() => {
             setDetailHover(false);
+            setHover(false);
           }}
         >
           {subCategory.map((z: any, index) => (
-            <div key={index} className="">
+            <div key={index} className="flex flex-col gap-1">
               <Link
                 href="/marketplace"
                 className="font-semibold text-accent hover:text-primary p-3"
@@ -52,7 +57,7 @@ function SubCategoryDropdown({
                   <Link
                     href={"/marketplace"}
                     key={index1}
-                    className="text-sm hover:text-primary"
+                    className="text-sm hover:text-primary px-3"
                   >
                     {getText(b.name, b.nameMM, locale)}
                   </Link>

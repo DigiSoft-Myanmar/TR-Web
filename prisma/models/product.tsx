@@ -19,6 +19,7 @@ export const getAllCategories = async () => {
       where: { categoryIds: { has: categories[i].id } },
     });
     categories[i].prodCount = prodCount;
+
     if (!categories[i].parentId) {
       catData.push(categories[i]);
     } else {

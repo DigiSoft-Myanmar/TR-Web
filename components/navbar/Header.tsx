@@ -41,6 +41,7 @@ function Header({
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { data: session }: any = useSession();
   const [isNotiModalOpen, setNotiModalOpen] = React.useState(false);
+  const [open, setOpen] = React.useState("");
 
   enum TabList {
     all = "all",
@@ -397,21 +398,24 @@ function Header({
               </label>
               <ul
                 tabIndex={0}
-                className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-10"
+                className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-72 z-10"
               >
                 {categories?.map((e: any, index) => (
                   <li key={index} className="group">
                     {e.subCategory && e.subCategory.length > 0 ? (
                       <Link href={"/marketplace"}>
                         <SubCategoryDropdown
+                          id={e.id}
                           name={getText(e.name, e.nameMM, locale)}
                           subCategory={e.subCategory}
+                          open={open}
+                          setOpen={setOpen}
                         />
                       </Link>
                     ) : (
                       <Link
                         href={"/marketplace"}
-                        className="group-hover:text-primary"
+                        className="group-hover:text-primary max-w-[288px] text-ellipsis"
                       >
                         {getText(e.name, e.nameMM, locale)}
                       </Link>
@@ -440,7 +444,7 @@ function Header({
             </Link>
             <Link
               href={"/marketplace"}
-              className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              className="hidden xl:flex whitespace-nowrap hover:text-primary hover:underline "
             >
               Help
             </Link>
@@ -515,13 +519,17 @@ function Header({
             <Link
               key={index}
               href={"/marketplace"}
-              className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              className={`whitespace-nowrap ${
+                index === categories.length - 1
+                  ? ""
+                  : "border-r pr-3 border-r-neutral"
+              } hover:text-primary hover:underline `}
             >
               {getText(e.name, e.nameMM, locale)}
             </Link>
           ))}
         </div>
-        {router.asPath !== "/" && (
+        {router.asPath.includes("/marketplace") && (
           <div className="flex lg:hidden flex-row items-center px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-b-[1px] border-y-gray-200 overflow-x-auto scrollbar-hide">
             <Link
               href={"/marketplace"}
