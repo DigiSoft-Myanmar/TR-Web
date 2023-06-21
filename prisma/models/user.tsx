@@ -12,9 +12,8 @@ export const getAllUser = async (type?: any) => {
     township: true,
     userDefinedRole: true,
   };
-  if (type === Role.Buyer) {
-    include = { ...include, Order: true };
-  }
+  include = { ...include, Order: true, currentMembership: true };
+
   if (type) {
     if (type === RoleNav.Subscribe) {
       const users = await prisma.subscribe.findMany({});
@@ -54,16 +53,24 @@ export const getAllUser = async (type?: any) => {
         where: {
           role: Role.Staff,
         },
-        include,
+        include: include,
       });
       return users;
     }
-    const users = await prisma.user.findMany({
+    const users: any = await prisma.user.findMany({
       where: {
         role: type,
       },
-      include,
+      include: include,
     });
+    if (type === Role.Seller || type === Role.Trader) {
+      for (let i = 0; i < users.length; i++) {
+        let prodCount = await prisma.product.count({
+          where: { sellerId: users[i].id },
+        });
+        users[i].prodCount = prodCount;
+      }
+    }
     return users;
   } else {
     const users = await prisma.user.findMany({

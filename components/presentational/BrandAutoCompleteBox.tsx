@@ -20,7 +20,7 @@ export default function BrandAutoCompleteBox({
 
   React.useEffect(() => {
     if (brandList && parentSelect && parentSelect.id) {
-      setSelected(brandList.find((e: any) => e._id === parentSelect.id));
+      setSelected(brandList.find((e: any) => e.id === parentSelect.id));
     }
   }, [brandList, parentSelect]);
 

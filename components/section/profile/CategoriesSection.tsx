@@ -9,6 +9,8 @@ import { z } from "zod";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
 import { showErrorDialog } from "@/util/swalFunction";
+import { Category } from "@prisma/client";
+import { getText } from "@/util/textHelper";
 
 type Props = {
   backFn: Function;
@@ -46,6 +48,70 @@ function CategoriesSection({ backFn, nextFn }: Props) {
           submit();
         }}
       >
+        <div className="flex flex-row items-center gap-3 flex-wrap">
+          {data.map((z: Category, index: number) => (
+            <div
+              key={index}
+              className=""
+              onClick={() => {
+                setProfile((prevValue) => {
+                  let v = prevValue.preferCategoryIDs;
+                  if (v.find((b) => b === z.id)) {
+                    v = v.filter((b) => b !== z.id);
+                  } else {
+                    v = [...v, z.id];
+                  }
+                  if (v.length <= 3) {
+                    return {
+                      ...prevValue,
+                      preferCategoryIDs: v,
+                    };
+                  } else {
+                    return prevValue;
+                  }
+                });
+              }}
+            >
+              <input
+                type="checkbox"
+                name="DeliveryOption"
+                value={z.id}
+                className="peer hidden [&:checked_+_label_svg]:block"
+                checked={
+                  profile.preferCategoryIDs?.find((b) => b === z.id)
+                    ? true
+                    : false
+                }
+              />
+
+              <label
+                htmlFor="DeliveryStandard"
+                className="block cursor-pointer rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 peer-checked:border-primary peer-checked:ring-1 peer-checked:ring-primary"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-700">
+                    {getText(z.name, z.nameMM, locale)}
+                  </p>
+
+                  <svg
+                    className="ml-3 hidden h-5 w-5 text-primary"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+
+                {/* <p className="mt-1 text-gray-900">Free</p> */}
+              </label>
+            </div>
+          ))}
+        </div>
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button
             className={`inline-block rounded-l-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}

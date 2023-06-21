@@ -516,10 +516,6 @@ function InformationSection({ nextFn, infoRef }: Props) {
 
           {isInternal(session) ? (
             <div>
-              <label className={`text-sm font-medium text-gray-400`}>
-                {t("seller")}
-                <span className="text-primary">*</span>
-              </label>
               <SellerSelectBox
                 selected={product?.seller}
                 setSelected={(e: User) => {
@@ -599,7 +595,7 @@ function InformationSection({ nextFn, infoRef }: Props) {
               setSelected={(e: any) => {
                 if (e) {
                   setProduct((prevValue: any) => {
-                    return { ...prevValue, Condition: e, conditionId: e.id };
+                    return { ...prevValue, Condition: e, conditionId: e.value };
                   });
                 }
               }}

@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
+import { toDateTimeLocal } from "@/util/textHelper";
 
 type Props = {
   backFn: Function;
@@ -76,6 +77,11 @@ function StatusSection({ backFn, nextFn, currentStep }: Props) {
     });
     nextFn();
   }
+  console.log(
+    watchFields.memberStartDate
+      ? new Date(watchFields.memberStartDate).toISOString().substring(0, 10)
+      : ""
+  );
 
   return (
     <div className="flex flex-col">
@@ -91,13 +97,23 @@ function StatusSection({ backFn, nextFn, currentStep }: Props) {
             <>
               {/* //TODO check date */}
               <FormInput
-                label={t("memberStartDate")}
+                label={
+                  t("memberStartDate") +
+                  " " +
+                  (watchFields.memberStartDate
+                    ? new Date(watchFields.memberStartDate)
+                        .toISOString()
+                        .substring(0, 10)
+                    : "")
+                }
                 placeHolder={t("enter") + " " + t("memberStartDate")}
                 error={errors.memberStartDate?.message}
                 type="date"
                 defaultValue={
                   profile?.memberStartDate
-                    ? profile?.memberStartDate.toISOString().substring(0, 10)
+                    ? new Date(profile?.memberStartDate)
+                        .toISOString()
+                        .substring(0, 10)
                     : ""
                 }
                 formControl={{
@@ -108,7 +124,7 @@ function StatusSection({ backFn, nextFn, currentStep }: Props) {
                 currentValue={
                   watchFields.memberStartDate
                     ? new Date(watchFields.memberStartDate)
-                        ?.toISOString()
+                        .toISOString()
                         .substring(0, 10)
                     : ""
                 }

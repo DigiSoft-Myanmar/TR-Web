@@ -13,7 +13,7 @@ import CardContent from "@mui/material/CardContent";
 import LinearProgress from "@mui/material/LinearProgress";
 import { PaymentStatus } from "@/types/orderTypes";
 // ** Type Imports
-import { Category, Product, Role, StockType } from "@prisma/client";
+import { Category, Product, Role, StockType, User } from "@prisma/client";
 import { fileUrl } from "@/types/const";
 import {
   formatAmount,
@@ -58,6 +58,7 @@ import { getPercentage } from "@/util/compareHelper";
 import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
 import { getHeaders } from "@/util/authHelper";
+import { isTodayBetween } from "@/util/verify";
 
 interface CellType {
   row: any;
@@ -183,46 +184,59 @@ const SellerTbl = ({
       minWidth: 120,
       field: "currentMembership",
       headerName: "Membership",
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {getText(
-                row.currentMembership?.name,
-                row.currentMembership?.nameMM,
-                locale
-              )}
-            </Typography>
-            {/* 
-            //TODO Update Payment
-            <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {row.currentMembership?.MemberPayment.length > 0 ? (
-                sortBy(
-                  row.currentMembership?.MemberPayment,
-                  (obj: any) => obj.memberStartDate,
-                ).reverse()[0].paymentStatus === PaymentStatus.Verified ? (
-                  <span className="mt-2 rounded-md bg-success/20 px-3 py-1 text-xs text-success">
-                    Verified
-                  </span>
-                ) : (
-                  <span className="mt-2 rounded-md bg-warning/20 px-3 py-1 text-xs text-warning">
-                    {
-                      sortBy(
-                        row.currentMembership?.MemberPayment,
-                        (obj: any) => obj.memberStartDate,
-                      ).reverse()[0].paymentStatus
-                    }
-                  </span>
-                )
-              ) : (
-                <span className="mt-2 rounded-md bg-error/20 px-3 py-1 text-xs text-error">
-                  Expired
-                </span>
-              )}
-            </Typography> */}
-          </Box>
-        </Box>
-      ),
+      renderCell: ({ row }: CellType) => {
+        let endDate = new Date(row.memberStartDate);
+        endDate.setDate(endDate.getDate() + row.currentMembership.validity);
+
+        return (
+          <Tooltip
+            title={
+              <div>
+                <p>
+                  Start Date :{" "}
+                  {new Date(row.memberStartDate).toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </p>
+                <p>
+                  End Date :{" "}
+                  {endDate.toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </p>
+              </div>
+            }
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                  {getText(
+                    row.currentMembership?.name,
+                    row.currentMembership?.nameMM,
+                    locale
+                  )}
+                </Typography>
+
+                <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                  {isTodayBetween(row.memberStartDate, endDate) ? (
+                    <span className="mt-2 rounded-md bg-success/20 px-3 py-1 text-xs text-success">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="mt-2 rounded-md bg-error/20 px-3 py-1 text-xs text-error">
+                      Expired
+                    </span>
+                  )}
+                </Typography>
+              </Box>
+            </Box>
+          </Tooltip>
+        );
+      },
     },
     {
       flex: 0.15,
@@ -487,62 +501,10 @@ const SellerTbl = ({
             <StatsCard
               label={`Pending ${type}`}
               currentCount={
-                data.filter(
-                  (e: any) =>
-                    !e.currentMembership?.MemberPayment ||
-                    e.currentMembership?.MemberPayment === 0 ||
-                    (e.currentMembership?.MemberPayment &&
-                      e.currentMembership?.MemberPayment.length > 0 &&
-                      getExpiredMembershipDate(
-                        sortBy(
-                          e.currentMembership?.MemberPayment,
-                          (obj: any) => obj.memberStartDate
-                        ).reverse()[0].memberStartDate
-                      ) >= new Date().toISOString() &&
-                      sortBy(
-                        e.currentMembership?.MemberPayment,
-                        (obj: any) => obj.memberStartDate
-                      ).reverse()[0].paymentStatus !== PaymentStatus.Verified)
-                ).length
+                data.filter((e: any) => e.sellAllow === false).length
               }
-              prevCount={
-                data.filter(
-                  (e: any) =>
-                    !e.currentMembership?.MemberPayment ||
-                    e.currentMembership?.MemberPayment === 0 ||
-                    (e.currentMembership?.MemberPayment &&
-                      e.currentMembership?.MemberPayment.length > 0 &&
-                      getExpiredMembershipDate(
-                        sortBy(
-                          e.currentMembership?.MemberPayment,
-                          (obj: any) => obj.memberStartDate
-                        ).reverse()[0].memberStartDate
-                      ) >= new Date().toISOString() &&
-                      sortBy(
-                        e.currentMembership?.MemberPayment,
-                        (obj: any) => obj.memberStartDate
-                      ).reverse()[0].paymentStatus !== PaymentStatus.Verified)
-                ).length
-              }
-              totalCount={
-                data.filter(
-                  (e: any) =>
-                    !e.currentMembership?.MemberPayment ||
-                    e.currentMembership?.MemberPayment === 0 ||
-                    (e.currentMembership?.MemberPayment &&
-                      e.currentMembership?.MemberPayment.length > 0 &&
-                      getExpiredMembershipDate(
-                        sortBy(
-                          e.currentMembership?.MemberPayment,
-                          (obj: any) => obj.memberStartDate
-                        ).reverse()[0].memberStartDate
-                      ) >= new Date().toISOString() &&
-                      sortBy(
-                        e.currentMembership?.MemberPayment,
-                        (obj: any) => obj.memberStartDate
-                      ).reverse()[0].paymentStatus !== PaymentStatus.Verified)
-                ).length
-              }
+              prevCount={data.filter((e: any) => e.sellAllow === false).length}
+              totalCount={data.filter((e: any) => e.sellAllow === false).length}
             />
 
             <StatsCard

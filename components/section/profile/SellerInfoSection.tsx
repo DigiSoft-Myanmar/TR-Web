@@ -13,6 +13,7 @@ import { formatAmount, getText } from "@/util/textHelper";
 import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 import dynamic from "next/dynamic";
 import MembershipTable from "@/components/presentational/MembershipTable";
+import SelectBox from "@/components/presentational/SelectBox";
 
 const FormInputRichText: any = dynamic(
   () => import("@/components/presentational/FormInputRichTextSun"),
@@ -155,6 +156,53 @@ function SellerInfoSection({ backFn, nextFn }: Props) {
         ) : (
           <></>
         )}
+
+        <label
+          className={`text-sm font-medium ${
+            profile && profile.membershipId ? "text-green-600" : "text-error"
+          }`}
+        >
+          <span className="whitespace-nowrap">
+            {" "}
+            {t("membership")} <span className="text-primary">*</span>
+          </span>
+        </label>
+
+        <SelectBox
+          isSearch={false}
+          list={
+            data
+              ? data.map((z: Membership) => {
+                  return {
+                    name: z.name,
+                    nameMM: z.nameMM,
+                    value: z.id,
+                  };
+                })
+              : []
+          }
+          selected={
+            profile.membershipId
+              ? data.find((b: any) => b.id === profile.membershipId)
+                ? {
+                    name: data.find((b: any) => b.id === profile.membershipId)
+                      .name,
+                    value: data.find((b: any) => b.id === profile.membershipId)
+                      .id,
+                    nameMM: data.find((b: any) => b.id === profile.membershipId)
+                      .nameMM,
+                  }
+                : undefined
+              : undefined
+          }
+          setSelected={(e: any) => {
+            if (e) {
+              setProfile((prevValue: any) => {
+                return { ...prevValue, Membership: e, membershipId: e.value };
+              });
+            }
+          }}
+        />
 
         <MembershipTable data={data} />
 

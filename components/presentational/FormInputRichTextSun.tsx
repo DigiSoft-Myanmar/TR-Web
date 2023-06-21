@@ -32,7 +32,6 @@ function FormInputRichTextSun({ label, content, setContent, maxCount }: Props) {
               [
                 ":p-More Paragraph-default.more_paragraph",
                 "font",
-                "fontSize",
                 "fontColor",
                 "hiliteColor",
                 "align",

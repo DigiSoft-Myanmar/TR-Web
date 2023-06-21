@@ -58,7 +58,7 @@ function ProfileScreen() {
           Step.Confirmation,
         ];
 
-  const [currentStep, setCurrentStep] = React.useState(Step.SellerInformation);
+  const [currentStep, setCurrentStep] = React.useState(Step.Profile);
 
   const stepDetails = [
     {

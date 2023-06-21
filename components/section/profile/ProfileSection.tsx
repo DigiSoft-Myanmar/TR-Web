@@ -5,7 +5,7 @@ import { useProfile } from "@/context/ProfileContext";
 import { fileUrl } from "@/types/const";
 import { showErrorDialog } from "@/util/swalFunction";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Role } from "@prisma/client";
+import { Gender, Role } from "@prisma/client";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -32,7 +32,7 @@ type Profile = {
 
 function ProfileSection({ nextFn }: Props) {
   const { t } = useTranslation("common");
-  const genderList = ["male", "female"];
+  const genderList = [Gender.Male, Gender.Female];
   const {
     user: profile,
     setUser: setProfile,
@@ -321,7 +321,9 @@ function ProfileSection({ nextFn }: Props) {
           error={errors.dob?.message}
           type="date"
           defaultValue={
-            profile?.dob ? profile?.dob.toISOString().substring(0, 10) : ""
+            profile?.dob
+              ? new Date(profile?.dob).toISOString().substring(0, 10)
+              : ""
           }
           formControl={{
             ...register("dob", {

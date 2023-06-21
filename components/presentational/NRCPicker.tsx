@@ -186,9 +186,18 @@ function NRCPicker({
       <div className="flex flex-col space-y-3">
         <label
           htmlFor="countries"
-          className="text-sm text-darkShade/50 dark:text-white/50"
+          className={`text-sm font-medium ${
+            currentState &&
+            currentTownship &&
+            currentType &&
+            nrcNumber &&
+            nrcNumber.length > 6 &&
+            nrcVerify === true
+              ? "text-green-600"
+              : "text-error"
+          }`}
         >
-          {t("nrc")}
+          {t("nrc")} <span className="text-primary">*</span>
         </label>
         <div className="flex items-center gap-2 flex-wrap">
           <SelectBox
@@ -215,7 +224,8 @@ function NRCPicker({
           <input
             autoComplete="off"
             type="text"
-            className="block py-2.5 px-0 w-[100px] text-sm text-darkShade bg-transparent border-0 border-b-2 border-inputLightBorder appearance-none dark:text-white dark:border-inputDarkBorder dark:focus:border-white focus:outline-none focus:ring-0 focus:border-brand peer"
+            className={`relative w-[80px] cursor-pointer rounded-lg
+            py-2 pl-3 pr-3 text-left text-primaryText focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300`}
             placeholder=" "
             disabled={disabled}
             defaultValue={nrcNumber}
@@ -237,7 +247,7 @@ function NRCPicker({
           {nrcVerify ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-success"
+              className="h-5 w-5 text-green-600"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -250,7 +260,7 @@ function NRCPicker({
           ) : (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-danger"
+              className="h-5 w-5 text-error"
               viewBox="0 0 20 20"
               fill="currentColor"
             >

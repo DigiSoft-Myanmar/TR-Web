@@ -34,15 +34,7 @@ function AuctionPricingSection({
   pricingRef,
 }: Props) {
   const { t } = useTranslation("common");
-  const stockList = [
-    StockType.InStock,
-    StockType.OutOfStock,
-    StockType.StockLevel,
-  ];
-  const saleStartDate = React.useRef<HTMLInputElement | null>(null);
-  const saleEndDate = React.useRef<HTMLInputElement | null>(null);
   const { product, setProduct, maxAuctionPeriod } = useProduct();
-  const [error, setError] = React.useState("");
   const schema = z.object({
     estimatedPrice: z
       .number({
@@ -164,7 +156,9 @@ function AuctionPricingSection({
               setValueAs: (v) => (v ? new Date(v).toISOString() : ""),
             }),
           }}
-          currentValue={watchFields.startTime?.substring(0, 19)}
+          currentValue={
+            watchFields.startTime ? toDateTimeLocal(watchFields.startTime) : ""
+          }
         />
 
         <FormInput
@@ -178,7 +172,9 @@ function AuctionPricingSection({
               setValueAs: (v) => (v ? new Date(v).toISOString() : ""),
             }),
           }}
-          currentValue={watchFields.endTime?.substring(0, 19)}
+          currentValue={
+            watchFields.endTime ? toDateTimeLocal(watchFields.endTime) : ""
+          }
         />
 
         <span className="mt-5 flex justify-end divide-x overflow-hidden">

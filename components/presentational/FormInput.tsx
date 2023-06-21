@@ -73,6 +73,7 @@ function FormInput({
             }
           }}
           {...formControl}
+          value={currentValue}
         />
         {icon && (
           <span

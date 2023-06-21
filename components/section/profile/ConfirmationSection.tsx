@@ -20,7 +20,7 @@ type Props = {
 
 function ConfirmationSection({ backFn, currentStep }: Props) {
   const { t } = useTranslation("common");
-  const { user: profile, profileImg } = useProfile();
+  const { user: profile, profileImg, nrcFront, nrcBack } = useProfile();
   const [isSubmit, setSubmit] = React.useState(false);
   const router = useRouter();
   const { data: session }: any = useSession();
@@ -43,14 +43,14 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
             form.append("theFiles", profileImg);
             imgList.push({ type: "profile" });
           }
-          /* if (brandLogoImg) {
-            form.append("theFiles", brandLogoImg);
-            imgList.push({ type: "logo" });
+          if (nrcFront) {
+            form.append("theFiles", nrcFront);
+            imgList.push({ type: "nrcFront" });
           }
-          if (brandBannerImg) {
-            form.append("theFiles", brandBannerImg);
-            imgList.push({ type: "banner" });
-          } */
+          if (nrcBack) {
+            form.append("theFiles", nrcBack);
+            imgList.push({ type: "nrcBack" });
+          }
           form.append("data", JSON.stringify({ user: profile, img: imgList }));
           setSubmit(true);
           if (getHeaders(session)) {

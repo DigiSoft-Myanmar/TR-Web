@@ -2,7 +2,7 @@ import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 import { useProduct } from "@/context/ProductContext";
 import { fileUrl } from "@/types/const";
 import { fetcher } from "@/util/fetcher";
-import { getText } from "@/util/textHelper";
+import { getInitials, getText } from "@/util/textHelper";
 import { PaymentStatus } from "@/types/orderTypes";
 import { Membership, Role } from "@prisma/client";
 import moment from "moment";
@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
+import { isInternal } from "@/util/authHelper";
 
 type Props = {
   backFn: Function;
@@ -44,18 +45,11 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
     "/api/user/SKUUsage?brandId=" + product.sellerId,
     fetcher
   );
-  const { data: memberPayment } = useSWR(
-    "/api/user/payment?brandId=" + product.sellerId,
-    fetcher
-  );
 
   const now = moment();
   const usedDay =
-    memberPayment &&
-    memberPayment[0] &&
-    memberPayment[0].memberStartDate &&
-    memberPayment[0].paymentStatus === PaymentStatus.Verified
-      ? now.diff(moment(memberPayment[0].memberStartDate, "YYYY-MM-DD"), "days")
+    product && product.seller && product.seller.memberStartDate
+      ? now.diff(moment(product.seller.memberStartDate, "YYYY-MM-DD"), "days")
       : 0;
 
   const { errors } = formState;
@@ -78,58 +72,68 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
         {membershipData &&
         membershipData.find(
-          (e: Membership) => e.id === product.brand?.membershipId
+          (e: Membership) => e.id === product.seller?.membershipId
         ) ? (
           <>
             <FormInputCheckbox
               formControl={{ ...register("isPublished") }}
               label={t("isPublished")}
               value={watchFields.isPublished}
-              disabled={session && session.role === Role.Seller ? true : false}
+              disabled={isInternal(session) ? false : true}
             />
             <FormInputCheckbox
               formControl={{ ...register("isFeatured") }}
               label={t("isFeatured")}
               value={watchFields.isFeatured}
-              disabled={session && session.role === Role.Seller ? true : false}
+              disabled={isInternal(session) ? false : true}
             />
-            <FormInputCheckbox
-              formControl={{ ...register("isFeaturedSelf") }}
-              label={t("isFeaturedSelf")}
-              value={watchFields.isFeaturedSelf}
-            />
-            <p className="text-sm">{t("featuredSelfDescription")}</p>
+
             <article className="rounded-md border border-primary/30 bg-white p-6 sm:p-8">
               <div className="flex items-start">
                 <div
                   className="hidden sm:grid sm:h-20 sm:w-20 sm:shrink-0 sm:place-content-center sm:rounded-full sm:border-2 sm:border-primary"
                   aria-hidden="true"
                 >
-                  <Image
-                    src={fileUrl + product.brand.brandLogo}
-                    width={80}
-                    height={80}
-                    className="h-[80px] w-[80px] rounded-full object-contain p-2"
-                    alt="brand logo"
-                  />
+                  {product?.seller?.profile ? (
+                    <Image
+                      src={fileUrl + product.seller?.profile}
+                      width={80}
+                      height={80}
+                      className="h-[80px] w-[80px] rounded-full object-contain p-2"
+                      alt="brand logo"
+                    />
+                  ) : (
+                    <div className="avatar">
+                      <div className="avatar placeholder">
+                        <div className="bg-neutral-focus text-neutral-content rounded-full w-[80px] h-[80px] min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px]">
+                          <span>{getInitials(product?.seller?.username)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex-grow sm:ml-8">
                   <strong className="rounded border border-primary bg-primary px-3 py-1.5 text-[10px] font-medium text-white">
                     {getText(
                       membershipData.find(
-                        (e: Membership) => e.id === product.brand.membershipId
+                        (e: Membership) => e.id === product.seller.membershipId
                       ).name,
                       membershipData.find(
-                        (e: Membership) => e.id === product.brand.membershipId
+                        (e: Membership) => e.id === product.seller.membershipId
                       ).nameMM,
                       locale
                     )}
                   </strong>
 
                   <h3 className="mt-4 text-lg font-medium sm:text-xl">
-                    <Link href="/brands/cola" className="hover:underline">
-                      {product.brand.brandName}
+                    <Link
+                      href={`/account/${encodeURIComponent(
+                        product.seller?.phoneNum
+                      )}?action=view`}
+                      className="hover:underline"
+                    >
+                      {product.seller.username}
                     </Link>
                   </h3>
 
@@ -143,8 +147,8 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                           {
                             membershipData.find(
                               (e: Membership) =>
-                                e.id === product.brand.membershipId
-                            ).productLimit
+                                e.id === product.seller.membershipId
+                            )?.SKUListing
                           }
                         </td>
                       </tr>
@@ -162,7 +166,10 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                     </tbody>
                   </table>
 
-                  {usedDay > 365 ? (
+                  {usedDay >
+                  membershipData.find(
+                    (e: Membership) => e.id === product.seller.membershipId
+                  ).validity ? (
                     <div>
                       <h2 className="sr-only">Steps</h2>
                       <div>
@@ -170,7 +177,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                           <p className="text-sm font-medium text-gray-500">
                             Membership Start Date -{" "}
                             {new Date(
-                              memberPayment[0].memberStartDate
+                              product.seller.memberStartDate
                             ).toLocaleDateString("en-CA", {
                               year: "numeric",
                               month: "long",
@@ -192,19 +199,36 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                             {t("days")}
                           </p>
                           <p className="text-sm font-medium text-gray-500">
-                            {usedDay} of 365 {t("days")}
+                            {usedDay} of{" "}
+                            {
+                              membershipData.find(
+                                (e: Membership) =>
+                                  e.id === product.seller.membershipId
+                              ).validity
+                            }{" "}
+                            {t("days")}
                           </p>
                         </div>
                         <div className="mt-1 overflow-hidden rounded-full bg-gray-200">
                           <div
                             className="h-2 rounded-full bg-primary"
                             style={{
-                              width: (usedDay * 100) / 365 + "%",
+                              width:
+                                (usedDay * 100) /
+                                  membershipData.find(
+                                    (e: Membership) =>
+                                      e.id === product.seller.membershipId
+                                  ).validity +
+                                "%",
                             }}
                           ></div>
                         </div>
                         <p className="mt-1 text-xs font-light text-gray-500">
-                          {365 - usedDay} {t("days")} {t("remaining")}
+                          {membershipData.find(
+                            (e: Membership) =>
+                              e.id === product.seller.membershipId
+                          ).validity - usedDay}{" "}
+                          {t("days")} {t("remaining")}
                         </p>
                       </div>
                     </div>

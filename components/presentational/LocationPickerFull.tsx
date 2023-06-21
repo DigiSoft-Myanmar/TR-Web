@@ -79,7 +79,7 @@ function LocationPickerFull({ selected, setSelected, disableLabel }: Props) {
             selected.stateId &&
             selected.districtId &&
             selected.townshipId
-              ? "text-success"
+              ? "text-green-600"
               : "text-error"
           }`}
         >
@@ -90,7 +90,14 @@ function LocationPickerFull({ selected, setSelected, disableLabel }: Props) {
       <div className={`relative mt-1`}>
         <Listbox.Button
           className={`relative w-full cursor-pointer rounded-lg
-      py-2 pl-3 pr-10 text-left text-primaryText border border-gray-300 focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm`}
+      py-2 pl-3 pr-10 text-left text-primaryText border border-gray-300 focus:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm ${
+        selected &&
+        selected.stateId &&
+        selected.districtId &&
+        selected.townshipId
+          ? "border-green-600"
+          : ""
+      }`}
         >
           <span className="block truncate">
             {locationList.find(
@@ -131,7 +138,7 @@ function LocationPickerFull({ selected, setSelected, disableLabel }: Props) {
           leaveTo="opacity-0"
         >
           <Listbox.Options
-            className={`absolute z-20 mt-1 max-h-60 min-w-max overflow-auto rounded-md pb-1 text-base text-primaryText shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm bg-white`}
+            className={`absolute right-0 z-20 mt-1 max-h-60 min-w-max overflow-auto rounded-md pb-1 text-base text-primaryText shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm bg-white`}
           >
             <div className="p-5 flex flex-grow sticky top-0 bg-white z-10">
               <div className="group z-0 w-full px-4">

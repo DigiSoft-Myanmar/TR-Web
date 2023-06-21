@@ -42,6 +42,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
+                key={index}
                 className={
                   data.length - 1 === index
                     ? "w-1/3 sm:w-1/4 p-4 border border-t-0 border-gray-300 flex flex-col"
@@ -63,6 +64,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
             {data?.map((z: Membership, index: number) => (
               <th
+                key={index}
                 scope="col"
                 className={
                   data.length - 1 === index

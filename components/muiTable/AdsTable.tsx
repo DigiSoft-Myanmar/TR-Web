@@ -16,7 +16,7 @@ import Typography from "@mui/material/Typography";
 // ** Icon Imports
 import Icon from "@/components/presentational/Icon";
 import { Ads, Role } from "@prisma/client";
-import { formatAmount, getInitials } from "@/util/textHelper";
+import { formatAmount, getInitials, getText } from "@/util/textHelper";
 import { useRouter } from "next/router";
 import { OrderStatus } from "@/types/orderTypes";
 import { Colors } from "@/types/color";
@@ -153,16 +153,64 @@ const AdsTable = ({
       field: "membership",
       minWidth: 90,
       headerName: "Membership",
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
-          {/* <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-          
-          </Typography>
-          <Typography variant="caption" sx={{ color: "text.disabled" }}>
-            {row.adsWidth}px x {row.adsHeight}px
-          </Typography> */}
-        </Box>
-      ),
+      renderCell: ({ row }: any) => {
+        let endDate = new Date(row.seller.memberStartDate);
+        endDate.setDate(
+          endDate.getDate() + row.seller.currentMembership.validity
+        );
+
+        return (
+          <Tooltip
+            title={
+              <div>
+                <p>
+                  Start Date :{" "}
+                  {new Date(row.seller.memberStartDate).toLocaleDateString(
+                    "en-ca",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                    }
+                  )}
+                </p>
+                <p>
+                  End Date :{" "}
+                  {endDate.toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })}
+                </p>
+              </div>
+            }
+          >
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                  {getText(
+                    row.seller?.currentMembership?.name,
+                    row.seller?.currentMembership?.nameMM,
+                    locale
+                  )}
+                </Typography>
+
+                <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                  {isTodayBetween(row.seller.memberStartDate, endDate) ? (
+                    <span className="mt-2 rounded-md bg-success/20 px-3 py-1 text-xs text-success">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="mt-2 rounded-md bg-error/20 px-3 py-1 text-xs text-error">
+                      Expired
+                    </span>
+                  )}
+                </Typography>
+              </Box>
+            </Box>
+          </Tooltip>
+        );
+      },
     },
 
     {

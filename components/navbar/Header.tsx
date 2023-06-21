@@ -487,7 +487,7 @@ function Header({
               </svg>
 
               <span>Ship to : </span>
-              <div className="flex-grow min-w-[350px]">
+              <div className="flex-grow min-w-[350px] max-w-[350px]">
                 <LocationPickerFull
                   selected={{
                     stateId: shippingLocation?.stateId,

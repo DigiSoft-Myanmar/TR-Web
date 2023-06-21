@@ -6,6 +6,7 @@ import {
   ProductType,
   PromoCode,
   StockType,
+  User,
 } from "@prisma/client";
 import { sortBy } from "lodash";
 
@@ -14,7 +15,7 @@ export function getOrderStatus(data: any, brandName?: string) {
   if (brandName) {
     return sortBy(
       data.find((e: any) => e.brand === brandName),
-      (obj: any) => obj.updatedDate,
+      (obj: any) => obj.updatedDate
     ).reverse()[0].status;
   } else {
     return sortBy(data, (obj: any) => obj.updatedDate).reverse()[0].status;
@@ -23,7 +24,7 @@ export function getOrderStatus(data: any, brandName?: string) {
 
 export function getValidCartItems(
   cartItems: CartItem[],
-  sellerStatus: OrderStatus,
+  sellerStatus: OrderStatus
 ) {
   switch (sellerStatus) {
     case OrderStatus.Cancelled:
@@ -38,7 +39,7 @@ export function getValidCartItems(
 export function isCartValid(sellerResponse: any) {
   let status = sortBy(
     sellerResponse.statusHistory,
-    (obj: any) => obj.updatedDate,
+    (obj: any) => obj.updatedDate
   ).reverse()[0].status;
   switch (status) {
     case OrderStatus.Cancelled:
@@ -55,11 +56,11 @@ export function getCartItems(cartItems: CartItem[], sellerResponse: any[]) {
   for (let i = 0; i < sellerResponse.length; i++) {
     let status = sortBy(
       sellerResponse[i].statusHistory,
-      (obj: any) => obj.updatedDate,
+      (obj: any) => obj.updatedDate
     ).reverse()[0].status;
     let d = getValidCartItems(
       cartItems.filter((e) => e.brandId === sellerResponse[i].brandId),
-      status,
+      status
     );
     c = [...c, ...d];
   }
@@ -71,13 +72,13 @@ export function getTotal(cartItems: CartItem[], brandId?: string) {
     return cartItems
       .filter((e) => e.brandId === brandId)
       .map((e) =>
-        e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity,
+        e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
       )
       .reduce((a, b) => a + b, 0);
   } else {
     return cartItems
       .map((e) =>
-        e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity,
+        e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
       )
       .reduce((a, b) => a + b, 0);
   }
@@ -85,9 +86,9 @@ export function getTotal(cartItems: CartItem[], brandId?: string) {
 
 export function getDiscountTotal(
   cartItems: CartItem[],
-  brandList: Brand[],
+  sellerList: User[],
   promoCode?: PromoCode,
-  brandId?: string,
+  brandId?: string
 ) {
   if (promoCode) {
     if (promoCode.isPercent === true) {
@@ -95,7 +96,7 @@ export function getDiscountTotal(
         (cartItems
           .filter((e: any) => (brandId ? e.brandId === brandId : true))
           .map((e: any) =>
-            e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity,
+            e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
           )
           .reduce((a: number, b: number) => a + b, 0) *
           promoCode.discount) /
@@ -103,7 +104,7 @@ export function getDiscountTotal(
       );
     } else {
       if (brandId) {
-        return promoCode.discount / brandList.length;
+        return promoCode.discount / sellerList.length;
       } else {
         return promoCode.discount;
       }
@@ -112,17 +113,13 @@ export function getDiscountTotal(
   return 0;
 }
 
-export function getShippingTotal(sellerResponse: any[], brandId?: string) {
+export function getShippingTotal(sellerResponse: any[], sellerId?: string) {
   return sellerResponse
     .filter(
-      (e: any) => (brandId ? e.brandId === brandId : true) && isCartValid(e),
+      (e: any) => (sellerId ? e.sellerId === sellerId : true) && isCartValid(e)
     )
     .map((e: any) => (e.shippingFee ? e.shippingFee : 0))
     .reduce((a: number, b: number) => a + b, 0);
-}
-
-export function getAvgPointUsage(pointUsage: number, brandList: Brand[]) {
-  return pointUsage / brandList.length;
 }
 
 export function getStock(product: Product) {
@@ -140,7 +137,7 @@ export function getStock(product: Product) {
       return Infinity;
     } else if (variationStock.find((e) => e === StockType.StockLevel)) {
       let stockLevel: number[] = product.variations.map((e: any) =>
-        e.stockLevel ? e.stockLevel : 0,
+        e.stockLevel ? e.stockLevel : 0
       );
       return Math.max(...stockLevel);
     } else if (variationStock.find((e) => e === StockType.OutOfStock)) {

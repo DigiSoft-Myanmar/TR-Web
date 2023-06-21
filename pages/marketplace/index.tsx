@@ -7,6 +7,7 @@ import { useTranslation } from "next-i18next";
 import { defaultDescription } from "@/types/const";
 import { useRouter } from "next/router";
 import { formatAmount } from "@/util/textHelper";
+import Link from "next/link";
 
 function getValue(value: number) {
   let returnVal: any = { "--value": value };
@@ -298,9 +299,9 @@ function MarketplacePage() {
                       <p className="text-xs mb-1 text-gray-500">
                         96.7% Positive Feedback
                       </p>
-                      <a
+                      <Link
                         className="group relative inline-flex items-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary-focus"
-                        href="/download"
+                        href="/shop"
                       >
                         <span className="absolute -end-full transition-all group-hover:end-4">
                           <svg
@@ -316,7 +317,7 @@ function MarketplacePage() {
                         <span className="text-sm font-medium transition-all group-hover:me-4">
                           Visit Store
                         </span>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -326,7 +327,7 @@ function MarketplacePage() {
 
           <div className="flex flex-col gap-3 w-full">
             {type?.toString() === "auction" ? (
-              <div className="bg-primary px-3 py-2 rounded-md flex flex-col items-center justify-between gap-3">
+              <div className="lg:sticky lg:top-36 lg:z-30 bg-primary px-3 py-2 rounded-md flex flex-col items-center justify-between gap-3">
                 <h3 className="text-white font-semibold text-center">
                   Bidding ends in
                 </h3>
@@ -504,7 +505,7 @@ function MarketplacePage() {
                       </span>
                     </a>
                   </div>
-                  <div className="flex flex-col items-center bg-primary justify-center py-3 mx-3 rounded-md">
+                  {/*  <div className="flex flex-col items-center bg-primary justify-center py-3 mx-3 rounded-md">
                     <h3 className="text-white font-semibold text-center">
                       Bidding ends in
                     </h3>
@@ -534,7 +535,7 @@ function MarketplacePage() {
                         sec
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </>
               ) : (
                 <>
