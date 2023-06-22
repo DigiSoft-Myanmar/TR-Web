@@ -48,7 +48,7 @@ function SubCategoryDropdown({
             <div key={index} className="flex flex-col gap-1">
               <Link
                 href="/marketplace"
-                className="font-semibold text-accent hover:text-primary p-3"
+                className="font-semibold text-primary hover:text-primary p-3"
               >
                 {getText(z.name, z.nameMM, locale)}
               </Link>

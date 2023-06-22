@@ -48,7 +48,7 @@ function MembershipPage() {
         </Head>
 
         <div className="relative mx-auto max-w-screen-xl px-4 py-8">
-          <section className="flex w-full flex-col space-y-5 bg-white py-10 px-5">
+          <section className="flex w-full flex-col items-start space-y-5 bg-white py-10 px-5">
             {data && data.length > 0 ? (
               <div>
                 <h3 className="text-lg font-semibold text-gray-700 mb-5">

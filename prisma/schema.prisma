@@ -346,6 +346,7 @@ model Product {
 
   isPublished Boolean @default(false)
   isFeatured  Boolean @default(false)
+  priceIndex  Int?
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -360,6 +361,7 @@ model Product {
   Condition   Condition? @relation(fields: [conditionId], references: [id])
   conditionId String?    @db.ObjectId
   Auctions    Auctions[]
+  UnitSold    UnitSold[]
 }
 
 model Brand {
@@ -640,17 +642,33 @@ model FAQ {
   updatedAt  DateTime @updatedAt
 }
 
-model Content {
+model UnitSold {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId     String   @db.ObjectId
+  product       Product  @relation(fields: [productId], references: [id])
+  regularPrice  Int?
+  soldPrice     Int?
+  soldUnit      Int?
+  isDiscount    Boolean  @default(false)
+  purchasedDate DateTime
+}
+
+model Content {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   googleMapUrl  String?
   googleMapUrl1 String?
   lat           Float?
   long          Float?
   email         String?
   phone         String?
-  address       String?
-  addressMM     String?
-  socialUrl     String[]
+
+  additionalPhone     String[]
+  workingHourWeekend  String?
+  workingHourWeekdays String?
+
+  address   String?
+  addressMM String?
+  socialUrl String[]
 
   aboutTitle         String?
   aboutTitleMM       String?

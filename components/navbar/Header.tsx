@@ -17,6 +17,7 @@ import { fetcher } from "@/util/fetcher";
 import { useMarketplace } from "@/context/MarketplaceContext";
 import SubCategoryDropdown from "../presentational/SubCategoryDropdown";
 import LocationPickerFull from "../presentational/LocationPickerFull";
+import { useSeller } from "@/context/SellerContext";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -60,6 +61,7 @@ function Header({
 
   const [scrollPosition, setScrollPosition] = React.useState(0);
   const { data: banner } = useSWR("/api/siteManagement/banner", fetcher);
+  const { isSeller, toggleSellerMode } = useSeller();
 
   React.useEffect(() => {
     if (banner && banner.length > 1) {
@@ -303,6 +305,16 @@ function Header({
               </Link>
 
               <button
+                className="bg-primary text-white p-3 rounded-md"
+                type="button"
+                onClick={() => {
+                  toggleSellerMode();
+                }}
+              >
+                {isSeller === true ? "Seller Mode" : "Buyer Mode"}
+              </button>
+
+              <button
                 className="text-primaryText flex min-w-[130px] flex-row items-center space-x-5 hover:text-primary"
                 onClick={() => {
                   setCartModalOpen(true);
@@ -371,77 +383,114 @@ function Header({
         </div>
 
         <div
-          className={`hidden lg:flex flex-row items-center justify-between px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200`}
+          className={`hidden lg:flex flex-row items-center justify-between px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 min-h-[52px]`}
         >
           <div className="flex flex-row items-center gap-3">
-            <div className="dropdown dropdown-hover border-r pr-3 border-r-neutral">
-              <label
-                tabIndex={0}
-                className="whitespace-nowrap hover:text-primary hover:underline flex flex-row items-center gap-3"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
+            {isSeller === true ? (
+              <>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                  />
-                </svg>
+                  Products
+                </Link>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Orders
+                </Link>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Offers
+                </Link>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Shipping Cost
+                </Link>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Promo Code
+                </Link>
+              </>
+            ) : (
+              <>
+                <div className="dropdown dropdown-hover border-r pr-3 border-r-neutral">
+                  <label
+                    tabIndex={0}
+                    className="whitespace-nowrap hover:text-primary hover:underline flex flex-row items-center gap-3"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                      />
+                    </svg>
 
-                <span>Categories</span>
-              </label>
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-72 z-10"
-              >
-                {categories?.map((e: any, index) => (
-                  <li key={index} className="group">
-                    {e.subCategory && e.subCategory.length > 0 ? (
-                      <Link href={"/marketplace"}>
-                        <SubCategoryDropdown
-                          id={e.id}
-                          name={getText(e.name, e.nameMM, locale)}
-                          subCategory={e.subCategory}
-                          open={open}
-                          setOpen={setOpen}
-                        />
-                      </Link>
-                    ) : (
-                      <Link
-                        href={"/marketplace"}
-                        className="group-hover:text-primary max-w-[288px] text-ellipsis"
-                      >
-                        {getText(e.name, e.nameMM, locale)}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Link
-              href={"/marketplace"}
-              className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
-            >
-              Promotions
-            </Link>
-            <Link
-              href={"/marketplace"}
-              className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
-            >
-              Live Auctions
-            </Link>
-            <Link
-              href={"/marketplace"}
-              className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
-            >
-              Sell on Treasure Rush
-            </Link>
+                    <span>Categories</span>
+                  </label>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-72 z-10"
+                  >
+                    {categories?.map((e: any, index) => (
+                      <li key={index} className="group">
+                        {e.subCategory && e.subCategory.length > 0 ? (
+                          <Link href={"/marketplace"}>
+                            <SubCategoryDropdown
+                              id={e.id}
+                              name={getText(e.name, e.nameMM, locale)}
+                              subCategory={e.subCategory}
+                              open={open}
+                              setOpen={setOpen}
+                            />
+                          </Link>
+                        ) : (
+                          <Link
+                            href={"/marketplace"}
+                            className="group-hover:text-primary max-w-[288px] text-ellipsis"
+                          >
+                            {getText(e.name, e.nameMM, locale)}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Promotions
+                </Link>
+                <Link
+                  href={"/marketplace"}
+                  className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Live Auctions
+                </Link>
+                <Link
+                  href={"/marketplace"}
+                  className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+                >
+                  Sell on Treasure Rush
+                </Link>
+              </>
+            )}
             <Link
               href={"/marketplace"}
               className="hidden xl:flex whitespace-nowrap hover:text-primary hover:underline "
@@ -452,7 +501,9 @@ function Header({
           <div className="flex flex-row items-center gap-3">
             <Link
               href={"/marketplace"}
-              className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline flex flex-row items-center gap-2"
+              className={`whitespace-nowrap ${
+                isSeller === false ? "border-r pr-3 border-r-neutral" : ""
+              } hover:text-primary hover:underline flex flex-row items-center gap-2`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -470,64 +521,103 @@ function Header({
               </svg>
               <span>Get Apps</span>
             </Link>
-            <div className="whitespace-nowrap hover:text-primary flex flex-row items-center gap-2 flex-grow">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
-                />
-              </svg>
+            {isSeller === false && (
+              <div className="whitespace-nowrap hover:text-primary flex flex-row items-center gap-2 flex-grow">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
+                  />
+                </svg>
 
-              <span>Ship to : </span>
-              <div className="flex-grow min-w-[350px] max-w-[350px]">
-                <LocationPickerFull
-                  selected={{
-                    stateId: shippingLocation?.stateId,
-                    districtId: shippingLocation?.districtId,
-                    townshipId: shippingLocation?.townshipId,
-                  }}
-                  disableLabel={true}
-                  setSelected={(data) => {
-                    setShippingLocation({
-                      stateId: data.stateId,
-                      districtId: data.districtId,
-                      townshipId: data.townshipId,
-                    });
-                  }}
-                />
+                <span>Ship to : </span>
+                <div className="flex-grow min-w-[350px] max-w-[350px]">
+                  <LocationPickerFull
+                    selected={{
+                      stateId: shippingLocation?.stateId,
+                      districtId: shippingLocation?.districtId,
+                      townshipId: shippingLocation?.townshipId,
+                    }}
+                    disableLabel={true}
+                    setSelected={(data) => {
+                      setShippingLocation({
+                        stateId: data.stateId,
+                        districtId: data.districtId,
+                        townshipId: data.townshipId,
+                      });
+                    }}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
         <div className="flex lg:hidden flex-row items-center px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 overflow-x-auto scrollbar-hide">
-          <Link
-            href={"/marketplace"}
-            className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
-          >
-            All Categories
-          </Link>
-          {categories?.map((e, index) => (
-            <Link
-              key={index}
-              href={"/marketplace"}
-              className={`whitespace-nowrap ${
-                index === categories.length - 1
-                  ? ""
-                  : "border-r pr-3 border-r-neutral"
-              } hover:text-primary hover:underline `}
-            >
-              {getText(e.name, e.nameMM, locale)}
-            </Link>
-          ))}
+          {isSeller === true ? (
+            <>
+              <Link
+                href={"/marketplace"}
+                className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              >
+                Products
+              </Link>
+              <Link
+                href={"/marketplace"}
+                className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              >
+                Orders
+              </Link>
+              <Link
+                href={"/marketplace"}
+                className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              >
+                Offers
+              </Link>
+              <Link
+                href={"/marketplace"}
+                className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              >
+                Shipping Cost
+              </Link>
+              <Link
+                href={"/marketplace"}
+                className="whitespace-nowrap hover:text-primary hover:underline "
+              >
+                Promo Code
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href={"/marketplace"}
+                className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
+              >
+                All Categories
+              </Link>
+              {categories?.map((e, index) => (
+                <Link
+                  key={index}
+                  href={"/marketplace"}
+                  className={`whitespace-nowrap ${
+                    index === categories.length - 1
+                      ? ""
+                      : "border-r pr-3 border-r-neutral"
+                  } hover:text-primary hover:underline `}
+                >
+                  {getText(e.name, e.nameMM, locale)}
+                </Link>
+              ))}
+            </>
+          )}
         </div>
         {router.asPath.includes("/marketplace") && (
           <div className="flex lg:hidden flex-row items-center px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-b-[1px] border-y-gray-200 overflow-x-auto scrollbar-hide">

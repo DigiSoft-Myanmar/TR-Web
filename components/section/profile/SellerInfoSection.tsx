@@ -183,7 +183,7 @@ function SellerInfoSection({ backFn, nextFn }: Props) {
           }
           selected={
             profile.membershipId
-              ? data.find((b: any) => b.id === profile.membershipId)
+              ? data?.find((b: any) => b.id === profile.membershipId)
                 ? {
                     name: data.find((b: any) => b.id === profile.membershipId)
                       .name,

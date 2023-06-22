@@ -371,9 +371,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInputTextArea
-                          label={""}
+                          label={"Home Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter Home Description (ENG)"}
                           error={errors.homeHeroSectionDescription?.message}
@@ -384,9 +384,9 @@ function ContactPage({ data }: { data: Content }) {
                           currentValue={watchFields.homeHeroSectionDescription}
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInputTextArea
-                          label={""}
+                          label={"Home Description (MM)"}
                           optional={true}
                           placeHolder={"Enter Home Description (MM)"}
                           error={errors.homeHeroSectionDescriptionMM?.message}
@@ -465,9 +465,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Auction Title (EN)"}
                           placeHolder={"Enter Auction Title (EN)"}
                           error={errors.auctionHeroSectionTitle?.message}
                           type="text"
@@ -479,7 +479,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Auction Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter Auction Description (ENG)"}
                           error={errors.auctionHeroSectionDescription?.message}
@@ -492,9 +492,9 @@ function ContactPage({ data }: { data: Content }) {
                           }
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Auction Title (MM)"}
                           placeHolder={"Enter Auction Title (MM)"}
                           error={errors.auctionHeroSectionTitleMM?.message}
                           type="text"
@@ -506,7 +506,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Auction Description (MM)"}
                           optional={true}
                           placeHolder={"Enter Auction Description (MM)"}
                           error={
@@ -590,9 +590,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Featured Title (EN)"}
                           placeHolder={"Enter Featured Title (EN)"}
                           error={errors.featuredHeroSectionTitle?.message}
                           type="text"
@@ -604,7 +604,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Featured Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter Featured Description (ENG)"}
                           error={errors.featuredHeroSectionDescription?.message}
@@ -617,9 +617,9 @@ function ContactPage({ data }: { data: Content }) {
                           }
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Feature Title (MM)"}
                           placeHolder={"Enter Feature Title (MM)"}
                           error={errors.featuredHeroSectionTitleMM?.message}
                           type="text"
@@ -631,7 +631,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Featured Description (MM)"}
                           optional={true}
                           placeHolder={"Enter Featured Description (MM)"}
                           error={
@@ -715,9 +715,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Promotion Title (EN)"}
                           placeHolder={"Enter Promotion Title (EN)"}
                           error={errors.promotionHeroSectionTitle?.message}
                           type="text"
@@ -729,7 +729,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Promotion Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter Promotion Description (ENG)"}
                           error={
@@ -744,9 +744,9 @@ function ContactPage({ data }: { data: Content }) {
                           }
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Promotion Title (MM)"}
                           placeHolder={"Enter Promotion Title (MM)"}
                           error={errors.promotionHeroSectionTitleMM?.message}
                           type="text"
@@ -758,7 +758,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Promotion Description (MM)"}
                           optional={true}
                           placeHolder={"Enter Promotion Description (MM)"}
                           error={
@@ -819,7 +819,7 @@ function ContactPage({ data }: { data: Content }) {
                   </div>
                 </details>
 
-                <details className="group">
+                {/* <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
                       Mobile Hero Section
@@ -845,9 +845,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Mobile Title (EN)"}
                           placeHolder={"Enter Mobile Title (EN)"}
                           error={errors.mobileHeroSectionTitle?.message}
                           type="text"
@@ -859,7 +859,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Mobile Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter Mobile Description (ENG)"}
                           error={errors.mobileHeroSectionDescription?.message}
@@ -872,9 +872,9 @@ function ContactPage({ data }: { data: Content }) {
                           }
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Mobile Title (MM)"}
                           placeHolder={"Enter Mobile Title (MM)"}
                           error={errors.mobileHeroSectionTitleMM?.message}
                           type="text"
@@ -886,7 +886,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Mobile Description (MM)"}
                           optional={true}
                           placeHolder={"Enter Mobile Description (MM)"}
                           error={errors.mobileHeroSectionDescriptionMM?.message}
@@ -938,7 +938,7 @@ function ContactPage({ data }: { data: Content }) {
                     )}
                     <span className="sr-only">Loading...</span>
                   </div>
-                </details>
+                </details> */}
               </div>
             ) : currentTab === Page.Membership ? (
               <div className="mt-5 flex flex-col gap-5">
@@ -967,9 +967,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Membership Title (EN)"}
                           placeHolder={"Enter Membership Title (EN)"}
                           error={errors.membershipTitle?.message}
                           type="text"
@@ -981,7 +981,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Membership Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter Membership Description (ENG)"}
                           error={errors.membershipDescription?.message}
@@ -992,9 +992,9 @@ function ContactPage({ data }: { data: Content }) {
                           currentValue={watchFields.membershipDescription}
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 flex flex-col gap-3">
                         <FormInput
-                          label={""}
+                          label={"Membership Title (MM)"}
                           placeHolder={"Enter Membership Title (MM)"}
                           error={errors.membershipTitleMM?.message}
                           type="text"
@@ -1006,7 +1006,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"Membership Description (MM)"}
                           optional={true}
                           placeHolder={"Enter Membership Description (MM)"}
                           error={errors.membershipDescriptionMM?.message}
@@ -1362,9 +1362,9 @@ function ContactPage({ data }: { data: Content }) {
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
                     <div className="flex flex-row w-full gap-3">
-                      <div className="flex-1">
+                      <div className="flex-1 gap-3 flex flex-col">
                         <FormInput
-                          label={""}
+                          label={"About Title (EN)"}
                           placeHolder={"Enter About Title (EN)"}
                           error={errors.aboutTitle?.message}
                           type="text"
@@ -1376,7 +1376,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"About Description (ENG)"}
                           optional={true}
                           placeHolder={"Enter About Description (ENG)"}
                           error={errors.aboutDescription?.message}
@@ -1387,9 +1387,9 @@ function ContactPage({ data }: { data: Content }) {
                           currentValue={watchFields.aboutDescription}
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 gap-3 flex flex-col">
                         <FormInput
-                          label={""}
+                          label={"About Title (MM)"}
                           placeHolder={"Enter About Title (MM)"}
                           error={errors.aboutTitleMM?.message}
                           type="text"
@@ -1401,7 +1401,7 @@ function ContactPage({ data }: { data: Content }) {
                           optional={true}
                         />
                         <FormInputTextArea
-                          label={""}
+                          label={"About Description (MM)"}
                           optional={true}
                           placeHolder={"Enter About Description (MM)"}
                           error={errors.aboutDescriptionMM?.message}

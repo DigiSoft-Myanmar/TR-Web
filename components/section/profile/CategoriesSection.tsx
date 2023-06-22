@@ -49,7 +49,7 @@ function CategoriesSection({ backFn, nextFn }: Props) {
         }}
       >
         <div className="flex flex-row items-center gap-3 flex-wrap">
-          {data.map((z: Category, index: number) => (
+          {data?.map((z: Category, index: number) => (
             <div
               key={index}
               className=""

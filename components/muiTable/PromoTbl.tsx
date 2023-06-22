@@ -38,6 +38,7 @@ import { sortBy } from "lodash";
 import { useTranslation } from "next-i18next";
 import { PromoType, isBetween, isTodayBetween } from "@/util/verify";
 import { fileUrl } from "@/types/const";
+import PromotionModal from "../modal/sideModal/PromotionModal";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -121,12 +122,20 @@ const PromoTbl = ({
   const columns = [
     {
       flex: 0.2,
+      field: "promoCode",
+      minWidth: 90,
+      headerName: "Promo Code",
+      renderCell: ({ row }: CellType) => (
+        <Typography>{`${row.promoCode.toUpperCase()}`}</Typography>
+      ),
+    },
+    {
+      flex: 0.2,
       field: "img",
       minWidth: 90,
-      headerName: "Promo Image",
+      headerName: "Status",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img src={fileUrl + row.img} alt={`${row.promoCode}`} />
           {row.isScheduled === true && row.startDate && row.endDate ? (
             <>
               {isTodayBetween(row.startDate, row.endDate) ===
@@ -151,15 +160,6 @@ const PromoTbl = ({
             </div>
           )}
         </Box>
-      ),
-    },
-    {
-      flex: 0.2,
-      field: "promoCode",
-      minWidth: 90,
-      headerName: "Promo Code",
-      renderCell: ({ row }: CellType) => (
-        <Typography>{`${row.promoCode.toUpperCase()}`}</Typography>
       ),
     },
     {
@@ -501,7 +501,7 @@ const PromoTbl = ({
           sx={{ "& .MuiDataGrid-columnHeaders": { borderRadius: 0 } }}
         />
       )}
-      {/* <PromotionModal
+      <PromotionModal
         title={"Update Promo Code"}
         isModalOpen={isModalOpen}
         setModalOpen={setModalOpen}
@@ -509,7 +509,7 @@ const PromoTbl = ({
         setUpdate={() => {
           refetch();
         }}
-      /> */}
+      />
     </Card>
   ) : (
     <></>

@@ -4,24 +4,14 @@ import { useRouter } from "next/router";
 
 import { useTranslation } from "next-i18next";
 import SubmitBtn from "@/components/presentational/SubmitBtn";
-import ColorPicker from "@/components/presentational/ColorPicker";
-import SingleUploadModal from "./SingleUploadModal";
-import SingleGalleryModal from "./SingleGalleryModal";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@/components/presentational/FormInput";
-import { Category } from "@/models/product";
-import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
-import useSWR from "swr";
-import { fetcher } from "@/util/fetcher";
-import { Banner, Brand, PromoCode, User } from "@prisma/client";
-import { ImgType } from "@/types/orderTypes";
-import Image from "next/image";
-import { fileUrl } from "@/types/const";
+import { showSuccessDialog } from "@/util/swalFunction";
+import { PromoCode, User } from "@prisma/client";
 import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 
-import BuyerMultiSelectBox from "@/components/presentational/BuyerMultiSelectBox";
 import FormSaleDatePicker from "@/components/presentational/FormSaleDatePicker";
 import SellerSelectBox from "@/components/presentational/SellerSelectBox";
 import { getHeaders } from "@/util/authHelper";
@@ -135,7 +125,6 @@ function PromotionModal({
   function submitPromoCode(data: PromoCode) {
     let b: any = { ...data };
     if (promotion) {
-      b.img = promotion.img;
       b.isPercent = promotion!.isPercent!;
       b.isScheduled = promotion.isScheduled;
       b.startDate = promotion.startDate;
@@ -272,93 +261,6 @@ function PromotionModal({
                     </button>
                   </Dialog.Title>
                   <form onSubmit={handleSubmit(submitPromoCode)}>
-                    <div className="mt-3 flex flex-row items-center justify-center">
-                      {promotion?.img && (
-                        <Image
-                          src={fileUrl + promotion.img}
-                          alt=""
-                          width={430}
-                          height={180}
-                          quality={100}
-                          className="h-[180px] max-h-[180px] w-[430px] object-contain"
-                        />
-                      )}
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <label
-                        className={`text-sm font-medium ${
-                          !promotion?.img
-                            ? "text-error"
-                            : promotion?.img
-                            ? "text-green-600"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        {t("Image")} (Optimal Image Resolution: 415 x 185 px)
-                      </label>
-
-                      <div
-                        className={`relative mt-1 flex w-full flex-row justify-center`}
-                      >
-                        <span className="inline-flex divide-x overflow-hidden rounded-md border bg-white shadow-sm">
-                          <button
-                            type="button"
-                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 focus:relative"
-                            onClick={() => {
-                              setUploadModalOpen(true);
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="mr-3 h-4 w-4"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                              />
-                            </svg>
-
-                            {t("upload")}
-                          </button>
-
-                          <button
-                            type="button"
-                            className="flex items-center py-2 px-4 text-sm text-gray-700 hover:bg-gray-50 focus:relative"
-                            title="Choose"
-                            onClick={() => {
-                              setChooseModalOpen(true);
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="mr-3 h-4 w-4"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                              />
-                            </svg>
-
-                            {t("choose")}
-                          </button>
-                        </span>
-                      </div>
-                      {!promotion?.img && (
-                        <span className="p-2 text-xs text-error">
-                          {t("inputError")}
-                        </span>
-                      )}
-                    </div>
                     <div className="mt-2 flex flex-col gap-3">
                       <FormInput
                         label={"Promo Code"}
@@ -537,28 +439,6 @@ function PromotionModal({
           </div>
         </Dialog>
       </Transition>
-      <SingleUploadModal
-        type={ImgType.PromoCode}
-        isModalOpen={uploadModalOpen}
-        setModalOpen={setUploadModalOpen}
-        setFileSrc={(e: string) => {
-          setPromotion((prevValue: any) => {
-            return { ...prevValue, img: e };
-          });
-        }}
-      />
-      <SingleGalleryModal
-        type={ImgType.PromoCode}
-        isSeller={false}
-        isModalOpen={chooseModalOpen}
-        setModalOpen={setChooseModalOpen}
-        fileSrc={promotion?.img?.toString()}
-        setFileSrc={(e: string) => {
-          setPromotion((prevValue: any) => {
-            return { ...prevValue, img: e };
-          });
-        }}
-      />
     </>
   );
 }

@@ -19,6 +19,7 @@ import PricingDetail from "@/components/presentational/PricingDetail";
 import FourColAds from "@/components/Ads/FourColAds";
 import TwoColsAds from "@/components/Ads/TwoColAds";
 import AuctionHome from "@/components/section/Home/AuctionHome";
+import MyanmarMap from "@/components/presentational/MyanmarMap";
 
 export function IndexPage({
   sellerList,
@@ -50,6 +51,7 @@ export function IndexPage({
           <link rel="icon" href="/favicon.ico" />
           <meta name="description" content={defaultDescription} />
         </Head>
+        <MyanmarMap />
       </div>
     );
   }

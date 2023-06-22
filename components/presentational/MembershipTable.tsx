@@ -37,7 +37,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
         <tbody>
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border lg:border-r-0 border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border lg:border-r-0 border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               Pricing
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -85,7 +85,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
                     {/* <p>billed anually</p> */}
                   </div>
                 </div>
-                <ul className="text-sm font-normal mb-6 hidden sm:block">
+                {/* <ul className="text-sm font-normal mb-6 hidden sm:block">
                   <li className="mb-2 tick">Free 14 day trial</li>
                   <li className="mb-2 tick">
                     A single team hosted on stackoverflow.com
@@ -94,10 +94,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                     Unlimited private questions and answers
                   </li>
                   <li className="tick">Searchable archive</li>
-                </ul>
+                </ul> */}
                 <a
                   href=""
-                  className=" mt-auto block text-white bg-indigo-500 text-xs py-2 text-center rounded font-normal"
+                  className=" mt-auto block text-white bg-primary hover:bg-primary-focus text-xs py-2 text-center rounded font-normal"
                   title=""
                 >
                   Get Started
@@ -109,7 +109,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("SKUListing")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -125,7 +125,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("SKUListing")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -225,7 +225,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("Ads")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -241,7 +241,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("Ads")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -425,7 +425,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("topSearch")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -441,7 +441,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("topSearch")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -539,7 +539,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("reports")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -555,7 +555,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("reports")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -698,7 +698,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("onBoarding")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -714,7 +714,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
               {t("onBoarding")}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -874,7 +874,7 @@ function MembershipTable({ data }: { data: Membership[] }) {
               >
                 <a
                   href=""
-                  className=" mt-auto block text-white bg-indigo-500 text-xs py-2 text-center rounded font-normal"
+                  className=" mt-auto block text-white bg-primary hover:bg-primary-focus text-xs py-2 text-center rounded font-normal"
                   title=""
                 >
                   Get Started

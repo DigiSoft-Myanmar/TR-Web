@@ -86,6 +86,9 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
             in: [Role.Seller, Role.Trader],
           },
         },
+        include: {
+          currentMembership: true,
+        },
       });
       for (let i = 0; i < user.length; i++) {
         let shippingInfo = await addShippingInfo(user[i]);
