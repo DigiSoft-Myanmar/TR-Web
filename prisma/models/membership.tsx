@@ -47,16 +47,35 @@ export const updateMembership = async (
   id: string,
   membershipInfo: Membership
 ) => {
+  let m: any = {};
+  if (membershipInfo) {
+    m = { ...membershipInfo };
+    if (m.id) {
+      delete m.id;
+    }
+    if (m.User) {
+      delete m.User;
+    }
+  }
   const newMembership = await prisma.membership.update({
     where: {
       id: id,
     },
-    data: membershipInfo,
+    data: m,
   });
   return newMembership;
 };
 
 export const deleteMembership = async (id: string) => {
-  const membership = await prisma.membership.delete({ where: { id: id } });
-  return membership;
+  let userCount = await prisma.user.count({
+    where: {
+      membershipId: id,
+    },
+  });
+  if (userCount === 0) {
+    const membership = await prisma.membership.delete({ where: { id: id } });
+    return membership;
+  } else {
+    return null;
+  }
 };

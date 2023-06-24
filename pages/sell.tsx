@@ -24,6 +24,7 @@ import { signIn } from "next-auth/react";
 import { getHighlightText, getText } from "@/util/textHelper";
 import prisma from "@/prisma/prisma";
 import { PrivacyType } from "@/types/pageType";
+import MembershipTable from "@/components/presentational/MembershipTable";
 
 export type Register = {
   username: string;
@@ -570,67 +571,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
                 </div>
               </div>
             </div>
-            <div className="-mx-4 flex flex-wrap justify-center">
-              {data && data.length > 3 && isAllPlan === false
-                ? [
-                    data[0],
-                    data[(data.length / 2).toFixed(0)],
-                    data[data.length - 1],
-                  ].map((e: any, index: number) => (
-                    <MembershipCard
-                      key={index}
-                      {...e}
-                      button={
-                        <button
-                          className={
-                            currentLevel?.name === e.name
-                              ? "block w-full rounded-md border border-primary bg-primary p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-90"
-                              : "block w-full rounded-md border border-[#D4DEFF] bg-transparent p-4 text-center text-base font-semibold text-primary transition hover:border-primary hover:bg-primary hover:text-white"
-                          }
-                          onClick={() => {
-                            setCurrentLevel(e);
-                            registerRef.current.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
-                        >
-                          {getText(
-                            "Choose " + e.name,
-                            e.nameMM + " ရွေးရန်",
-                            locale
-                          )}
-                        </button>
-                      }
-                    />
-                  ))
-                : data?.map((e: any, index: number) => (
-                    <MembershipCard
-                      key={index}
-                      {...e}
-                      button={
-                        <button
-                          className={
-                            currentLevel?.name === e.name
-                              ? "block w-full rounded-md border border-primary bg-primary p-4 text-center text-base font-semibold text-white transition hover:bg-opacity-90"
-                              : "block w-full rounded-md border border-[#D4DEFF] bg-transparent p-4 text-center text-base font-semibold text-primary transition hover:border-primary hover:bg-primary hover:text-white"
-                          }
-                          onClick={() => {
-                            setCurrentLevel(e);
-                            registerRef.current.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
-                        >
-                          {getText(
-                            "Choose " + e.name,
-                            e.nameMM + " ရွေးရန်",
-                            locale
-                          )}
-                        </button>
-                      }
-                    />
-                  ))}
-            </div>
+            <MembershipTable data={data} />
             {data && data.length > 3 && (
               <div className="flex w-full items-center justify-center">
                 <button

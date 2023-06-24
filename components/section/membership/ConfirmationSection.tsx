@@ -144,7 +144,7 @@ function ConfirmationSection({
                 className={`inline-flex items-center gap-3 rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
                 title="Next"
                 type="submit"
-                disabled={isSubmit}
+                disabled={false}
               >
                 {isSubmit === true ? (
                   <>

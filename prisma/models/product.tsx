@@ -10,6 +10,7 @@ import {
 } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import prisma from "../prisma";
+import { sortBy } from "lodash";
 
 export const getAllCategories = async () => {
   let categories: any = await prisma.category.findMany({});
@@ -171,6 +172,17 @@ export const createProduct = async (data: Product) => {
   if (d.seller) {
     delete d.seller;
   }
+  if (d.type === ProductType.Fixed) {
+    d.priceIndex = d.regularPrice;
+  } else if (d.type === ProductType.Variable) {
+    let priceList = sortBy(
+      d.variations,
+      (z: any) => z.regularPrice
+    ).reverse()[0];
+    d.priceIndex = priceList;
+  } else if (d.type === ProductType.Auction) {
+    d.priceIndex = d.openingBid;
+  }
 
   const product = await prisma.product.create({
     data: d,
@@ -222,6 +234,17 @@ export const updateProduct = async (id: string, data: Product) => {
     if (d.saleEndDate) {
       delete d.saleEndDate;
     }
+  }
+  if (d.type === ProductType.Fixed) {
+    d.priceIndex = d.regularPrice;
+  } else if (d.type === ProductType.Variable) {
+    let priceList = sortBy(
+      d.variations,
+      (z: any) => z.regularPrice
+    ).reverse()[0];
+    d.priceIndex = priceList;
+  } else if (d.type === ProductType.Auction) {
+    d.priceIndex = d.openingBid;
   }
 
   const product = await prisma.product.update({

@@ -1,4 +1,10 @@
-import { Membership, Product, ProductType, Role } from "@prisma/client";
+import {
+  Content,
+  Membership,
+  Product,
+  ProductType,
+  Role,
+} from "@prisma/client";
 import React, { createContext } from "react";
 
 type IMember = {
@@ -9,6 +15,7 @@ type IMember = {
   adsValid: boolean;
   membership: Membership | undefined;
   setMembership: Function;
+  content: Content | undefined;
 };
 
 const MemberContext = createContext<IMember>({
@@ -18,6 +25,7 @@ const MemberContext = createContext<IMember>({
   SKUValid: false,
   topSearchValid: false,
   membership: undefined,
+  content: undefined,
   setMembership: () => {},
 });
 
@@ -25,9 +33,11 @@ export const useMembership = () => React.useContext(MemberContext);
 
 export const MembershipProvider = ({
   memberDetail,
+  content,
   children,
 }: {
   memberDetail?: Membership;
+  content?: Content;
   children: React.ReactNode;
 }) => {
   const [membership, setMembership] = React.useState<any>(memberDetail);
@@ -41,8 +51,21 @@ export const MembershipProvider = ({
   );
 
   React.useEffect(() => {
-    setMembership(memberDetail);
-  }, [memberDetail]);
+    if (memberDetail?.id) {
+      setMembership(memberDetail);
+    } else {
+      setMembership({
+        adsDetails: content.adsDetails,
+        adsDetailsMM: content.adsDetailsMM,
+        topSearchDetails: content.topSearchDetails,
+        topSearchDetailsMM: content.topSearchDetailsMM,
+        saleReportDetails: content.saleReportDetails,
+        saleReportDetailsMM: content.saleReportDetailsMM,
+        SKUDetails: content.SKUDetails,
+        SKUDetailsMM: content.SKUDetailsMM,
+      });
+    }
+  }, [memberDetail, content]);
 
   function verifyInfo(member: Membership) {
     return false;
@@ -58,6 +81,7 @@ export const MembershipProvider = ({
         reportValid,
         SKUValid,
         topSearchValid,
+        content,
       }}
     >
       {children}

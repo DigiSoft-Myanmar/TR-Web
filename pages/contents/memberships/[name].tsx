@@ -21,7 +21,10 @@ function MembershipDetailsPage(param: any) {
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MembershipProvider memberDetail={param.membership}>
+      <MembershipProvider
+        memberDetail={param.membership}
+        content={param.content}
+      >
         <MembershipScreen />
       </MembershipProvider>
     </div>
@@ -29,7 +32,8 @@ function MembershipDetailsPage(param: any) {
 }
 
 export async function getServerSideProps({ locale, params }: any) {
-  console.log(params);
+  const content = await prisma.content.findFirst({});
+
   let membership = await prisma.membership.findFirst({
     where: {
       name: decodeURIComponent(params.name),
@@ -38,6 +42,7 @@ export async function getServerSideProps({ locale, params }: any) {
 
   return {
     props: {
+      content: JSON.parse(JSON.stringify(content)),
       membership: JSON.parse(JSON.stringify(membership)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },

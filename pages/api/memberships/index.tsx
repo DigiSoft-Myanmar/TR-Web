@@ -9,7 +9,12 @@ import {
   getMembershipByName,
   updateMembership,
 } from "@/prisma/models/membership";
-import { BadRequest, Success, Unauthorized } from "@/types/ApiResponseTypes";
+import {
+  BadRequest,
+  Success,
+  Unauthorized,
+  UsersExists,
+} from "@/types/ApiResponseTypes";
 import { Membership, Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -71,8 +76,12 @@ export default async function handler(
         case "DELETE":
           let { id: deleteId } = req.query;
           if (deleteId) {
-            await deleteMembership(deleteId.toString());
-            return res.status(200).json(Success);
+            let data = await deleteMembership(deleteId.toString());
+            if (data) {
+              return res.status(200).json(Success);
+            } else {
+              return res.status(400).json(UsersExists);
+            }
           } else {
             return res.status(400).json(BadRequest);
           }

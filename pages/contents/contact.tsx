@@ -78,6 +78,16 @@ function ContactPage({ data }: { data: any }) {
       .optional()
       .or(z.literal("")),
     facebookPlugin: z.string().min(1, { message: t("inputError") }),
+    workingHourWeekend: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
+    workingHourWeekdays: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
   });
 
   const { register, handleSubmit, watch, formState, reset } = useForm<any>({
@@ -224,6 +234,26 @@ function ContactPage({ data }: { data: any }) {
               defaultValue={data?.facebookPlugin}
               formControl={{ ...register("facebookPlugin") }}
               currentValue={watchFields.facebookPlugin}
+            />
+
+            <FormInput
+              label={"Working Hour (Mon-Fri)"}
+              placeHolder={"Enter Working Hour (Mon-Fri)"}
+              error={errors.workingHourWeekdays?.message}
+              type="text"
+              defaultValue={data?.workingHourWeekdays}
+              formControl={{ ...register("workingHourWeekdays") }}
+              currentValue={watchFields.workingHourWeekdays}
+            />
+
+            <FormInput
+              label={"Working Hour (Weekend)"}
+              placeHolder={"Enter Working Hour (Weekend)"}
+              error={errors.workingHourWeekend?.message}
+              type="text"
+              defaultValue={data?.workingHourWeekend}
+              formControl={{ ...register("workingHourWeekend") }}
+              currentValue={watchFields.workingHourWeekend}
             />
 
             <div className="mt-5 flex flex-col gap-3 border-t pt-5">

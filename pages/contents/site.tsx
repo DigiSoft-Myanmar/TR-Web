@@ -32,21 +32,13 @@ import { getHeaders } from "@/util/authHelper";
 import SingleUploadModal from "@/components/modal/sideModal/SingleUploadModal";
 import ImgFeaturesModal from "@/components/modal/sideModal/ImgFeatureModal";
 
-enum SiteImg {
-  Home,
-  Sell,
-  Login,
-  Register,
-  SellRegister,
-  Mobile,
-}
-
 enum Page {
   Home,
   Membership,
   Credentials,
   Forgot,
   About,
+  Ads,
 }
 
 function ContactPage({ data }: { data: Content }) {
@@ -263,9 +255,7 @@ function ContactPage({ data }: { data: Content }) {
   }
 
   return session &&
-    (session.role === Role.Admin ||
-      session.role === Role.Staff ||
-      session.role === Role.SuperAdmin) ? (
+    (session.role === Role.Admin || session.role === Role.SuperAdmin) ? (
     <div>
       <Head>
         <title>Site Management | Treasure Rush</title>
@@ -342,6 +332,18 @@ function ContactPage({ data }: { data: Content }) {
                 }}
               >
                 About Page
+              </div>
+              <div
+                className={
+                  currentTab === Page.Ads
+                    ? "tab tab-bordered border-primary text-primary font-semibold"
+                    : "tab tab-bordered"
+                }
+                onClick={() => {
+                  setCurrentTab(Page.Ads);
+                }}
+              >
+                Default Ads
               </div>
             </div>
             {currentTab === Page.Home ? (
@@ -1413,6 +1415,213 @@ function ContactPage({ data }: { data: Content }) {
                         />
                       </div>
                     </div>
+                  </div>
+                </details>
+              </div>
+            ) : currentTab === Page.Ads ? (
+              <div className="mt-5 flex flex-col gap-5">
+                <details className="group">
+                  <summary className="flex flex-row cursor-pointer">
+                    <h3 className="ml-3 text-sm font-semibold text-gray-700">
+                      Default One Col Ads (1200 x 300)
+                    </h3>
+                    <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+                  <div
+                    role="homeHero"
+                    className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
+                  >
+                    {content?.defaultAdsOneCol ? (
+                      <Image
+                        src={
+                          fileUrl +
+                          encodeURIComponent(content?.defaultAdsOneCol)
+                        }
+                        alt="Home Hero Image"
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        width={1200}
+                        height={300}
+                      />
+                    ) : data?.defaultAdsOneCol ? (
+                      <Image
+                        src={
+                          fileUrl + encodeURIComponent(data?.defaultAdsOneCol)
+                        }
+                        alt="Home Hero Image"
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        width={1200}
+                        height={300}
+                      />
+                    ) : (
+                      <div
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        onClick={() => {
+                          setUploadModalOpen(true);
+                          setImgType("defaultAdsOneCol");
+                        }}
+                      >
+                        <svg
+                          className="w-12 h-12 text-gray-200"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          fill="currentColor"
+                          viewBox="0 0 640 512"
+                        >
+                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                        </svg>
+                      </div>
+                    )}
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </details>
+
+                <details className="group">
+                  <summary className="flex flex-row cursor-pointer">
+                    <h3 className="ml-3 text-sm font-semibold text-gray-700">
+                      Default Two Col Ads (700 x 300)
+                    </h3>
+                    <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+                  <div
+                    role="actionHero"
+                    className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
+                  >
+                    {content?.defaultAdsTwoCol ? (
+                      <Image
+                        src={
+                          fileUrl +
+                          encodeURIComponent(content?.defaultAdsTwoCol)
+                        }
+                        alt="defaultAdsTwoCol"
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        width={700}
+                        height={300}
+                      />
+                    ) : data?.auctionHeroImg ? (
+                      <Image
+                        src={
+                          fileUrl + encodeURIComponent(data?.defaultAdsTwoCol)
+                        }
+                        alt="defaultAdsTwoCol"
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        width={700}
+                        height={300}
+                      />
+                    ) : (
+                      <div
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        onClick={() => {
+                          setUploadModalOpen(true);
+                          setImgType("defaultAdsTwoCol");
+                        }}
+                      >
+                        <svg
+                          className="w-12 h-12 text-gray-200"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          fill="currentColor"
+                          viewBox="0 0 640 512"
+                        >
+                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                        </svg>
+                      </div>
+                    )}
+                    <span className="sr-only">Loading...</span>
+                  </div>
+                </details>
+
+                <details className="group">
+                  <summary className="flex flex-row cursor-pointer">
+                    <h3 className="ml-3 text-sm font-semibold text-gray-700">
+                      Default Three / Four Col Ads (300 x 300)
+                    </h3>
+                    <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+
+                  <div
+                    role="featureHero"
+                    className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
+                  >
+                    {content?.defaultAdsThreeCol ? (
+                      <Image
+                        src={
+                          fileUrl +
+                          encodeURIComponent(content?.defaultAdsThreeCol)
+                        }
+                        alt="Featured Hero Image"
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        width={300}
+                        height={300}
+                      />
+                    ) : data?.defaultAdsThreeCol ? (
+                      <Image
+                        src={
+                          fileUrl + encodeURIComponent(data?.defaultAdsThreeCol)
+                        }
+                        alt="Featured Hero Image"
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        width={300}
+                        height={300}
+                      />
+                    ) : (
+                      <div
+                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                        onClick={() => {
+                          setUploadModalOpen(true);
+                          setImgType("featureHeroImg");
+                        }}
+                      >
+                        <svg
+                          className="w-12 h-12 text-gray-200"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                          fill="currentColor"
+                          viewBox="0 0 640 512"
+                        >
+                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                        </svg>
+                      </div>
+                    )}
+                    <span className="sr-only">Loading...</span>
                   </div>
                 </details>
               </div>

@@ -1,14 +1,34 @@
+import { getHeaders, isInternal } from "@/util/authHelper";
+import {
+  showConfirmationDialog,
+  showErrorDialog,
+  showSuccessDialog,
+} from "@/util/swalFunction";
 import { formatAmount, getText } from "@/util/textHelper";
-import { Membership } from "@prisma/client";
+import { Content, Membership } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-function MembershipTable({ data }: { data: Membership[] }) {
+function MembershipTable({
+  data,
+  content,
+}: {
+  data: Membership[];
+  content?: Content;
+}) {
   const { locale } = useRouter();
   const { t } = useTranslation("common");
+  const { data: session }: any = useSession();
+  const router = useRouter();
+
   return (
-    <div className="w-full overflow-x-auto">
+    <div
+      className={`${
+        isInternal(session) ? "w-[65vw] max-w-[65vw] min-w-[65vw]" : ""
+      } overflow-x-auto`}
+    >
       <table className="rounded lg:max-w-5xl m-auto">
         <thead className="block">
           <tr className="flex text-left">
@@ -21,14 +41,16 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 scope="col"
                 className={
                   index === data.length - 1
-                    ? "w-1/3 sm:w-1/4 p-4 border bg-white rounded-tr border-gray-300 font-normal"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border bg-white rounded-tr border-gray-300 font-normal"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border bg-white lg:border-l-0 border-r-0 border-gray-300 font-normal"
-                    : "w-1/3 sm:w-1/4 p-4 border bg-white border-r-0 border-gray-300 font-normal"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border bg-white lg:border-l-0 border-r-0 border-gray-300 font-normal"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border bg-white border-r-0 border-gray-300 font-normal"
                 }
                 key={index}
               >
-                <h4 className="u-slab">{getText(z.name, z.nameMM, locale)}</h4>
+                <h4 className="u-slab text-center">
+                  {getText(z.name, z.nameMM, locale)}
+                </h4>
                 {/* <p className="text-sm hidden sm:block">Private Q&A for teams</p> */}
               </th>
             ))}
@@ -45,10 +67,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border border-t-0 border-gray-300 flex flex-col"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-t-0 border-gray-300 flex flex-col"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-r-0 border-t-0 border-l-0 border-gray-300 flex flex-col"
-                    : "w-1/3 sm:w-1/4 p-4 border border-r-0 border-t-0 border-gray-300 flex flex-col"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-l-0 border-gray-300 flex flex-col"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-gray-300 flex flex-col"
                 }
               ></td>
             ))}
@@ -68,14 +90,14 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 scope="col"
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border border-t-0 border-gray-300 flex flex-col"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-t-0 border-gray-300 flex flex-col"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-r-0 border-t-0 lg:border-l-0 border-gray-300 flex flex-col"
-                    : "w-1/3 sm:w-1/4 p-4 border border-r-0 border-t-0 border-gray-300 flex flex-col"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 lg:border-l-0 border-gray-300 flex flex-col"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-gray-300 flex flex-col"
                 }
               >
                 <div className="flex items-center mb-4 flex-wrap sm:no-wrap justify-center">
-                  <p className="text-xl">
+                  <p className="text-xl text-center">
                     {formatAmount(z.price, locale, true)}
                   </p>
                   <p className="text-xs font-normal text-center mt-3">
@@ -95,13 +117,71 @@ function MembershipTable({ data }: { data: Membership[] }) {
                   </li>
                   <li className="tick">Searchable archive</li>
                 </ul> */}
-                <a
-                  href=""
-                  className=" mt-auto block text-white bg-primary hover:bg-primary-focus text-xs py-2 text-center rounded font-normal"
-                  title=""
-                >
-                  Get Started
-                </a>
+                {isInternal(session) && (
+                  <div className="flex flex-row items-center gap-3">
+                    <button
+                      type="button"
+                      className="flex-grow mt-auto block text-white bg-primary hover:bg-primary-focus text-xs py-2 text-center rounded font-normal"
+                      onClick={() => {
+                        router.push(
+                          "/contents/memberships/" + encodeURIComponent(z.name)
+                        );
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="text-white bg-warning hover:bg-opacity-80 text-xs p-2 text-center rounded font-normal"
+                      onClick={(evt) => {
+                        evt.stopPropagation();
+                        showConfirmationDialog(
+                          t("deleteConfirmation"),
+                          "",
+                          locale,
+                          () => {
+                            fetch(
+                              `/api/memberships?id=${encodeURIComponent(
+                                z.id!
+                              )}`,
+                              {
+                                method: "DELETE",
+                                headers: getHeaders(session),
+                              }
+                            ).then(async (data) => {
+                              if (data.status === 200) {
+                                router.reload();
+                                showSuccessDialog("Delete Success", "", locale);
+                              } else {
+                                let json = await data.json();
+                                showErrorDialog(
+                                  json.error,
+                                  json.errorMM,
+                                  locale
+                                );
+                              }
+                            });
+                          }
+                        );
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </th>
             ))}
           </tr>
@@ -110,15 +190,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("SKUListing")}
+              <h3>{t("SKUListing")}</h3>
+              {content?.SKUDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.SKUDetails,
+                      content?.SKUDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -126,13 +218,25 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="lg:flex hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("SKUListing")}
+              <h3>{t("SKUListing")}</h3>
+              {content?.SKUDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.SKUDetails,
+                      content?.SKUDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
-                  "w-1/3 sm:w-1/4 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
+                  "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -147,8 +251,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -167,10 +271,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">{z.SKUListing}</p>
@@ -187,8 +291,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -207,10 +311,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">
@@ -226,15 +330,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("Ads")}
+              <h3>{t("Ads")}</h3>
+              {content?.adsDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.adsDetails,
+                      content?.adsDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -242,13 +358,25 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="lg:flex hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("Ads")}
+              <h3>{t("Ads")}</h3>
+              {content?.adsDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.adsDetails,
+                      content?.adsDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
-                  "w-1/3 sm:w-1/4 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
+                  "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -263,8 +391,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -283,10 +411,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">{z.freeAdsLimit}</p>
@@ -303,8 +431,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -323,10 +451,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">
@@ -345,8 +473,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -365,10 +493,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">
@@ -387,8 +515,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -407,10 +535,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">
@@ -426,15 +554,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("topSearch")}
+              <h3>{t("topSearch")}</h3>
+              {content?.topSearchDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.topSearchDetails,
+                      content?.topSearchDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -442,13 +582,25 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="lg:flex hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("topSearch")}
+              <h3>{t("topSearch")}</h3>
+              {content?.topSearchDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.topSearchDetails,
+                      content?.topSearchDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
-                  "w-1/3 sm:w-1/4 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
+                  "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -463,8 +615,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -483,10 +635,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">{z.topSearchStart}</p>
@@ -503,8 +655,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -523,10 +675,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <p className="text-center">{z.topSearchEnd}</p>
@@ -540,15 +692,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("reports")}
+              <h3>{t("reports")}</h3>
+              {content?.saleReportDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.saleReportDetails,
+                      content?.saleReportDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -556,13 +720,25 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="lg:flex hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("reports")}
+              <h3>{t("reports")}</h3>
+              {content?.saleReportDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.saleReportDetails,
+                      content?.saleReportDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
-                  "w-1/3 sm:w-1/4 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
+                  "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -577,8 +753,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -597,10 +773,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <div className="flex flex-col items-center">
@@ -627,15 +803,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col font-semibold text-sm">
-              {t("buyerProfileReport")}
+              <h3>{t("buyerProfileReport")}</h3>
+              {content?.buyerReportDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.buyerReportDetails,
+                      content?.buyerReportDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -646,7 +834,19 @@ function MembershipTable({ data }: { data: Membership[] }) {
               scope="col"
               className="sticky left-0 hidden min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col"
             >
-              {t("buyerProfileReport")}
+              <h3>{t("buyerProfileReport")}</h3>
+              {content?.buyerReportDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.buyerReportDetails,
+                      content?.buyerReportDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </th>
 
             {data?.map((z: Membership, index: number) => (
@@ -654,10 +854,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <div className="flex flex-col items-center">
@@ -699,15 +899,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("onBoarding")}
+              <h3>{t("onBoarding")}</h3>
+              {content?.onBoardingDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.onBoardingDetails,
+                      content?.onBoardingDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -715,13 +927,25 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="lg:flex hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              {t("onBoarding")}
+              <h3>{t("onBoarding")}</h3>
+              {content?.onBoardingDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.onBoardingDetails,
+                      content?.onBoardingDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
-                  "w-1/3 sm:w-1/4 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
+                  "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-b border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -736,8 +960,8 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -756,10 +980,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <div className="flex flex-col items-center">
@@ -786,15 +1010,27 @@ function MembershipTable({ data }: { data: Membership[] }) {
 
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col font-semibold text-sm">
-              {t("dedicatedAccountManager")}
+              <h3>{t("dedicatedAccountManager")}</h3>
+              {content?.customerServiceDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.customerServiceDetails,
+                      content?.customerServiceDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "w-1/3 sm:w-1/4 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -805,7 +1041,19 @@ function MembershipTable({ data }: { data: Membership[] }) {
               scope="col"
               className="sticky left-0 hidden min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col"
             >
-              {t("dedicatedAccountManager")}
+              <h3>{t("dedicatedAccountManager")}</h3>
+              {content?.customerServiceDetails?.length > 0 && (
+                <div
+                  className="text-gray-600 text-sm mt-3 font-normal"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      content?.customerServiceDetails,
+                      content?.customerServiceDetailsMM,
+                      locale
+                    ),
+                  }}
+                />
+              )}
             </th>
 
             {data?.map((z: Membership, index: number) => (
@@ -813,10 +1061,10 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
                 <div className="flex flex-col items-center">
@@ -866,19 +1114,77 @@ function MembershipTable({ data }: { data: Membership[] }) {
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "w-1/3 sm:w-1/4 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border lg:border-l-0 border-t-0 border-gray-300 flex flex-col bg-white"
                     : index === 0
-                    ? "w-1/3 sm:w-1/4 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
-                    : "w-1/3 sm:w-1/4 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
+                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-gray-300 flex flex-col bg-white border-t-0 lg:border-l-0"
+                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-l-0 border-gray-300 flex flex-col bg-white border-t-0"
                 }
               >
-                <a
-                  href=""
-                  className=" mt-auto block text-white bg-primary hover:bg-primary-focus text-xs py-2 text-center rounded font-normal"
-                  title=""
-                >
-                  Get Started
-                </a>
+                {isInternal(session) && (
+                  <div className="flex flex-row items-center gap-3">
+                    <button
+                      type="button"
+                      className="flex-grow mt-auto block text-white bg-primary hover:bg-primary-focus text-xs py-2 text-center rounded font-normal"
+                      onClick={() => {
+                        router.push(
+                          "/content/memberships/" + encodeURIComponent(z.name)
+                        );
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="text-white bg-warning hover:bg-opacity-80 text-xs p-2 text-center rounded font-normal"
+                      onClick={(evt) => {
+                        evt.stopPropagation();
+                        showConfirmationDialog(
+                          t("deleteConfirmation"),
+                          "",
+                          locale,
+                          () => {
+                            fetch(
+                              `/api/memberships?id=${encodeURIComponent(
+                                z.id!
+                              )}`,
+                              {
+                                method: "DELETE",
+                                headers: getHeaders(session),
+                              }
+                            ).then(async (data) => {
+                              if (data.status === 200) {
+                                router.reload();
+                                showSuccessDialog("Delete Success", "", locale);
+                              } else {
+                                let json = await data.json();
+                                showErrorDialog(
+                                  json.error,
+                                  json.errorMM,
+                                  locale
+                                );
+                              }
+                            });
+                          }
+                        );
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </td>
             ))}
           </tr>
