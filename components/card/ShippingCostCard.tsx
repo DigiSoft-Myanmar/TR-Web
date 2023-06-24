@@ -51,10 +51,10 @@ function ShippingCostCard({
     shippingCost && (
       <>
         <details
-          className={`group border-l-4 bg-white p-6 ${
+          className={`group border-l-4 border bg-white p-6 ${
             shippingCost.shippingIncluded === true
-              ? "border-success"
-              : "border-warning"
+              ? "border-l-success"
+              : "border-l-warning"
           }`}
           onClick={(e) => setDetailOpen(!detailOpen)}
           open={detailOpen}

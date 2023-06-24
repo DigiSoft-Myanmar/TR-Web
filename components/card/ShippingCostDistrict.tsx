@@ -65,10 +65,10 @@ function ShippingCostDistrinct({ district, isUpdate, state, sellerId }: Props) {
     shippingCost && (
       <>
         <details
-          className={`group my-5 border-l-4 bg-white p-6 ${
+          className={`group my-5 border-l-4 border bg-white p-6 ${
             shippingCost.shippingIncluded === true
-              ? "border-success"
-              : "border-warning"
+              ? "border-l-success"
+              : "border-l-warning"
           }`}
           onClick={(e) => setDetailOpen(!detailOpen)}
           open={detailOpen}

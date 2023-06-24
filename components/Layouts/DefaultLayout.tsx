@@ -210,7 +210,7 @@ function DefaultLayout({ children }: LayoutProps) {
           {children}
           {showBtn === true && (
             <button
-              className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-primary bg-opacity-60 text-white hover:bg-opacity-100"
+              className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-[#f0777f] text-white hover:bg-primary-focus"
               onClick={() => {
                 if (window) {
                   window.scrollTo({

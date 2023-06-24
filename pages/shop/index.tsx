@@ -6,13 +6,20 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { defaultDescription } from "@/types/const";
 import prisma from "@/prisma/prisma";
-import { Role } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { formatAmount } from "@/util/textHelper";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import ProductImg from "@/components/card/ProductImg";
 import { useSession } from "next-auth/react";
 import { isInternal } from "@/util/authHelper";
+import UserHomeSection from "@/components/section/user/UserHomeSection";
+import UserAddressSection from "@/components/section/user/UserAddressSection";
+import UserAdsSection from "@/components/section/user/UserAdsSection";
+import UserBuyerRatingSection from "@/components/section/user/UserBuyerRatingSection";
+import UserDetailsSection from "@/components/section/user/UserDetailsSection";
+import UserSellerRatingSection from "@/components/section/user/UserSellerRatingSection";
+import UserUsageSection from "@/components/section/user/UserUsageSection";
 
 enum ShopTab {
   Home,
@@ -24,47 +31,56 @@ enum ShopTab {
   Details,
 }
 
-function Default() {
+function Default({ user }: { user: User }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { locale } = router;
   const { data: session }: any = useSession();
   const [currentTab, setCurrentTab] = React.useState<ShopTab>(ShopTab.Home);
-  let seller: any = {
-    role: Role.Trader,
-  };
 
   useEffect(() => {
     const hash = router.asPath.split("#")[1];
-    if (session) {
-      switch (true) {
-        case hash.includes("address") &&
-          (session.id === seller?.id || isInternal(session)):
-          setCurrentTab(ShopTab.Address);
-          break;
-        case hash.includes("ads") &&
-          (session.id === seller?.id || isInternal(session)):
-          setCurrentTab(ShopTab.Ads);
-          break;
-        case hash.includes("buyerRatings") &&
-          (seller.role === Role.Buyer || seller.role === Role.Trader):
-          setCurrentTab(ShopTab.BuyerRating);
-          break;
-        case hash.includes("sellerRatings") &&
-          (seller.role === Role.Seller || seller.role === Role.Trader):
-          setCurrentTab(ShopTab.SellerRating);
-          break;
-        case hash.includes("usage") &&
-          (session.id === seller?.id || isInternal(session)):
-          setCurrentTab(ShopTab.Usage);
-          break;
-        case hash.includes("details") &&
-          (session.id === seller?.id || isInternal(session)):
-          setCurrentTab(ShopTab.Details);
-          break;
-        default:
-          setCurrentTab(ShopTab.Home);
-          break;
+    if (hash) {
+      if (session) {
+        switch (true) {
+          case hash.includes("address") &&
+            (session.id === user?.id || isInternal(session)):
+            setCurrentTab(ShopTab.Address);
+            break;
+          case hash.includes("ads") &&
+            (session.id === user?.id || isInternal(session)):
+            setCurrentTab(ShopTab.Ads);
+            break;
+          case hash.includes("buyerRatings") &&
+            (user?.role === Role.Buyer || user?.role === Role.Trader):
+            setCurrentTab(ShopTab.BuyerRating);
+            break;
+          case hash.includes("sellerRatings") &&
+            (user?.role === Role.Seller || user?.role === Role.Trader):
+            setCurrentTab(ShopTab.SellerRating);
+            break;
+          case hash.includes("usage") &&
+            (session.id === user?.id || isInternal(session)):
+            setCurrentTab(ShopTab.Usage);
+            break;
+          case hash.includes("details") &&
+            (session.id === user?.id || isInternal(session)):
+            setCurrentTab(ShopTab.Details);
+            break;
+          default:
+            setCurrentTab(ShopTab.Home);
+            break;
+        }
+      } else {
+        switch (true) {
+          case hash.includes("sellerRatings") &&
+            (user?.role === Role.Seller || user?.role === Role.Trader):
+            setCurrentTab(ShopTab.SellerRating);
+            break;
+          default:
+            setCurrentTab(ShopTab.Home);
+            break;
+        }
       }
     } else {
       setCurrentTab(ShopTab.Home);
@@ -224,7 +240,7 @@ function Default() {
                 <h3 className="text-sm">
                   Joined Date:{" "}
                   <span className="font-semibold text-primary">
-                    {new Date().toLocaleDateString("en-ca", {
+                    {new Date(user.createdAt).toLocaleDateString("en-ca", {
                       year: "numeric",
                       month: "short",
                       day: "2-digit",
@@ -238,130 +254,191 @@ function Default() {
             aria-label="Tabs"
             className="flex text-sm font-medium overflow-x-auto scrollbar-hide"
           >
-            <a
-              href=""
-              className="-mb-px border-b-4 border-current p-4 text-primary whitespace-nowrap"
+            <div
+              className={`-mb-px border-b-4 ${
+                currentTab === ShopTab.Home
+                  ? "border-current text-primary"
+                  : "border-transparent hover:text-primary"
+              } p-4 whitespace-nowrap cursor-pointer`}
+              onClick={() => {
+                router.replace(
+                  {
+                    pathname: "shop",
+                    hash: "home",
+                  },
+                  undefined,
+                  { shallow: true }
+                );
+              }}
             >
               Home
-            </a>
+            </div>
 
-            <a
-              href=""
-              className="-mb-px border-b-4 border-transparent p-4 hover:text-primary whitespace-nowrap"
-            >
-              Address
-            </a>
+            {session && (isInternal(session) || session.id === user?.id) && (
+              <div
+                className={`-mb-px border-b-4 ${
+                  currentTab === ShopTab.Address
+                    ? "border-current text-primary"
+                    : "border-transparent hover:text-primary"
+                } p-4 whitespace-nowrap cursor-pointer`}
+                onClick={() => {
+                  router.replace(
+                    {
+                      pathname: "shop",
+                      hash: "address",
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
+                }}
+              >
+                Address
+              </div>
+            )}
 
-            <a
-              href=""
-              className="-mb-px border-b-4 border-transparent p-4 hover:text-primary whitespace-nowrap"
-            >
-              Ads
-            </a>
+            {session && (isInternal(session) || session.id === user?.id) && (
+              <div
+                className={`-mb-px border-b-4 ${
+                  currentTab === ShopTab.Ads
+                    ? "border-current text-primary"
+                    : "border-transparent hover:text-primary"
+                } p-4 whitespace-nowrap cursor-pointer`}
+                onClick={() => {
+                  router.replace(
+                    {
+                      pathname: "shop",
+                      hash: "ads",
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
+                }}
+              >
+                Ads
+              </div>
+            )}
+            {session &&
+              (isInternal(session) ||
+                session.role === Role.Trader ||
+                session.role === Role.Seller) && (
+                <div
+                  className={`-mb-px border-b-4 ${
+                    currentTab === ShopTab.BuyerRating
+                      ? "border-current text-primary"
+                      : "border-transparent hover:text-primary"
+                  } p-4 whitespace-nowrap cursor-pointer`}
+                  onClick={() => {
+                    router.replace(
+                      {
+                        pathname: "shop",
+                        hash: "buyerRatings",
+                      },
+                      undefined,
+                      { shallow: true }
+                    );
+                  }}
+                >
+                  Buyer Ratings
+                </div>
+              )}
 
-            <a
-              href=""
-              className="-mb-px border-b-4 border-transparent p-4 hover:text-primary whitespace-nowrap"
-            >
-              Buyer Ratings
-            </a>
-
-            <a
-              href=""
-              className="-mb-px border-b-4 border-transparent p-4 hover:text-primary whitespace-nowrap"
+            <div
+              className={`-mb-px border-b-4 ${
+                currentTab === ShopTab.SellerRating
+                  ? "border-current text-primary"
+                  : "border-transparent hover:text-primary"
+              } p-4 whitespace-nowrap cursor-pointer`}
+              onClick={() => {
+                router.replace(
+                  {
+                    pathname: "shop",
+                    hash: "sellerRatings",
+                  },
+                  undefined,
+                  { shallow: true }
+                );
+              }}
             >
               Seller Ratings
-            </a>
+            </div>
 
-            <a
-              href=""
-              className="-mb-px border-b-4 border-transparent p-4 hover:text-primary whitespace-nowrap"
-            >
-              Usage
-            </a>
-            <a
-              href=""
-              className="-mb-px border-b-4 border-transparent p-4 hover:text-primary whitespace-nowrap"
-            >
-              Details
-            </a>
+            {session && (isInternal(session) || session.id === user?.id) && (
+              <div
+                className={`-mb-px border-b-4 ${
+                  currentTab === ShopTab.Usage
+                    ? "border-current text-primary"
+                    : "border-transparent hover:text-primary"
+                } p-4 whitespace-nowrap cursor-pointer`}
+                onClick={() => {
+                  router.replace(
+                    {
+                      pathname: "shop",
+                      hash: "usage",
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
+                }}
+              >
+                Usage
+              </div>
+            )}
+
+            {session && (isInternal(session) || session.id === user?.id) && (
+              <div
+                className={`-mb-px border-b-4 ${
+                  currentTab === ShopTab.Details
+                    ? "border-current text-primary"
+                    : "border-transparent hover:text-primary"
+                } p-4 whitespace-nowrap cursor-pointer`}
+                onClick={() => {
+                  router.replace(
+                    {
+                      pathname: "shop",
+                      hash: "details",
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
+                }}
+              >
+                Details
+              </div>
+            )}
           </nav>
         </div>
-        <div
-          className={`${
-            isInternal(session)
-              ? "py-5 flex flex-col gap-5"
-              : "mx-6 px-4 py-5 flex flex-col gap-5"
-          }`}
-        >
-          <div className="bg-white p-3 rounded-md border flex flex-col">
-            <h3 className="text-lg ml-3 mt-3">Promo Codes</h3>
-            <div className="p-3 mt-3 flex flex-row items-center gap-3 overflow-x-auto scrollbar-hide">
-              {Array.from(Array(1000).keys()).map((b, index) => (
-                <div
-                  key={index}
-                  className="bg-primary/5 border p-5 min-w-[200px] rounded-md"
-                >
-                  <h3 className="font-semibold whitespace-nowrap text-sm text-primary">
-                    PROMO-{b}
-                  </h3>
-                  <p className="text-xs mt-1">
-                    Min Spend -{" "}
-                    <span className="text-primary font-semibold">
-                      {formatAmount(10000, locale, true)}
-                    </span>
-                  </p>
-                  <p className="text-xs mt-2 text-gray-500">
-                    Valid till{" "}
-                    <span className="font-semibold text-primary">
-                      {new Date().toLocaleDateString("en-ca", {
-                        year: "numeric",
-                        month: "short",
-                        day: "2-digit",
-                      })}
-                    </span>
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <h3 className="text-lg ml-3 mt-3">Products</h3>
-          <div className="bg-white p-3 rounded-md border grid grid-cols-auto200 gap-3 place-items-center">
-            {Array.from(Array(10).keys()).map((b, index) => (
-              <div
-                key={index}
-                className="bg-white border min-w-[200px] max-w-[200px] rounded-md overflow-hidden cursor-pointer"
-              >
-                <div className="overflow-hidden">
-                  <ProductImg
-                    imgUrl="/assets/dummy/dummy_product.png"
-                    width={200}
-                    title=""
-                    roundedAll={false}
-                  />
-                </div>
-                <div className="m-3 flex flex-col">
-                  <h4 className="text-sm line-clamp-2">Sweater</h4>
-                  <h4 className="text-sm mt-1 font-semibold text-primary">
-                    {formatAmount(5000, locale, true)}
-                  </h4>
-
-                  <span className="text-xs font-semibold text-success bg-success/20 rounded-md px-3 py-1 mt-1 w-fit">
-                    In Stock
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {currentTab === ShopTab.Home ? (
+          <UserHomeSection />
+        ) : currentTab === ShopTab.Address ? (
+          <UserAddressSection />
+        ) : currentTab === ShopTab.Ads ? (
+          <UserAdsSection />
+        ) : currentTab === ShopTab.BuyerRating ? (
+          <UserBuyerRatingSection />
+        ) : currentTab === ShopTab.Details ? (
+          <UserDetailsSection />
+        ) : currentTab === ShopTab.SellerRating ? (
+          <UserSellerRatingSection />
+        ) : currentTab === ShopTab.Usage ? (
+          <UserUsageSection />
+        ) : (
+          <UserHomeSection />
+        )}
       </div>
     </div>
   );
 }
 
 export async function getServerSideProps({ locale }: any) {
+  const user = await prisma.user.findFirst({
+    where: {
+      role: Role.Trader,
+    },
+  });
+
   return {
     props: {
+      user: JSON.parse(JSON.stringify(user)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };
