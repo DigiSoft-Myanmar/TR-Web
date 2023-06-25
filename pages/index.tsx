@@ -9,8 +9,12 @@ import prisma from "@/prisma/prisma";
 import {
   Ads,
   AdsPlacement,
+  Brand,
   Category,
   Content,
+  Product,
+  ProductType,
+  Review,
   Role,
   User,
 } from "@prisma/client";
@@ -28,12 +32,14 @@ import TwoColsAds from "@/components/Ads/TwoColAds";
 import AuctionHome from "@/components/section/Home/AuctionHome";
 import MyanmarMap from "@/components/presentational/MyanmarMapDistrict";
 import { useQuery } from "react-query";
+import BuyNowHome from "@/components/section/Home/BuyNowHome";
 
 export function IndexPage({
   sellerList,
   categories,
   totalReview,
   content,
+  prodList,
 }: {
   sellerList: User[];
   categories: (Category & {
@@ -41,17 +47,93 @@ export function IndexPage({
   })[];
   totalReview: number;
   content: Content;
+  prodList: (Product & {
+    Brand: Brand;
+    Review: Review[];
+    seller: User;
+  })[];
 }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { data: session }: any = useSession();
-  const totalAuction = 0;
-  const totalBuyNow = 0;
+
+  const totalAuction = prodList.filter(
+    (z) => z.type === ProductType.Auction
+  ).length;
+  const totalBuyNow = prodList.length - totalAuction;
   const auctionFeaturedCount = 0;
   const buyNowFeaturedCount = 0;
   const totalPromotion = 0;
   let membershipSettings: any = {};
   const { locale } = router;
+
+  const headDescription = getHighlightText(
+    getText(
+      content.homeHeroSectionDescription,
+      content.homeHeroSectionDescription,
+      locale
+    )
+  );
+
+  const auctionHeader = getHighlightText(
+    getText(
+      content.auctionHeroSectionTitle,
+      content.auctionHeroSectionTitleMM,
+      locale
+    )
+  );
+
+  const auctionDescription = getHighlightText(
+    getText(
+      content.auctionHeroSectionDescription,
+      content.auctionHeroSectionDescriptionMM,
+      locale
+    )
+  );
+
+  const featuredHeader = getHighlightText(
+    getText(
+      content.featuredHeroSectionTitle,
+      content.featuredHeroSectionTitleMM,
+      locale
+    )
+  );
+
+  const featuredDescription = getHighlightText(
+    getText(
+      content.featuredHeroSectionDescription,
+      content.featuredHeroSectionDescriptionMM,
+      locale
+    )
+  );
+
+  const promotionHeader = getHighlightText(
+    getText(
+      content.promotionHeroSectionTitle,
+      content.promotionHeroSectionTitleMM,
+      locale
+    )
+  );
+
+  const promotionDescription = getHighlightText(
+    getText(
+      content.promotionHeroSectionDescription,
+      content.promotionHeroSectionDescriptionMM,
+      locale
+    )
+  );
+
+  const membershipHeader = getHighlightText(
+    getText(content.membershipTitle, content.membershipTitleMM, locale)
+  );
+
+  const membershipDescription = getHighlightText(
+    getText(
+      content.membershipDescription,
+      content.membershipDescriptionMM,
+      locale
+    )
+  );
 
   const {
     isLoading,
@@ -63,14 +145,6 @@ export function IndexPage({
       let json = res.json();
       return json;
     })
-  );
-
-  const headDescription = getHighlightText(
-    getText(
-      content.homeHeroSectionDescription,
-      content.homeHeroSectionDescription,
-      locale
-    )
   );
 
   if (isInternal(session)) {
@@ -270,33 +344,56 @@ export function IndexPage({
               <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 gap-8 lg:gap-16 lg:grid-cols-2">
                   <div className="relative h-64 overflow-hidden rounded-lg sm:h-80 lg:h-full lg:order-last">
-                    <img src="/assets/images/Bid.png" />
+                    {content.auctionHeroImg && (
+                      <img
+                        src={fileUrl + content.auctionHeroImg}
+                        className="max-w-[500px]"
+                      />
+                    )}
                   </div>
 
                   <div className="lg:py-24">
                     <h2 className="text-3xl font-bold sm:text-4xl leading-loose sm:leading-loose">
-                      {t("heroHeader21")}{" "}
-                      <span className="text-primary">{t("heroHeader22")}</span>{" "}
-                      {t("heroHeader23")}
+                      {auctionHeader.map((e: any, index: number) => (
+                        <span
+                          key={index}
+                          className={
+                            e.isHighlight === true
+                              ? "font-extrabold text-primary"
+                              : ""
+                          }
+                        >
+                          {e.text}
+                        </span>
+                      ))}
                     </h2>
 
                     <p className="mt-4 text-gray-600 leading-8">
-                      {/* {t("heroDescription21") &&
-                        t("heroDescription21").replace(
-                          "{data}",
-                          totalAuction > 100
-                            ? numberWithCommas(totalAuction, router.locale) +
-                                "+"
-                            : numberWithCommas(totalAuction, router.locale)
-                        )}{" "}
-                      {t("heroDescription22")} */}
+                      {auctionDescription.map((e: any, index: number) => (
+                        <span
+                          key={index}
+                          className={
+                            e.isHighlight === true
+                              ? "font-bold text-primary"
+                              : ""
+                          }
+                        >
+                          {e.text}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
               </div>
             </section>
-            {/* //TODO Auction Home 
-            {auctionFeaturedCount > 0 && <AuctionHome />} */}
+            {totalAuction > 0 && (
+              <AuctionHome
+                prodList={prodList.filter(
+                  (z) => z.type === ProductType.Auction
+                )}
+                categories={categories}
+              />
+            )}
           </>
         )}
         <AdsHere
@@ -322,31 +419,56 @@ export function IndexPage({
               <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 gap-8 lg:gap-16 lg:grid-cols-2">
                   <div className="relative h-64 overflow-hidden rounded-lg sm:h-80 lg:h-full lg:order-last">
-                    <img src="/assets/images/Feature.png" />
+                    {content.featureHeroImg && (
+                      <img
+                        src={fileUrl + content.featureHeroImg}
+                        className="max-w-[500px]"
+                      />
+                    )}
                   </div>
 
                   <div className="lg:py-24">
                     <h2 className="text-3xl font-bold sm:text-4xl leading-loose sm:leading-loose">
-                      {t("heroHeader31")}{" "}
-                      <span className="text-primary">{t("heroHeader32")}</span>{" "}
+                      {featuredHeader.map((e: any, index: number) => (
+                        <span
+                          key={index}
+                          className={
+                            e.isHighlight === true
+                              ? "font-extrabold text-primary"
+                              : ""
+                          }
+                        >
+                          {e.text}
+                        </span>
+                      ))}
                     </h2>
 
                     <p className="mt-4 text-gray-600 leading-8">
-                      {/*  {t("heroDescription31") &&
-                        t("heroDescription31").replace(
-                          "{data}",
-                          totalBuyNow > 100
-                            ? numberWithCommas(totalBuyNow, router.locale) + "+"
-                            : numberWithCommas(totalBuyNow, router.locale)
-                        )}{" "}
-                      {t("heroDescription32")} */}
+                      {featuredDescription.map((e: any, index: number) => (
+                        <span
+                          key={index}
+                          className={
+                            e.isHighlight === true
+                              ? "font-bold text-primary"
+                              : ""
+                          }
+                        >
+                          {e.text}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
               </div>
             </section>
-            {/* //TODO Buy Now
-             {buyNowFeaturedCount > 0 && <BuyNowHome />} */}
+            {totalBuyNow > 0 && (
+              <BuyNowHome
+                categories={categories}
+                prodList={prodList.filter(
+                  (z) => z.type !== ProductType.Auction
+                )}
+              />
+            )}
           </>
         )}
         <AdsHere
@@ -388,21 +510,44 @@ export function IndexPage({
             <section className="px-10 md:px-20">
               <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 gap-8 lg:gap-16 lg:grid-cols-2">
-                  <div className="relative h-64 overflow-hidden rounded-lg sm:h-80 lg:h-full lg:order-last">
-                    <img src="/assets/images/Sale.png" />
+                  <div className="relative h-64 overflow-hidden rounded-lg sm:h-80 lg:h-full lg:order-last flex items-center justify-center">
+                    {content.promotionHeroImg && (
+                      <img
+                        src={fileUrl + content.promotionHeroImg}
+                        className="max-w-[500px]"
+                      />
+                    )}
                   </div>
 
                   <div className="lg:py-24">
                     <h2 className="text-3xl font-bold sm:text-4xl leading-loose sm:leading-loose">
-                      {t("heroHeaderPromo")}
-                      <br />
-                      <span className="text-primary">
-                        {t("heroHeaderPromo2")}
-                      </span>{" "}
+                      {promotionHeader.map((e: any, index: number) => (
+                        <span
+                          key={index}
+                          className={
+                            e.isHighlight === true
+                              ? "font-extrabold text-primary"
+                              : ""
+                          }
+                        >
+                          {e.text}
+                        </span>
+                      ))}
                     </h2>
 
                     <p className="mt-4 text-gray-600 leading-8">
-                      {t("heroDescriptionPromo")}
+                      {promotionDescription.map((e: any, index: number) => (
+                        <span
+                          key={index}
+                          className={
+                            e.isHighlight === true
+                              ? "font-bold text-primary"
+                              : ""
+                          }
+                        >
+                          {e.text}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
@@ -452,11 +597,31 @@ export function IndexPage({
             <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
                 <h2 className="text-3xl font-bold sm:text-4xl">
-                  {t("heroHeader41")}
+                  {membershipHeader.map((e: any, index: number) => (
+                    <span
+                      key={index}
+                      className={
+                        e.isHighlight === true
+                          ? "font-extrabold text-primary"
+                          : ""
+                      }
+                    >
+                      {e.text}
+                    </span>
+                  ))}
                 </h2>
 
                 <p className="mt-4 text-gray-600 leading-8">
-                  {t("heroDescription41")}
+                  {membershipDescription.map((e: any, index: number) => (
+                    <span
+                      key={index}
+                      className={
+                        e.isHighlight === true ? "font-bold text-primary" : ""
+                      }
+                    >
+                      {e.text}
+                    </span>
+                  ))}
                 </p>
               </div>
 
@@ -685,10 +850,25 @@ export async function getStaticProps({ locale }) {
     include: {
       subCategory: true,
     },
+    where: {
+      parentId: {
+        isSet: false,
+      },
+    },
   });
   const totalReview = sellerList
     .map((z) => z.Review.map((b) => b.rating).reduce((a, b) => a + b, 0))
     .reduce((a, b) => a + b, 0);
+  const prodList = await prisma.product.findMany({
+    where: {
+      isFeatured: true,
+    },
+    include: {
+      Brand: true,
+      Review: true,
+      seller: true,
+    },
+  });
 
   return {
     props: {
@@ -696,6 +876,7 @@ export async function getStaticProps({ locale }) {
       sellerList: JSON.parse(JSON.stringify(sellerList)),
       content: JSON.parse(JSON.stringify(content)),
       totalReview: totalReview,
+      prodList: JSON.parse(JSON.stringify(prodList)),
       ...(await serverSideTranslations(locale, ["common"])),
       // Will be passed to the page component as props
     },

@@ -21,7 +21,7 @@ function AdsHere({
   const router = useRouter();
 
   return (
-    <div className="flex flex-row items-center justify-between gap-3 my-5 lg:m-10">
+    <div className="flex flex-row items-center justify-between gap-3 my-5 max-w-screen-xl mx-auto w-full">
       {imgList?.map((z: any, index: number) => (
         <div key={index} className="flex-1">
           {z?.length > 0 ? (

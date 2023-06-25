@@ -18,7 +18,7 @@ export function getPricingSingle(product: any) {
           : product.saleStartDate,
         typeof product.saleEndDate === "object"
           ? new Date(product.saleEndDate).toLocaleDateString("en-ca")
-          : product.saleEndDate,
+          : product.saleEndDate
       )
     ) {
       if (product.salePrice) {
@@ -44,6 +44,10 @@ export function getPricingSingle(product: any) {
         pricing = {
           ...pricing,
           isPromotion: true,
+          discount:
+            ((pricing.regularPrice - pricing.salePrice) /
+              pricing.regularPrice) *
+            100,
         };
       }
     }
@@ -65,6 +69,9 @@ export function getPricingSingle(product: any) {
     pricing = {
       ...pricing,
       isPromotion: true,
+      discount:
+        ((pricing.regularPrice - pricing.salePrice) / pricing.regularPrice) *
+        100,
     };
   }
   return pricing;
@@ -92,6 +99,8 @@ export function getPricing(product: any) {
     let maxSalePrice = _.maxBy(pricingInfo, "saleAmount");
     let minSaleStartDate = _.minBy(pricingInfo, "saleStartDate");
     let maxSaleEndDate = _.minBy(pricingInfo, "saleEndDate");
+    let minSaleDiscount = _.minBy(pricingInfo, "discount");
+    let maxSaleDiscount = _.minBy(pricingInfo, "discount");
 
     let d: any = {
       minRegPrice: minRegPrice.regularPrice,
@@ -105,6 +114,10 @@ export function getPricing(product: any) {
     if (minSaleStartDate) {
       d.minSaleStartDate = minSaleStartDate.saleStartDate;
       d.maxSaleEndDate = maxSaleEndDate.saleEndDate;
+    }
+    if (minSaleDiscount) {
+      d.minSaleDiscount = minSaleDiscount.discount;
+      d.maxSaleDiscount = maxSaleDiscount.discount;
     }
 
     return d;

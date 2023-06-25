@@ -6,19 +6,68 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { defaultDescription } from "@/types/const";
 import { useRouter } from "next/router";
-import { formatAmount } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 import Link from "next/link";
 import ProductInfo from "@/components/presentational/ProductInfo";
+import { convertMsToTime, getValue } from "@/util/formatter";
+import prisma from "@/prisma/prisma";
+import {
+  Brand,
+  Category,
+  Condition,
+  Product,
+  ProductType,
+  Review,
+  UnitSold,
+  User,
+} from "@prisma/client";
+import Avatar from "@/components/presentational/Avatar";
+import { getPricing } from "@/util/pricing";
+import { RemainingTime } from "@/types/productTypes";
 
-function getValue(value: number) {
-  let returnVal: any = { "--value": value };
-  return returnVal;
-}
-
-function MarketplacePage() {
+function MarketplacePage({
+  product,
+}: {
+  product: Product & {
+    Brand: Brand;
+    Condition: Condition;
+    seller: User;
+    UnitSold: UnitSold[];
+    categories: Category[];
+    Review: Review[];
+  };
+}) {
   const { t } = useTranslation("common");
   const router = useRouter();
+  const { locale } = router;
   const { type } = router.query;
+  const pricingInfo =
+    product.type === ProductType.Auction ? undefined : getPricing(product);
+  const [remainingTime, setRemainingTime] = React.useState<RemainingTime>();
+  const currentBid = 0;
+  const myBid = 0;
+
+  React.useEffect(() => {
+    if (product) {
+      const startDate = new Date(product.startTime);
+      if (new Date() >= startDate) {
+        const intervalId = setInterval(() => {
+          if (product.endTime) {
+            if (new Date(product.endTime!).valueOf() > new Date().valueOf()) {
+              let remainingTime =
+                new Date(product.endTime!).valueOf() - new Date().valueOf();
+              setRemainingTime(convertMsToTime(remainingTime));
+            } else {
+              setRemainingTime(undefined);
+            }
+          }
+        }, 1000);
+
+        // clear interval on re-render to avoid memory leaks
+        return () => clearInterval(intervalId);
+      }
+    }
+  }, [product]);
 
   return (
     <div>
@@ -33,7 +82,7 @@ function MarketplacePage() {
           <ol className="flex items-center gap-1 text-sm text-gray-600">
             <li>
               <a href="#" className="block transition hover:text-gray-700">
-                <span className="sr-only"> Home </span>
+                <span className="sr-only"> Marketplace </span>
 
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -66,35 +115,37 @@ function MarketplacePage() {
                 />
               </svg>
             </li>
-
-            <li>
-              <a href="#" className="block transition hover:text-gray-700">
-                {" "}
-                Shirts{" "}
-              </a>
-            </li>
-
-            <li className="rtl:rotate-180">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </li>
-
-            <li>
-              <a href="#" className="block transition hover:text-gray-700">
-                {" "}
-                Plain Tee{" "}
-              </a>
-            </li>
+            {product.categories.map((z, index) => (
+              <React.Fragment key={index}>
+                <li>
+                  <Link
+                    href={
+                      "/marketplace?categories=" + encodeURIComponent(z.slug)
+                    }
+                    className="block transition hover:text-gray-700"
+                  >
+                    {" "}
+                    {getText(z.name, z.nameMM, locale)}{" "}
+                  </Link>
+                </li>
+                {index < product.categories.length - 1 && (
+                  <li className="rtl:rotate-180">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </li>
+                )}
+              </React.Fragment>
+            ))}
           </ol>
         </nav>
         <section className="grid grid-cols-1 lg:grid-cols-5 place-items-start gap-5 mt-5">
@@ -131,11 +182,11 @@ function MarketplacePage() {
               />
             </div>
           </div>
-          <div className="flex flex-col lg:col-span-2 order-3 lg:order-2">
+          <div className="flex flex-col lg:col-span-2 order-3 lg:order-2 w-full">
             <div className="hidden lg:flex">
-              <ProductInfo />
+              <ProductInfo product={product} />
             </div>
-            <div className="flex flex-col gap-3 mt-10">
+            <div className="flex flex-col gap-3 mt-10 w-full">
               <nav
                 aria-label="Tabs"
                 className="flex border-b-2 border-gray-300 text-sm font-medium"
@@ -155,101 +206,141 @@ function MarketplacePage() {
                 </a>
               </nav>
 
-              <div className="flex flex-col gap-5 p-3">
+              <div className="flex flex-col gap-5 p-3 w-full">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   <p className="text-gray-500 text-sm">
                     Brand:{" "}
                     <span className="font-semibold text-primaryText">
-                      Yamaha
+                      {getText(
+                        product.Brand.name,
+                        product.Brand.nameMM,
+                        locale
+                      )}
                     </span>
                   </p>
 
                   <p className="text-gray-500 text-sm">
                     Condition:{" "}
                     <span className="font-semibold text-primaryText">
-                      New Condition
+                      {getText(
+                        product.Condition.name,
+                        product.Condition.nameMM,
+                        locale
+                      )}
                     </span>
                   </p>
                   <p className="text-gray-500 text-sm">
                     Category:{" "}
                     <span className="font-semibold text-primaryText">
-                      Accessories, Guitar
+                      {product.categories
+                        .map((z) => getText(z.name, z.nameMM, locale))
+                        .join(", ")}
                     </span>
                   </p>
-                  <p className="text-gray-500 text-sm">
-                    Tags:{" "}
-                    <span className="font-semibold text-primaryText">
-                      Tag 1, Tag 2, Tag 3
-                    </span>
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Style:{" "}
-                    <span className="font-semibold text-primaryText">
-                      Style 1
-                    </span>
-                  </p>
+                  {product.tags.length > 0 && (
+                    <p className="text-gray-500 text-sm">
+                      Tags:{" "}
+                      <span className="font-semibold text-primaryText">
+                        {product.tags.join(", ")}
+                      </span>
+                    </p>
+                  )}
+                  {product.type === ProductType.Variable && (
+                    <p className="text-gray-500 text-sm">
+                      Style:{" "}
+                      <span className="font-semibold text-primaryText">
+                        Style 1
+                      </span>
+                    </p>
+                  )}
                   <p className="text-gray-500 text-sm">
                     SKU:{" "}
                     <span className="font-semibold text-primaryText">
-                      Yamaha-01
+                      {product.type !== ProductType.Variable ? product.SKU : ""}
                     </span>
                   </p>
                 </div>
-                <p className="text-sm">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus
-                  consectetur architecto praesentium porro aut reiciendis amet
-                  modi odio laudantium quaerat, distinctio inventore veritatis
-                  nesciunt labore sunt, unde voluptate, ut non!
-                </p>
+                <div
+                  className="text-sm"
+                  dangerouslySetInnerHTML={{
+                    __html: getText(
+                      product.shortDescription,
+                      product.shortDescriptionMM,
+                      locale
+                    ),
+                  }}
+                ></div>
 
-                <div className="flex flex-col gap-3">
-                  <h3 className="font-semibold text-sm">
-                    Product Description:{" "}
-                  </h3>
-                  <p className="text-sm">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolor placeat harum cumque aut eos velit odit culpa
-                    voluptas, similique nam officia expedita est amet! Maxime
-                    voluptas ex suscipit repellat sapiente?
-                  </p>
-                </div>
+                {product.description?.length > 0 && (
+                  <div className="flex flex-col gap-3">
+                    <h3 className="font-semibold text-sm">
+                      Product Description:{" "}
+                    </h3>
+                    <div
+                      className="text-sm"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          product.description,
+                          product.descriptionMM,
+                          locale
+                        ),
+                      }}
+                    ></div>
+                  </div>
+                )}
 
-                <div className="flex flex-col gap-3">
-                  <h3 className="font-semibold text-sm">
-                    Additional Information:
-                  </h3>
-                  <p className="text-sm">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolor placeat harum cumque aut eos velit odit culpa
-                    voluptas, similique nam officia expedita est amet! Maxime
-                    voluptas ex suscipit repellat sapiente?
-                  </p>
-                </div>
+                {product.additionalInformation?.length > 0 && (
+                  <div className="flex flex-col gap-3">
+                    <h3 className="font-semibold text-sm">
+                      Additional Information:
+                    </h3>
+                    <div
+                      className="text-sm"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          product.additionalInformation,
+                          product.additionalInformationMM,
+                          locale
+                        ),
+                      }}
+                    ></div>
+                  </div>
+                )}
 
-                <div className="flex flex-col gap-3">
-                  <h3 className="font-semibold text-sm">
-                    Shipping Information:{" "}
-                  </h3>
-                  <p className="text-sm">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolor placeat harum cumque aut eos velit odit culpa
-                    voluptas, similique nam officia expedita est amet! Maxime
-                    voluptas ex suscipit repellat sapiente?
-                  </p>
-                </div>
+                {product.shippingInformation?.length > 0 && (
+                  <div className="flex flex-col gap-3">
+                    <h3 className="font-semibold text-sm">
+                      Shipping Information:{" "}
+                    </h3>
+                    <div
+                      className="text-sm"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          product.shippingInformation,
+                          product.shippingInformationMM,
+                          locale
+                        ),
+                      }}
+                    ></div>
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-3 pt-5 border-t border-t-gray-500">
                   <h3 className="font-semibold text-sm">
                     Seller Information:{" "}
                   </h3>
                   <div className="flex flex-row items-start gap-3">
-                    <div className="avatar placeholder">
-                      <div className="bg-neutral-focus text-neutral-content rounded-full w-14">
-                        <span className="text-3xl">K</span>
-                      </div>
-                    </div>
+                    <Avatar
+                      username={product.seller.username}
+                      isLarge={true}
+                      profile={product.seller.profile}
+                    />
                     <div className="flex flex-col gap-1">
-                      <h3 className="font-semibold">Kevin</h3>
+                      <h3 className="font-semibold">
+                        {product.seller.displayName
+                          ? product.seller.displayName
+                          : product.seller.username}
+                      </h3>
                       <p className="text-xs mb-1 text-gray-500">
                         96.7% Positive Feedback
                       </p>
@@ -281,62 +372,104 @@ function MarketplacePage() {
 
           <div className="flex flex-col gap-3 w-full lg:sticky lg:top-36 order-2 lg:order-3">
             <div className="flex lg:hidden">
-              <ProductInfo />
+              <ProductInfo product={product} />
             </div>
-            {type?.toString() === "auction" ? (
+            {product.type === ProductType.Auction ? (
               <div className="bg-primary px-3 py-2 rounded-md flex flex-col items-center justify-between gap-3">
                 <h3 className="text-white font-semibold text-center">
                   Bidding ends in
                 </h3>
                 <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-white">
+                  {remainingTime?.days > 0 && (
+                    <div className="flex flex-col text-gray-200 text-xs items-center">
+                      <span className="countdown font-mono text-lg text-white">
+                        <span style={getValue(remainingTime?.days)}></span>
+                      </span>
+                      days
+                    </div>
+                  )}
                   <div className="flex flex-col text-gray-200 text-xs items-center">
                     <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(15)}></span>
-                    </span>
-                    days
-                  </div>
-                  <div className="flex flex-col text-gray-200 text-xs items-center">
-                    <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(10)}></span>
+                      <span style={getValue(remainingTime?.hours)}></span>
                     </span>
                     hours
                   </div>
                   <div className="flex flex-col text-gray-200 text-xs items-center">
                     <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(24)}></span>
+                      <span style={getValue(remainingTime?.minutes)}></span>
                     </span>
                     min
                   </div>
                   <div className="flex flex-col text-gray-200 text-xs items-center">
                     <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(49)}></span>
+                      <span style={getValue(remainingTime?.seconds)}></span>
                     </span>
                     sec
                   </div>
                 </div>
                 <div className="py-3 border-t border-t-white w-full flex flex-col gap-3">
-                  <div className="flex flex-row items-center justify-between gap-3">
-                    <p className="text-gray-100 text-sm">Highest Bid: </p>
-                    <span className="font-semibold text-white">53,000 MMK</span>
-                  </div>
-                  <div className="flex flex-row items-center justify-between gap-3">
-                    <p className="text-gray-100 text-sm">My Bid: </p>
-                    <span className="font-semibold text-white">53,000 MMK</span>
-                  </div>
+                  {currentBid === 0 ? (
+                    <>
+                      <div className="flex flex-row items-center justify-between gap-3">
+                        <p className="text-gray-100 text-sm">Opening Bid: </p>
+                        <span className="font-semibold text-white">
+                          {formatAmount(product.openingBid, locale, true)}
+                        </span>
+                      </div>
+                      <div className="flex flex-row items-center justify-between gap-3">
+                        <p className="text-gray-100 text-sm">My Bid: </p>
+                        <span className="font-semibold text-white">
+                          {t("notBid")}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex flex-row items-center justify-between gap-3">
+                        <p className="text-gray-100 text-sm">Highest Bid: </p>
+                        <span className="font-semibold text-white">
+                          {formatAmount(currentBid, locale, true)}
+                        </span>
+                      </div>
+                      <div className="flex flex-row items-center justify-between gap-3">
+                        <p className="text-gray-100 text-sm">My Bid: </p>
+                        <span className="font-semibold text-white">
+                          {myBid > 0
+                            ? formatAmount(myBid, locale, true)
+                            : t("notBid")}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            ) : (
+            ) : pricingInfo &&
+              pricingInfo.isPromotion === true &&
+              product.type === ProductType.Fixed ? (
               <div className="bg-primary px-3 py-2 rounded-md flex flex-row items-center justify-between gap-3">
-                <h3 className="text-white font-semibold">25% OFF</h3>
-                <p className="bg-[#ee6069] p-2 rounded-md text-sm text-white">
-                  Until{" "}
-                  {new Date().toLocaleDateString("en-ca", {
-                    year: "numeric",
-                    month: "short",
-                    day: "2-digit",
-                  })}
-                </p>
+                <h3 className="text-white font-semibold">
+                  {pricingInfo.discount}% OFF
+                </h3>
+                {pricingInfo.saleEndDate && (
+                  <p className="bg-[#ee6069] p-2 rounded-md text-sm text-white">
+                    Until{" "}
+                    {new Date(pricingInfo.saleEndDate).toLocaleDateString(
+                      "en-ca",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      }
+                    )}
+                  </p>
+                )}
               </div>
+            ) : pricingInfo &&
+              pricingInfo.isPromotion === true &&
+              product.type === ProductType.Variable ? (
+              <p>Variable</p>
+            ) : (
+              <></>
             )}
 
             <div className="bg-white flex flex-col gap-3 p-1 rounded-md border">
@@ -352,29 +485,32 @@ function MarketplacePage() {
                 <div className="flex flex-col gap-1 text-sm">
                   <p className="text-gray-500">SKU</p>
                   <span className="font-semibold text-primaryText">
-                    Yamaha-01
+                    {product.type !== ProductType.Variable ? product.SKU : ""}
                   </span>
                 </div>
               </div>
-              {type?.toString() === "auction" ? (
+              {product.type === ProductType.Auction ? (
                 <>
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
                       <p className="text-gray-500">Bidding starts at</p>
                       <span className="font-semibold text-primaryText">
-                        {new Date().toLocaleDateString("en-ca", {
-                          year: "numeric",
-                          month: "short",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {new Date(product.startTime).toLocaleDateString(
+                          "en-ca",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
                       </span>
                     </div>
                     <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
                       <p className="text-gray-500">Bidding will end at</p>
                       <span className="font-semibold text-primaryText">
-                        {new Date().toLocaleDateString("en-ca", {
+                        {new Date(product.endTime).toLocaleDateString("en-ca", {
                           year: "numeric",
                           month: "short",
                           day: "2-digit",
@@ -383,32 +519,61 @@ function MarketplacePage() {
                         })}
                       </span>
                     </div>
-                    <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
-                      <p className="text-gray-500">Opening price</p>
-                      <span className="font-semibold text-primaryText">
-                        {formatAmount(50000, router.locale, true)}
-                      </span>
-                    </div>
+                    {currentBid !== 0 && (
+                      <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
+                        <p className="text-gray-500">Opening bid</p>
+                        <span className="font-semibold text-primaryText">
+                          {formatAmount(
+                            product.openingBid,
+                            router.locale,
+                            true
+                          )}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
                       <p className="text-gray-500">Total bids</p>
                       <span className="font-semibold text-primaryText">
                         {10}
                       </span>
                     </div>
-                    <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
-                      <p className="text-gray-500">Highest bid</p>
-                      <span className="font-semibold text-primaryText">
-                        {formatAmount(53000, router.locale, true)}
-                      </span>
-                    </div>
-                    <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
-                      <p className="text-gray-500">
-                        My bid (Currently Leading)
-                      </p>
-                      <span className="font-semibold text-primaryText">
-                        {formatAmount(53000, router.locale, true)}
-                      </span>
-                    </div>
+
+                    {currentBid === 0 ? (
+                      <>
+                        <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
+                          <p className="text-gray-500">Opening bid</p>
+                          <span className="font-semibold text-primaryText">
+                            {formatAmount(product.openingBid, locale, true)}
+                          </span>
+                        </div>
+
+                        <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
+                          <p className="text-gray-500">My bid</p>
+                          <span className="font-semibold text-primaryText">
+                            {t("notBid")}
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
+                          <p className="text-gray-500">Highest bid</p>
+                          <span className="font-semibold text-primaryText">
+                            {formatAmount(currentBid, locale, true)}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
+                          <p className="text-gray-500">
+                            My bid (Currently Leading)
+                          </p>
+                          <span className="font-semibold text-primaryText">
+                            {myBid > 0
+                              ? formatAmount(myBid, locale, true)
+                              : t("notBid")}
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div className="flex flex-row items-center justify-center gap-3">
                     <div className="flex flex-col items-center px-3">
@@ -659,8 +824,22 @@ function MarketplacePage() {
 }
 
 export async function getServerSideProps({ locale }: any) {
+  const product = await prisma.product.findFirst({
+    where: {
+      type: ProductType.Auction,
+    },
+    include: {
+      Condition: true,
+      Brand: true,
+      categories: true,
+      seller: true,
+      UnitSold: true,
+      Review: true,
+    },
+  });
   return {
     props: {
+      product: JSON.parse(JSON.stringify(product)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };

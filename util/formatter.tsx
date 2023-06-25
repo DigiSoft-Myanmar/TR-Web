@@ -1,6 +1,11 @@
 import { RemainingTime } from "@/types/productTypes";
 import { formatAmount } from "./textHelper";
 
+export function getValue(value: number) {
+  let returnVal: any = { "--value": value };
+  return returnVal;
+}
+
 export function convertMsToTime(milliseconds: number) {
   let seconds = Math.floor(milliseconds / 1000);
   let minutes = Math.floor(seconds / 60);

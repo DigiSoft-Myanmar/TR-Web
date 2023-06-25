@@ -32,7 +32,7 @@ module.exports = {
         secondary: "#1DE7D9",
         accent: "#E71D9C",
         neutral: "#8F8F8F",
-        darkShade: "#22212B",
+        darkShade: "#3A394C",
         lightShade: "#FAF9FA",
       },
       backgroundImage: {
@@ -57,7 +57,7 @@ module.exports = {
           secondary: "#1DE7D9",
           accent: "#B85954",
           neutral: "#8F8F8F",
-          darkShade: "#22212B",
+          darkShade: "#3A394C",
           lightShade: "#FAF9FA",
         },
       },
