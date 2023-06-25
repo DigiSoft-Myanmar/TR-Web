@@ -1607,7 +1607,7 @@ function ContactPage({ data }: { data: Content }) {
                         className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
                         onClick={() => {
                           setUploadModalOpen(true);
-                          setImgType("featureHeroImg");
+                          setImgType("defaultAdsThreeCol");
                         }}
                       >
                         <svg

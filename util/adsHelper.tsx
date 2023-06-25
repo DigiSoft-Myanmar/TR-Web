@@ -1,3 +1,5 @@
+import { Ads, Membership } from "@prisma/client";
+
 export enum AdsLocation {
   HomeAds1 = "Home Ad 1",
   HomeAds21 = "Home Ad 2-1",
@@ -118,4 +120,19 @@ export function getImageSizeFromFileInput(fileInput) {
 
     img.src = imageUrl;
   });
+}
+
+export function checkExpire(adsLocation: any, sellerMembership: Membership) {
+  let startDate = new Date(adsLocation.startDate);
+  let adsValidity = sellerMembership.adsValidity;
+  startDate.setDate(startDate.getDate() + adsValidity);
+  const differenceMs: number = startDate.getTime() - new Date().getTime();
+  const differenceDays: number = Math.floor(
+    differenceMs / (1000 * 60 * 60 * 24)
+  );
+  if (differenceDays <= 1) {
+    return true;
+  } else {
+    return false;
+  }
 }
