@@ -41,12 +41,47 @@ export const MembershipProvider = ({
   children: React.ReactNode;
 }) => {
   const [membership, setMembership] = React.useState<any>(memberDetail);
-  const infoValid = React.useMemo(() => verifyInfo(membership), [membership]);
-  const adsValid = React.useMemo(() => verifyInfo(membership), [membership]);
-  const reportValid = React.useMemo(() => verifyInfo(membership), [membership]);
-  const SKUValid = React.useMemo(() => verifyInfo(membership), [membership]);
+  const infoValid = React.useMemo(
+    () =>
+      membership &&
+      membership.name &&
+      membership.nameMM &&
+      membership.price >= 0 &&
+      membership.validity > 0 &&
+      membership.onBoardingLimit >= 0
+        ? true
+        : false,
+    [membership]
+  );
+  const adsValid = React.useMemo(
+    () =>
+      membership &&
+      membership.freeAdsLimit >= 0 &&
+      membership.adsValidity >= 0 &&
+      membership.adsLifeTime >= 0 &&
+      membership.extraAdsPricing > 0
+        ? true
+        : false,
+    [membership]
+  );
+  const reportValid = React.useMemo(
+    () => (membership && membership.subCategoryReport >= 0 ? true : false),
+    [membership]
+  );
+  const SKUValid = React.useMemo(
+    () =>
+      membership && membership.SKUListing > 0 && membership.extraSKUPricing >= 0
+        ? true
+        : false,
+    [membership]
+  );
   const topSearchValid = React.useMemo(
-    () => verifyInfo(membership),
+    () =>
+      membership &&
+      membership.topSearchStart >= 0 &&
+      membership.topSearchEnd >= 0
+        ? true
+        : false,
     [membership]
   );
 

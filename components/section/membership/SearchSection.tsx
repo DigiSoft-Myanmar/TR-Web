@@ -20,9 +20,11 @@ const FormInputRichText: any = dynamic(
 function SearchSection({
   backFn,
   nextFn,
+  submitRef,
 }: {
   backFn: Function;
   nextFn: Function;
+  submitRef: any;
 }) {
   const { t } = useTranslation("common");
   const { membership, setMembership } = useMembership();
@@ -155,6 +157,7 @@ function SearchSection({
             className={`inline-flex items-center gap-3 rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -14,9 +14,10 @@ import { z } from "zod";
 type Props = {
   backFn: Function;
   nextFn: Function;
+  submitRef: any;
 };
 
-function NRCSection({ backFn, nextFn }: Props) {
+function NRCSection({ backFn, nextFn, submitRef }: Props) {
   const { t } = useTranslation("common");
   const {
     nrcFront,
@@ -328,6 +329,7 @@ function NRCSection({ backFn, nextFn }: Props) {
           nrcTownship={user.nrcTownship}
           nrcType={user.nrcType}
           nrcNumber={user.nrcNumber}
+          userId={user.id}
           disabled={false}
           setNrc={(
             verify: boolean,
@@ -373,6 +375,7 @@ function NRCSection({ backFn, nextFn }: Props) {
             className={`inline-block rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

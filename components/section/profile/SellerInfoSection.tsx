@@ -25,9 +25,10 @@ const FormInputRichText: any = dynamic(
 type Props = {
   backFn: Function;
   nextFn: Function;
+  submitRef: any;
 };
 
-function SellerInfoSection({ backFn, nextFn }: Props) {
+function SellerInfoSection({ backFn, nextFn, submitRef }: Props) {
   const { t } = useTranslation("common");
   const {
     user: profile,
@@ -231,6 +232,7 @@ function SellerInfoSection({ backFn, nextFn }: Props) {
             className={`inline-block rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

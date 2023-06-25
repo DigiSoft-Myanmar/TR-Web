@@ -15,6 +15,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { isInternal } from "@/util/authHelper";
+import Avatar from "@/components/presentational/Avatar";
 
 type Props = {
   backFn: Function;
@@ -94,23 +95,10 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                   className="hidden sm:grid sm:h-20 sm:w-20 sm:shrink-0 sm:place-content-center sm:rounded-full sm:border-2 sm:border-primary"
                   aria-hidden="true"
                 >
-                  {product?.seller?.profile ? (
-                    <Image
-                      src={fileUrl + product.seller?.profile}
-                      width={80}
-                      height={80}
-                      className="h-[80px] w-[80px] rounded-full object-contain p-2"
-                      alt="brand logo"
-                    />
-                  ) : (
-                    <div className="avatar">
-                      <div className="avatar placeholder">
-                        <div className="bg-neutral-focus text-neutral-content rounded-full w-[80px] h-[80px] min-w-[80px] min-h-[80px] max-w-[80px] max-h-[80px]">
-                          <span>{getInitials(product?.seller?.username)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <Avatar
+                    profile={product?.seller?.profile}
+                    username={product?.seller?.username}
+                  />
                 </div>
 
                 <div className="flex-grow sm:ml-8">

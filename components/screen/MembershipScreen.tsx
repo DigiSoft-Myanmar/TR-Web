@@ -23,6 +23,12 @@ function MembershipScreen() {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
 
+  const submitInfoRef = useRef<HTMLButtonElement | null>();
+  const submitAdsRef = useRef<HTMLButtonElement | null>();
+  const submitSKURef = useRef<HTMLButtonElement | null>();
+  const submitTopSearchRef = useRef<HTMLButtonElement | null>();
+  const submitReportsRef = useRef<HTMLButtonElement | null>();
+
   const {
     membership,
     infoValid,
@@ -174,8 +180,6 @@ function MembershipScreen() {
       ),
     },
   ];
-
-  console.log(stepList);
 
   function verify(newStep: Step) {
     if (newStep === Step.Information) {
@@ -367,7 +371,33 @@ function MembershipScreen() {
             }
           >
             {stepList.map((e, index) => (
-              <div key={index} className="flex flex-row items-center gap-3">
+              <div
+                key={index}
+                className="flex flex-row items-center gap-3 cursor-pointer"
+                onClick={() => {
+                  if (verify(e)) {
+                    if (currentStep < e) {
+                      if (currentStep === Step.Information) {
+                        submitInfoRef.current?.click();
+                      } else if (currentStep === Step.Advertisements) {
+                        submitAdsRef.current?.click();
+                      } else if (currentStep === Step.Reports) {
+                        submitReportsRef.current?.click();
+                      } else if (currentStep === Step.SKUListing) {
+                        submitSKURef.current?.click();
+                      } else if (currentStep === Step.TopSearch) {
+                        submitTopSearchRef.current?.click();
+                      } else {
+                        setCurrentStep(e);
+                      }
+                    } else {
+                      setCurrentStep(e);
+                    }
+                  } else {
+                    showErrorDialog(t("fillInformation"));
+                  }
+                }}
+              >
                 <div
                   className={`${
                     currentStep === e
@@ -402,15 +432,31 @@ function MembershipScreen() {
           >
             <div className={"w-full p-10"}>
               {currentStep === Step.Information ? (
-                <InformationSection nextFn={nextFn} />
+                <InformationSection nextFn={nextFn} submitRef={submitInfoRef} />
               ) : currentStep === Step.TopSearch ? (
-                <SearchSection backFn={backFn} nextFn={nextFn} />
+                <SearchSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitTopSearchRef}
+                />
               ) : currentStep === Step.SKUListing ? (
-                <SKUSection backFn={backFn} nextFn={nextFn} />
+                <SKUSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitSKURef}
+                />
               ) : currentStep === Step.Reports ? (
-                <ReportSection backFn={backFn} nextFn={nextFn} />
+                <ReportSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitReportsRef}
+                />
               ) : currentStep === Step.Advertisements ? (
-                <AdsSection backFn={backFn} nextFn={nextFn} />
+                <AdsSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitAdsRef}
+                />
               ) : currentStep === Step.Confirmation ? (
                 <ConfirmationSection
                   backFn={backFn}

@@ -23,6 +23,7 @@ import { useMarketplace } from "@/context/MarketplaceContext";
 import SubCategoryDropdown from "../presentational/SubCategoryDropdown";
 import LocationPickerFull from "../presentational/LocationPickerFull";
 import { useSeller } from "@/context/SellerContext";
+import Avatar from "../presentational/Avatar";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -291,13 +292,10 @@ function Header({
                       tabIndex={0}
                       className="text-primaryText flex flex-row items-center space-x-2 hover:text-primary cursor-pointer"
                     >
-                      <div className="avatar">
-                        <div className="avatar placeholder">
-                          <div className="bg-neutral-focus text-neutral-content rounded-full w-10 h-10 min-w-[40px] min-h-[40px] max-w-[40px] max-h-[40px]">
-                            <span>{getInitials(session.username)}</span>
-                          </div>
-                        </div>
-                      </div>
+                      <Avatar
+                        profile={session.profile}
+                        username={session.username}
+                      />
 
                       <div className="flex flex-row items-center gap-1">
                         <span className="text-sm font-medium">

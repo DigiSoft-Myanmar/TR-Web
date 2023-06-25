@@ -34,6 +34,7 @@ import { sortBy } from "lodash";
 import { useTranslation } from "next-i18next";
 import { PromoType, isBetween, isTodayBetween } from "@/util/verify";
 import { fileUrl } from "@/types/const";
+import Avatar from "../presentational/Avatar";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -226,20 +227,11 @@ const AdsTable = ({
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            {row.seller.profile ? (
-              <Img
-                src={fileUrl + row.seller.profile}
-                alt={`${row.seller.profile}`}
-              />
-            ) : (
-              <div className="avatar">
-                <div className="avatar placeholder">
-                  <div className="bg-neutral-focus text-neutral-content rounded-full w-8 h-8 min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px]">
-                    <span>{getInitials(row.seller.username)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            <Avatar
+              profile={row.seller.profile}
+              username={row.seller.username}
+            />
+
             <Box
               sx={{ display: "flex", flexDirection: "column", marginLeft: 1 }}
             >

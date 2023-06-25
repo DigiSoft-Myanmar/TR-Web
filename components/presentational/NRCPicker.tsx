@@ -16,6 +16,7 @@ interface Props {
   nrcNumber: string;
   setNrc: Function;
   disabled: boolean;
+  userId: string;
 }
 
 function NRCPicker({
@@ -26,6 +27,7 @@ function NRCPicker({
   nrcNumber: parentNrcNumber,
   setNrc,
   disabled,
+  userId,
 }: Props) {
   const { t } = useTranslation("account");
   const [nrcError, setNrcError] = React.useState("");
@@ -140,16 +142,16 @@ function NRCPicker({
     let verify = verifyNRC(nrcNumber);
     if (currentState && currentTownship && currentType && verify.isSuccess) {
       fetch(
-        "/api/user?nrc=" +
-          encodeURIComponent(
-            currentState.value +
-              "/" +
-              currentTownship.value +
-              "(" +
-              currentType.value +
-              ")" +
-              nrcNumber
-          )
+        "/api/user?id=" +
+          userId +
+          "&nrcState=" +
+          encodeURIComponent(currentState.value) +
+          "&nrcTownship=" +
+          encodeURIComponent(currentTownship.value) +
+          "&nrcType=" +
+          encodeURIComponent(currentType.value) +
+          "&nrcNumber=" +
+          encodeURIComponent(nrcNumber)
       ).then((data) => {
         if (data.status === 200) {
           setNrcVerify(false);
@@ -206,6 +208,7 @@ function NRCPicker({
             setSelected={setCurrentState}
             isSearch={true}
             disabled={disabled}
+            isInit={true}
           />
           <SelectBox
             list={townshipList}
@@ -213,6 +216,7 @@ function NRCPicker({
             setSelected={setCurrentTownship}
             isSearch={true}
             disabled={disabled}
+            isInit={true}
           />
           <SelectBox
             list={typeList}
@@ -220,6 +224,7 @@ function NRCPicker({
             setSelected={setCurrentType}
             isSearch={true}
             disabled={disabled}
+            isInit={true}
           />
           <input
             autoComplete="off"

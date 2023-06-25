@@ -9,6 +9,7 @@ import {
   Success,
   Unauthorized,
 } from "@/types/ApiResponseTypes";
+import { AdsLocation, AdsPage } from "@/util/adsHelper";
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -18,16 +19,79 @@ export default async function handler(
 ) {
   try {
     if (req.method === "GET") {
-      let ads = await prisma.ads.findMany({
-        include: {
-          seller: {
-            include: {
-              currentMembership: true,
+      let { placement } = req.query;
+      if (placement) {
+        let ads = await prisma.ads.findMany({});
+
+        switch (placement.toString()) {
+          case AdsPage.Marketplace:
+            ads = ads.filter(
+              (z) =>
+                z.adsLocations.filter(
+                  (b: any) =>
+                    b.location === AdsLocation.Marketplace1 ||
+                    b.location === AdsLocation.Marketplace21 ||
+                    b.location === AdsLocation.Marketplace22 ||
+                    b.location === AdsLocation.Marketplace23 ||
+                    b.location === AdsLocation.Marketplace24
+                ).length > 0
+            );
+            break;
+          case AdsPage.Membership:
+            ads = ads.filter(
+              (z) =>
+                z.adsLocations.filter(
+                  (b: any) => b.location === AdsLocation.Memberships1
+                ).length > 0
+            );
+            break;
+          case AdsPage.Product:
+            ads = ads.filter(
+              (z) =>
+                z.adsLocations.filter(
+                  (b: any) =>
+                    b.location === AdsLocation.ProductAds11 ||
+                    b.location === AdsLocation.ProductAds12 ||
+                    b.location === AdsLocation.ProductAds21 ||
+                    b.location === AdsLocation.ProductAds22 ||
+                    b.location === AdsLocation.ProductAds23 ||
+                    b.location === AdsLocation.ProductAds24
+                ).length > 0
+            );
+            break;
+          default:
+            ads = ads.filter(
+              (z) =>
+                z.adsLocations.filter(
+                  (b: any) =>
+                    b.location === AdsLocation.HomeAds1 ||
+                    b.location === AdsLocation.HomeAds21 ||
+                    b.location === AdsLocation.HomeAds22 ||
+                    b.location === AdsLocation.HomeAds31 ||
+                    b.location === AdsLocation.HomeAds32 ||
+                    b.location === AdsLocation.HomeAds33 ||
+                    b.location === AdsLocation.HomeAds34 ||
+                    b.location === AdsLocation.HomeAds41 ||
+                    b.location === AdsLocation.HomeAds42 ||
+                    b.location === AdsLocation.HomeAds43 ||
+                    b.location === AdsLocation.HomeAds44
+                ).length > 0
+            );
+            break;
+        }
+        return res.status(200).json(ads);
+      } else {
+        let ads = await prisma.ads.findMany({
+          include: {
+            seller: {
+              include: {
+                currentMembership: true,
+              },
             },
           },
-        },
-      });
-      return res.status(200).json(ads);
+        });
+        return res.status(200).json(ads);
+      }
     }
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);

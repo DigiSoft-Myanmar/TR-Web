@@ -39,6 +39,15 @@ export const ProductProvider = ({
     if (!data.imgList || data.imgList.length === 0) {
       return false;
     }
+    if (!data.conditionId) {
+      return false;
+    }
+    if (!data.brandId) {
+      return false;
+    }
+    if (!data.sellerId) {
+      return false;
+    }
     return true;
   }
 
@@ -58,12 +67,39 @@ export const ProductProvider = ({
       if (data.stockType === "StockLevel" && !data.stockLevel) {
         return false;
       }
+    } else if (data.type === ProductType.Variable) {
+      if (
+        data.variations.length > 0 &&
+        data.variations.every((z: any) => z.regularPrice)
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (data.type === ProductType.Auction) {
+      if (
+        data.openingBid &&
+        data.estimatedPrice &&
+        data.startTime &&
+        data.endTime
+      ) {
+        if (data.startTime < data.endTime) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     }
     return true;
   }
 
   function verifyAttribute(data: Product) {
-    return true;
+    if (data.attributes.length > 0) {
+      return true;
+    }
+    return false;
   }
 
   React.useEffect(() => {

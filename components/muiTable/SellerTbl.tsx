@@ -23,7 +23,6 @@ import {
 } from "@/util/textHelper";
 import { useRouter } from "next/router";
 import {
-  Avatar,
   Button,
   Checkbox,
   FormControl,
@@ -59,6 +58,7 @@ import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
 import { getHeaders } from "@/util/authHelper";
 import { isTodayBetween } from "@/util/verify";
+import Avatar from "../presentational/Avatar";
 
 interface CellType {
   row: any;
@@ -127,17 +127,7 @@ const SellerTbl = ({
       headerName: "Profile",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {row.profile ? (
-            <Img src={fileUrl + row.profile} alt={`${row.profile}`} />
-          ) : (
-            <div className="avatar">
-              <div className="avatar placeholder">
-                <div className="bg-neutral-focus text-neutral-content rounded-full w-8 h-8 min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px]">
-                  <span>{getInitials(row.username)}</span>
-                </div>
-              </div>
-            </div>
-          )}
+          <Avatar profile={row.profile} username={row.username} />
           <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 1 }}>
             <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
               {row.username}

@@ -18,6 +18,7 @@ type Props = {
   backFn: Function;
   nextFn: Function;
   currentStep: number;
+  submitRef: any;
 };
 
 type Status = {
@@ -29,7 +30,7 @@ type Status = {
   adminNote?: string;
 };
 
-function StatusSection({ backFn, nextFn, currentStep }: Props) {
+function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
   const { t } = useTranslation("common");
   const { user: profile, setUser: setProfile, membership } = useProfile();
   const { locale } = useRouter();
@@ -195,6 +196,7 @@ function StatusSection({ backFn, nextFn, currentStep }: Props) {
             className={`inline-block rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

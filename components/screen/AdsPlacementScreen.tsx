@@ -14,7 +14,7 @@ function AdsPlacementScreen({
 }) {
   const [adsLocation, setAdsLocation] = React.useState<any>();
   const [page, setPage] = React.useState<string>(AdsPage.Home);
-  const [adsModalOpen, setAdsModalOpen] = React.useState(true);
+  const [adsModalOpen, setAdsModalOpen] = React.useState(false);
   const [type, setType] = React.useState(AdsPlacement.OneCol);
   const [location, setLocation] = React.useState<any>(AdsLocation.HomeAds1);
 

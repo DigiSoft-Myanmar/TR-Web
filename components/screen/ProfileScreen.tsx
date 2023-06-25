@@ -11,6 +11,7 @@ import CategoriesSection from "../section/profile/CategoriesSection";
 import SellerInfoSection from "../section/profile/SellerInfoSection";
 import StatusSection from "../section/profile/StatusSection";
 import ConfirmationSection from "../section/profile/ConfirmationSection";
+import { showErrorDialog } from "@/util/swalFunction";
 
 enum Step {
   Profile,
@@ -26,7 +27,20 @@ function ProfileScreen() {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
 
-  const { user, setUser } = useProfile();
+  const submitProfileRef = useRef<HTMLButtonElement | null>();
+  const submitNRCRef = useRef<HTMLButtonElement | null>();
+  const submitMailRef = useRef<HTMLButtonElement | null>();
+  const submitSellerRef = useRef<HTMLButtonElement | null>();
+  const submitStatusRef = useRef<HTMLButtonElement | null>();
+
+  const {
+    user,
+    setUser,
+    isNRCValid,
+    isCategoriesValid,
+    isProfileValid,
+    isSellerValid,
+  } = useProfile();
 
   const [isFullScreen, setFullScreen] = React.useState(false);
 
@@ -238,6 +252,31 @@ function ProfileScreen() {
     });
   }
 
+  function verify(newStep: Step) {
+    if (newStep === Step.Profile) {
+      return true;
+    }
+    if (newStep === Step.NRC) {
+      return isProfileValid;
+    }
+    if (newStep === Step.MailPassword) {
+      return isProfileValid && isNRCValid;
+    }
+    if (newStep === Step.PreferredCategories) {
+      return isProfileValid && isNRCValid;
+    }
+    if (newStep === Step.SellerInformation) {
+      return isProfileValid && isNRCValid && isCategoriesValid;
+    }
+    if (newStep === Step.Status) {
+      return isProfileValid && isNRCValid && isSellerValid && isCategoriesValid;
+    }
+    if (newStep === Step.Confirmation) {
+      return isProfileValid && isNRCValid && isSellerValid && isCategoriesValid;
+    }
+    return true;
+  }
+
   return (
     <div>
       <div
@@ -380,7 +419,33 @@ function ProfileScreen() {
             }
           >
             {stepList.map((e, index) => (
-              <div key={index} className="flex flex-row items-center gap-3">
+              <div
+                key={index}
+                className="flex flex-row items-center gap-3 cursor-pointer"
+                onClick={() => {
+                  if (verify(e)) {
+                    if (currentStep < e) {
+                      if (currentStep === Step.Profile) {
+                        submitProfileRef.current?.click();
+                      } else if (currentStep === Step.NRC) {
+                        submitNRCRef.current?.click();
+                      } else if (currentStep === Step.MailPassword) {
+                        submitMailRef.current?.click();
+                      } else if (currentStep === Step.SellerInformation) {
+                        submitSellerRef.current?.click();
+                      } else if (currentStep === Step.Status) {
+                        submitStatusRef.current?.click();
+                      } else {
+                        setCurrentStep(e);
+                      }
+                    } else {
+                      setCurrentStep(e);
+                    }
+                  } else {
+                    showErrorDialog(t("fillInformation"));
+                  }
+                }}
+              >
                 <div
                   className={`${
                     currentStep === e
@@ -415,20 +480,33 @@ function ProfileScreen() {
           >
             <div className={"w-full p-10"}>
               {currentStep === Step.Profile ? (
-                <ProfileSection nextFn={nextFn} />
+                <ProfileSection nextFn={nextFn} submitRef={submitProfileRef} />
               ) : currentStep === Step.NRC ? (
-                <NRCSection backFn={backFn} nextFn={nextFn} />
+                <NRCSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitNRCRef}
+                />
               ) : currentStep === Step.MailPassword ? (
-                <PasswordSection backFn={backFn} nextFn={nextFn} />
+                <PasswordSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitMailRef}
+                />
               ) : currentStep === Step.PreferredCategories ? (
                 <CategoriesSection backFn={backFn} nextFn={nextFn} />
               ) : currentStep === Step.SellerInformation ? (
-                <SellerInfoSection backFn={backFn} nextFn={nextFn} />
+                <SellerInfoSection
+                  backFn={backFn}
+                  nextFn={nextFn}
+                  submitRef={submitSellerRef}
+                />
               ) : currentStep === Step.Status ? (
                 <StatusSection
                   backFn={backFn}
                   nextFn={nextFn}
                   currentStep={stepList.findIndex((e) => e === currentStep) + 1}
+                  submitRef={submitStatusRef}
                 />
               ) : (
                 <ConfirmationSection

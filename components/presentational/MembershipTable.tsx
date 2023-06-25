@@ -26,7 +26,9 @@ function MembershipTable({
   return (
     <div
       className={`${
-        isInternal(session) ? "w-[65vw] max-w-[65vw] min-w-[65vw]" : ""
+        isInternal(session) && !router.asPath.includes("account")
+          ? "w-[65vw] max-w-[65vw] min-w-[65vw]"
+          : ""
       } overflow-x-auto`}
     >
       <table className="rounded lg:max-w-5xl m-auto">

@@ -6,13 +6,20 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import prisma from "@/prisma/prisma";
-import { Ads, Category, Role, User } from "@prisma/client";
+import {
+  Ads,
+  AdsPlacement,
+  Category,
+  Content,
+  Role,
+  User,
+} from "@prisma/client";
 import Head from "next/head";
-import { defaultDescription } from "@/types/const";
+import { defaultDescription, fileUrl } from "@/types/const";
 import { useSession } from "next-auth/react";
-import { formatAmount } from "@/util/textHelper";
+import { formatAmount, getHighlightText, getText } from "@/util/textHelper";
 import { isInternal } from "@/util/authHelper";
-import { AdsLocation } from "@/util/adsHelper";
+import { AdsLocation, AdsPage } from "@/util/adsHelper";
 import OneColAds from "@/components/Ads/OneColAds";
 import AdsHere from "@/components/Ads/AdsHere";
 import PricingDetail from "@/components/presentational/PricingDetail";
@@ -20,28 +27,51 @@ import FourColAds from "@/components/Ads/FourColAds";
 import TwoColsAds from "@/components/Ads/TwoColAds";
 import AuctionHome from "@/components/section/Home/AuctionHome";
 import MyanmarMap from "@/components/presentational/MyanmarMapDistrict";
+import { useQuery } from "react-query";
 
 export function IndexPage({
   sellerList,
   categories,
   totalReview,
+  content,
 }: {
   sellerList: User[];
   categories: (Category & {
     subCategory: Category[];
   })[];
   totalReview: number;
+  content: Content;
 }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { data: session }: any = useSession();
-  const adsData = [];
   const totalAuction = 0;
   const totalBuyNow = 0;
   const auctionFeaturedCount = 0;
   const buyNowFeaturedCount = 0;
   const totalPromotion = 0;
   let membershipSettings: any = {};
+  const { locale } = router;
+
+  const {
+    isLoading,
+    error,
+    data: adsData,
+    refetch,
+  } = useQuery("adsDataHome", () =>
+    fetch("/api/siteManagement/ads?placement=" + AdsPage.Home).then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
+
+  const headDescription = getHighlightText(
+    getText(
+      content.homeHeroSectionDescription,
+      content.homeHeroSectionDescription,
+      locale
+    )
+  );
 
   if (isInternal(session)) {
     return (
@@ -69,7 +99,12 @@ export function IndexPage({
           <div className="max-w-screen-xl px-4 mx-auto sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               <div className="relative h-full overflow-hidden rounded-lg lg:h-full lg:order-last items-center justify-center flex flex-col md:pb-14">
-                <img src="/assets/images/TopBanner.png" />
+                {content.homeHeroImg && (
+                  <img
+                    src={fileUrl + content.homeHeroImg}
+                    className="max-w-[500px]"
+                  />
+                )}
                 <div className="md:absolute md:bottom-0 px-10 py-5 bg-white shadow-md flex flex-col rounded-md space-y-3 mt-5 z-20">
                   <div className="flex -space-x-4">
                     {sellerList.slice(0, 4).map((e: any, index: number) => (
@@ -124,7 +159,20 @@ export function IndexPage({
                 <img src="/assets/logo_white_full.png" className="w-2/3" />
                 <h2 className="text-3xl font-bold sm:text-4xl leading-loose sm:leading-loose"></h2>
 
-                <p className="mt-4 text-white">{t("heroDescription1")}</p>
+                <p className="mt-4 max-w-lg sm:text-xl sm:leading-relaxed">
+                  {headDescription.map((e: any, index: number) => (
+                    <span
+                      key={index}
+                      className={
+                        e.isHighlight === true
+                          ? "font-extrabold text-white"
+                          : "text-white"
+                      }
+                    >
+                      {e.text}
+                    </span>
+                  ))}
+                </p>
 
                 <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                   {session &&
@@ -203,21 +251,18 @@ export function IndexPage({
             </div>
           </div>
         </section>
-        {adsData &&
-        adsData.filter((e: any) =>
-          e.adsLocations.find((z: any) => z.location === AdsLocation.HomeAds1)
-        ).length > 0 ? (
-          <OneColAds
-            adsList={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds1
+        <AdsHere
+          column={1}
+          adsLocations={[AdsLocation.HomeAds1]}
+          defaultImg={content?.defaultAdsOneCol ? content.defaultAdsOneCol : ""}
+          imgList={[
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds1
               )
-            )}
-            adsLocations={[AdsLocation.HomeAds1]}
-          />
-        ) : (
-          <AdsHere />
-        )}
+            ),
+          ]}
+        />
 
         {totalAuction > 0 && (
           <>
@@ -254,30 +299,23 @@ export function IndexPage({
             {auctionFeaturedCount > 0 && <AuctionHome />} */}
           </>
         )}
-        {adsData &&
-        adsData.filter((e: any) =>
-          e.adsLocations.find(
-            (z: any) =>
-              z.location === AdsLocation.HomeAds21 ||
-              z.location === AdsLocation.HomeAds22
-          )
-        ).length > 0 ? (
-          <TwoColsAds
-            adsList1={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds21
+        <AdsHere
+          column={2}
+          adsLocations={[AdsLocation.HomeAds21, AdsLocation.HomeAds22]}
+          defaultImg={content?.defaultAdsTwoCol ? content.defaultAdsTwoCol : ""}
+          imgList={[
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds21
               )
-            )}
-            adsList2={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds22
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds22
               )
-            )}
-            adsLocations={[AdsLocation.HomeAds21, AdsLocation.HomeAds22]}
-          />
-        ) : (
-          <AdsHere />
-        )}
+            ),
+          ]}
+        />
         {totalBuyNow > 0 && (
           <>
             <section className="px-10 md:px-20">
@@ -311,47 +349,40 @@ export function IndexPage({
              {buyNowFeaturedCount > 0 && <BuyNowHome />} */}
           </>
         )}
-        {adsData &&
-        adsData.filter((e: any) =>
-          e.adsLocations.find(
-            (z: any) =>
-              z.location === AdsLocation.HomeAds31 ||
-              z.location === AdsLocation.HomeAds32 ||
-              z.location === AdsLocation.HomeAds33 ||
-              z.location === AdsLocation.HomeAds34
-          )
-        ).length > 0 ? (
-          <FourColAds
-            adsList1={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds31
+        <AdsHere
+          column={4}
+          adsLocations={[
+            AdsLocation.HomeAds31,
+            AdsLocation.HomeAds32,
+            AdsLocation.HomeAds33,
+            AdsLocation.HomeAds34,
+          ]}
+          defaultImg={
+            content?.defaultAdsThreeCol ? content.defaultAdsThreeCol : ""
+          }
+          imgList={[
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds31
               )
-            )}
-            adsList2={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds32
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds32
               )
-            )}
-            adsList3={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds33
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds33
               )
-            )}
-            adsList4={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds34
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds34
               )
-            )}
-            adsLocations={[
-              AdsLocation.HomeAds31,
-              AdsLocation.HomeAds32,
-              AdsLocation.HomeAds33,
-              AdsLocation.HomeAds34,
-            ]}
-          />
-        ) : (
-          <AdsHere />
-        )}
+            ),
+          ]}
+        />
         {totalPromotion > 0 && (
           <>
             <section className="px-10 md:px-20">
@@ -381,47 +412,40 @@ export function IndexPage({
             <PromotionHome promotionList={data.promotionList} /> */}
           </>
         )}
-        {adsData &&
-        adsData.filter((e: any) =>
-          e.adsLocations.find(
-            (z: any) =>
-              z.location === AdsLocation.HomeAds41 ||
-              z.location === AdsLocation.HomeAds42 ||
-              z.location === AdsLocation.HomeAds43 ||
-              z.location === AdsLocation.HomeAds44
-          )
-        ).length > 0 ? (
-          <FourColAds
-            adsList1={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds41
+        <AdsHere
+          column={4}
+          adsLocations={[
+            AdsLocation.HomeAds41,
+            AdsLocation.HomeAds42,
+            AdsLocation.HomeAds43,
+            AdsLocation.HomeAds44,
+          ]}
+          defaultImg={
+            content?.defaultAdsThreeCol ? content.defaultAdsThreeCol : ""
+          }
+          imgList={[
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds41
               )
-            )}
-            adsList2={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds42
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds42
               )
-            )}
-            adsList3={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds43
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds43
               )
-            )}
-            adsList4={adsData.filter((e: any) =>
-              e.adsLocations.find(
-                (z: any) => z.location === AdsLocation.HomeAds44
+            ),
+            adsData?.filter((z: Ads) =>
+              z.adsLocations.find(
+                (b: any) => b.location === AdsLocation.HomeAds44
               )
-            )}
-            adsLocations={[
-              AdsLocation.HomeAds41,
-              AdsLocation.HomeAds42,
-              AdsLocation.HomeAds43,
-              AdsLocation.HomeAds44,
-            ]}
-          />
-        ) : (
-          <AdsHere />
-        )}
+            ),
+          ]}
+        />
 
         {!session && (
           <section className="px-10 md:px-20">

@@ -7,6 +7,7 @@ import { Brand, User } from "@prisma/client";
 import Image from "next/image";
 import { fileUrl } from "@/types/const";
 import { getInitials } from "@/util/textHelper";
+import Avatar from "./Avatar";
 
 type Props = {
   selected: User;
@@ -87,23 +88,11 @@ export default function SellerSelectBox({
                   >
                     {({ selected }) => (
                       <div className="flex items-center gap-3">
-                        {brand.profile ? (
-                          <Image
-                            src={fileUrl + brand.profile}
-                            width={20}
-                            height={20}
-                            alt={brand.username!}
-                            className="object-contain"
-                          />
-                        ) : (
-                          <div className="avatar">
-                            <div className="avatar placeholder">
-                              <div className="bg-neutral-focus text-neutral-content rounded-full w-5 h-5 min-w-[20px] min-h-[20px] max-w-[20px] max-h-[20px]">
-                                <span>{getInitials(brand.username)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <Avatar
+                          profile={brand.profile}
+                          username={brand.username}
+                        />
+
                         <span
                           className={`block truncate ${
                             selected ? "font-medium" : "font-normal"

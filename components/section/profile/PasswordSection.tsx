@@ -10,6 +10,7 @@ import { z } from "zod";
 type Props = {
   backFn: Function;
   nextFn: Function;
+  submitRef: any;
 };
 
 type Password = {
@@ -17,7 +18,7 @@ type Password = {
   confirmPassword?: string;
 };
 
-function PasswordSection({ backFn, nextFn }: Props) {
+function PasswordSection({ backFn, nextFn, submitRef }: Props) {
   const { t } = useTranslation("common");
   const { user: profile, setUser: setProfile } = useProfile();
   const { locale } = useRouter();
@@ -144,6 +145,7 @@ function PasswordSection({ backFn, nextFn }: Props) {
             className={`inline-block rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

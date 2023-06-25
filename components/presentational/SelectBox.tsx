@@ -14,6 +14,7 @@ interface Props {
   setSelected: Function;
   isSearch: boolean;
   disabled?: boolean;
+  isInit?: boolean;
 }
 
 export default function SelectBox({
@@ -22,16 +23,17 @@ export default function SelectBox({
   setSelected,
   isSearch,
   disabled,
+  isInit,
 }: Props) {
   const { locale } = useRouter();
   const [showList, setShowList] = React.useState<SelectType[]>(list);
   const [searchQry, setSearchQry] = React.useState<string>("");
 
   React.useEffect(() => {
-    if (!selected) {
+    if (!selected && isInit === false) {
       setSelected(list[0]);
     }
-  }, [selected]);
+  }, [selected, isInit]);
 
   React.useEffect(() => {
     if (searchQry && searchQry.length > 0) {

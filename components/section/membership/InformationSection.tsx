@@ -10,7 +10,13 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-function InformationSection({ nextFn }: { nextFn: Function }) {
+function InformationSection({
+  nextFn,
+  submitRef,
+}: {
+  nextFn: Function;
+  submitRef: any;
+}) {
   const { t } = useTranslation("common");
   const { membership, setMembership } = useMembership();
   const { data: session }: any = useSession();
@@ -148,6 +154,7 @@ function InformationSection({ nextFn }: { nextFn: Function }) {
             className={`inline-flex items-center gap-3 rounded-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

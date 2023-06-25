@@ -14,6 +14,10 @@ type IProfile = {
   setNRCAvailable: Function;
   membership?: Membership;
   setMembership: Function;
+  isNRCValid: boolean;
+  isProfileValid: boolean;
+  isCategoriesValid: boolean;
+  isSellerValid: boolean;
 };
 
 const ProfileContext = createContext<IProfile>({
@@ -29,6 +33,10 @@ const ProfileContext = createContext<IProfile>({
   setNRCAvailable: () => {},
   membership: null,
   setMembership: () => {},
+  isCategoriesValid: false,
+  isNRCValid: false,
+  isProfileValid: false,
+  isSellerValid: false,
 });
 
 export const useProfile = () => React.useContext(ProfileContext);
@@ -46,6 +54,49 @@ export const ProfileProvider = ({
   const [nrcBack, setNRCBack] = React.useState<any>();
   const [nrcAvailable, setNRCAvailable] = React.useState(false);
   const [membership, setMembership] = React.useState<Membership | null>(null);
+
+  const isCategoriesValid = React.useMemo(
+    () => user && user.preferCategoryIDs.length === 3,
+    [user]
+  );
+  const isNRCValid = React.useMemo(
+    () =>
+      user &&
+      (user.nrcFront || nrcFront) &&
+      (user.nrcBack || nrcBack) &&
+      user.nrcType &&
+      user.nrcState &&
+      user.nrcTownship &&
+      user.nrcNumber.length === 6,
+    [user]
+  );
+  const isProfileValid = React.useMemo(
+    () =>
+      user &&
+      (user.profile || profileImg) &&
+      user.email &&
+      user.dob &&
+      user.houseNo &&
+      user.street &&
+      user.stateId &&
+      user.districtId &&
+      user.townshipId
+        ? true
+        : false,
+    [user]
+  );
+
+  const isSellerValid = React.useMemo(
+    () =>
+      user && user.role === Role.Buyer
+        ? true
+        : user &&
+          (user.role === Role.Seller || user.role === Role.Trader) &&
+          user.membershipId
+        ? true
+        : false,
+    [user]
+  );
 
   React.useEffect(() => {
     setUser(parentUser);
@@ -66,6 +117,10 @@ export const ProfileProvider = ({
         setNRCAvailable,
         membership,
         setMembership,
+        isCategoriesValid,
+        isNRCValid,
+        isProfileValid,
+        isSellerValid,
       }}
     >
       {children}

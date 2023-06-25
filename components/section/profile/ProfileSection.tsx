@@ -15,6 +15,7 @@ import { z } from "zod";
 
 type Props = {
   nextFn: Function;
+  submitRef: any;
 };
 
 type Profile = {
@@ -30,7 +31,7 @@ type Profile = {
   dob?: Date;
 };
 
-function ProfileSection({ nextFn }: Props) {
+function ProfileSection({ nextFn, submitRef }: Props) {
   const { t } = useTranslation("common");
   const genderList = [Gender.Male, Gender.Female];
   const {
@@ -449,6 +450,7 @@ function ProfileSection({ nextFn }: Props) {
             className={`inline-block rounded-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
+            ref={submitRef}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

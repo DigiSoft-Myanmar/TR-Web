@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
+import Avatar from "../presentational/Avatar";
 
 function AdsCard({ ads }: { ads: any }) {
   const { data: membershipData } = useSWR("/api/memberships", fetcher);
@@ -22,23 +23,8 @@ function AdsCard({ ads }: { ads: any }) {
       />
       <div className="flex flex-col gap-1">
         <div className="flex flex-row items-center gap-3 flex-wrap">
-          {ads.seller.profile ? (
-            <Image
-              src={fileUrl + ads.seller.profile}
-              alt={`${ads.seller.profile}`}
-              width={32}
-              height={32}
-              className="border-primary border rounded-full"
-            />
-          ) : (
-            <div className="avatar">
-              <div className="avatar placeholder">
-                <div className="bg-neutral-focus text-neutral-content rounded-full w-8 h-8 min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px] border border-primary">
-                  <span>{getInitials(ads.seller.username)}</span>
-                </div>
-              </div>
-            </div>
-          )}
+          <Avatar profile={ads.seller.profile} username={ads.seller.username} />
+
           <h3 className="text-sm font-semibold">
             {ads.seller.username}{" "}
             {ads.seller.displayName ? (

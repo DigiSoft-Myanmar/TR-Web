@@ -1,74 +1,135 @@
+import { fileUrl } from "@/types/const";
+import { AdsLocation } from "@/util/adsHelper";
+import { Ads, AdsPlacement, Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
-interface Props {
-  width?: number;
-  height?: number;
-  src?: string;
-}
+function AdsHere({
+  column,
+  adsLocations,
+  defaultImg,
+  imgList,
+}: {
+  column: number;
+  adsLocations: AdsLocation[];
+  defaultImg: string;
+  imgList: Ads[][];
+}) {
+  const { data: session }: any = useSession();
+  const router = useRouter();
 
-function AdsHere({ width = 1200, height = 300, src }: Props) {
-  const { data: session } = useSession();
-  const { t } = useTranslation("common");
-
-  /* return (
-    <section
-      className={`${
-        width && height
-          ? `px-4 py-10 mx-auto lg:items-center lg:flex overflow-hidden min-w-[${width}px] min-h-[${height}px] max-w-[${width}px] max-h-[${height}px]`
-          : "mx-10 "
-      } text-white bg-brandLight rounded-md my-10 flex items-center justify-center`}
-    >
-      <div
-        className={`px-4 py-10 mx-auto ${
-          height ? `lg:h[${height}px]` : "lg:h-[380px]"
-        } lg:items-center lg:flex`}
-      >
-        <div className="max-w-3xl mx-auto text-center">
-          <h1
-            className={`${
-              width && width <= 300 ? "text-2xl" : "text-3xl"
-            }  font-extrabold text-white leading-loose sm:leading-loose`}
-          >
-            {t("placeYourAdsHere")}
-          </h1>
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            {session &&
-              (session.role === Role.Trader ||
-                session.role === Role.Seller) && (
-                <Link href="/ads">
-                  <a
-                    className="block w-full px-12 py-3 text-sm font-medium text-brand bg-white border border-white rounded sm:w-auto active:text-opacity-75 hover:bg-transparent hover:text-lightShade focus:outline-none focus:ring"
-                    href="/ads"
-                  >
-                    {t("getStarted")}
-                  </a>
-                </Link>
-              )}
-
-            <Link href="/memberships">
-              <a className="block w-full px-12 py-3 text-sm font-medium text-white border border-white rounded sm:w-auto hover:bg-brand active:bg-brand focus:outline-none focus:ring">
-                {t("learnMore")}
-              </a>
+  return (
+    <div className="flex flex-row items-center justify-between gap-3 my-5 lg:m-10">
+      {imgList?.map((z: any, index: number) => (
+        <div key={index} className="flex-1">
+          {z?.length > 0 ? (
+            z.map((b: Ads, index2: number) =>
+              b.url ? (
+                <a
+                  target="_blank"
+                  href={b.url}
+                  onClick={(e) => {
+                    try {
+                      fetch("https://api.ipify.org/?format=json")
+                        .then((data) => data.json())
+                        .then((json) => {
+                          fetch(
+                            "/api/ads/clickCount?adsId=" +
+                              b.id.toString() +
+                              "&adsLocation=" +
+                              encodeURIComponent(adsLocations[index]) +
+                              "&ip=" +
+                              json.ip,
+                            {
+                              method: "POST",
+                            }
+                          );
+                        });
+                      return true;
+                    } catch (err) {
+                      fetch(
+                        "/api/ads/clickCount?adsId=" +
+                          b.id.toString() +
+                          "&adsLocation=" +
+                          encodeURIComponent(adsLocations[index]) +
+                          {
+                            method: "POST",
+                          }
+                      );
+                      return true;
+                    }
+                  }}
+                >
+                  <img
+                    src={fileUrl + b.adsImg}
+                    key={index2}
+                    className="max-h-[300px] w-full object-contain"
+                  />
+                </a>
+              ) : (
+                <div
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    try {
+                      fetch("https://api.ipify.org/?format=json")
+                        .then((data) => data.json())
+                        .then((json) => {
+                          fetch(
+                            "/api/ads/clickCount?adsId=" +
+                              b.id.toString() +
+                              "&adsLocation=" +
+                              encodeURIComponent(adsLocations[index]) +
+                              "&ip=" +
+                              json.ip,
+                            {
+                              method: "POST",
+                            }
+                          );
+                        });
+                      return true;
+                    } catch (err) {
+                      fetch(
+                        "/api/ads/clickCount?adsId=" +
+                          b.id.toString() +
+                          "&adsLocation=" +
+                          encodeURIComponent(adsLocations[index]) +
+                          {
+                            method: "POST",
+                          }
+                      );
+                      return true;
+                    }
+                  }}
+                >
+                  <img
+                    src={fileUrl + b.adsImg}
+                    key={index2}
+                    className="max-h-[300px] w-full object-contain"
+                  />
+                </div>
+              )
+            )
+          ) : (
+            <Link
+              className="cursor-pointer"
+              href={
+                session &&
+                (session.role === Role.Seller || session.role === Role.Trader)
+                  ? "/ads"
+                  : "/sell"
+              }
+            >
+              <img
+                src={fileUrl + defaultImg}
+                className="max-h-[300px] min-h-[300px] w-full object-contain"
+              />
             </Link>
-          </div>
+          )}
         </div>
-      </div>
-    </section>
-  ); */
-
-  return width === 1200 && height === 300 ? (
-    <img
-      src={src ? src : "/assets/images/Ads1200x300.png"}
-      className={`overflow-hidden xl:min-w-[${width}px] min-h-[${height}px] xl:max-w-[${width}px] max-h-[${height}px] mx-auto xl:w-[1200px] xl:max-w-[1200px] object-contain my-5`}
-    />
-  ) : (
-    <img
-      src={src ? src : "/assets/images/Ads1200x300.png"}
-      className={`overflow-hidden min-w-[${width}px] min-h-[${height}px] max-w-[${width}px] max-h-[${height}px] object-contain mx-10 md:mx-20 my-5`}
-    />
+      ))}
+    </div>
   );
 }
 

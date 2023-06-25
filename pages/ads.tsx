@@ -37,7 +37,7 @@ function AdsPage() {
   const [title, setTitle] = React.useState("Create Ads");
   const [ads, setAds] = React.useState<any>();
   const { locale } = useRouter();
-  const [isPlacement, setPlacement] = React.useState(true);
+  const [isPlacement, setPlacement] = React.useState(false);
 
   return session &&
     (session.role === Role.Admin ||

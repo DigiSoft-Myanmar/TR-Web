@@ -17,6 +17,7 @@ import {
   NotAvailable,
   Success,
   Unauthorized,
+  UsersExists,
 } from "@/types/ApiResponseTypes";
 import { RoleNav } from "@/types/role";
 import { Gender, Role, User } from "@prisma/client";
@@ -56,10 +57,38 @@ async function addShippingInfo(user: any) {
 }
 
 async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
-  const { isLogin, phone, type, email, isSeller } = req.query;
+  const {
+    isLogin,
+    phone,
+    type,
+    email,
+    isSeller,
+    id,
+    nrcState,
+    nrcTownship,
+    nrcType,
+    nrcNumber,
+  } = req.query;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
-  if (isLogin && phone) {
+  if (nrcState && nrcTownship && nrcType && nrcNumber && id) {
+    let user = await prisma.user.findFirst({
+      where: {
+        id: {
+          not: id.toString(),
+        },
+        nrcState: nrcState.toString(),
+        nrcTownship: nrcTownship.toString(),
+        nrcNumber: nrcNumber.toString(),
+        nrcType: nrcType.toString(),
+      },
+    });
+    if (user) {
+      return res.status(200).json(UsersExists);
+    } else {
+      return res.status(404).json(NotAvailable);
+    }
+  } else if (isLogin && phone) {
     let user = await getUserByPhone(phone.toString());
     if (user) {
       return res.status(200).json(user);
