@@ -20,13 +20,13 @@ import { useRouter } from "next/router";
 import React, { createContext, useMemo } from "react";
 import { useQuery } from "react-query";
 
-type ProductWithBrand = Product & { brand: Brand };
+type ProductWithSeller = Product & { seller: User };
 
 type MarketplaceType = {
   cartItems: CartItem[];
   subTotal: number;
   totalPrice: number;
-  productDetails: ProductWithBrand[];
+  productDetails: ProductWithSeller[];
   wishedItems: WishedItems | undefined;
   promoCode: PromoCode | undefined;
   shippingFee: ShippingFee[];
@@ -34,16 +34,21 @@ type MarketplaceType = {
   billingAddress?: BillingAddress;
   shippingAddress?: ShippingAddress;
   isAddressDiff: boolean;
-  screenshot: string[];
-  file: FileList | null;
   isPromoLoading: boolean;
   addPromotion: Function;
   removePromotion: Function;
-  setFile: Function;
   setWishedItems: Function;
-  changeDeliveryType: Function;
   modifyCount: Function;
-  addCart: Function;
+  addCart: (
+    sellerId: string,
+    normalPrice: number,
+    salePrice: number,
+    productId: string,
+    quantity: number,
+    stockType: StockType,
+    stockLevel: number,
+    variation?: any
+  ) => void;
   modifyAddress: Function;
   shippingLocation: any;
   setShippingLocation: Function;
@@ -82,14 +87,10 @@ const MarketplaceContext = createContext<MarketplaceType>({
   billingAddress: undefined,
   shippingAddress: undefined,
   isAddressDiff: false,
-  file: null,
-  screenshot: [],
   isPromoLoading: false,
   addPromotion: () => {},
   removePromotion: () => {},
-  setFile: () => {},
   setWishedItems: (data: WishedItems[]) => {},
-  changeDeliveryType: (data: CartItem[]) => {},
   modifyCount: () => {},
   addCart: () => {},
   modifyAddress: () => {},
@@ -111,7 +112,6 @@ export const MarketplaceProvider = ({
   const [promoCode, setPromoCode] = React.useState<PromoCode | undefined>(
     undefined
   );
-  const [file, setFile] = React.useState<FileList | null>(null);
   const [shippingLocation, setShippingLocation] = React.useState({
     stateId: "",
     districtId: "",
@@ -180,7 +180,7 @@ export const MarketplaceProvider = ({
     }
   }, [cartData?.cartItems]);
 
-  const productDetails: ProductWithBrand[] = useMemo(() => {
+  const productDetails: ProductWithSeller[] = useMemo(() => {
     if (cartData?.prodDetails) {
       return cartData.prodDetails;
     } else {
@@ -484,15 +484,11 @@ export const MarketplaceProvider = ({
         billingAddress,
         shippingAddress,
         isAddressDiff,
-        file,
-        screenshot,
         isPromoLoading,
 
         addPromotion,
         removePromotion,
-        setFile,
         setWishedItems,
-        changeDeliveryType,
         modifyCount,
         modifyAddress,
         addCart,

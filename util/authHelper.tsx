@@ -17,6 +17,30 @@ export function isInternal(session: any, isDisableStaff?: boolean) {
   return false;
 }
 
+export function isBuyer(session: any) {
+  if (session) {
+    if (session.role === Role.Buyer || session.role === Role.Trader) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+export function isSeller(session: any) {
+  if (session) {
+    if (session.role === Role.Seller || session.role === Role.Trader) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 export function getHeaders(session: User) {
   if (session) {
     if (session.email) {

@@ -179,7 +179,7 @@ export const createProduct = async (data: Product) => {
       d.variations,
       (z: any) => z.regularPrice
     ).reverse()[0];
-    d.priceIndex = priceList;
+    d.priceIndex = priceList.regularPrice;
   } else if (d.type === ProductType.Auction) {
     d.priceIndex = d.openingBid;
   }
@@ -227,6 +227,10 @@ export const updateProduct = async (id: string, data: Product) => {
   if (d.seller) {
     delete d.seller;
   }
+  if (d.Auctions) {
+    delete d.Auctions;
+  }
+
   if (d.type === ProductType.Variable) {
     if (d.saleStartDate) {
       delete d.saleStartDate;
@@ -242,7 +246,7 @@ export const updateProduct = async (id: string, data: Product) => {
       d.variations,
       (z: any) => z.regularPrice
     ).reverse()[0];
-    d.priceIndex = priceList;
+    d.priceIndex = priceList.regularPrice;
   } else if (d.type === ProductType.Auction) {
     d.priceIndex = d.openingBid;
   }

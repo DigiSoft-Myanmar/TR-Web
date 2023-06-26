@@ -158,7 +158,9 @@ function InformationSection({ nextFn, infoRef }: Props) {
       product.categories &&
       product.categories.length > 0
     ) {
-      if (data.SKU && product.sellerId) {
+      if (product.type === ProductType.Variable && product.sellerId) {
+        nextFn();
+      } else if (data.SKU && product.sellerId) {
         setChecking(true);
         let url =
           "/api/products/checkSKU?SKU=" +
@@ -168,7 +170,6 @@ function InformationSection({ nextFn, infoRef }: Props) {
         if (product.id) {
           url += "&id=" + encodeURIComponent(product.id);
         }
-        console.log(url);
         fetch(url).then((data) => {
           console.log(data.status);
           if (data.status === 404) {
@@ -368,9 +369,34 @@ function InformationSection({ nextFn, infoRef }: Props) {
                   } `}
                   key={index}
                   onClick={(e) => {
-                    setProduct((prevValue: any) => {
-                      return { ...prevValue, type: elem };
-                    });
+                    if (product.id) {
+                      showErrorDialog(
+                        "Cannot change product type when update.",
+                        t("productType") +
+                          "အား ပစ္စည်းပြင်ဆင်သည့်အချိန်တွင် ပြောင်းလဲ၍မရပါ။",
+                        locale
+                      );
+                    } else {
+                      setProduct((prevValue: any) => {
+                        if (elem === ProductType.Variable) {
+                          return {
+                            ...prevValue,
+                            type: elem,
+                            variations: [],
+                            attributes: [],
+                          };
+                        } else {
+                          let d = { ...prevValue };
+                          if (d.variations) {
+                            delete d.variations;
+                          }
+                          if (d.attributes) {
+                            delete d.attributes;
+                          }
+                          return { ...d, type: elem };
+                        }
+                      });
+                    }
                   }}
                 >
                   <label
@@ -706,7 +732,6 @@ function InformationSection({ nextFn, infoRef }: Props) {
           <FormInputRichText
             content={product.shortDescription}
             label={t("shortDescription")}
-            maxCount={200}
             setContent={(e: string) => {
               setProduct((prevValue: any) => {
                 return { ...prevValue, shortDescription: e };
@@ -718,7 +743,6 @@ function InformationSection({ nextFn, infoRef }: Props) {
             <FormInputRichText
               content={product.shortDescriptionMM}
               label={t("shortDescription") + " " + t("mm")}
-              maxCount={200}
               setContent={(e: string) => {
                 setProduct((prevValue: any) => {
                   return { ...prevValue, shortDescriptionMM: e };

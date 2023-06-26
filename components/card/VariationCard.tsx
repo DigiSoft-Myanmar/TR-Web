@@ -78,10 +78,10 @@ function VariationCard({ variation, editDetail, deleteVariation }: Props) {
                   product.attributes.find((e: any) => e.id === elem.attributeId)
                     .nameMM.length > 0
                     ? product.attributes.find(
-                        (e: any) => e.id === elem.attributeId,
+                        (e: any) => e.id === elem.attributeId
                       ).nameMM
                     : product.attributes.find(
-                        (e: any) => e.id === elem.attributeId,
+                        (e: any) => e.id === elem.attributeId
                       ).name}
                 </h3>
                 <h4 className="text-sm font-semibold">
@@ -120,7 +120,7 @@ function VariationCard({ variation, editDetail, deleteVariation }: Props) {
                       year: "numeric",
                       month: "short",
                       day: "2-digit",
-                    },
+                    }
                   )}
                 </span>
                 <span className="text-xs">to</span>
@@ -142,10 +142,10 @@ function VariationCard({ variation, editDetail, deleteVariation }: Props) {
       </div>
       <div className="flex w-full items-center space-x-5 px-2">
         <h3 className="flex-grow text-sm text-gray-600">
-          {/* SKU:{" "}
+          SKU:{" "}
           <span className="text-darkShade font-semibold">
             {variation.SKU ? variation.SKU : "Not set"}
-          </span> */}
+          </span>
         </h3>
         {variation.stockType ? (
           variation.stockType === StockType.OutOfStock ? (

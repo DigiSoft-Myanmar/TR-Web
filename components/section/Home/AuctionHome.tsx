@@ -1,7 +1,8 @@
+import AuctionCard from "@/components/card/AuctionCard";
 import ProductImg from "@/components/card/ProductImg";
 import Avatar from "@/components/presentational/Avatar";
 import { fileUrl } from "@/types/const";
-import { RemainingTime } from "@/types/productTypes";
+import { ProductNavType, RemainingTime } from "@/types/productTypes";
 import { convertMsToTime, getValue } from "@/util/formatter";
 import { formatAmount, getText } from "@/util/textHelper";
 import { Brand, Category, Product, Review, User } from "@prisma/client";
@@ -9,6 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
 
 function AuctionHome({
   prodList,
@@ -25,7 +27,16 @@ function AuctionHome({
   const { t } = useTranslation("common");
   const [current, setCurrent] = React.useState("");
   const [remainingTime, setRemainingTime] = React.useState<RemainingTime>();
-  const currentBid = 0;
+  const { data } = useQuery(
+    ["bidAmount", prodList[0].id, prodList[0].SKU],
+    () =>
+      fetch(
+        "/api/auction/prod?prodId=" + prodList[0].id + "&SKU=" + prodList[0].SKU
+      ).then((res) => {
+        let json = res.json();
+        return json;
+      })
+  );
 
   React.useEffect(() => {
     if (prodList[0]) {
@@ -47,12 +58,30 @@ function AuctionHome({
 
         // clear interval on re-render to avoid memory leaks
         return () => clearInterval(intervalId);
+      } else {
+        const intervalId = setInterval(() => {
+          if (prodList[0].startTime) {
+            if (
+              new Date(prodList[0].startTime!).valueOf() > new Date().valueOf()
+            ) {
+              let remainingTime =
+                new Date(prodList[0].startTime!).valueOf() -
+                new Date().valueOf();
+              setRemainingTime(convertMsToTime(remainingTime));
+            } else {
+              setRemainingTime(undefined);
+            }
+          }
+        }, 1000);
+
+        // clear interval on re-render to avoid memory leaks
+        return () => clearInterval(intervalId);
       }
     }
   }, [prodList[0]]);
 
   return (
-    <div className="bg-darkShade text-white p-5 lg:p-0">
+    <div className="bg-darkShade text-white p-5 lg:p-0 mt-32 lg:mt-56">
       <div className="py-5 flex flex-col gap-5 w-full max-w-screen-xl mx-auto">
         <div className="relative flex flex-col lg:flex-row items-center gap-3">
           <div className="absolute -top-32 lg:-top-56 flex flex-col items-start bg-white rounded-md max-w-[250px]">
@@ -94,7 +123,7 @@ function AuctionHome({
             />
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 w-full">
               <div className="flex flex-col gap-3 items-center flex-1">
-                {currentBid > 0 ? (
+                {data?.currentBid > 0 ? (
                   <h3 className="font-medium text-gray-200">
                     {t("currentBid")}
                   </h3>
@@ -105,14 +134,20 @@ function AuctionHome({
                 )}
                 <p className="text-xl font-bold">
                   {formatAmount(
-                    currentBid > 0 ? currentBid : prodList[0].openingBid,
+                    data?.currentBid > 0
+                      ? data?.currentBid
+                      : prodList[0].openingBid,
                     locale,
                     true
                   )}
                 </p>
               </div>
               <div className="flex flex-col gap-3 items-center flex-1">
-                <h3 className="font-medium text-gray-200">{t("endsIn")}</h3>
+                <h3 className="font-medium text-gray-200">
+                  {new Date(prodList[0].startTime) > new Date()
+                    ? "Starts in"
+                    : "Ending in"}
+                </h3>
                 <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-white">
                   {remainingTime?.days > 0 ? (
                     <div className="flex flex-col text-gray-200 text-xs items-center">
@@ -145,12 +180,18 @@ function AuctionHome({
                 </div>
               </div>
               <div className="flex flex-row items-center gap-3 flex-1 justify-end mt-3 lg:mt-5">
-                <button className="bg-primary text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-primary-focus transition">
+                <button
+                  className="bg-primary text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-primary-focus transition"
+                  type="button"
+                >
                   {t("placeBid")}
                 </button>
-                <button className="bg-slate-600 text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-slate-700 transition">
+                <Link
+                  href={"/marketplace/" + encodeURIComponent(prodList[0].slug)}
+                  className="bg-slate-600 text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-slate-700 transition text-center"
+                >
                   {t("seeDetails")}
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -158,7 +199,7 @@ function AuctionHome({
         <div className="mt-10 lg:mt-20 flex flex-row items-center justify-between gap-5 w-full">
           <h3 className="font-semibold text-lg">{t("liveAuctions")}</h3>
           <Link
-            href="/marketplace"
+            href={"/marketplace?type=" + ProductNavType.Auction}
             className="text-sm font-semibold transition group pb-[3px] hover:pb-0"
           >
             {t("seeMore")}
@@ -207,7 +248,7 @@ function AuctionHome({
             : z.id !== prodList[0].id &&
               z.categoryIds.find((b) => b === current)
         ).length > 0 ? (
-          <div className="mt-3 flex flex-row max-w-screen-xl overflow-auto scrollbar-hide">
+          <div className="mt-3 flex flex-row max-w-screen-xl overflow-auto scrollbar-hide pb-5 gap-3">
             {prodList
               .filter((z) =>
                 current === ""
@@ -216,7 +257,7 @@ function AuctionHome({
                     z.categoryIds.find((b) => b === current)
               )
               .map((z, index) => (
-                <div key={index}>{z.name}</div>
+                <AuctionCard key={index} product={z} />
               ))}
           </div>
         ) : (

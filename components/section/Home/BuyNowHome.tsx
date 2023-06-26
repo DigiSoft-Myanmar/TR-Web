@@ -1,7 +1,9 @@
+import ProductCard from "@/components/card/ProductCard";
 import ProductImg from "@/components/card/ProductImg";
 import Avatar from "@/components/presentational/Avatar";
+import { useMarketplace } from "@/context/MarketplaceContext";
 import { fileUrl } from "@/types/const";
-import { RemainingTime } from "@/types/productTypes";
+import { ProductNavType, RemainingTime } from "@/types/productTypes";
 import { convertMsToTime, getValue } from "@/util/formatter";
 import { getPricing } from "@/util/pricing";
 import { formatAmount, getText } from "@/util/textHelper";
@@ -22,6 +24,7 @@ import { useTranslation } from "react-i18next";
 function BuyNowHome({
   prodList,
   categories,
+  isPromotion,
 }: {
   prodList: (Product & {
     Brand: Brand;
@@ -29,25 +32,29 @@ function BuyNowHome({
     seller: User;
   })[];
   categories: Category[];
+  isPromotion?: boolean;
 }) {
   const { locale } = useRouter();
   const { t } = useTranslation("common");
   const [current, setCurrent] = React.useState("");
   const pricingInfo = getPricing(prodList[0]);
   const [remainingTime, setRemainingTime] = React.useState<RemainingTime>();
+  const router = useRouter();
+  const { addCart } = useMarketplace();
+  let highlightProd: any = prodList[0];
 
   React.useEffect(() => {
-    if (prodList[0] && prodList[0].type === ProductType.Fixed) {
-      const startDate = new Date(prodList[0].saleStartDate);
+    if (highlightProd && highlightProd.type === ProductType.Fixed) {
+      const startDate = new Date(highlightProd.saleStartDate);
       if (new Date() >= startDate) {
         const intervalId = setInterval(() => {
-          if (prodList[0].saleEndDate) {
+          if (highlightProd.saleEndDate) {
             if (
-              new Date(prodList[0].saleEndDate!).valueOf() >
+              new Date(highlightProd.saleEndDate!).valueOf() >
               new Date().valueOf()
             ) {
               let remainingTime =
-                new Date(prodList[0].saleEndDate!).valueOf() -
+                new Date(highlightProd.saleEndDate!).valueOf() -
                 new Date().valueOf();
               setRemainingTime(convertMsToTime(remainingTime));
             } else {
@@ -82,34 +89,34 @@ function BuyNowHome({
         return () => clearInterval(intervalId);
       }
     }
-  }, [prodList[0], pricingInfo]);
+  }, [highlightProd, pricingInfo]);
 
   return (
-    <div className="bg-darkShade text-white p-5 lg:p-0">
+    <div className="bg-darkShade text-white p-5 lg:p-0 mt-32 lg:mt-56">
       <div className="py-5 flex flex-col gap-5 w-full max-w-screen-xl mx-auto">
         <div className="relative flex flex-col lg:flex-row items-center gap-3">
           <div className="absolute -top-32 lg:-top-56 flex flex-col items-start bg-white rounded-md max-w-[250px]">
             <div className="overflow-hidden">
               <ProductImg
-                imgUrl={fileUrl + prodList[0].imgList[0]}
+                imgUrl={fileUrl + highlightProd.imgList[0]}
                 roundedAll={true}
-                title={prodList[0].name}
+                title={highlightProd.name}
                 width={250}
               />
             </div>
             <div className="flex flex-col gap-3 p-5">
               <h3 className="text-primaryText font-semibold line-clamp-2">
-                {getText(prodList[0].name, prodList[0].nameMM, locale)}
+                {getText(highlightProd.name, highlightProd.nameMM, locale)}
               </h3>
               <div className="flex flex-row items-center gap-3 text-gray-600">
                 <Avatar
-                  username={prodList[0].seller.username}
-                  profile={prodList[0].seller.profile}
+                  username={highlightProd.seller.username}
+                  profile={highlightProd.seller.profile}
                 />
                 <p className="text-sm line-clamp-1">
-                  {prodList[0].seller.displayName
-                    ? prodList[0].seller.displayName
-                    : prodList[0].seller.username}
+                  {highlightProd.seller.displayName
+                    ? highlightProd.seller.displayName
+                    : highlightProd.seller.username}
                 </p>
               </div>
             </div>
@@ -119,8 +126,8 @@ function BuyNowHome({
               className="text-sm"
               dangerouslySetInnerHTML={{
                 __html: getText(
-                  prodList[0].shortDescription,
-                  prodList[0].shortDescriptionMM,
+                  highlightProd.shortDescription,
+                  highlightProd.shortDescriptionMM,
                   locale
                 ),
               }}
@@ -131,11 +138,11 @@ function BuyNowHome({
                   <h3 className="font-medium text-gray-200">{t("price")}</h3>
                   {pricingInfo.isPromotion === true ? (
                     <span className="bg-primary text-white rounded-md px-2 py-1 text-sm font-semibold">
-                      {prodList[0].type === ProductType.Variable &&
+                      {highlightProd.type === ProductType.Variable &&
                       pricingInfo.maxSaleDiscount !==
                         pricingInfo.minSaleDiscount
                         ? "Up to " + pricingInfo.maxSaleDiscount
-                        : prodList[0].type === ProductType.Variable
+                        : highlightProd.type === ProductType.Variable
                         ? pricingInfo.maxSaleDiscount
                         : pricingInfo.discount}
                       % OFF
@@ -143,42 +150,10 @@ function BuyNowHome({
                   ) : (
                     <></>
                   )}
-                  {remainingTime && (
-                    <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-white">
-                      {remainingTime?.days > 0 ? (
-                        <div className="flex flex-col text-gray-200 text-xs items-center">
-                          <span className="countdown font-mono text-lg text-white font-bold">
-                            <span style={getValue(remainingTime?.days)}></span>
-                          </span>
-                          days
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                      <div className="flex flex-col text-gray-200 text-xs items-center">
-                        <span className="countdown font-mono text-lg text-white font-bold">
-                          <span style={getValue(remainingTime?.hours)}></span>
-                        </span>
-                        hours
-                      </div>
-                      <div className="flex flex-col text-gray-200 text-xs items-center">
-                        <span className="countdown font-mono text-lg text-white font-bold">
-                          <span style={getValue(remainingTime?.minutes)}></span>
-                        </span>
-                        min
-                      </div>
-                      <div className="flex flex-col text-gray-200 text-xs items-center">
-                        <span className="countdown font-mono text-lg text-white font-bold">
-                          <span style={getValue(remainingTime?.seconds)}></span>
-                        </span>
-                        sec
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <p className="text-xl font-bold">
                   {pricingInfo.isPromotion &&
-                  prodList[0].type === ProductType.Fixed
+                  highlightProd.type === ProductType.Fixed
                     ? formatAmount(pricingInfo.salePrice, locale, true)
                     : pricingInfo.isPromotion === true &&
                       pricingInfo.minSalePrice !== pricingInfo.maxSalePrice
@@ -187,7 +162,7 @@ function BuyNowHome({
                       formatAmount(pricingInfo.maxSalePrice, locale, true)
                     : pricingInfo.isPromotion === true
                     ? formatAmount(pricingInfo.minSalePrice, locale, true)
-                    : prodList[0].type === ProductType.Fixed
+                    : highlightProd.type === ProductType.Fixed
                     ? formatAmount(pricingInfo.regularPrice, locale, true)
                     : pricingInfo.minRegPrice !== pricingInfo.maxRegPrice
                     ? formatAmount(pricingInfo.minRegPrice, locale, false) +
@@ -196,54 +171,154 @@ function BuyNowHome({
                     : formatAmount(pricingInfo.regularPrice, locale, true)}
                 </p>
 
-                <p></p>
+                {remainingTime && (
+                  <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-white">
+                    {remainingTime?.days > 0 ? (
+                      <div className="flex flex-col text-gray-200 text-xs items-center">
+                        <span className="countdown font-mono text-lg text-white font-bold">
+                          <span style={getValue(remainingTime?.days)}></span>
+                        </span>
+                        days
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                    <div className="flex flex-col text-gray-200 text-xs items-center">
+                      <span className="countdown font-mono text-lg text-white font-bold">
+                        <span style={getValue(remainingTime?.hours)}></span>
+                      </span>
+                      hours
+                    </div>
+                    <div className="flex flex-col text-gray-200 text-xs items-center">
+                      <span className="countdown font-mono text-lg text-white font-bold">
+                        <span style={getValue(remainingTime?.minutes)}></span>
+                      </span>
+                      min
+                    </div>
+                    <div className="flex flex-col text-gray-200 text-xs items-center">
+                      <span className="countdown font-mono text-lg text-white font-bold">
+                        <span style={getValue(remainingTime?.seconds)}></span>
+                      </span>
+                      sec
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col gap-3 items-center flex-1">
                 <h3 className="font-medium text-gray-200">
                   {t("stockAvailability")}
                 </h3>
-                {prodList[0].type === ProductType.Fixed ? (
+                {highlightProd.type === ProductType.Fixed ? (
                   <p
                     className={`${
-                      prodList[0].stockType === StockType.InStock
+                      highlightProd.stockType === StockType.InStock
                         ? "bg-success"
-                        : prodList[0].stockType === StockType.OutOfStock
+                        : highlightProd.stockType === StockType.OutOfStock
                         ? "bg-error"
-                        : prodList[0].stockType === StockType.StockLevel
+                        : highlightProd.stockType === StockType.StockLevel
                         ? "bg-warning"
                         : "bg-success"
                     } p-2 rounded-md text-sm font-semibold`}
                   >
-                    {prodList[0].stockType === StockType.InStock
+                    {highlightProd.stockType === StockType.InStock
                       ? t("inStock")
-                      : prodList[0].stockType === StockType.OutOfStock
+                      : highlightProd.stockType === StockType.OutOfStock
                       ? t("outOfStock")
-                      : prodList[0].stockType === StockType.StockLevel
+                      : highlightProd.stockType === StockType.StockLevel
                       ? t("quantity").replace(
                           "{data}",
-                          formatAmount(prodList[0].stockLevel, locale)
+                          formatAmount(highlightProd.stockLevel, locale)
                         )
                       : t("inStock")}
                   </p>
                 ) : (
-                  <p></p>
+                  <p
+                    className={`${
+                      highlightProd.variations.filter(
+                        (z: any) => z.stockType === StockType.InStock
+                      ).length > 0
+                        ? "bg-success"
+                        : highlightProd.variations.filter(
+                            (z: any) => z.stockType === StockType.StockLevel
+                          ).length > 0
+                        ? "bg-warning"
+                        : highlightProd.variations.filter(
+                            (z: any) => z.stockType === StockType.OutOfStock
+                          ).length > 0
+                        ? "bg-error"
+                        : "bg-success"
+                    } p-2 rounded-md text-sm font-semibold`}
+                  >
+                    {highlightProd.variations.filter(
+                      (z: any) => z.stockType === StockType.InStock
+                    ).length > 0
+                      ? t("inStock")
+                      : highlightProd.variations.filter(
+                          (z: any) => z.stockType === StockType.StockLevel
+                        ).length > 0
+                      ? t("quantity").replace(
+                          "{data}",
+                          formatAmount(
+                            highlightProd.variations.find(
+                              (z: any) => z.stockType === StockType.StockLevel
+                            )?.stockLevel,
+                            locale
+                          )
+                        )
+                      : highlightProd.stockType === StockType.StockLevel
+                      ? t("outOfStock")
+                      : t("inStock")}
+                  </p>
                 )}
               </div>
               <div className="flex flex-row items-center gap-3 flex-1 justify-end mt-3 lg:mt-5">
-                <button className="bg-primary text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-primary-focus transition">
+                <button
+                  type="button"
+                  className="bg-primary text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-primary-focus transition"
+                  onClick={() => {
+                    if (highlightProd.type === ProductType.Fixed) {
+                      addCart(
+                        highlightProd.sellerId,
+                        pricingInfo.normalPrice,
+                        pricingInfo.salePrice,
+                        highlightProd.id,
+                        1,
+                        highlightProd.stockType,
+                        highlightProd.stockLevel
+                      );
+                    } else {
+                      router.push(
+                        "/marketplace/" + encodeURIComponent(highlightProd.slug)
+                      );
+                    }
+                  }}
+                >
                   {t("buyNow")}
                 </button>
-                <button className="bg-slate-600 text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-slate-700 transition">
+                <Link
+                  className="bg-slate-600 text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-slate-700 transition text-center"
+                  href={
+                    "/marketplace/" + encodeURIComponent(highlightProd.slug)
+                  }
+                >
                   {t("seeDetails")}
-                </button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
         <div className="mt-10 lg:mt-20 flex flex-row items-center justify-between gap-5 w-full">
-          <h3 className="font-semibold text-lg">{t("highlightProducts")}</h3>
+          <h3 className="font-semibold text-lg">
+            {isPromotion === true
+              ? t("promotionProducts")
+              : t("highlightProducts")}
+          </h3>
           <Link
-            href="/marketplace"
+            href={
+              isPromotion === true
+                ? "/marketplace?type=" + ProductNavType.Promotion
+                : "/marketplace?type=" + ProductNavType.Buy
+            }
             className="text-sm font-semibold transition group pb-[3px] hover:pb-0"
           >
             {t("seeMore")}
@@ -288,70 +363,20 @@ function BuyNowHome({
         </div>
         {prodList.filter((z) =>
           current === ""
-            ? z.id !== prodList[0].id
-            : z.id !== prodList[0].id &&
+            ? z.id !== highlightProd.id
+            : z.id !== highlightProd.id &&
               z.categoryIds.find((b) => b === current)
         ).length > 0 ? (
-          <div className="mt-3 flex flex-row max-w-screen-xl overflow-auto scrollbar-hide pb-5">
+          <div className="mt-3 flex flex-row max-w-screen-xl overflow-auto scrollbar-hide pb-5 gap-3">
             {prodList
               .filter((z) =>
                 current === ""
-                  ? z.id !== prodList[0].id
-                  : z.id !== prodList[0].id &&
+                  ? z.id !== highlightProd.id
+                  : z.id !== highlightProd.id &&
                     z.categoryIds.find((b) => b === current)
               )
               .map((z, index) => (
-                <div
-                  key={index}
-                  className="max-w-[200px] overflow-hidden flex flex-col gap-3 rounded-md cursor-pointer bg-white"
-                >
-                  <div className="overflow-hidden">
-                    <ProductImg
-                      imgUrl={fileUrl + z.imgList[0]}
-                      title={z.name}
-                      roundedAll={false}
-                      width={200}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-3 text-primaryText p-3">
-                    <h3 className="text-primaryText font-semibold line-clamp-2">
-                      {getText(z.name, z.nameMM, locale)}
-                    </h3>
-
-                    <p className="text-sm mb-3">
-                      {z.type === ProductType.Fixed
-                        ? getPricing(z).isPromotion === true
-                          ? formatAmount(getPricing(z).salePrice, locale, true)
-                          : formatAmount(
-                              getPricing(z).regularPrice,
-                              locale,
-                              true
-                            )
-                        : getPricing(z).isPromotion === true &&
-                          getPricing(z).minSalePrice ===
-                            getPricing(z).maxSalePrice
-                        ? formatAmount(getPricing(z).minSalePrice, locale, true)
-                        : getPricing(z).isPromotion === true
-                        ? formatAmount(
-                            getPricing(z).minSalePrice,
-                            locale,
-                            false
-                          ) +
-                          " - " +
-                          formatAmount(getPricing(z).maxSalePrice, locale, true)
-                        : getPricing(z).minRegPrice ===
-                          getPricing(z).maxRegPrice
-                        ? formatAmount(getPricing(z).minRegPrice, locale, true)
-                        : formatAmount(
-                            getPricing(z).minRegPrice,
-                            locale,
-                            false
-                          ) +
-                          " - " +
-                          formatAmount(getPricing(z).maxRegPrice, locale, true)}
-                    </p>
-                  </div>
-                </div>
+                <ProductCard key={index} product={z} />
               ))}
           </div>
         ) : (

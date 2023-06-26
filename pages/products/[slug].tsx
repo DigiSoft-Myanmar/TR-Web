@@ -67,6 +67,7 @@ export async function getServerSideProps({ locale, params }: any) {
       categories: true,
       Condition: true,
       seller: true,
+      Auctions: true,
     },
   });
 

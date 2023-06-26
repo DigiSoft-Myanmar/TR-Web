@@ -8,6 +8,7 @@ import ProductScreen from "@/components/screen/ProductScreen";
 import { useSession } from "next-auth/react";
 import { ProductType, Role } from "@prisma/client";
 import ErrorScreen from "@/components/screen/ErrorScreen";
+import { isSeller } from "@/util/authHelper";
 
 function NewProduct() {
   const { data: session }: any = useSession();
@@ -25,11 +26,11 @@ function NewProduct() {
       </Head>
       <ProductProvider
         productDetail={
-          session && session.role === Role.Seller
+          isSeller(session)
             ? {
                 type: ProductType.Fixed,
-                brand: session.brand,
-                brandId: session.brand.id,
+                seller: session,
+                sellerId: session.id,
               }
             : {
                 type: ProductType.Fixed,

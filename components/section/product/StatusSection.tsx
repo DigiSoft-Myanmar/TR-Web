@@ -4,7 +4,7 @@ import { fileUrl } from "@/types/const";
 import { fetcher } from "@/util/fetcher";
 import { getInitials, getText } from "@/util/textHelper";
 import { PaymentStatus } from "@/types/orderTypes";
-import { Membership, Role } from "@prisma/client";
+import { Membership, ProductType, Role } from "@prisma/client";
 import moment from "moment";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -55,6 +55,17 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
 
   const { errors } = formState;
   const watchFields = watch();
+
+  const usedProd =
+    product.type === ProductType.Variable
+      ? product.variations.length
+      : product.type === ProductType.Auction
+      ? product.Auctions?.length > 0
+        ? Array.from(new Set(product.Auctions.map((item) => item.SKU))).map(
+            (sku) => ({ SKU: sku })
+          ).length
+        : 1
+      : 1;
 
   function submit(data: Status) {
     setProduct((prevValue: any) => {
@@ -145,10 +156,22 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                           Product listing used
                         </th>
                         <td className="flex items-center font-bold text-primary">
-                          {usedSKU && usedSKU.Usage ? usedSKU.Usage : 0}
-                          <span className="ml-5 text-sm font-normal text-primary/50">
+                          {usedSKU && usedSKU.Usage
+                            ? product.id
+                              ? usedSKU.Usage - usedProd
+                              : usedSKU.Usage
+                            : 0}
+                          <span className="ml-5 text-sm font-normal text-primary">
                             {t("notIncluded")}
                           </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th className="text-sm font-normal">
+                          No. of SKU used in this product
+                        </th>
+                        <td className="flex items-center font-bold text-primary">
+                          {usedProd}
                         </td>
                       </tr>
                     </tbody>

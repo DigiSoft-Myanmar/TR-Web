@@ -76,8 +76,8 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
     setShowList(
       variations.slice(
         (parseInt(currentPage.value) - 1) * maxProd * 2,
-        parseInt(currentPage.value) * maxProd * 2,
-      ),
+        parseInt(currentPage.value) * maxProd * 2
+      )
     );
   }, [product.variations, currentPage, maxProd]);
 
@@ -98,8 +98,8 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
         variations.find((e: any) =>
           _.isEqual(
             _.sortBy(e.attributes, (o) => o.id),
-            _.sortBy(elem, (o: any) => o.id),
-          ),
+            _.sortBy(elem, (o: any) => o.id)
+          )
         )
       ) {
       } else {
@@ -238,7 +238,7 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
                             </button>
                           )}
                         </Menu.Item>
-                      ),
+                      )
                     )}
                   </div>
                   <div className="px-1 py-1">
@@ -256,7 +256,7 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
                             </button>
                           )}
                         </Menu.Item>
-                      ),
+                      )
                     )}
                   </div>
                   <div className="px-1 py-1">
@@ -274,7 +274,7 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
                             </button>
                           )}
                         </Menu.Item>
-                      ),
+                      )
                     )}
                   </div>
                 </Menu.Items>
@@ -300,7 +300,7 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
                       name: "Page " + e.toString(),
                       value: e.toString(),
                     };
-                  },
+                  }
                 )}
                 setSelected={setCurrentPage}
                 selected={currentPage}
@@ -329,7 +329,7 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
                           let variationList = [...product.variations];
                           variationList.splice(index, 1);
                           setProduct({ ...product, variations: variationList });
-                        },
+                        }
                       );
                     }}
                   />
@@ -375,14 +375,27 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
                 if (
                   product &&
                   product.variations &&
-                  product.variations.length > 0
+                  product.variations.length > 0 &&
+                  product.variations.filter(
+                    (z) => z.SKU && z.regularPrice && z.stockType
+                  ).length === product.variations.length
                 ) {
                   nextFn();
+                } else if (
+                  product.variations.filter(
+                    (z) => z.SKU && z.regularPrice && z.stockType
+                  ).length !== product.variations.length
+                ) {
+                  showErrorDialog(
+                    "Please input SKU, regular price and stock type for all variations.",
+                    "SKU, ပုံမှန်စျေးနှင့် ပစ္စည်းရရှိနိုင်မှု တန်ဖိုးအား အမျိုးအစားအကုန်တွင် ဖြည့်စွက်ပေးပါ။",
+                    locale
+                  );
                 } else {
                   showErrorDialog(
                     "At least one variation is required.",
                     "အနည်းဆုံးတစ်ခုလိုအပ်ပါသည်။",
-                    locale,
+                    locale
                   );
                 }
               }}
@@ -432,14 +445,14 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
           if (successCnt === 0) {
             showErrorHTMLDialog(
               `<p>${variations.length - successCnt} ${t("update")} ${t(
-                "failed",
-              )}</p>`,
+                "failed"
+              )}</p>`
             );
           } else {
             showSuccessHTMLDialog(
               `<p>${successCnt}  ${t("update")} ${t("success")}</p><p>${
                 variations.length - successCnt
-              } ${t("update")} ${t("failed")}</p>`,
+              } ${t("update")} ${t("failed")}</p>`
             );
           }
 
@@ -473,14 +486,14 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
           if (successCnt === 0) {
             showErrorHTMLDialog(
               `<p>${variations.length - successCnt} ${t("update")} ${t(
-                "failed",
-              )}</p>`,
+                "failed"
+              )}</p>`
             );
           } else {
             showSuccessHTMLDialog(
               `<p>${successCnt}  ${t("update")} ${t("success")}</p><p>${
                 variations.length - successCnt
-              } ${t("update")} ${t("failed")}</p>`,
+              } ${t("update")} ${t("failed")}</p>`
             );
           }
           setProduct({ ...product, variations: variations });
@@ -509,7 +522,7 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
               let verify = verifyPrice(
                 changeAmount,
                 elem.salePrice,
-                elem.isPercent,
+                elem.isPercent
               );
               if (verify.isSuccess) {
                 elem.regularPrice = changeAmount;
@@ -520,14 +533,14 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
           if (successCnt === 0) {
             showErrorHTMLDialog(
               `<p>${variations.length - successCnt} ${t("update")} ${t(
-                "failed",
-              )}</p>`,
+                "failed"
+              )}</p>`
             );
           } else {
             showSuccessHTMLDialog(
               `<p>${successCnt}  ${t("update")} ${t("success")}</p><p>${
                 variations.length - successCnt
-              } ${t("update")} ${t("failed")}</p>`,
+              } ${t("update")} ${t("failed")}</p>`
             );
           }
           setProduct({ ...product, variations: variations });
@@ -567,14 +580,14 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
           if (successCnt === 0) {
             showErrorHTMLDialog(
               `<p>${variations.length - successCnt} ${t("update")} ${t(
-                "failed",
-              )}</p>`,
+                "failed"
+              )}</p>`
             );
           } else {
             showSuccessHTMLDialog(
               `<p>${successCnt}  ${t("update")} ${t("success")}</p><p>${
                 variations.length - successCnt
-              } ${t("update")} ${t("failed")}</p>`,
+              } ${t("update")} ${t("failed")}</p>`
             );
           }
           setProduct({ ...product, variations: variations });
@@ -601,14 +614,14 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
           if (successCnt === 0) {
             showErrorHTMLDialog(
               `<p>${variations.length - successCnt} ${t("update")} ${t(
-                "failed",
-              )}</p>`,
+                "failed"
+              )}</p>`
             );
           } else {
             showSuccessHTMLDialog(
               `<p>${successCnt}  ${t("update")} ${t("success")}</p><p>${
                 variations.length - successCnt
-              } ${t("update")} ${t("failed")}</p>`,
+              } ${t("update")} ${t("failed")}</p>`
             );
           }
           setProduct({ ...product, variations: variations });
@@ -634,14 +647,14 @@ function VariationSection({ backFn, nextFn, currentStep }: Props) {
           if (successCnt === 0) {
             showErrorHTMLDialog(
               `<p>${variations.length - successCnt} ${t("update")} ${t(
-                "failed",
-              )}</p>`,
+                "failed"
+              )}</p>`
             );
           } else {
             showSuccessHTMLDialog(
               `<p>${successCnt}  ${t("update")} ${t("success")}</p><p>${
                 variations.length - successCnt
-              } ${t("update")} ${t("failed")}</p>`,
+              } ${t("update")} ${t("failed")}</p>`
             );
           }
           setProduct({ ...product, variations: variations });

@@ -33,6 +33,7 @@ import AuctionHome from "@/components/section/Home/AuctionHome";
 import MyanmarMap from "@/components/presentational/MyanmarMapDistrict";
 import { useQuery } from "react-query";
 import BuyNowHome from "@/components/section/Home/BuyNowHome";
+import { getPricing } from "@/util/pricing";
 
 export function IndexPage({
   sellerList,
@@ -505,7 +506,8 @@ export function IndexPage({
             ),
           ]}
         />
-        {totalPromotion > 0 && (
+        {prodList?.filter((z) => getPricing(z)?.isPromotion === true).length >
+          0 && (
           <>
             <section className="px-10 md:px-20">
               <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
@@ -553,8 +555,13 @@ export function IndexPage({
                 </div>
               </div>
             </section>
-            {/* //TODO Promo
-            <PromotionHome promotionList={data.promotionList} /> */}
+            <BuyNowHome
+              categories={categories}
+              prodList={prodList.filter(
+                (z) => getPricing(z)?.isPromotion === true
+              )}
+              isPromotion={true}
+            />
           </>
         )}
         <AdsHere
