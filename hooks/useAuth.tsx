@@ -21,7 +21,7 @@ export default async function useAuth(req: NextApiRequest) {
 
           let d = await fetch(
             process.env.NEXTAUTH_URL +
-              "/api/user?email=" +
+              "/api/user?isLogin=true&email=" +
               encodeURIComponent(appId)
           );
           if (d.status === 200) {
@@ -63,9 +63,11 @@ export default async function useAuth(req: NextApiRequest) {
 
         let d = await fetch(
           process.env.NEXTAUTH_URL +
-            "/api/user?phone=" +
+            "/api/user?isLogin=true&phone=" +
             encodeURIComponent(appId)
         );
+        console.log(d.status);
+
         if (d.status === 200) {
           let user = await d.json();
           if (user) {

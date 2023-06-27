@@ -679,6 +679,7 @@ model Content {
   playStoreURL   String?
   appStoreURL    String?
   facebookPlugin String?
+  fbAppId        String?
 
   homeHeroImg       String?
   auctionHeroImg    String?

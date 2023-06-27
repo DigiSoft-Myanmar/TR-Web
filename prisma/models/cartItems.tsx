@@ -8,11 +8,11 @@ export type CartItem = {
   quantity: number;
   normalPrice: number;
   salePrice: number;
-  brandId: string;
+  sellerId: string;
 };
 
 export type ShippingFee = {
-  brandId: string;
+  sellerId: string;
   isFreeShipping: boolean;
   deliveryType: DeliveryType;
   shippingFee?: number;
@@ -30,7 +30,7 @@ export const updateCartItem = async (
   cartItems: CartItem[],
   billingAddress: BillingAddress,
   shippingAddress: ShippingAddress,
-  isAddressDiff: boolean,
+  isAddressDiff: boolean
 ) => {
   const cartItem = await prisma.cartItems.upsert({
     where: { userId: userId },

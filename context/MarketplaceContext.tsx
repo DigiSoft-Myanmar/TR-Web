@@ -52,6 +52,7 @@ type MarketplaceType = {
   modifyAddress: Function;
   shippingLocation: any;
   setShippingLocation: Function;
+  sellerDetails: User[];
 };
 
 export type BillingAddress = {
@@ -96,6 +97,7 @@ const MarketplaceContext = createContext<MarketplaceType>({
   modifyAddress: () => {},
   shippingLocation: null,
   setShippingLocation: () => {},
+  sellerDetails: [],
 });
 
 export const useMarketplace = () => React.useContext(MarketplaceContext);
@@ -187,16 +189,16 @@ export const MarketplaceProvider = ({
       return [];
     }
   }, [cartData?.prodDetails]);
-  /* 
-  const brandDetails: User[] = useMemo(() => {
-    let brandList = productDetails.map((e: any) => e.brand);
-    let brand = brandList.filter(
-      (a, i) => brandList.findIndex((s) => a.id === s.id) === i
+
+  const sellerDetails: User[] = useMemo(() => {
+    let sellerList = productDetails.map((e: any) => e.seller);
+    let seller = sellerList.filter(
+      (a, i) => sellerList.findIndex((s) => a.id === s.id) === i
     );
 
-    return brand;
+    return seller;
   }, [productDetails]);
- */
+
   const subTotal = useMemo(() => {
     return cartItems
       .map((e) =>
@@ -210,15 +212,15 @@ export const MarketplaceProvider = ({
     if (promoCode) {
       let brandList = promoCode?.sellerId;
       let subTotal = cartItems
-        .filter((e) => brandList === e.brandId)
+        .filter((e) => brandList === e.sellerId)
         .map((e) => e.quantity * e.salePrice)
         .reduce((a, b) => a + b, 0);
       if (subTotal >= promoCode.minimumPurchasePrice) {
         if (promoCode.isShippingFree) {
-          if (shippingFee.find((e) => e.brandId === brandList)) {
+          if (shippingFee.find((e) => e.sellerId === brandList)) {
             changeDeliveryType(
               brandList,
-              shippingFee.find((e) => e.brandId === brandList)!.deliveryType,
+              shippingFee.find((e) => e.sellerId === brandList)!.deliveryType,
               0
             );
           }
@@ -244,20 +246,31 @@ export const MarketplaceProvider = ({
   }, [subTotal, shippingFee, promoTotal]);
 
   function setWishedItems(data: WishedItems) {
-    fetch("/api/wished", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: getHeaders(session),
-    });
+    if (session) {
+      fetch("/api/wished", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: getHeaders(session),
+      });
+    } else {
+      showErrorDialog(
+        "Please login to continue.",
+        "ရှေ့ဆက်ရန် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။",
+        locale,
+        () => {
+          router.push("/login");
+        }
+      );
+    }
   }
 
   function changeDeliveryType(
-    brandId: string,
+    sellerId: string,
     type: DeliveryType,
     fee?: number
   ) {
     let c = [...shippingFee];
-    let update = c.findIndex((e) => e.brandId === brandId);
+    let update = c.findIndex((e) => e.sellerId === sellerId);
     if (update >= 0) {
       c[update].deliveryType = type;
       c[update].shippingFee = fee;
@@ -311,11 +324,11 @@ export const MarketplaceProvider = ({
       if (qty <= 0) {
         let c = cartItems.filter((e) => e.productId !== productId);
         let prodCount = cartItems.filter(
-          (e) => e.brandId === prod!.brandId
+          (e) => e.sellerId === prod!.sellerId
         ).length;
         let s = [...shippingFee];
         if (prodCount === 1) {
-          s = s.filter((e) => e.brandId !== prod!.brandId);
+          s = s.filter((e) => e.sellerId !== prod!.sellerId);
         }
         updateCartItem(
           c,
@@ -344,7 +357,7 @@ export const MarketplaceProvider = ({
   }
 
   function addCart(
-    brandId: string,
+    sellerId: string,
     normalPrice: number,
     salePrice: number,
     productId: string,
@@ -374,6 +387,8 @@ export const MarketplaceProvider = ({
           (stockType === StockType.StockLevel &&
             stockLevel >= quantity + c[index].quantity)
         ) {
+          c[index].normalPrice = normalPrice;
+          c[index].salePrice = salePrice;
           c[index].quantity += quantity;
         } else {
           let error = OutOfStockError;
@@ -387,7 +402,7 @@ export const MarketplaceProvider = ({
         ) {
           if (variation) {
             c.push({
-              brandId: brandId,
+              sellerId: sellerId,
               normalPrice: normalPrice,
               salePrice: salePrice,
               productId: productId,
@@ -396,7 +411,7 @@ export const MarketplaceProvider = ({
             });
           } else {
             c.push({
-              brandId: brandId,
+              sellerId: sellerId,
               normalPrice: normalPrice,
               salePrice: salePrice,
               productId: productId,
@@ -485,6 +500,7 @@ export const MarketplaceProvider = ({
         shippingAddress,
         isAddressDiff,
         isPromoLoading,
+        sellerDetails,
 
         addPromotion,
         removePromotion,

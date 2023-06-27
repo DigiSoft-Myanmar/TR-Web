@@ -12,6 +12,7 @@ import { fetcher } from "@/util/fetcher";
 import { CartItem } from "@/prisma/models/cartItems";
 import Link from "next/link";
 import { DeliveryType } from "@/types/orderTypes";
+import Avatar from "@/components/presentational/Avatar";
 
 interface Props {
   isModalOpen: boolean;
@@ -26,7 +27,7 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
     subTotal,
     modifyCount,
     shippingFee,
-    changeDeliveryType,
+    sellerDetails,
   } = useMarketplace();
   const { locale } = router;
 
@@ -121,38 +122,31 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
                       </svg>
                     </button>
                   </Dialog.Title>
-                  {/* <div className="mt-6 flex flex-col gap-3">
-                    {brandDetails.length > 0
-                      ? brandDetails.map((b: User, index: number) => (
+                  <div className="mt-6 flex flex-col gap-3">
+                    {sellerDetails.length > 0
+                      ? sellerDetails.map((b: User, index: number) => (
                           <React.Fragment key={index}>
                             <details className="group min-w-[300px] cursor-pointer rounded-md bg-white px-3">
                               <summary className="flex w-full min-w-[293px] flex-row items-center gap-3 py-3">
                                 <div className="flex flex-col items-center gap-1">
-                                  <Image
-                                    src={fileUrl + b.profile}
-                                    className="h-[100px] w-[100px] object-contain"
-                                    alt={
-                                      b.displayName
-                                        ? b.displayName
-                                        : b.username!
-                                    }
-                                    width={100}
-                                    height={100}
-                                    quality={100}
+                                  <Avatar
+                                    username={b.username}
+                                    profile={b.profile}
+                                    isLarge={true}
                                   />
                                 </div>
                                 <div className="flex w-full flex-grow flex-col space-y-1 pr-3">
                                   <h3 className="text-linear truncate py-1 text-xs font-semibold">
-                                    {b.brandName} x{" "}
+                                    {b.username} x{" "}
                                     {cartItems
-                                      .filter((e) => e.brandId === b.id)
+                                      .filter((e) => e.sellerId === b.id)
                                       .map((z) => z.quantity)
                                       .reduce((a, b) => a + b, 0)}
                                   </h3>
                                   <p className="truncate text-sm font-semibold text-primary">
                                     {formatAmount(
                                       cartItems
-                                        .filter((e) => e.brandId === b.id)
+                                        .filter((e) => e.sellerId === b.id)
                                         .map((z) =>
                                           z.salePrice
                                             ? z.salePrice * z.quantity
@@ -165,76 +159,13 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
                                   </p>
                                   <div className="flex w-full flex-row items-center gap-3">
                                     {shippingFee.find(
-                                      (e) => e.brandId === b.id
+                                      (e) => e.sellerId === b.id
                                     ) === undefined ? (
                                       <span className="mt-1 text-xs text-error">
                                         Please provide delivery address.
                                       </span>
-                                    ) : shippingFee.find(
-                                        (e) => e.brandId === b.id
-                                      )!.deliveryType ===
-                                      DeliveryType.DoorToDoor ? (
-                                      <button
-                                        className="flex w-fit flex-row items-center gap-3 rounded-md p-1 transition-colors hover:bg-primary hover:text-white"
-                                        onClick={(evt) => {
-                                          evt.preventDefault();
-                                          evt.stopPropagation();
-                                          changeDeliveryType(
-                                            b.id,
-                                            DeliveryType.CarGate,
-                                            undefined
-                                          );
-                                        }}
-                                      >
-                                        <span className="text-xs">
-                                          Door to Door
-                                        </span>
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          strokeWidth={1.5}
-                                          stroke="currentColor"
-                                          className="h-6 w-6"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                                          />
-                                        </svg>
-                                      </button>
                                     ) : (
-                                      <button
-                                        className="flex w-fit flex-row items-center gap-3 rounded-md p-1 transition-colors hover:bg-primary hover:text-white"
-                                        onClick={(evt) => {
-                                          evt.preventDefault();
-                                          evt.stopPropagation();
-                                          changeDeliveryType(
-                                            b.id,
-                                            DeliveryType.DoorToDoor,
-                                            undefined
-                                          );
-                                        }}
-                                      >
-                                        <span className="text-xs">
-                                          Car Gate Delivery
-                                        </span>
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          fill="none"
-                                          viewBox="0 0 24 24"
-                                          strokeWidth={1.5}
-                                          stroke="currentColor"
-                                          className="h-6 w-6"
-                                        >
-                                          <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"
-                                          />
-                                        </svg>
-                                      </button>
+                                      <></>
                                     )}
                                   </div>
                                 </div>
@@ -256,7 +187,7 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
                               </summary>
                               <div className="flex flex-col divide-y divide-primary">
                                 {cartItems
-                                  .filter((z) => z.brandId === b.id)
+                                  .filter((z) => z.sellerId === b.id)
                                   .map((e: CartItem, index: number) => (
                                     <div
                                       key={index}
@@ -292,7 +223,7 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
                                               productDetails.find(
                                                 (p: Product) =>
                                                   e.productId === p.id
-                                              )?.brand.brandName
+                                              )?.seller.username
                                             }
                                           </span>
                                           <h3 className="text-linear truncate py-1 text-xs font-semibold">
@@ -433,7 +364,7 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
                                   {
                                     productDetails.find(
                                       (p: Product) => e.productId === p.id
-                                    )?.brand.brandName
+                                    )?.seller.username
                                   }
                                 </span>
                                 <h3 className="text-linear truncate py-1 text-xs font-semibold">
@@ -530,7 +461,7 @@ function CartModal({ isModalOpen, setModalOpen }: Props) {
                             </div>
                           </div>
                         ))}
-                  </div> */}
+                  </div>
 
                   <div className="mt-5 flex flex-row items-center">
                     <label className="flex flex-grow py-2 text-sm font-semibold">

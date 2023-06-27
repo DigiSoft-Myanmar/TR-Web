@@ -17,6 +17,8 @@ export default async function handler(
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
+    console.log(session);
+
     if (session) {
       if (session && session.role === Role.Buyer) {
         switch (req.method) {
@@ -86,8 +88,8 @@ export default async function handler(
               } else {
                 isAddressDiff = false;
               }
-              let brandIds = Array.from(
-                new Set(prodDetails.map((e: any) => e.brandId))
+              let sellerIds = Array.from(
+                new Set(prodDetails.map((e: any) => e.sellerId))
               );
               for (let i = 0; i < prodDetails.length; i++) {
                 if (prodDetails[i].type === ProductType.Fixed) {
@@ -251,7 +253,7 @@ export default async function handler(
                   }
                 }
               }
-              for (let b = 0; b < brandIds.length; b++) {
+              for (let b = 0; b < sellerIds.length; b++) {
                 if (
                   isAddressDiff === true &&
                   shippingAddress.stateId &&
@@ -260,8 +262,8 @@ export default async function handler(
                 ) {
                   await fetch(
                     process.env.NEXTAUTH_URL +
-                      "/api/shippingCost?brandId=" +
-                      brandIds[b] +
+                      "/api/shippingCost?sellerId=" +
+                      sellerIds[b] +
                       "&state=" +
                       shippingAddress.stateId +
                       "&district=" +
@@ -272,7 +274,7 @@ export default async function handler(
                     .then((data) => data.json())
                     .then((json) => {
                       let exists = shippingFee.findIndex(
-                        (e) => e.brandId === brandIds[b]
+                        (e) => e.sellerId === sellerIds[b]
                       );
                       if (exists >= 0) {
                         if (
@@ -291,7 +293,7 @@ export default async function handler(
                         }
                         if (json.isOfferFreeShipping === true) {
                           let subTotal = cartItems
-                            .filter((e: any) => e.brandId === brandIds[b])
+                            .filter((e: any) => e.sellerId === sellerIds[b])
                             .map((e: any) =>
                               e.salePrice
                                 ? e.salePrice * e.quantity
@@ -310,7 +312,7 @@ export default async function handler(
                         let freeShipping = false;
                         if (json.isOfferFreeShipping === true) {
                           let subTotal = cartItems
-                            .filter((e: any) => e.brandId === brandIds[b])
+                            .filter((e: any) => e.sellerId === sellerIds[b])
                             .map((e: any) =>
                               e.salePrice
                                 ? e.salePrice * e.quantity
@@ -323,14 +325,14 @@ export default async function handler(
                         }
                         if (json.shippingIncluded === true) {
                           shippingFee.push({
-                            brandId: brandIds[b],
+                            sellerId: sellerIds[b],
                             deliveryType: DeliveryType.CarGate,
                             isFreeShipping: freeShipping,
                             shippingFee: undefined,
                           });
                         } else {
                           shippingFee.push({
-                            brandId: brandIds[b],
+                            sellerId: sellerIds[b],
                             deliveryType: DeliveryType.CarGate,
                             isFreeShipping: freeShipping,
                             shippingFee: undefined,
@@ -345,8 +347,8 @@ export default async function handler(
                 ) {
                   await fetch(
                     process.env.NEXTAUTH_URL +
-                      "/api/shippingCost?brandId=" +
-                      brandIds[b] +
+                      "/api/shippingCost?sellerId=" +
+                      sellerIds[b] +
                       "&state=" +
                       billingAddress.stateId +
                       "&district=" +
@@ -357,7 +359,7 @@ export default async function handler(
                     .then((data) => data.json())
                     .then((json) => {
                       let exists = shippingFee.findIndex(
-                        (e) => e.brandId === brandIds[b]
+                        (e) => e.sellerId === sellerIds[b]
                       );
 
                       if (exists >= 0) {
@@ -377,7 +379,7 @@ export default async function handler(
                         }
                         if (json.isOfferFreeShipping === true) {
                           let subTotal = cartItems
-                            .filter((e: any) => e.brandId === brandIds[b])
+                            .filter((e: any) => e.sellerId === sellerIds[b])
                             .map((e: any) =>
                               e.salePrice
                                 ? e.salePrice * e.quantity
@@ -396,7 +398,7 @@ export default async function handler(
                         let freeShipping = false;
                         if (json.isOfferFreeShipping === true) {
                           let subTotal = cartItems
-                            .filter((e: any) => e.brandId === brandIds[b])
+                            .filter((e: any) => e.sellerId === sellerIds[b])
                             .map((e: any) =>
                               e.salePrice
                                 ? e.salePrice * e.quantity
@@ -409,14 +411,14 @@ export default async function handler(
                         }
                         if (json.shippingIncluded === true) {
                           shippingFee.push({
-                            brandId: brandIds[b],
+                            sellerId: sellerIds[b],
                             deliveryType: DeliveryType.DoorToDoor,
                             isFreeShipping: freeShipping,
                             shippingFee: json.defaultShippingCost,
                           });
                         } else {
                           shippingFee.push({
-                            brandId: brandIds[b],
+                            sellerId: sellerIds[b],
                             deliveryType: DeliveryType.DoorToDoor,
                             isFreeShipping: freeShipping,
                             shippingFee: undefined,
@@ -453,6 +455,7 @@ export default async function handler(
             break;
           case "POST":
             let { type } = req.query;
+            console.log("HERE");
             if (type === "Order") {
               let body = JSON.parse(req.body);
               let data = await prisma.cartItems.findFirst({
@@ -473,15 +476,15 @@ export default async function handler(
                 }
                 let sellerResponse: any = [];
 
-                let brandIds = Array.from(
-                  new Set(data.cartItems.map((e: any) => e.brandId))
+                let sellerIds = Array.from(
+                  new Set(data.cartItems.map((e: any) => e.sellerId))
                 );
-                for (let i = 0; i < brandIds.length; i++) {
+                for (let i = 0; i < sellerIds.length; i++) {
                   let brandFee: any = data.shippingFee.find(
-                    (e: any) => e.brandId === brandIds[i]
+                    (e: any) => e.sellerId === sellerIds[i]
                   );
                   sellerResponse.push({
-                    brandId: brandIds[i],
+                    sellerId: sellerIds[i],
                     deliveryType: brandFee.deliveryType,
                     isFreeShipping: brandFee.isFreeShipping,
                     shippingFee: brandFee.shippingFee,

@@ -78,6 +78,7 @@ function ContactPage({ data }: { data: any }) {
       .optional()
       .or(z.literal("")),
     facebookPlugin: z.string().min(1, { message: t("inputError") }),
+    fbAppId: z.string().min(1, { message: t("inputError") }),
     workingHourWeekend: z
       .string()
       .min(1, { message: t("inputError") })
@@ -234,6 +235,16 @@ function ContactPage({ data }: { data: any }) {
               defaultValue={data?.facebookPlugin}
               formControl={{ ...register("facebookPlugin") }}
               currentValue={watchFields.facebookPlugin}
+            />
+
+            <FormInput
+              label={"Facebook App Id"}
+              placeHolder={"Enter Facebook App Id"}
+              error={errors.fbAppId?.message}
+              type="text"
+              defaultValue={data?.fbAppId}
+              formControl={{ ...register("fbAppId") }}
+              currentValue={watchFields.fbAppId}
             />
 
             <FormInput

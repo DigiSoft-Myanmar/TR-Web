@@ -24,6 +24,9 @@ import SubCategoryDropdown from "../presentational/SubCategoryDropdown";
 import LocationPickerFull from "../presentational/LocationPickerFull";
 import { useSeller } from "@/context/SellerContext";
 import Avatar from "../presentational/Avatar";
+import DefaultDialog from "../modal/dialog/DefaultDialog";
+import NavModal from "../modal/sideModal/NavModal";
+import CartModal from "../modal/sideModal/CartModal";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -220,7 +223,14 @@ function Header({
       <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
         <div className="z-50 mx-auto flex h-20 max-w-screen-2xl items-center justify-between sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <button type="button" className="p-2 lg:hidden">
+            <button
+              type="button"
+              className="p-2 lg:hidden"
+              onClick={(e) => {
+                e.preventDefault();
+                setMenuOpen(true);
+              }}
+            >
               <svg
                 className="h-6 w-6"
                 xmlns="http://www.w3.org/2000/svg"
@@ -295,6 +305,7 @@ function Header({
                       <Avatar
                         profile={session.profile}
                         username={session.username}
+                        size={32}
                       />
 
                       <div className="flex flex-row items-center gap-1">
@@ -815,6 +826,11 @@ function Header({
           </div>
         )}
       </header>
+      <NavModal isModalOpen={isMenuOpen} setModalOpen={setMenuOpen} />
+      <CartModal
+        isModalOpen={isCartModalOpen}
+        setModalOpen={setCartModalOpen}
+      />
     </>
   );
 }

@@ -15,6 +15,7 @@ import {
   Brand,
   Category,
   Condition,
+  Content,
   Product,
   ProductType,
   Review,
@@ -30,10 +31,41 @@ import { isBuyer } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 import ZoomImage from "@/components/presentational/ZoomImage";
 import _ from "lodash";
+import { useMarketplace } from "@/context/MarketplaceContext";
+
+import {
+  EmailShareButton,
+  FacebookIcon,
+  FacebookMessengerIcon,
+  FacebookMessengerShareButton,
+  FacebookShareButton,
+  HatenaShareButton,
+  InstapaperShareButton,
+  LineShareButton,
+  LinkedinShareButton,
+  LivejournalShareButton,
+  MailruShareButton,
+  OKShareButton,
+  PinterestShareButton,
+  PocketShareButton,
+  RedditShareButton,
+  TelegramIcon,
+  TelegramShareButton,
+  TumblrShareButton,
+  TwitterIcon,
+  TwitterShareButton,
+  ViberIcon,
+  ViberShareButton,
+  VKShareButton,
+  WhatsappShareButton,
+  WorkplaceShareButton,
+} from "react-share";
+import { showErrorDialog } from "@/util/swalFunction";
 
 function MarketplacePage({
   product,
   attributes: parentAttributes,
+  content,
 }: {
   product:
     | any
@@ -46,8 +78,10 @@ function MarketplacePage({
         Review: Review[];
       });
   attributes: any;
+  content: Content;
 }) {
   const [qty, setQty] = React.useState(1);
+  const { setWishedItems, addCart, wishedItems } = useMarketplace();
 
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
@@ -958,7 +992,7 @@ function MarketplacePage({
                           <p className="text-gray-500">Discount</p>
                           <span className="font-semibold text-primaryText">
                             {formatAmount(
-                              pricingInfo.regularPrice - pricingInfo.salePrice,
+                              pricingInfo.regularPrice - pricingInfo.saleAmount,
                               locale,
                               true
                             )}
@@ -967,7 +1001,7 @@ function MarketplacePage({
                         <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">
                           <p className="text-gray-500">Cost</p>
                           <span className="font-semibold text-primaryText">
-                            {formatAmount(pricingInfo.salePrice, locale, true)}
+                            {formatAmount(pricingInfo.saleAmount, locale, true)}
                           </span>
                         </div>
                       </>
@@ -1000,7 +1034,7 @@ function MarketplacePage({
                       <span className="font-semibold text-primaryText">
                         {formatAmount(
                           pricingInfo.isPromotion === true
-                            ? pricingInfo.salePrice * qty
+                            ? pricingInfo.saleAmount * qty
                             : pricingInfo.regularPrice * qty,
                           locale,
                           true
@@ -1048,9 +1082,47 @@ function MarketplacePage({
                   </div>
 
                   <div className="flex flex-row items-center justify-between gap-3 px-3">
-                    <a
+                    <button
                       className="group relative inline-flex items-center justify-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary flex-grow"
-                      href="/download"
+                      type="button"
+                      onClick={() => {
+                        if (product.type === ProductType.Fixed) {
+                          addCart(
+                            product.sellerId,
+                            pricingInfo.regularPrice,
+                            pricingInfo.saleAmount,
+                            product.id,
+                            qty,
+                            product.stockType,
+                            product.stockLevel
+                          );
+                        } else {
+                          if (
+                            product.type === ProductType.Variable &&
+                            currentVariation &&
+                            pricingInfo &&
+                            attributes.length ===
+                              product.variations[0].attributes.length
+                          ) {
+                            addCart(
+                              product.sellerId,
+                              pricingInfo.regularPrice,
+                              pricingInfo.saleAmount,
+                              product.id,
+                              qty,
+                              currentVariation.stockType,
+                              currentVariation.stockLevel,
+                              currentVariation
+                            );
+                          } else {
+                            showErrorDialog(
+                              "Please choose all attributes.",
+                              "အရည်အသွေးအားလုံးကို ရွေးပါ။",
+                              locale
+                            );
+                          }
+                        }
+                      }}
                     >
                       <span className="absolute -start-full transition-all group-hover:start-4">
                         <svg
@@ -1070,13 +1142,38 @@ function MarketplacePage({
                       <span className="text-sm font-medium transition-all group-hover:ms-4">
                         Add to Cart
                       </span>
-                    </a>
+                    </button>
                   </div>
                 </>
               )}
 
               <div className="py-3 border-t flex flex-row items-center px-3 justify-between gap-3">
-                <span className="flex flex-row items-center gap-1 text-primary group cursor-pointer">
+                <span
+                  className="flex flex-row items-center gap-1 text-primary group cursor-pointer"
+                  onClick={() => {
+                    if (Array.isArray(wishedItems)) {
+                      setWishedItems({
+                        productIds: [product.id],
+                      });
+                    } else {
+                      let wished = wishedItems?.productIds;
+                      if (wished?.find((e) => e === product.id)) {
+                        wished = wishedItems?.productIds.filter(
+                          (e) => e !== product.id
+                        );
+                      } else {
+                        if (wishedItems?.productIds) {
+                          wished = [...wishedItems?.productIds, product.id];
+                        } else {
+                          wished = [product.id];
+                        }
+                      }
+                      setWishedItems({
+                        productIds: wished,
+                      });
+                    }
+                  }}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -1095,23 +1192,93 @@ function MarketplacePage({
                     Add to wishlist
                   </span>
                 </span>
-                <span className="flex flex-row items-center gap-1 text-primary group cursor-pointer">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path d="M13 4.5a2.5 2.5 0 11.702 1.737L6.97 9.604a2.518 2.518 0 010 .792l6.733 3.367a2.5 2.5 0 11-.671 1.341l-6.733-3.367a2.5 2.5 0 110-3.475l6.733-3.366A2.52 2.52 0 0113 4.5z" />
-                  </svg>
 
-                  <span className="text-xs group-hover:border-b group-hover:border-b-current">
-                    Share
-                  </span>
-                </span>
+                <div className="dropdown dropdown-end">
+                  <label
+                    tabIndex={0}
+                    className="flex flex-row items-center gap-1 text-primary group cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path d="M13 4.5a2.5 2.5 0 11.702 1.737L6.97 9.604a2.518 2.518 0 010 .792l6.733 3.367a2.5 2.5 0 11-.671 1.341l-6.733-3.367a2.5 2.5 0 110-3.475l6.733-3.366A2.52 2.52 0 0113 4.5z" />
+                    </svg>
+
+                    <span className="text-xs group-hover:border-b group-hover:border-b-current">
+                      Share
+                    </span>
+                  </label>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                  >
+                    <li className="w-full hover:bg-gray-100 py-2">
+                      <FacebookShareButton
+                        quote={product.name}
+                        url={"https://treasurerush.com.mm/" + router.asPath}
+                        children={
+                          <div className="flex flex-row items-center gap-3">
+                            <FacebookIcon size={24} round />
+                            <span>Share to facebook</span>
+                          </div>
+                        }
+                      />
+                    </li>
+                    {content?.fbAppId && (
+                      <li className="w-full hover:bg-gray-100 py-2">
+                        <FacebookMessengerShareButton
+                          appId={content.fbAppId}
+                          url={"https://treasurerush.com.mm/" + router.asPath}
+                          children={
+                            <div className="flex flex-row items-center gap-3">
+                              <FacebookMessengerIcon size={24} round />
+                              <span>Share to messenger</span>
+                            </div>
+                          }
+                        />
+                      </li>
+                    )}
+                    <li className="w-full hover:bg-gray-100 py-2">
+                      <TwitterShareButton
+                        url={"https://treasurerush.com.mm/" + router.asPath}
+                        children={
+                          <div className="flex flex-row items-center gap-3">
+                            <TwitterIcon size={24} round />
+                            <span>Share to twitter</span>
+                          </div>
+                        }
+                      />
+                    </li>
+                    <li className="w-full hover:bg-gray-100 py-2">
+                      <TelegramShareButton
+                        url={"https://treasurerush.com.mm/" + router.asPath}
+                        children={
+                          <div className="flex flex-row items-center gap-3">
+                            <TelegramIcon size={24} round />
+                            <span>Share to telegram</span>
+                          </div>
+                        }
+                      />
+                    </li>
+                    <li className="w-full hover:bg-gray-100 py-2">
+                      <ViberShareButton
+                        url={"https://treasurerush.com.mm/" + router.asPath}
+                        children={
+                          <div className="flex flex-row items-center gap-3">
+                            <ViberIcon size={24} round />
+                            <span>Share to viber</span>
+                          </div>
+                        }
+                      />
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <p className="text-xs text-gray-500 flex gap-0.5 flex-wrap items-center justify-center">
+            <p className="text-xs text-gray-500 flex gap-0.5 flex-wrap items-center justify-center pb-[2px] hover:pb-0">
               Any problem with this product?{" "}
               <span className="flex flex-row items-center gap-0.5 cursor-pointer text-primary hover:border-b hover:border-b-current">
                 <svg
@@ -1151,11 +1318,13 @@ export async function getServerSideProps({ locale, params }: any) {
       Term: true,
     },
   });
+  const content = await prisma.content.findFirst({});
 
   return {
     props: {
       product: JSON.parse(JSON.stringify(product)),
       attributes: JSON.parse(JSON.stringify(attributes)),
+      content: JSON.parse(JSON.stringify(content)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };
