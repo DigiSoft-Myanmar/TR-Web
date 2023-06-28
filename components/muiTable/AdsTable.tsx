@@ -35,6 +35,7 @@ import { useTranslation } from "next-i18next";
 import { PromoType, isBetween, isTodayBetween } from "@/util/verify";
 import { fileUrl } from "@/types/const";
 import Avatar from "../presentational/Avatar";
+import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -81,28 +82,13 @@ const AdsTable = ({
   React.useEffect(() => {
     if (parentData) {
       if (value) {
-        /* setData(
+        setData(
           parentData.filter(
-            (e) =>
-              e.promoCode.toLowerCase().includes(value.toLowerCase()) ||
-              (e.startDate &&
-                new Date(e.startDate)
-                  .toLocaleDateString("en-ca", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })
-                  .includes(value.toLowerCase())) ||
-              (e.endDate &&
-                new Date(e.endDate)
-                  .toLocaleDateString("en-ca", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })
-                  .includes(value.toLowerCase()))
+            (e: any) =>
+              e.seller.username.toLowerCase().includes(value.toLowerCase()) ||
+              e.seller.displayName?.toLowerCase().includes(value.toLowerCase())
           )
-        ); */
+        );
       } else {
         setData(parentData);
       }
@@ -464,6 +450,15 @@ const AdsTable = ({
           sx={{ "& .MuiDataGrid-columnHeaders": { borderRadius: 0 } }}
         />
       )}
+      <AdsDetailDialog
+        ads={promotion}
+        isModalOpen={isModalOpen}
+        setModalOpen={setModalOpen}
+        refetch={() => {
+          refetch();
+        }}
+        isEditMode={true}
+      />
       {/* <PromotionModal
         title={"Update Promo Code"}
         isModalOpen={isModalOpen}

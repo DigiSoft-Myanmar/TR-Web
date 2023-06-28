@@ -67,21 +67,6 @@ export default async function SocketHandler(req: NextApiRequest, res: any) {
         socket.emit("newBid", d);
       });
 
-      socket.on("placeBid", async (obj) => {
-        if (obj.productId) {
-          await prisma.auctions.create({
-            data: {
-              ...obj,
-            },
-            include: {
-              createdBy: true,
-              product: true,
-            },
-          });
-          io.emit("receive-noti", obj);
-        }
-      });
-
       socket.on("disconnect", () => {
         // Handle client disconnection logic here
         console.log("A client has disconnected");

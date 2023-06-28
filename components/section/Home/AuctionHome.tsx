@@ -1,9 +1,11 @@
 import AuctionCard from "@/components/card/AuctionCard";
 import ProductImg from "@/components/card/ProductImg";
 import Avatar from "@/components/presentational/Avatar";
+import { useAuction } from "@/context/AuctionContext";
 import { fileUrl } from "@/types/const";
 import { ProductNavType, RemainingTime } from "@/types/productTypes";
 import { convertMsToTime, getValue } from "@/util/formatter";
+import { showConfirmationDialog } from "@/util/swalFunction";
 import { formatAmount, getText } from "@/util/textHelper";
 import { Brand, Category, Product, Review, User } from "@prisma/client";
 import Link from "next/link";
@@ -27,7 +29,8 @@ function AuctionHome({
   const { t } = useTranslation("common");
   const [current, setCurrent] = React.useState("");
   const [remainingTime, setRemainingTime] = React.useState<RemainingTime>();
-  const { data } = useQuery(
+  const [bidAmount, setBidAmount] = React.useState(0);
+  const { data, refetch } = useQuery(
     ["bidAmount", prodList[0].id, prodList[0].SKU],
     () =>
       fetch(
@@ -37,6 +40,27 @@ function AuctionHome({
         return json;
       })
   );
+  const { newBid, placeBid } = useAuction();
+
+  React.useEffect(() => {
+    if (data?.currentBid) {
+      setBidAmount(data?.currentBid + 1000);
+    } else {
+      setBidAmount(prodList[0].openingBid);
+    }
+  }, [prodList[0], data]);
+
+  React.useEffect(() => {
+    if (newBid) {
+      if (
+        newBid.find(
+          (z) => z.productId === prodList[0].id && z.SKU === prodList[0].SKU
+        )
+      ) {
+        refetch();
+      }
+    }
+  }, [newBid]);
 
   React.useEffect(() => {
     if (prodList[0]) {
@@ -179,13 +203,27 @@ function AuctionHome({
                   </div>
                 </div>
               </div>
-              <div className="flex flex-row items-center gap-3 flex-1 justify-end mt-3 lg:mt-5">
-                <button
-                  className="bg-primary text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-primary-focus transition"
-                  type="button"
-                >
-                  {t("placeBid")}
-                </button>
+              <div className="flex flex-row items-start gap-3 flex-1 justify-end mt-3 lg:mt-5">
+                <div className="flex-1 flex flex-col gap-1">
+                  <button
+                    className="bg-primary text-white rounded-md px-3 py-3 w-full text-sm hover:bg-primary-focus transition"
+                    type="button"
+                    onClick={() => {
+                      placeBid(
+                        bidAmount,
+                        prodList[0].id,
+                        prodList[0].SKU,
+                        prodList[0].sellerId,
+                        prodList[0].seller
+                      );
+                    }}
+                  >
+                    {t("placeBid")}
+                  </button>
+                  <span className="text-sm text-center">
+                    {formatAmount(bidAmount, locale, true)}
+                  </span>
+                </div>
                 <Link
                   href={"/marketplace/" + encodeURIComponent(prodList[0].slug)}
                   className="bg-slate-600 text-white rounded-md px-3 py-3 flex-1 text-sm hover:bg-slate-700 transition text-center"

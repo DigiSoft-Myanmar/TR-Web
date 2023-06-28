@@ -4,19 +4,24 @@ import AdsList from "../presentational/AdsList";
 import AdsDetailList from "../presentational/AdsDetailList";
 import { AdsLocation, AdsPage, checkExpire } from "@/util/adsHelper";
 import AdsPickerDialog from "../modal/dialog/AdsPickerDialog";
+import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
 
 function AdsPlacementScreen({
   data,
   onBackPress,
+  refetch,
 }: {
   data: Ads[];
   onBackPress: Function;
+  refetch: Function;
 }) {
   const [adsLocation, setAdsLocation] = React.useState<any>();
   const [page, setPage] = React.useState<string>(AdsPage.Home);
   const [adsModalOpen, setAdsModalOpen] = React.useState(false);
   const [type, setType] = React.useState(AdsPlacement.OneCol);
   const [location, setLocation] = React.useState<any>(AdsLocation.HomeAds1);
+  const [adsDetailOpen, setAdsDetailOpen] = React.useState(false);
+  const [ads, setAds] = React.useState<any>(undefined);
 
   const usage = [
     {
@@ -929,6 +934,10 @@ function AdsPlacementScreen({
                   setAdsModalOpen={setAdsModalOpen}
                   setType={setType}
                   setLocation={setLocation}
+                  openDetails={(adInfo) => {
+                    setAds(adInfo);
+                    setAdsDetailOpen(true);
+                  }}
                 />
               ))}
           </div>
@@ -939,6 +948,14 @@ function AdsPlacementScreen({
         setModalOpen={setAdsModalOpen}
         type={type}
         location={location}
+      />
+      <AdsDetailDialog
+        isModalOpen={adsDetailOpen}
+        setModalOpen={setAdsDetailOpen}
+        ads={ads}
+        refetch={() => {
+          refetch();
+        }}
       />
     </>
   );

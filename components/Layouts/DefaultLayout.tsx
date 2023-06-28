@@ -17,6 +17,7 @@ import { useQuery } from "react-query";
 import { MarketplaceProvider } from "@/context/MarketplaceContext";
 import { useScrollDirection } from "react-use-scroll-direction";
 import { SellerProvider } from "@/context/SellerContext";
+import { AuctionProvider } from "@/context/AuctionContext";
 
 declare global {
   interface Window {
@@ -198,46 +199,48 @@ function DefaultLayout({ children }: LayoutProps) {
   ) : (
     <SellerProvider>
       <MarketplaceProvider>
-        <div
-          className={`min-h-screen bg-gray-50 ${
-            router.locale && router.locale === "en"
-              ? "font-poppins"
-              : "font-myanmarAngoun"
-          }`}
-        >
-          <Header content={content} categories={categories} />
+        <AuctionProvider>
+          <div
+            className={`min-h-screen bg-gray-50 ${
+              router.locale && router.locale === "en"
+                ? "font-poppins"
+                : "font-myanmarAngoun"
+            }`}
+          >
+            <Header content={content} categories={categories} />
 
-          {children}
-          {showBtn === true && (
-            <button
-              className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-[#f0777f] text-white hover:bg-primary-focus"
-              onClick={() => {
-                if (window) {
-                  window.scrollTo({
-                    top: 0,
-                    behavior: "smooth",
-                  });
-                }
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
+            {children}
+            {showBtn === true && (
+              <button
+                className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-[#f0777f] text-white hover:bg-primary-focus"
+                onClick={() => {
+                  if (window) {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "smooth",
+                    });
+                  }
+                }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 11l5-5m0 0l5 5m-5-5v12"
-                />
-              </svg>
-            </button>
-          )}
-          <Footer content={content} />
-        </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M7 11l5-5m0 0l5 5m-5-5v12"
+                  />
+                </svg>
+              </button>
+            )}
+            <Footer content={content} />
+          </div>
+        </AuctionProvider>
       </MarketplaceProvider>
     </SellerProvider>
   );

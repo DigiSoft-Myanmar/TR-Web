@@ -34,33 +34,19 @@ import _ from "lodash";
 import { useMarketplace } from "@/context/MarketplaceContext";
 
 import {
-  EmailShareButton,
   FacebookIcon,
   FacebookMessengerIcon,
   FacebookMessengerShareButton,
   FacebookShareButton,
-  HatenaShareButton,
-  InstapaperShareButton,
-  LineShareButton,
-  LinkedinShareButton,
-  LivejournalShareButton,
-  MailruShareButton,
-  OKShareButton,
-  PinterestShareButton,
-  PocketShareButton,
-  RedditShareButton,
   TelegramIcon,
   TelegramShareButton,
-  TumblrShareButton,
   TwitterIcon,
   TwitterShareButton,
   ViberIcon,
   ViberShareButton,
-  VKShareButton,
-  WhatsappShareButton,
-  WorkplaceShareButton,
 } from "react-share";
 import { showErrorDialog } from "@/util/swalFunction";
+import { useAuction } from "@/context/AuctionContext";
 
 function MarketplacePage({
   product,
@@ -91,6 +77,8 @@ function MarketplacePage({
     isShippingAddressFilled,
   } = useMarketplace();
 
+  const { placeBid } = useAuction();
+
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
   const router = useRouter();
@@ -111,16 +99,29 @@ function MarketplacePage({
   );
 
   const [remainingTime, setRemainingTime] = React.useState<RemainingTime>();
-  const { data } = useQuery(["bidAmount", product.id, product.SKU], () =>
-    fetch(
-      "/api/auction/prod?prodId=" + product.id + "&SKU=" + product.SKU
-    ).then((res) => {
-      let json = res.json();
-      return json;
-    })
+  const { data, refetch } = useQuery(
+    ["bidAmount", product.id, product.SKU],
+    () =>
+      fetch(
+        "/api/auction/prod?prodId=" + product.id + "&SKU=" + product.SKU
+      ).then((res) => {
+        let json = res.json();
+        return json;
+      })
   );
   const [bidAmount, setBidAmount] = React.useState(0);
   const [isAvailable, setAvailable] = React.useState(false);
+  const { newBid } = useAuction();
+
+  React.useEffect(() => {
+    if (newBid) {
+      if (
+        newBid.find((z) => z.productId === product.id && z.SKU === product.SKU)
+      ) {
+        refetch();
+      }
+    }
+  }, [newBid]);
 
   React.useEffect(() => {
     if (product.type === ProductType.Variable) {
@@ -359,9 +360,9 @@ function MarketplacePage({
                 fill="currentColor"
               >
                 <path
-                  fill-rule="evenodd"
+                  fillRule="evenodd"
                   d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clip-rule="evenodd"
+                  clipRule="evenodd"
                 />
               </svg>
             </li>
@@ -388,9 +389,9 @@ function MarketplacePage({
                       fill="currentColor"
                     >
                       <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   </li>
@@ -440,6 +441,17 @@ function MarketplacePage({
                 >
                   About Product
                 </a>
+
+                {product.type === ProductType.Auction ? (
+                  <a
+                    href=""
+                    className="-mb-px border-b-2 border-transparent p-4 hover:text-primary"
+                  >
+                    Bid Information
+                  </a>
+                ) : (
+                  <></>
+                )}
 
                 <a
                   href=""
@@ -923,9 +935,18 @@ function MarketplacePage({
                     </div>
                   </div>
                   <div className="flex flex-row items-center justify-between gap-3 px-3">
-                    <a
+                    <button
+                      type="button"
                       className="group relative inline-flex items-center justify-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary flex-grow"
-                      href="/download"
+                      onClick={() => {
+                        placeBid(
+                          bidAmount,
+                          product.id,
+                          product.SKU,
+                          product.sellerId,
+                          product.seller
+                        );
+                      }}
                     >
                       <span className="absolute -start-full transition-all group-hover:start-4">
                         <svg
@@ -941,8 +962,20 @@ function MarketplacePage({
                       <span className="text-sm font-medium transition-all group-hover:ms-4">
                         Place Bid
                       </span>
-                    </a>
+                    </button>
                   </div>
+                  {isAvailable === true ? (
+                    <></>
+                  ) : isShippingAddressFilled === true ? (
+                    <span className="text-xs text-error bg-error/20 rounded-md text-center p-1">
+                      Sorry this product is not delivered to your area.
+                    </span>
+                  ) : (
+                    <span className="text-xs text-warning bg-warning/20 rounded-md text-center p-1">
+                      * Fill address to know if this seller deliver to your
+                      area.
+                    </span>
+                  )}
                   {/*  <div className="flex flex-col items-center bg-primary justify-center py-3 mx-3 rounded-md">
                     <h3 className="text-white font-semibold text-center">
                       Bidding ends in
@@ -1301,6 +1334,7 @@ function MarketplacePage({
                         }
                       />
                     </li>
+
                     <li className="w-full hover:bg-gray-100 py-2">
                       <ViberShareButton
                         url={"https://treasurerush.com.mm/" + router.asPath}

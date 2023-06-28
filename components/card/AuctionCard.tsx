@@ -8,18 +8,33 @@ import { useRouter } from "next/router";
 import { RemainingTime } from "@/types/productTypes";
 import { convertMsToTime, getValue } from "@/util/formatter";
 import { useQuery } from "react-query";
+import Link from "next/link";
+import { useAuction } from "@/context/AuctionContext";
 
 function AuctionCard({ product }: { product: any }) {
   const { locale } = useRouter();
-  const { data } = useQuery(["bidAmount", product.id, product.SKU], () =>
-    fetch(
-      "/api/auction/prod?prodId=" + product.id + "&SKU=" + product.SKU
-    ).then((res) => {
-      let json = res.json();
-      return json;
-    })
+  const { data, refetch } = useQuery(
+    ["bidAmount", product.id, product.SKU],
+    () =>
+      fetch(
+        "/api/auction/prod?prodId=" + product.id + "&SKU=" + product.SKU
+      ).then((res) => {
+        let json = res.json();
+        return json;
+      })
   );
   const [remainingTime, setRemainingTime] = React.useState<RemainingTime>();
+  const { newBid } = useAuction();
+
+  React.useEffect(() => {
+    if (newBid) {
+      if (
+        newBid.find((z) => z.productId === product.id && z.SKU === product.SKU)
+      ) {
+        refetch();
+      }
+    }
+  }, [newBid]);
 
   React.useEffect(() => {
     if (product) {
@@ -59,7 +74,10 @@ function AuctionCard({ product }: { product: any }) {
   }, [product]);
 
   return (
-    <div className="max-w-[200px] overflow-hidden flex flex-col gap-3 rounded-md cursor-pointer bg-white">
+    <Link
+      className="max-w-[200px] overflow-hidden flex flex-col gap-3 rounded-md cursor-pointer bg-white"
+      href={"/marketplace/" + encodeURIComponent(product.slug)}
+    >
       <div className="overflow-hidden">
         <ProductImg
           imgUrl={fileUrl + product.imgList[0]}
@@ -114,7 +132,7 @@ function AuctionCard({ product }: { product: any }) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

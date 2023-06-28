@@ -60,6 +60,9 @@ function AdsPage() {
                   setPlacement(false);
                   refetch();
                 }}
+                refetch={() => {
+                  refetch();
+                }}
               />
             ) : (
               <section className="flex flex-col space-y-5">

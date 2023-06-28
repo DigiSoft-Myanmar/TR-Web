@@ -11,6 +11,7 @@ function AdsDetailList({
   setType,
   type,
   setLocation,
+  openDetails,
 }: {
   title: string;
   ads: Ads[];
@@ -19,10 +20,14 @@ function AdsDetailList({
   setType: Function;
   type: any;
   setLocation: Function;
+  openDetails: Function;
 }) {
   return (
-    <details open={title === currentLocation}>
-      <summary className="flex flex-row cursor-pointer items-end py-3 border-b">
+    <details
+      open={title === currentLocation}
+      className="overflow-x-hidden relative"
+    >
+      <summary className="flex flex-row cursor-pointer items-end py-3 border-b sticky top-0">
         <div className="flex flex-row items-center justify-between gap-3 flex-grow mr-3">
           <div className={`text-xs font-semibold text-gray-700`}>{title}</div>
           <span className="text-xs bg-darkShade text-white p-1 rounded-full min-w-[24px] min-h-[24px] max-w-[24px] max-h-[24px] items-center flex justify-center">
@@ -59,7 +64,13 @@ function AdsDetailList({
           </button>
         </div>
         {ads.map((z, index) => (
-          <div key={index} className="border p-2">
+          <div
+            key={index}
+            className="border p-2 hover:border-primary cursor-pointer rounded-md"
+            onClick={() => {
+              openDetails(z);
+            }}
+          >
             <AdsCard ads={z} />
           </div>
         ))}

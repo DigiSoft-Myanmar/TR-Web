@@ -2,7 +2,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CartItem, ShippingFee } from "@/prisma/models/cartItems";
 import { OutOfStockError } from "@/types/ApiResponseTypes";
 import { DeliveryType } from "@/types/orderTypes";
-import { getHeaders } from "@/util/authHelper";
+import { getHeaders, isBuyer } from "@/util/authHelper";
 import { fetcher } from "@/util/fetcher";
 import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
 import { formatAmount } from "@/util/textHelper";
@@ -57,6 +57,7 @@ type MarketplaceType = {
   checkShip: Function;
   isShippingAddressFilled: boolean;
   attributes: any;
+  canShip: Function;
 };
 
 export type BillingAddress = {
@@ -104,6 +105,7 @@ const MarketplaceContext = createContext<MarketplaceType>({
   checkShip: () => {},
   isShippingAddressFilled: false,
   attributes: [],
+  canShip: () => {},
 });
 
 export const useMarketplace = () => React.useContext(MarketplaceContext);
@@ -480,7 +482,15 @@ export const MarketplaceProvider = ({
     variation?: any,
     seller?: any
   ) {
-    if (session) {
+    if (session && session.id === sellerId) {
+      showErrorDialog(
+        "You cannot buy your own product.",
+        "သင့်ကိုယ်ပိုင် ပစ္စည်းအား ၀ယ်ယူခွင့်မရှိပါ။",
+        locale
+      );
+      return;
+    }
+    if (session && isBuyer(session)) {
       if (isAddressDiff === true) {
         if (
           !shippingLocation.stateId ||
@@ -582,6 +592,12 @@ export const MarketplaceProvider = ({
         true,
         shippingLocation
       );
+    } else if (session && !isBuyer(session)) {
+      showErrorDialog(
+        "You are not allowed to perform this action",
+        "ရှေ့ဆက်ရန် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။",
+        locale
+      );
     } else {
       showErrorDialog(
         "Please login to continue.",
@@ -656,6 +672,7 @@ export const MarketplaceProvider = ({
         setShippingLocation,
         checkShip,
         attributes,
+        canShip,
       }}
     >
       {children}
