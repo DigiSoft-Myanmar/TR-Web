@@ -2,6 +2,12 @@ import { ProductType } from "@prisma/client";
 import _ from "lodash";
 import { getSalePrice, isBetween } from "./verify";
 
+export function getPriceDiscount(regularPrice: number, salePrice: number) {
+  return parseFloat(
+    (((regularPrice - salePrice) / regularPrice) * 100).toFixed(2)
+  );
+}
+
 export function getPricingSingle(product: any) {
   if (!product.regularPrice) {
     return undefined;

@@ -81,7 +81,15 @@ function MarketplacePage({
   content: Content;
 }) {
   const [qty, setQty] = React.useState(1);
-  const { setWishedItems, addCart, wishedItems } = useMarketplace();
+  const {
+    setWishedItems,
+    addCart,
+    wishedItems,
+    checkShip,
+    billingAddress,
+    shippingLocation,
+    isShippingAddressFilled,
+  } = useMarketplace();
 
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
@@ -112,6 +120,7 @@ function MarketplacePage({
     })
   );
   const [bidAmount, setBidAmount] = React.useState(0);
+  const [isAvailable, setAvailable] = React.useState(false);
 
   React.useEffect(() => {
     if (product.type === ProductType.Variable) {
@@ -184,6 +193,20 @@ function MarketplacePage({
     list[index] = tempImg;
     setImgList(list);
   }
+
+  React.useEffect(() => {
+    const fetchDataAsync = async () => {
+      try {
+        const data = await checkShip(product?.sellerId);
+        setAvailable(data);
+        // Handle the data (e.g., update component state)
+      } catch (error) {
+        // Handle error
+      }
+    };
+
+    fetchDataAsync();
+  }, [product?.sellerId, billingAddress, shippingLocation]);
 
   React.useEffect(() => {
     if (
@@ -1094,7 +1117,9 @@ function MarketplacePage({
                             product.id,
                             qty,
                             product.stockType,
-                            product.stockLevel
+                            product.stockLevel,
+                            undefined,
+                            product.seller
                           );
                         } else {
                           if (
@@ -1112,7 +1137,8 @@ function MarketplacePage({
                               qty,
                               currentVariation.stockType,
                               currentVariation.stockLevel,
-                              currentVariation
+                              currentVariation,
+                              product.seller
                             );
                           } else {
                             showErrorDialog(
@@ -1144,6 +1170,18 @@ function MarketplacePage({
                       </span>
                     </button>
                   </div>
+                  {isAvailable === true ? (
+                    <></>
+                  ) : isShippingAddressFilled === true ? (
+                    <span className="text-xs text-error bg-error/20 rounded-md text-center p-1">
+                      Sorry this product is not delivered to your area.
+                    </span>
+                  ) : (
+                    <span className="text-xs text-warning bg-warning/20 rounded-md text-center p-1">
+                      * Fill address to know if this seller deliver to your
+                      area.
+                    </span>
+                  )}
                 </>
               )}
 

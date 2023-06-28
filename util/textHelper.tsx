@@ -1,4 +1,4 @@
-import { Brand, State, User } from "@prisma/client";
+import { Brand, PromoCode, State, User } from "@prisma/client";
 
 export function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -11,6 +11,49 @@ export function getText(
 ) {
   if (locale === "mm" && mmText && mmText.length > 0) return mmText;
   return engText ? engText : "";
+}
+
+export function getPromoAvailCount(
+  promoCode: PromoCode & {
+    seller: User;
+    usage: number;
+    ownUsage: number;
+  }
+) {
+  if (
+    promoCode.isCouponUsagePerUserInfinity &&
+    promoCode.isCouponUsageInfinity
+  ) {
+    return Number.POSITIVE_INFINITY;
+  } else if (
+    !promoCode.isCouponUsagePerUserInfinity &&
+    promoCode.isCouponUsageInfinity
+  ) {
+    return promoCode.couponUsagePerUser - promoCode.ownUsage;
+  } else if (
+    promoCode.isCouponUsagePerUserInfinity &&
+    !promoCode.isCouponUsageInfinity
+  ) {
+    return promoCode.couponUsage - promoCode.usage;
+  } else {
+    var availableUsage = promoCode.couponUsage - promoCode.usage;
+    if (
+      promoCode.isCouponUsageInfinity === false &&
+      availableUsage >= promoCode.couponUsagePerUser
+    ) {
+      return promoCode.couponUsagePerUser;
+    }
+    if (promoCode.isCouponUsageInfinity === true) {
+      return availableUsage;
+    }
+    if (
+      promoCode.isCouponUsageInfinity === false &&
+      availableUsage < promoCode.couponUsagePerUser
+    ) {
+      return availableUsage - promoCode.ownUsage;
+    }
+    return availableUsage >= 0 ? availableUsage : 0;
+  }
 }
 
 function getCount(text: string) {

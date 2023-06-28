@@ -17,7 +17,6 @@ export default async function handler(
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
-    console.log(session);
 
     if (session) {
       if (session && session.role === Role.Buyer) {
@@ -78,9 +77,6 @@ export default async function handler(
               };
               if (cartData.shippingFee) {
                 shippingFee = cartData.shippingFee;
-              }
-              if (cartData.screenshot) {
-                screenshot = cartData.screenshot;
               }
 
               if (cartData.isAddressDiff === true) {
@@ -277,19 +273,11 @@ export default async function handler(
                         (e) => e.sellerId === sellerIds[b]
                       );
                       if (exists >= 0) {
-                        if (
-                          shippingFee[exists].deliveryType ===
-                          DeliveryType.CarGate
-                        ) {
-                          shippingFee[exists].shippingFee =
-                            json.carGateShippingCost;
+                        if (json.shippingCost! >= 0) {
+                          shippingFee[exists].shippingFee = json.shippingCost;
                         } else {
-                          if (json.shippingCost! >= 0) {
-                            shippingFee[exists].shippingFee = json.shippingCost;
-                          } else {
-                            shippingFee[exists].shippingFee =
-                              json.defaultShippingCost;
-                          }
+                          shippingFee[exists].shippingFee =
+                            json.defaultShippingCost;
                         }
                         if (json.isOfferFreeShipping === true) {
                           let subTotal = cartItems
@@ -300,6 +288,7 @@ export default async function handler(
                                 : e.normalPrice * e.quantity
                             )
                             .reduce((a, b) => a + b, 0);
+
                           if (subTotal >= json.freeShippingCost) {
                             shippingFee[exists].isFreeShipping = true;
                           } else {
@@ -326,14 +315,14 @@ export default async function handler(
                         if (json.shippingIncluded === true) {
                           shippingFee.push({
                             sellerId: sellerIds[b],
-                            deliveryType: DeliveryType.CarGate,
+                            deliveryType: DeliveryType.DoorToDoor,
                             isFreeShipping: freeShipping,
                             shippingFee: undefined,
                           });
                         } else {
                           shippingFee.push({
                             sellerId: sellerIds[b],
-                            deliveryType: DeliveryType.CarGate,
+                            deliveryType: DeliveryType.DoorToDoor,
                             isFreeShipping: freeShipping,
                             shippingFee: undefined,
                           });
@@ -363,19 +352,11 @@ export default async function handler(
                       );
 
                       if (exists >= 0) {
-                        if (
-                          shippingFee[exists].deliveryType ===
-                          DeliveryType.CarGate
-                        ) {
-                          shippingFee[exists].shippingFee =
-                            json.carGateShippingCost;
+                        if (json.shippingCost! >= 0) {
+                          shippingFee[exists].shippingFee = json.shippingCost;
                         } else {
-                          if (json.shippingCost! >= 0) {
-                            shippingFee[exists].shippingFee = json.shippingCost;
-                          } else {
-                            shippingFee[exists].shippingFee =
-                              json.defaultShippingCost;
-                          }
+                          shippingFee[exists].shippingFee =
+                            json.defaultShippingCost;
                         }
                         if (json.isOfferFreeShipping === true) {
                           let subTotal = cartItems

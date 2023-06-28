@@ -27,6 +27,7 @@ import Avatar from "../presentational/Avatar";
 import DefaultDialog from "../modal/dialog/DefaultDialog";
 import NavModal from "../modal/sideModal/NavModal";
 import CartModal from "../modal/sideModal/CartModal";
+import { isBuyer, isSeller } from "@/util/authHelper";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -64,13 +65,12 @@ function Header({
   const { data: banner } = useSWR("/api/siteManagement/banner", fetcher); */
 
   const [isModalOpen, setModalOpen] = React.useState(false);
-  const [isCartModalOpen, setCartModalOpen] = React.useState(false);
+  const [isCartModalOpen, setCartModalOpen] = React.useState(true);
   const categoryBtnRef = useRef<any>();
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const [scrollPosition, setScrollPosition] = React.useState(0);
   const { data: banner } = useSWR("/api/siteManagement/banner", fetcher);
-  const { isSeller, toggleSellerMode } = useSeller();
 
   React.useEffect(() => {
     if (banner && banner.length > 1) {
@@ -570,7 +570,7 @@ function Header({
           className={`hidden lg:flex flex-row items-center justify-between px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 min-h-[52px]`}
         >
           <div className="flex flex-row items-center gap-3">
-            {isSeller === true ? (
+            {isSeller(session) ? (
               <>
                 <Link
                   href={"/marketplace"}
@@ -686,7 +686,7 @@ function Header({
             <Link
               href={"/marketplace"}
               className={`whitespace-nowrap ${
-                isSeller === false ? "border-r pr-3 border-r-neutral" : ""
+                isSeller(session) ? "border-r pr-3 border-r-neutral" : ""
               } hover:text-primary hover:underline flex flex-row items-center gap-2`}
             >
               <svg
@@ -705,7 +705,7 @@ function Header({
               </svg>
               <span>Get Apps</span>
             </Link>
-            {isSeller === false && (
+            {isBuyer(session) && (
               <div className="whitespace-nowrap hover:text-primary flex flex-row items-center gap-2 flex-grow">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -746,7 +746,7 @@ function Header({
         </div>
 
         <div className="flex lg:hidden flex-row items-center px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 overflow-x-auto scrollbar-hide">
-          {isSeller === true ? (
+          {isSeller(session) ? (
             <>
               <Link
                 href={"/marketplace"}

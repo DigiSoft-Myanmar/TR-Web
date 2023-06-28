@@ -11,6 +11,7 @@ import {
 } from "@/types/ApiResponseTypes";
 import { otherPermission } from "@/types/permissionTypes";
 import { canAccess } from "@/util/roleHelper";
+import { isTodayBetween } from "@/util/verify";
 import { Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -19,6 +20,7 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     let session = await useAuth(req);
+    const { sellerId } = req.query;
     let allowPermission = await canAccess(req, otherPermission.promotionView);
     if (allowPermission === false) {
       return res.status(401).json(Unauthorized);
@@ -36,8 +38,7 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
       filter = {};
     } else {
       filter = {
-        startDate: { $lte: date.toLocaleDateString("en-ca") },
-        endDate: { $gte: date.toLocaleDateString("en-ca") },
+        sellerId: sellerId?.toString(),
       };
     }
 
@@ -49,12 +50,25 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
       },
     });
 
+    data = data.filter((z) =>
+      z.startDate && z.endDate ? isTodayBetween(z.startDate, z.endDate) : true
+    );
+
     for (let i = 0; i < data.length; i++) {
       data[i].usage = data[i].Order.length;
+      if (session) {
+        data[i].ownUsage = data[i].Order.filter(
+          (z) => z.orderByUserId === session.id
+        ).length;
+      }
+      if (data[i].Order) {
+        delete data[i].Order;
+      }
     }
 
     return res.status(200).json(data);
   } catch (err) {
+    console.log(err);
     res.status(400).json(err);
   }
 }

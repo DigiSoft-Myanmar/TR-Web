@@ -1,3 +1,4 @@
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { CartItem, ShippingFee } from "@/prisma/models/cartItems";
 import { OutOfStockError } from "@/types/ApiResponseTypes";
 import { DeliveryType } from "@/types/orderTypes";
@@ -20,7 +21,7 @@ import { useRouter } from "next/router";
 import React, { createContext, useMemo } from "react";
 import { useQuery } from "react-query";
 
-type ProductWithSeller = Product & { seller: User };
+type ProductWithSeller = Product & { seller: User; Brand: Brand };
 
 type MarketplaceType = {
   cartItems: CartItem[];
@@ -28,13 +29,12 @@ type MarketplaceType = {
   totalPrice: number;
   productDetails: ProductWithSeller[];
   wishedItems: WishedItems | undefined;
-  promoCode: PromoCode | undefined;
+  promoCode: PromoCode[];
   shippingFee: ShippingFee[];
   promoTotal: number;
   billingAddress?: BillingAddress;
   shippingAddress?: ShippingAddress;
   isAddressDiff: boolean;
-  isPromoLoading: boolean;
   addPromotion: Function;
   removePromotion: Function;
   setWishedItems: Function;
@@ -47,12 +47,16 @@ type MarketplaceType = {
     quantity: number,
     stockType: StockType,
     stockLevel: number,
-    variation?: any
+    variation?: any,
+    seller?: any
   ) => void;
   modifyAddress: Function;
   shippingLocation: any;
   setShippingLocation: Function;
   sellerDetails: User[];
+  checkShip: Function;
+  isShippingAddressFilled: boolean;
+  attributes: any;
 };
 
 export type BillingAddress = {
@@ -83,12 +87,11 @@ const MarketplaceContext = createContext<MarketplaceType>({
   productDetails: [],
   wishedItems: undefined,
   shippingFee: [],
-  promoCode: undefined,
+  promoCode: [],
   promoTotal: 0,
   billingAddress: undefined,
   shippingAddress: undefined,
   isAddressDiff: false,
-  isPromoLoading: false,
   addPromotion: () => {},
   removePromotion: () => {},
   setWishedItems: (data: WishedItems[]) => {},
@@ -98,6 +101,9 @@ const MarketplaceContext = createContext<MarketplaceType>({
   shippingLocation: null,
   setShippingLocation: () => {},
   sellerDetails: [],
+  checkShip: () => {},
+  isShippingAddressFilled: false,
+  attributes: [],
 });
 
 export const useMarketplace = () => React.useContext(MarketplaceContext);
@@ -110,16 +116,21 @@ export const MarketplaceProvider = ({
   const router = useRouter();
   const { data: session }: any = useSession();
   const { locale } = useRouter();
-  const [isPromoLoading, setPromoLoading] = React.useState(false);
-  const [promoCode, setPromoCode] = React.useState<PromoCode | undefined>(
-    undefined
+  const [promoCode, setPromoCode] = React.useState<PromoCode[]>([]);
+  const [shippingLocation, setShippingLocation] = useLocalStorage(
+    "shippingLocation",
+    JSON.stringify({
+      stateId: "",
+      districtId: "",
+      townshipId: "",
+    })
   );
-  const [shippingLocation, setShippingLocation] = React.useState({
-    stateId: "",
-    districtId: "",
-    townshipId: "",
-  });
-
+  const { data: attributes } = useQuery("attributesData", () =>
+    fetch("/api/products/attributes").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
   const { data: cartData, refetch: refetchCart } = useQuery("cartData", () =>
     fetch("/api/cart").then((res) => {
       let json = res.json();
@@ -134,14 +145,6 @@ export const MarketplaceProvider = ({
     })
   );
 
-  const screenshot: string[] = useMemo(() => {
-    if (cartData?.screenshot) {
-      return cartData.screenshot;
-    } else {
-      return [];
-    }
-  }, [cartData?.screenshot]);
-
   const billingAddress: BillingAddress = useMemo(() => {
     if (cartData?.billingAddress) {
       return cartData.billingAddress;
@@ -154,17 +157,47 @@ export const MarketplaceProvider = ({
     if (cartData?.shippingAddress) {
       return cartData.shippingAddress;
     } else {
-      return {};
+      return shippingLocation;
     }
-  }, [cartData?.shippingAddress]);
+  }, [cartData?.shippingAddress, shippingLocation]);
 
   const isAddressDiff: boolean = useMemo(() => {
     if (cartData?.isAddressDiff === true) {
       return true;
     } else {
+      if (
+        billingAddress.stateId === shippingLocation.stateId &&
+        billingAddress.districtId === shippingLocation.districtId &&
+        billingAddress.townshipId === shippingLocation.townshipId
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }, [cartData?.isAddressDiff, shippingLocation, billingAddress]);
+
+  const isShippingAddressFilled: boolean = useMemo(() => {
+    if (isAddressDiff === true) {
+      if (
+        shippingLocation.townshipId &&
+        shippingLocation.districtId &&
+        shippingLocation.stateId
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (
+      billingAddress.townshipId &&
+      billingAddress.districtId &&
+      billingAddress.stateId
+    ) {
+      return true;
+    } else {
       return false;
     }
-  }, [cartData?.isAddressDiff]);
+  }, [isAddressDiff, billingAddress, shippingLocation]);
 
   const shippingFee: ShippingFee[] = useMemo(() => {
     if (cartData?.shippingFee) {
@@ -210,25 +243,29 @@ export const MarketplaceProvider = ({
   const promoTotal = useMemo(() => {
     let totalDiscount = 0;
     if (promoCode) {
-      let brandList = promoCode?.sellerId;
-      let subTotal = cartItems
-        .filter((e) => brandList === e.sellerId)
-        .map((e) => e.quantity * e.salePrice)
-        .reduce((a, b) => a + b, 0);
-      if (subTotal >= promoCode.minimumPurchasePrice) {
-        if (promoCode.isShippingFree) {
-          if (shippingFee.find((e) => e.sellerId === brandList)) {
-            changeDeliveryType(
-              brandList,
-              shippingFee.find((e) => e.sellerId === brandList)!.deliveryType,
-              0
-            );
+      for (let i = 0; i < promoCode.length; i++) {
+        let subTotal = cartItems
+          .filter((e) => promoCode[i].sellerId === e.sellerId)
+          .map((e) =>
+            e.salePrice ? e.quantity * e.salePrice : e.quantity * e.normalPrice
+          )
+          .reduce((a, b) => a + b, 0);
+        if (subTotal >= promoCode[i].minimumPurchasePrice) {
+          if (promoCode[i].isShippingFree) {
+            if (shippingFee.find((e) => e.sellerId === promoCode[i].sellerId)) {
+              changeDeliveryType(
+                promoCode[i].sellerId,
+                shippingFee.find((e) => e.sellerId === promoCode[i].sellerId)!
+                  .deliveryType,
+                0
+              );
+            }
           }
-        }
-        if (promoCode.isPercent) {
-          totalDiscount = subTotal - (promoCode.discount * subTotal) / 100;
-        } else {
-          totalDiscount = subTotal - promoCode.discount;
+          if (promoCode[i].isPercent) {
+            totalDiscount = (promoCode[i].discount * subTotal) / 100;
+          } else {
+            totalDiscount = promoCode[i].discount;
+          }
         }
       }
     }
@@ -292,7 +329,7 @@ export const MarketplaceProvider = ({
     isAddressDiff: boolean,
     showDialog: boolean,
 
-    shippingAddress?: ShippingAddress
+    shippingLocation?: any
   ) {
     fetch("/api/cart", {
       method: "POST",
@@ -300,7 +337,7 @@ export const MarketplaceProvider = ({
         cartItems: cartItems,
         shippingFee: shippingFee,
         billingAddress: billingAddress,
-        shippingAddress: shippingAddress,
+        shippingAddress: shippingLocation,
         isAddressDiff: isAddressDiff,
       }),
       headers: getHeaders(session),
@@ -336,8 +373,7 @@ export const MarketplaceProvider = ({
           billingAddress,
           isAddressDiff,
           false,
-
-          shippingAddress
+          shippingLocation
         );
       } else {
         let c = [...cartItems];
@@ -349,14 +385,91 @@ export const MarketplaceProvider = ({
           billingAddress,
           isAddressDiff,
           false,
-
-          shippingAddress
+          shippingLocation
         );
       }
     }
   }
 
-  function addCart(
+  async function checkShip(sellerId: string) {
+    if (session) {
+      if (isAddressDiff === true) {
+        if (shippingLocation.townshipId) {
+          let data = await fetch(
+            "/api/shippingCost?sellerId=" +
+              sellerId +
+              "&state=" +
+              shippingLocation.stateId +
+              "&district=" +
+              shippingLocation.districtId +
+              "&township=" +
+              shippingLocation.townshipId
+          )
+            .then((data) => data.json())
+            .then((json) => {
+              return json;
+            });
+
+          if (data.shippingIncluded === true) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        if (billingAddress.townshipId) {
+          let data = await fetch(
+            "/api/shippingCost?sellerId=" +
+              sellerId +
+              "&state=" +
+              billingAddress.stateId +
+              "&district=" +
+              billingAddress.districtId +
+              "&township=" +
+              billingAddress.townshipId
+          )
+            .then((data) => data.json())
+            .then((json) => {
+              return json;
+            });
+          if (data.shippingIncluded === true) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    } else {
+      return false;
+    }
+  }
+
+  async function canShip(sellerId: string, seller: any) {
+    let isAvailable = await checkShip(sellerId);
+
+    if (isAvailable === false) {
+      if (isAddressDiff === true) {
+        showErrorDialog(
+          "Sorry. " + seller.username + " cannot deliver to your area.",
+          "",
+          locale
+        );
+      } else {
+        showErrorDialog(
+          "Sorry. " + seller.username + " cannot deliver to your area.",
+          "",
+          locale
+        );
+      }
+    }
+    return isAvailable;
+  }
+
+  async function addCart(
     sellerId: string,
     normalPrice: number,
     salePrice: number,
@@ -364,9 +477,46 @@ export const MarketplaceProvider = ({
     quantity: number,
     stockType: StockType,
     stockLevel: number,
-    variation?: any
+    variation?: any,
+    seller?: any
   ) {
     if (session) {
+      if (isAddressDiff === true) {
+        if (
+          !shippingLocation.stateId ||
+          !shippingLocation.districtId ||
+          !shippingLocation.townshipId
+        ) {
+          showErrorDialog(
+            "Please provide your deliver area. We'll check if " +
+              seller.username +
+              " delivers to your area.",
+            "",
+            locale
+          );
+          return;
+        }
+      } else {
+        if (
+          !billingAddress.stateId ||
+          !billingAddress.districtId ||
+          !billingAddress.townshipId
+        ) {
+          showErrorDialog(
+            "Please provide your deliver area. We'll check if " +
+              seller.username +
+              " delivers to your area.",
+            "",
+            locale
+          );
+          return;
+        }
+      }
+      let isAvailable = await canShip(sellerId, seller);
+      if (isAvailable === false) {
+        return;
+      }
+
       let c = [...cartItems];
       let index = c.findIndex((z) =>
         variation
@@ -430,7 +580,7 @@ export const MarketplaceProvider = ({
         billingAddress,
         isAddressDiff,
         true,
-        shippingAddress
+        shippingLocation
       );
     } else {
       showErrorDialog(
@@ -455,33 +605,26 @@ export const MarketplaceProvider = ({
       billingAddress,
       isAddressDiff,
       false,
-      shippingAddress
+      shippingLocation
     );
   }
 
   function removePromotion() {
-    setPromoCode(undefined);
+    setPromoCode([]);
   }
 
-  function addPromotion(promoCode: string, isChange?: boolean) {
+  function addPromotion(promotion: PromoCode) {
     if (session) {
-      setPromoLoading(true);
-      fetch(
-        "/api/promotions/checkPromo?promoCode=" + encodeURIComponent(promoCode)
-      )
-        .then(async (data) => {
-          setPromoLoading(false);
-          if (data.status === 200) {
-            return data.json();
-          } else {
-            let error = await data.json();
-            showErrorDialog(error.error, error.errorMM, locale);
-          }
-        })
-        .then((json) => {
-          if (json) {
-          }
-        });
+      setPromoCode((prevValue) => {
+        if (prevValue.find((z) => z.sellerId === promotion.sellerId)) {
+          return [
+            ...prevValue.filter((z) => z.sellerId !== promotion.sellerId),
+            promotion,
+          ];
+        } else {
+          return [...prevValue, promotion];
+        }
+      });
     }
   }
 
@@ -499,8 +642,8 @@ export const MarketplaceProvider = ({
         billingAddress,
         shippingAddress,
         isAddressDiff,
-        isPromoLoading,
         sellerDetails,
+        isShippingAddressFilled,
 
         addPromotion,
         removePromotion,
@@ -511,6 +654,8 @@ export const MarketplaceProvider = ({
 
         shippingLocation,
         setShippingLocation,
+        checkShip,
+        attributes,
       }}
     >
       {children}

@@ -2153,15 +2153,12 @@ function AdminSidebar({ isOpen }: Props) {
 
       {isOpen === "open" && (
         <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-          <div className="flex shrink-0 items-center bg-white p-4 hover:bg-gray-50">
-            <div className="ml-1.5">
-              <p className="text-xs">
-                <strong className="block font-medium">
-                  Designed by DigiSoft (Myanmar)
-                </strong>
-              </p>
-            </div>
-          </div>
+          <p className="text-xs flex flex-col items-center w-full py-3 bg-white gap-1">
+            <span className="text-gray-500">Designed by</span>
+            <strong className="block font-medium text-primaryText">
+              DigiSoft (Myanmar)
+            </strong>
+          </p>
         </div>
       )}
     </div>

@@ -22,8 +22,6 @@ export const subscribeList = [
 
 function Footer({ content }: { content: Content }) {
   const { t } = useTranslation("common");
-  const { data: aboutData } = useSWR("/api/about", fetcher);
-  const { data: contactData } = useSWR("/api/contact", fetcher);
   const { data: session }: any = useSession();
   const { locale } = useRouter();
   const { theme } = useTheme();
