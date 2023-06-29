@@ -2,6 +2,9 @@ import useAuth from "@/hooks/useAuth";
 import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import {
+  BadAuctionClose,
+  BadAuctionLessAmount,
+  BadAuctionSeller,
   BadRequest,
   NotAvailable,
   Success,
@@ -9,6 +12,7 @@ import {
 } from "@/types/ApiResponseTypes";
 import { isBuyer } from "@/util/authHelper";
 import { getDevice } from "@/util/getDevice";
+import { isTodayBetween } from "@/util/verify";
 import e from "express";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -54,15 +58,55 @@ async function addBid(req: NextApiRequest, res: NextApiResponse<any>) {
         body = JSON.parse(req.body);
       }
 
-      await prisma.auctions.create({
-        data: {
-          amount: body.amount,
-          SKU: body.SKU,
-          createdByUserId: session.id,
-          productId: body.productId,
+      let product = await prisma.product.findFirst({
+        where: {
+          id: body.productId,
         },
       });
-      return res.status(200).json(Success);
+
+      if (product) {
+        if (
+          isTodayBetween(new Date(product.startTime), new Date(product.endTime))
+        ) {
+          let auction = await prisma.auctions.findFirst({
+            where: {
+              productId: product.id,
+              SKU: product.SKU,
+            },
+          });
+          if (auction) {
+            if (auction.amount > body.amount) {
+              return res.status(400).json(BadAuctionLessAmount);
+            }
+          }
+          if (product.sellerId === session.id) {
+            return res.status(400).json(BadAuctionSeller);
+          }
+
+          await prisma.auctions.create({
+            data: {
+              amount: body.amount,
+              SKU: body.SKU,
+              createdByUserId: session.id,
+              productId: body.productId,
+            },
+          });
+
+          await prisma.product.update({
+            where: {
+              id: body.productId,
+            },
+            data: {
+              priceIndex: body.amount,
+            },
+          });
+          return res.status(200).json(Success);
+        } else {
+          return res.status(400).json(BadAuctionClose);
+        }
+      } else {
+        return res.status(400).json(BadRequest);
+      }
     } else {
       return res.status(401).json(Unauthorized);
     }

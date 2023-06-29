@@ -146,7 +146,7 @@ function AdsDetailDialog({
                             <input
                               value={url}
                               onChange={(e) => setUrl(e.currentTarget.value)}
-                              className="text-sm border p-2 rounded-md"
+                              className="text-sm border p-2 rounded-md bg-white"
                             />
                           </>
                         ) : (

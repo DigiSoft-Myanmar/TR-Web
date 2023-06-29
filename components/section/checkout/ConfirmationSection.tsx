@@ -19,7 +19,7 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { locale } = router;
-  const { promoCode } = useMarketplace();
+  const { promoCode, clearCart, removePromotion } = useMarketplace();
   const { data: session }: any = useSession();
   return (
     <div className="flex flex-col">
@@ -51,14 +51,16 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
             </svg>
           </button>
           <button
-            className={`inline-block rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
+            className={`flex flex-row items-center rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="button"
             onClick={() => {
               if (getHeaders(session)) {
                 fetch("api/cart?type=Order", {
                   method: "POST",
-                  body: JSON.stringify({ promoCodeId: promoCode?.id }),
+                  body: JSON.stringify({
+                    promoIds: promoCode.map((z) => z.id),
+                  }),
                   headers: getHeaders(session),
                 }).then(async (data) => {
                   if (data.status === 200) {
@@ -67,6 +69,8 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
                       "",
                       locale,
                       () => {
+                        clearCart();
+                        removePromotion();
                         router.push("/orders");
                       }
                     );
@@ -88,7 +92,7 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="h-4 w-4"
+              className="ml-3 h-4 w-4"
             >
               <path
                 fillRule="evenodd"

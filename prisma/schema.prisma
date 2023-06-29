@@ -595,7 +595,8 @@ model PromoCode {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Order     Order[]
+  Orders    Order[]  @relation(fields: [orderIds], references: [id])
+  orderIds  String[] @db.ObjectId
 }
 
 model Order {
@@ -610,10 +611,10 @@ model Order {
   sellerResponse  Json[]
   buyerNote       String?
 
-  discountTotal Int?
+  discountTotal Json[]
 
-  promoId   String?    @db.ObjectId
-  promoCode PromoCode? @relation(fields: [promoId], references: [id])
+  promoIds   String[]    @db.ObjectId
+  promoCodes PromoCode[] @relation(fields: [promoIds], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

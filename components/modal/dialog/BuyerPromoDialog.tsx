@@ -4,7 +4,12 @@ import { useRouter } from "next/router";
 import { useQuery } from "react-query";
 import { PromoCode, User } from "@prisma/client";
 import Avatar from "@/components/presentational/Avatar";
-import { formatAmount, getPromoAvailCount } from "@/util/textHelper";
+import {
+  formatAmount,
+  getPromoAvailCount,
+  getPromoCount,
+  getUsageCount,
+} from "@/util/textHelper";
 import LoadingScreen from "@/components/screen/LoadingScreen";
 import { useMarketplace } from "@/context/MarketplaceContext";
 
@@ -210,7 +215,9 @@ function BuyerPromoDialog({
                                 )}
 
                                 <div className="flex flex-col gap-0.5 relative">
-                                  {z.isCouponUsageInfinity === false ? (
+                                  {getPromoAvailCount(z) > 0 &&
+                                  getPromoAvailCount(z) !==
+                                    Number.POSITIVE_INFINITY ? (
                                     <>
                                       <div
                                         className="absolute bg-primary rounded-md h-1"
@@ -218,8 +225,8 @@ function BuyerPromoDialog({
                                           width:
                                             parseFloat(
                                               (
-                                                (z.usage * 100) /
-                                                z.couponUsage
+                                                (getUsageCount(z) * 100) /
+                                                getPromoCount(z)
                                               ).toFixed(2)
                                             ) + "%",
                                         }}

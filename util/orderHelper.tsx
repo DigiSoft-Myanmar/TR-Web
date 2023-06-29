@@ -59,7 +59,7 @@ export function getCartItems(cartItems: CartItem[], sellerResponse: any[]) {
       (obj: any) => obj.updatedDate
     ).reverse()[0].status;
     let d = getValidCartItems(
-      cartItems.filter((e) => e.brandId === sellerResponse[i].brandId),
+      cartItems.filter((e) => e.sellerId === sellerResponse[i].sellerId),
       status
     );
     c = [...c, ...d];
@@ -67,10 +67,10 @@ export function getCartItems(cartItems: CartItem[], sellerResponse: any[]) {
   return c;
 }
 
-export function getTotal(cartItems: CartItem[], brandId?: string) {
-  if (brandId) {
+export function getTotal(cartItems: CartItem[], sellerId?: string) {
+  if (sellerId) {
     return cartItems
-      .filter((e) => e.brandId === brandId)
+      .filter((e) => e.sellerId === sellerId)
       .map((e) =>
         e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
       )
@@ -88,13 +88,13 @@ export function getDiscountTotal(
   cartItems: CartItem[],
   sellerList: User[],
   promoCode?: PromoCode,
-  brandId?: string
+  sellerId?: string
 ) {
   if (promoCode) {
     if (promoCode.isPercent === true) {
       return (
         (cartItems
-          .filter((e: any) => (brandId ? e.brandId === brandId : true))
+          .filter((e: any) => (sellerId ? e.sellerId === sellerId : true))
           .map((e: any) =>
             e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
           )
@@ -103,7 +103,7 @@ export function getDiscountTotal(
         100
       );
     } else {
-      if (brandId) {
+      if (sellerId) {
         return promoCode.discount / sellerList.length;
       } else {
         return promoCode.discount;
@@ -144,4 +144,30 @@ export function getStock(product: Product) {
       return 0;
     }
   }
+}
+
+export function getSubTotal(order: any) {
+  return order.cartItems
+    .map((z: CartItem) =>
+      z.salePrice ? z.salePrice * z.quantity : z.normalPrice * z.quantity
+    )
+    .reduce((a, b) => a + b, 0);
+}
+
+export function getShippingFeeTotal(order: any) {
+  return order.sellerResponse
+    .map((z: any) =>
+      z.shippingFee && z.isFreeShipping === false ? z.shippingFee : 0
+    )
+    .reduce((a, b) => a + b, 0);
+}
+
+export function getPromoTotal(order: any) {
+  return order.discountTotal
+    .map((z: any) => z.discount)
+    .reduce((a, b) => a + b, 0);
+}
+
+export function getPriceTotal(order: any) {
+  return getSubTotal(order) + getShippingFeeTotal(order) - getPromoTotal(order);
 }

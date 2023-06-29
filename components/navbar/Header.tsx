@@ -28,6 +28,7 @@ import DefaultDialog from "../modal/dialog/DefaultDialog";
 import NavModal from "../modal/sideModal/NavModal";
 import CartModal from "../modal/sideModal/CartModal";
 import { isBuyer, isSeller } from "@/util/authHelper";
+import { showErrorDialog } from "@/util/swalFunction";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -485,7 +486,15 @@ function Header({
               <button
                 className="group text-primaryText flex min-w-[130px] flex-row items-center space-x-5 hover:text-primary"
                 onClick={() => {
-                  setCartModalOpen(true);
+                  if (cartItems.length > 0) {
+                    setCartModalOpen(true);
+                  } else {
+                    showErrorDialog(
+                      "Empty cart. Please buy and try again.",
+                      "",
+                      locale
+                    );
+                  }
                 }}
               >
                 <div className="indicator">
@@ -530,7 +539,15 @@ function Header({
             <button
               className="group flex text-primaryText lg:hidden flex-row items-center hover:text-primary w-14"
               onClick={() => {
-                setCartModalOpen(true);
+                if (cartItems.length > 0) {
+                  setCartModalOpen(true);
+                } else {
+                  showErrorDialog(
+                    "Empty cart. Please buy and try again.",
+                    "",
+                    locale
+                  );
+                }
               }}
             >
               <div className="indicator">

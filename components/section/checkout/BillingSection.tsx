@@ -1,6 +1,7 @@
 import FormInput from "@/components/presentational/FormInput";
 import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 import LocationPicker from "@/components/presentational/LocationPicker";
+import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { BillingAddress, useMarketplace } from "@/context/MarketplaceContext";
 import { showErrorDialog } from "@/util/swalFunction";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -212,16 +213,15 @@ function BillingSection({ nextFn }: Props) {
             </svg>
           }
         />
-        <LocationPicker
-          stateId={location?.stateId}
-          districtId={location?.districtId}
-          townshipId={location?.townshipId}
-          setLocation={(e: any) => {
+        <LocationPickerFull
+          selected={location}
+          isStart={true}
+          setSelected={(e: any) => {
             setLocation(() => {
               return {
-                stateId: e.state,
-                districtId: e.district,
-                townshipId: e.township,
+                stateId: e.stateId,
+                districtId: e.districtId,
+                townshipId: e.townshipId,
               };
             });
           }}

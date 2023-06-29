@@ -6,8 +6,9 @@ import useSWR from "swr";
 import io from "socket.io-client";
 import { getHeaders, isBuyer, isInternal } from "@/util/authHelper";
 import { Auctions } from "@prisma/client";
-import { showErrorDialog } from "@/util/swalFunction";
+import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
 import { useMarketplace } from "./MarketplaceContext";
+import { formatAmount } from "@/util/textHelper";
 
 let socket: any;
 
@@ -118,6 +119,18 @@ export const AuctionProvider = ({
           productId: productId,
         }),
         headers: getHeaders(session),
+      }).then(async (data) => {
+        if (data.status === 200) {
+          showSuccessDialog(
+            "You have successfully bidded " +
+              formatAmount(bidAmount, locale, true),
+            "",
+            locale
+          );
+        } else {
+          let json = await data.json();
+          showErrorDialog(json.error, json.errorMM, locale);
+        }
       });
     } else if (session && !isBuyer(session)) {
       showErrorDialog(

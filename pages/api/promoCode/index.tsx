@@ -46,7 +46,6 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
       where: filter,
       include: {
         seller: true,
-        Order: true,
       },
     });
 
@@ -55,14 +54,25 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
     );
 
     for (let i = 0; i < data.length; i++) {
-      data[i].usage = data[i].Order.length;
+      let orderCount = await prisma.order.count({
+        where: {
+          promoIds: {
+            has: data[i].id,
+          },
+        },
+      });
+      data[i].usage = orderCount;
+
       if (session) {
-        data[i].ownUsage = data[i].Order.filter(
-          (z) => z.orderByUserId === session.id
-        ).length;
-      }
-      if (data[i].Order) {
-        delete data[i].Order;
+        let ownCount = await prisma.order.count({
+          where: {
+            promoIds: {
+              has: data[i].id,
+            },
+            orderByUserId: session.id,
+          },
+        });
+        data[i].ownUsage = ownCount;
       }
     }
 

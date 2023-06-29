@@ -10,9 +10,15 @@ interface Props {
   selected?: any;
   setSelected: Function;
   disableLabel?: boolean;
+  isStart?: boolean;
 }
 
-function LocationPickerFull({ selected, setSelected, disableLabel }: Props) {
+function LocationPickerFull({
+  selected,
+  setSelected,
+  disableLabel,
+  isStart,
+}: Props) {
   const { data } = useSWR("/api/townships?allow=true", fetcher);
   const router = useRouter();
   const { locale } = router;
@@ -138,7 +144,9 @@ function LocationPickerFull({ selected, setSelected, disableLabel }: Props) {
           leaveTo="opacity-0"
         >
           <Listbox.Options
-            className={`absolute right-0 z-20 mt-1 max-h-60 min-w-max overflow-auto rounded-md pb-1 text-base text-primaryText shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm bg-white`}
+            className={`absolute ${
+              isStart === true ? "" : "right-0"
+            } z-20 mt-1 max-h-60 min-w-max overflow-auto rounded-md pb-1 text-base text-primaryText shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm bg-white`}
           >
             <div className="p-5 flex flex-grow sticky top-0 bg-white z-10">
               <div className="group z-0 w-full px-4">

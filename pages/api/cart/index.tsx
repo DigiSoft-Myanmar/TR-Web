@@ -485,51 +485,71 @@ export default async function handler(
                   },
                 });
 
-                let discountTotal = 0;
-                if (body.promoCodeId) {
-                  const promoCode = await prisma.promoCode.findFirst({
-                    where: {
-                      promoCode: body.promoCodeId,
-                    },
-                    include: {
-                      Order: true,
-                    },
-                  });
-                  if (promoCode) {
-                    let promoValid = true;
-                    if (
-                      promoCode.isCouponUsageInfinity === false &&
-                      promoCode.couponUsage &&
-                      promoCode.couponUsage >= promoCode.Order.length
-                    ) {
-                      promoValid = false;
-                    }
-                    if (
-                      promoCode.isCouponUsagePerUserInfinity === false &&
-                      promoCode.couponUsagePerUser &&
-                      promoCode.couponUsagePerUser >=
-                        promoCode.Order.filter(
-                          (e) => e.orderByUserId === session.id
-                        ).length
-                    ) {
-                      promoValid = false;
-                    }
+                let discountTotal = [];
+                if (body.promoIds) {
+                  for (let i = 0; i < body.promoIds.length; i++) {
+                    const promoCode = await prisma.promoCode.findFirst({
+                      where: {
+                        id: body.promoIds[i],
+                      },
+                    });
+                    if (promoCode) {
+                      let orderCount = await prisma.order.count({
+                        where: {
+                          promoIds: {
+                            has: body.promoIds[i],
+                          },
+                        },
+                      });
+                      let promoValid = true;
+                      if (
+                        promoCode.isCouponUsageInfinity === false &&
+                        promoCode.couponUsage > 0 &&
+                        promoCode.couponUsage <= orderCount
+                      ) {
+                        promoValid = false;
+                      }
+                      if (
+                        promoCode.isCouponUsagePerUserInfinity === false &&
+                        promoCode.couponUsagePerUser > 0 &&
+                        promoCode.couponUsagePerUser <= orderCount
+                      ) {
+                        promoValid = false;
+                      }
 
-                    if (promoValid === true) {
-                      let cartItem = data.cartItems;
+                      if (promoValid === true) {
+                        let cartItem = data.cartItems.filter(
+                          (z: CartItem) => z.sellerId === promoCode.sellerId
+                        );
 
-                      let total = cartItem
-                        .map((e: any) =>
-                          e.salePrice
-                            ? e.salePrice * e.quantity
-                            : e.normalPrice * e.quantity
-                        )
-                        .reduce((a, b) => a + b, 0);
-                      if (total >= promoCode.minimumPurchasePrice) {
-                        if (promoCode.isPercent === true) {
-                          discountTotal = (promoCode.discount * total) / 100;
-                        } else {
-                          discountTotal = promoCode.discount;
+                        let total = cartItem
+                          .map((e: any) =>
+                            e.salePrice
+                              ? e.salePrice * e.quantity
+                              : e.normalPrice * e.quantity
+                          )
+                          .reduce((a, b) => a + b, 0);
+
+                        if (total >= promoCode.minimumPurchasePrice) {
+                          if (promoCode.isShippingFree === true) {
+                            let index = sellerResponse.findIndex(
+                              (z) => z.sellerId === promoCode.sellerId
+                            );
+                            if (index >= 0) {
+                              sellerResponse[index].isFreeShipping = true;
+                            }
+                          }
+                          if (promoCode.isPercent === true) {
+                            discountTotal.push({
+                              sellerId: promoCode.sellerId,
+                              discount: (promoCode.discount * total) / 100,
+                            });
+                          } else {
+                            discountTotal.push({
+                              sellerId: promoCode.sellerId,
+                              discount: promoCode.discount,
+                            });
+                          }
                         }
                       }
                     }
@@ -552,7 +572,6 @@ export default async function handler(
                     isBillingAddress: false,
                   },
                 });
-
                 let r = prisma.order
                   .create({
                     data: {
@@ -565,8 +584,8 @@ export default async function handler(
                       isAddressDiff: data.isAddressDiff,
                       orderByUserId: data.userId,
                       sellerResponse: sellerResponse,
-                      discountTotal: parseInt(discountTotal.toFixed(0)),
-                      promoId: body?.promoCodeId,
+                      discountTotal: discountTotal,
+                      promoIds: body?.promoIds,
                     },
                   })
                   .then(() => {

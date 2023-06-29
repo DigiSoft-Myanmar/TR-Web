@@ -83,7 +83,7 @@ const AdsTable = ({
     if (parentData) {
       if (value) {
         setData(
-          parentData.filter(
+          parentData?.filter(
             (e: any) =>
               e.seller.username.toLowerCase().includes(value.toLowerCase()) ||
               e.seller.displayName?.toLowerCase().includes(value.toLowerCase())
@@ -293,7 +293,7 @@ const AdsTable = ({
                             method: "DELETE",
                           }
                         ).then(async (data) => {
-                          if (data.status === 200) {
+                          if (data?.status === 200) {
                             showSuccessDialog(
                               t("delete") + " " + t("success"),
                               "",
@@ -303,7 +303,7 @@ const AdsTable = ({
                               }
                             );
                           } else {
-                            let json = await data.json();
+                            let json = await data?.json();
                             showErrorDialog(json.error, json.errorMM, locale);
                           }
                         });
@@ -379,35 +379,38 @@ const AdsTable = ({
         <StatsCard
           label="Total Ads"
           currentCount={
-            data.filter((e: any) => e.createdAt > prevYear.toISOString()).length
+            data?.filter((e: any) => e.createdAt > prevYear.toISOString())
+              .length
           }
           prevCount={
-            data.filter(
+            data?.filter(
               (e: any) =>
                 e.createdAt < prevYear.toISOString() &&
                 e.createdAt > doublePrevYear.toISOString()
             ).length
           }
-          totalCount={data.length}
+          totalCount={data?.length}
         />
         <StatsCard
           label={"Ads Placed"}
           currentCount={
-            data.filter((e: Ads) => e.adsLocations.length > 0).length
+            data?.filter((e: Ads) => e.adsLocations.length > 0).length
           }
-          prevCount={data.filter((e: any) => e.adsLocations.length > 0).length}
-          totalCount={data.filter((e: any) => e.adsLocations.length > 0).length}
+          prevCount={data?.filter((e: any) => e.adsLocations.length > 0).length}
+          totalCount={
+            data?.filter((e: any) => e.adsLocations.length > 0).length
+          }
         />
         <StatsCard
           label={"Ads not placed"}
           currentCount={
-            data.filter((e: Ads) => e.adsLocations.length === 0).length
+            data?.filter((e: Ads) => e.adsLocations.length === 0).length
           }
           prevCount={
-            data.filter((e: Ads) => e.adsLocations.length === 0).length
+            data?.filter((e: Ads) => e.adsLocations.length === 0).length
           }
           totalCount={
-            data.filter((e: Ads) => e.adsLocations.length === 0).length
+            data?.filter((e: Ads) => e.adsLocations.length === 0).length
           }
         />
       </div>

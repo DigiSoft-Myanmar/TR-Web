@@ -8,7 +8,24 @@ import { Order, Role } from "@prisma/client";
 import { sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-async function addOrderDetails(order: any, brandId?: string) {
+export async function addCartItems(order: any) {
+  for (let i = 0; i < order.cartItems.length; i++) {
+    let prod = await prisma.product.findFirst({
+      where: {
+        id: order.cartItems[i].productId,
+      },
+      include: {
+        Brand: true,
+        Condition: true,
+        seller: true,
+      },
+    });
+    order.cartItems[i].prodDetail = prod;
+  }
+  return order;
+}
+
+async function addOrderDetails(order: any, sellerId?: string) {
   for (let i = 0; i < order.length; i++) {
     let statusArr = [];
     for (let j = 0; j < order[i].sellerResponse.length; j++) {
@@ -19,7 +36,7 @@ async function addOrderDetails(order: any, brandId?: string) {
       ).reverse()[0];
       let brand = await prisma.user.findFirst({
         where: {
-          id: status.brandId,
+          id: status.sellerId,
         },
       });
       statusArr.push({
@@ -32,9 +49,9 @@ async function addOrderDetails(order: any, brandId?: string) {
     order[i].actions = order[i].orderNo;
 
     if (order[i].cartItems) {
-      if (brandId) {
+      if (sellerId) {
         order[i].total = order[i].cartItems
-          .filter((e: any) => e.brandId === brandId)
+          .filter((e: any) => e.sellerId === sellerId)
           .map((e: any) =>
             e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
           )
@@ -67,11 +84,12 @@ export default async function handler(
           },
           include: {
             orderBy: true,
+            promoCodes: true,
           },
         });
-        let brandId = session.brand?.id;
+        let sellerId = session.id;
 
-        let returnOrder: any = await addOrderDetails(order, brandId);
+        let returnOrder: any = await addOrderDetails(order, sellerId);
         return res.status(200).json(returnOrder);
       } else if (session.role === Role.Seller) {
         const order = await prisma.order.findMany({
@@ -82,10 +100,10 @@ export default async function handler(
         });
         const sellerOrders = order.filter(
           (e) =>
-            e.cartItems.find((z: any) => z.brandId === session.brand.id) &&
+            e.cartItems.find((z: any) => z.sellerId === session.id) &&
             e.sellerResponse.find(
               (z: any) =>
-                z.brandId === session.brand.id &&
+                z.sellerId === session.id &&
                 z.statusHistory.find(
                   (b: any) => b.status === OrderStatus.Verified
                 )

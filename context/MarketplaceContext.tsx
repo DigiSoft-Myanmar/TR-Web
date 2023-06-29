@@ -58,6 +58,8 @@ type MarketplaceType = {
   isShippingAddressFilled: boolean;
   attributes: any;
   canShip: Function;
+  refetchCart: Function;
+  clearCart: Function;
 };
 
 export type BillingAddress = {
@@ -106,6 +108,8 @@ const MarketplaceContext = createContext<MarketplaceType>({
   isShippingAddressFilled: false,
   attributes: [],
   canShip: () => {},
+  refetchCart: () => {},
+  clearCart: () => {},
 });
 
 export const useMarketplace = () => React.useContext(MarketplaceContext);
@@ -621,7 +625,7 @@ export const MarketplaceProvider = ({
       billingAddress,
       isAddressDiff,
       false,
-      shippingLocation
+      shippingAddress
     );
   }
 
@@ -642,6 +646,21 @@ export const MarketplaceProvider = ({
         }
       });
     }
+  }
+
+  function clearCart() {
+    fetch("/api/cart", {
+      method: "POST",
+      body: JSON.stringify({
+        cartItems: [],
+        shippingFee: [],
+      }),
+      headers: getHeaders(session),
+    }).then((data) => {
+      if (data.status === 200) {
+        refetchCart();
+      }
+    });
   }
 
   return (
@@ -673,6 +692,8 @@ export const MarketplaceProvider = ({
         checkShip,
         attributes,
         canShip,
+        refetchCart,
+        clearCart,
       }}
     >
       {children}

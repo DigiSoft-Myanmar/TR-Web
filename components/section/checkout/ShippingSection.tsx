@@ -1,5 +1,6 @@
 import FormInput from "@/components/presentational/FormInput";
 import LocationPicker from "@/components/presentational/LocationPicker";
+import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { ShippingAddress, useMarketplace } from "@/context/MarketplaceContext";
 import { showErrorDialog } from "@/util/swalFunction";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -189,16 +190,15 @@ function ShippingSection({ nextFn, backFn }: Props) {
             </svg>
           }
         />
-        <LocationPicker
-          stateId={location?.stateId}
-          districtId={location?.districtId}
-          townshipId={location?.townshipId}
-          setLocation={(e: any) => {
+        <LocationPickerFull
+          selected={location}
+          isStart={true}
+          setSelected={(e: any) => {
             setLocation(() => {
               return {
-                stateId: e.state,
-                districtId: e.district,
-                townshipId: e.township,
+                stateId: e.stateId,
+                districtId: e.districtId,
+                townshipId: e.townshipId,
               };
             });
           }}

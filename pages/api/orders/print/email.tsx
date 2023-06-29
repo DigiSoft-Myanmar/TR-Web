@@ -3,6 +3,9 @@ import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import { BadRequest } from "@/types/ApiResponseTypes";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { render } from "@react-email/render";
+import OrderEmail from "@/emails/order";
+import { addCartItems } from "..";
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,16 +14,43 @@ export default async function handler(
   try {
     let { orderNo } = req.query;
     if (orderNo) {
-      const order = await prisma.order.findFirst({
+      let order = await prisma.order.findFirst({
         include: {
           orderBy: true,
-          promoCode: true,
+          promoCodes: true,
         },
         where: {
           orderNo: parseInt(orderNo.toString()),
         },
       });
-      return res.send(await generateHTML(order));
+
+      for (let i = 0; i < order.sellerResponse.length; i++) {
+        let orderResponse: any = order.sellerResponse[i];
+        let seller = await prisma.user.findFirst({
+          where: {
+            id: orderResponse.sellerId,
+          },
+        });
+        if (seller) {
+          orderResponse.seller = seller;
+        }
+      }
+
+      const attributes = await prisma.attribute.findMany({
+        include: {
+          Term: true,
+        },
+      });
+
+      const content = await prisma.content.findFirst({});
+
+      order = await addCartItems(order);
+
+      const emailHtml = render(
+        <OrderEmail content={content!} order={order!} attributes={attributes} />
+      );
+
+      return res.send(emailHtml);
     } else {
       return res.status(400).json(BadRequest);
     }
