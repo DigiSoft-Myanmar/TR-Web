@@ -1,19 +1,11 @@
 import React from "react";
 import { invoiceStatusObj } from "../muiTable/OrderFullTbl";
 import Icon from "@/components/presentational/Icon";
+import { isInternal, isSeller } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 function StatusHistory({ e, index }: { e: any; index: number }) {
-  const noteRef = React.useRef<HTMLDivElement | null>(null);
-
-  React.useEffect(() => {
-    if (noteRef.current && e.note) {
-      let parser = new DOMParser();
-      let shortDescriptionContent = parser.parseFromString(e.note, "text/html");
-      noteRef.current.innerHTML = "";
-      noteRef.current.appendChild(shortDescriptionContent.body);
-    }
-  }, [noteRef.current, e.note]);
-
+  const { data: session }: any = useSession();
   return (
     <li className="mb-10 ml-6">
       <span
@@ -28,15 +20,15 @@ function StatusHistory({ e, index }: { e: any; index: number }) {
           color="#FFF"
         />
       </span>
-      <h3 className="mb-1 flex items-center text-lg font-semibold text-gray-900">
+      <h3 className="mb-1 flex items-center text-sm font-semibold text-gray-900">
         {e.status}
         {index === 0 && (
-          <span className="mr-2 ml-3 rounded bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary">
+          <span className="mr-2 ml-3 rounded bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
             Latest
           </span>
         )}
       </h3>
-      <time className="mb-2 block text-sm font-normal leading-none text-gray-400">
+      <time className="mb-2 block text-xs font-normal text-gray-400">
         Updated on{" "}
         {new Date(e.updatedDate).toLocaleDateString("en-ca", {
           year: "numeric",
@@ -46,7 +38,13 @@ function StatusHistory({ e, index }: { e: any; index: number }) {
           minute: "2-digit",
         })}
       </time>
-      <div ref={noteRef}></div>
+      <div className="text-sm">{e.note}</div>
+      {(isInternal(session) || isSeller(session)) && e.updatedUser && (
+        <span className="text-xs text-gray-500">
+          - {e.updatedUser.username}{" "}
+          {isInternal(session) ? "[" + e.updatedUser.role + "]" : ""}
+        </span>
+      )}
     </li>
   );
 }

@@ -10,15 +10,34 @@ import {
 } from "@prisma/client";
 import { sortBy } from "lodash";
 
-export function getOrderStatus(data: any, brandName?: string) {
-  console.log(data);
-  if (brandName) {
-    return sortBy(
-      data.find((e: any) => e.brand === brandName),
-      (obj: any) => obj.updatedDate
-    ).reverse()[0].status;
+export function getOrderStatus(data: any, sellerId?: string) {
+  let sellerResponse = data.sellerResponse;
+
+  if (sellerId) {
+    let responseData = sellerResponse
+      .filter((e: any) => e.sellerId === sellerId)
+      ?.map(
+        (b) =>
+          sortBy(b.statusHistory, (obj: any) => obj.updatedDate).reverse()[0]
+      );
+    return responseData[0];
   } else {
-    return sortBy(data, (obj: any) => obj.updatedDate).reverse()[0].status;
+    let responseData = sellerResponse.map(
+      (b) =>
+        sortBy(b.statusHistory, (obj: any) => obj.updatedDate).reverse()[0]
+          .status
+    );
+    if (Array.from(new Set(responseData)).length === 1) {
+      return responseData[0];
+    } else if (
+      responseData.every(
+        (b) => b === OrderStatus.Shipped || b === OrderStatus.Rejected
+      )
+    ) {
+      return OrderStatus.Completed;
+    } else {
+      return OrderStatus.Processing;
+    }
   }
 }
 
@@ -27,8 +46,7 @@ export function getValidCartItems(
   sellerStatus: OrderStatus
 ) {
   switch (sellerStatus) {
-    case OrderStatus.Cancelled:
-    case OrderStatus.Refund:
+    case OrderStatus.AutoCancelled:
     case OrderStatus.Rejected:
       return [];
     default:
@@ -42,8 +60,7 @@ export function isCartValid(sellerResponse: any) {
     (obj: any) => obj.updatedDate
   ).reverse()[0].status;
   switch (status) {
-    case OrderStatus.Cancelled:
-    case OrderStatus.Refund:
+    case OrderStatus.AutoCancelled:
     case OrderStatus.Rejected:
       return false;
     default:
@@ -51,7 +68,7 @@ export function isCartValid(sellerResponse: any) {
   }
 }
 
-export function getCartItems(cartItems: CartItem[], sellerResponse: any[]) {
+export function getCartItems(cartItems: any[], sellerResponse: any[]) {
   let c: any = [];
   for (let i = 0; i < sellerResponse.length; i++) {
     let status = sortBy(
@@ -84,30 +101,17 @@ export function getTotal(cartItems: CartItem[], sellerId?: string) {
   }
 }
 
-export function getDiscountTotal(
-  cartItems: CartItem[],
-  sellerList: User[],
-  promoCode?: PromoCode,
-  sellerId?: string
-) {
-  if (promoCode) {
-    if (promoCode.isPercent === true) {
-      return (
-        (cartItems
-          .filter((e: any) => (sellerId ? e.sellerId === sellerId : true))
-          .map((e: any) =>
-            e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
-          )
-          .reduce((a: number, b: number) => a + b, 0) *
-          promoCode.discount) /
-        100
-      );
+export function getDiscountTotal(discountTotal?: any[], sellerId?: string) {
+  if (discountTotal && discountTotal.length > 0) {
+    if (
+      sellerId &&
+      discountTotal.find((b) => b.sellerId === sellerId)?.discount
+    ) {
+      return discountTotal.find((b) => b.sellerId === sellerId)?.discount;
+    } else if (sellerId) {
+      return 0;
     } else {
-      if (sellerId) {
-        return promoCode.discount / sellerList.length;
-      } else {
-        return promoCode.discount;
-      }
+      return discountTotal.map((b) => b.discount).reduce((a, b) => a + b, 0);
     }
   }
   return 0;
@@ -146,18 +150,44 @@ export function getStock(product: Product) {
   }
 }
 
-export function getSubTotal(order: any) {
-  return order.cartItems
-    .map((z: CartItem) =>
-      z.salePrice ? z.salePrice * z.quantity : z.normalPrice * z.quantity
-    )
-    .reduce((a, b) => a + b, 0);
+export function getSubTotal(order: any, sellerId?: string) {
+  if (sellerId) {
+    return order.cartItems
+      .filter(
+        (b: any) =>
+          isCartValid(
+            order.sellerResponse.find((e: any) => e.sellerId === b.sellerId)
+          ) && b.sellerId === sellerId
+      )
+      .map((z: CartItem) =>
+        z.salePrice ? z.salePrice * z.quantity : z.normalPrice * z.quantity
+      )
+      .reduce((a, b) => a + b, 0);
+  } else {
+    return order.cartItems
+      .map((z: CartItem) =>
+        isCartValid(
+          order.sellerResponse.find((e: any) => e.sellerId === z.sellerId)
+        )
+          ? z.salePrice
+            ? z.salePrice * z.quantity
+            : z.normalPrice * z.quantity
+          : 0
+      )
+      .reduce((a, b) => a + b, 0);
+  }
 }
 
 export function getShippingFeeTotal(order: any) {
   return order.sellerResponse
     .map((z: any) =>
-      z.shippingFee && z.isFreeShipping === false ? z.shippingFee : 0
+      z.shippingFee && z.isFreeShipping === false
+        ? isCartValid(
+            order.sellerResponse.find((e: any) => e.sellerId === z.sellerId)
+          )
+          ? z.shippingFee
+          : 0
+        : 0
     )
     .reduce((a, b) => a + b, 0);
 }

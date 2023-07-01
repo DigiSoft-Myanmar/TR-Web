@@ -863,12 +863,26 @@ export async function getStaticProps({ locale }) {
       },
     },
   });
+  const today = new Date();
   const totalReview = sellerList
     .map((z) => z.Review.map((b) => b.rating).reduce((a, b) => a + b, 0))
     .reduce((a, b) => a + b, 0);
   const prodList = await prisma.product.findMany({
     where: {
       isFeatured: true,
+      OR: [
+        {
+          type: ProductType.Auction,
+          endTime: {
+            gt: today,
+          },
+        },
+        {
+          type: {
+            not: ProductType.Auction,
+          },
+        },
+      ],
     },
     include: {
       Brand: true,

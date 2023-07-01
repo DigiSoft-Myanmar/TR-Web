@@ -437,9 +437,8 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               data.filter((e: any) =>
                 e.invoiceStatus.every(
                   (e: any) =>
-                    e.status !== OrderStatus.Cancelled &&
+                    e.status !== OrderStatus.AutoCancelled &&
                     e.status !== OrderStatus.Completed &&
-                    e.status !== OrderStatus.Refund &&
                     e.status !== OrderStatus.Rejected
                 )
               ).length
@@ -448,9 +447,8 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               data.filter((e: any) =>
                 e.invoiceStatus.every(
                   (e: any) =>
-                    e.status !== OrderStatus.Cancelled &&
+                    e.status !== OrderStatus.AutoCancelled &&
                     e.status !== OrderStatus.Completed &&
-                    e.status !== OrderStatus.Refund &&
                     e.status !== OrderStatus.Rejected
                 )
               ).length
@@ -459,9 +457,8 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               data.filter((e: any) =>
                 e.invoiceStatus.every(
                   (e: any) =>
-                    e.status !== OrderStatus.Cancelled &&
+                    e.status !== OrderStatus.AutoCancelled &&
                     e.status !== OrderStatus.Completed &&
-                    e.status !== OrderStatus.Refund &&
                     e.status !== OrderStatus.Rejected
                 )
               ).length
@@ -473,8 +470,7 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               data.filter((e: any) =>
                 e.invoiceStatus.some(
                   (e: any) =>
-                    e.status === OrderStatus.Cancelled ||
-                    e.status === OrderStatus.Refund ||
+                    e.status === OrderStatus.AutoCancelled ||
                     e.status === OrderStatus.Rejected
                 )
               ).length
@@ -483,8 +479,7 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               data.filter((e: any) =>
                 e.invoiceStatus.some(
                   (e: any) =>
-                    e.status === OrderStatus.Cancelled ||
-                    e.status === OrderStatus.Refund ||
+                    e.status === OrderStatus.AutoCancelled ||
                     e.status === OrderStatus.Rejected
                 )
               ).length
@@ -493,8 +488,7 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               data.filter((e: any) =>
                 e.invoiceStatus.some(
                   (e: any) =>
-                    e.status === OrderStatus.Cancelled ||
-                    e.status === OrderStatus.Refund ||
+                    e.status === OrderStatus.AutoCancelled ||
                     e.status === OrderStatus.Rejected
                 )
               ).length

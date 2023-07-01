@@ -31,8 +31,6 @@ import { ProductAction } from "@/types/action";
 import Image from "next/image";
 import { isCartValid } from "@/util/orderHelper";
 
-type AttributeWithTerm = Attribute & { term: Term };
-
 interface CellType {
   row: any;
 }
@@ -51,7 +49,7 @@ const OrderCartTbl = ({
   sellerResponse,
 }: {
   data: any;
-  attributeList: AttributeWithTerm[];
+  attributeList: any[];
   sellerResponse: any[];
 }) => {
   // ** State
@@ -75,19 +73,26 @@ const OrderCartTbl = ({
       renderCell: ({ row }: CellType) => {
         return (
           <div className="flex max-h-[100px] items-center overflow-auto">
-            <Img src={fileUrl + row.productInfo?.img} alt={`${row.slug}`} />
+            <Img
+              src={
+                row.variation?.img
+                  ? fileUrl + row.variation?.img
+                  : fileUrl + row.productInfo?.imgList[0]
+              }
+              alt={`${row.slug}`}
+            />
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <Typography
                 sx={{
                   color: isCartValid(
-                    sellerResponse.find((e: any) => e.brandId === row.brandId)
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
                   )
                     ? "text.primary"
                     : "text.disabled",
                   fontWeight: 500,
                   fontSize: "0.875rem",
                   textDecoration: isCartValid(
-                    sellerResponse.find((e: any) => e.brandId === row.brandId)
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
                   )
                     ? "none"
                     : "line-through",
@@ -99,29 +104,73 @@ const OrderCartTbl = ({
                 variant="caption"
                 sx={{
                   color: isCartValid(
-                    sellerResponse.find((e: any) => e.brandId === row.brandId)
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
                   )
                     ? "text.secondary"
                     : "text.disabled",
                   textDecoration: isCartValid(
-                    sellerResponse.find((e: any) => e.brandId === row.brandId)
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
                   )
                     ? "none"
                     : "line-through",
                 }}
               >
-                {row.productInfo.brandName}
+                Brand -{" "}
+                {getText(
+                  row.productInfo.Brand.name,
+                  row.productInfo.Brand.nameMM,
+                  locale
+                )}
               </Typography>
               <Typography
                 variant="caption"
                 sx={{
                   color: isCartValid(
-                    sellerResponse.find((e: any) => e.brandId === row.brandId)
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
                   )
                     ? "text.secondary"
                     : "text.disabled",
                   textDecoration: isCartValid(
-                    sellerResponse.find((e: any) => e.brandId === row.brandId)
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
+                  )
+                    ? "none"
+                    : "line-through",
+                }}
+              >
+                Condition -{" "}
+                {getText(
+                  row.productInfo.Condition.name,
+                  row.productInfo.Condition.nameMM,
+                  locale
+                )}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: isCartValid(
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
+                  )
+                    ? "text.secondary"
+                    : "text.disabled",
+                  textDecoration: isCartValid(
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
+                  )
+                    ? "none"
+                    : "line-through",
+                }}
+              >
+                Seller - {row.productInfo.seller.username}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: isCartValid(
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
+                  )
+                    ? "text.secondary"
+                    : "text.disabled",
+                  textDecoration: isCartValid(
+                    sellerResponse.find((e: any) => e.sellerId === row.sellerId)
                   )
                     ? "none"
                     : "line-through",
@@ -142,7 +191,7 @@ const OrderCartTbl = ({
                           sx={{
                             color: isCartValid(
                               sellerResponse.find(
-                                (e: any) => e.brandId === row.brandId
+                                (e: any) => e.sellerId === row.sellerId
                               )
                             )
                               ? "text.secondary"
@@ -151,7 +200,7 @@ const OrderCartTbl = ({
                             alignItems: "center",
                             textDecoration: isCartValid(
                               sellerResponse.find(
-                                (e: any) => e.brandId === row.brandId
+                                (e: any) => e.sellerId === row.sellerId
                               )
                             )
                               ? "none"
@@ -209,21 +258,25 @@ const OrderCartTbl = ({
           variant="body2"
           sx={{
             color: isCartValid(
-              sellerResponse.find((e: any) => e.brandId === row.brandId)
+              sellerResponse.find((e: any) => e.sellerId === row.sellerId)
             )
               ? "text.primary"
               : "text.disabled",
             textDecoration: isCartValid(
-              sellerResponse.find((e: any) => e.brandId === row.brandId)
+              sellerResponse.find((e: any) => e.sellerId === row.sellerId)
             )
               ? "none"
               : "line-through",
           }}
         >
-          {formatAmount(row.unitPrice, locale)}
+          {formatAmount(
+            row.salePrice ? row.salePrice : row.normalPrice,
+            locale
+          )}
         </Typography>
       ),
     },
+
     {
       flex: 0.1,
       minWidth: 50,
@@ -234,12 +287,12 @@ const OrderCartTbl = ({
           variant="body2"
           sx={{
             color: isCartValid(
-              sellerResponse.find((e: any) => e.brandId === row.brandId)
+              sellerResponse.find((e: any) => e.sellerId === row.sellerId)
             )
               ? "text.primary"
               : "text.disabled",
             textDecoration: isCartValid(
-              sellerResponse.find((e: any) => e.brandId === row.brandId)
+              sellerResponse.find((e: any) => e.sellerId === row.sellerId)
             )
               ? "none"
               : "line-through",
@@ -259,18 +312,23 @@ const OrderCartTbl = ({
           variant="body2"
           sx={{
             color: isCartValid(
-              sellerResponse.find((e: any) => e.brandId === row.brandId)
+              sellerResponse.find((e: any) => e.sellerId === row.sellerId)
             )
               ? "text.primary"
               : "text.disabled",
             textDecoration: isCartValid(
-              sellerResponse.find((e: any) => e.brandId === row.brandId)
+              sellerResponse.find((e: any) => e.sellerId === row.sellerId)
             )
               ? "none"
               : "line-through",
           }}
         >
-          {formatAmount(row.total, locale)}
+          {formatAmount(
+            row.salePrice
+              ? row.salePrice * row.quantity
+              : row.normalPrice * row.quantity,
+            locale
+          )}
         </Typography>
       ),
     },

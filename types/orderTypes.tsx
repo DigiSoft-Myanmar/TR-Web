@@ -5,13 +5,12 @@ export enum DeliveryType {
 
 export enum OrderStatus {
   OrderReceived = "Order Received",
-  Verified = "Verified",
   Accepted = "Accepted",
   Rejected = "Rejected",
   Shipped = "Shipped",
   Completed = "Completed",
-  Refund = "Refund",
-  Cancelled = "Cancelled",
+  AutoCancelled = "Auto Cancelled",
+  Processing = "Processing",
 }
 
 export enum TransactionStatusSeller {

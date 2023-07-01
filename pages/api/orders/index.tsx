@@ -105,7 +105,7 @@ export default async function handler(
               (z: any) =>
                 z.sellerId === session.id &&
                 z.statusHistory.find(
-                  (b: any) => b.status === OrderStatus.Verified
+                  (b: any) => b.status === OrderStatus.OrderReceived
                 )
             )
         );

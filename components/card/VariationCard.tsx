@@ -148,7 +148,9 @@ function VariationCard({ variation, editDetail, deleteVariation }: Props) {
           </span>
         </h3>
         {variation.stockType ? (
-          variation.stockType === StockType.OutOfStock ? (
+          variation.stockType === StockType.OutOfStock ||
+          (variation.stockType === StockType.StockLevel &&
+            variation.stockLevel! <= 0) ? (
             <h3 className="rounded-md bg-error px-3 py-1 text-sm font-bold text-white">
               Out of Stock
             </h3>

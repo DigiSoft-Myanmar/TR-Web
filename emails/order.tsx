@@ -5,6 +5,7 @@ import {
   getPromoTotal,
   getShippingFeeTotal,
   getSubTotal,
+  isCartValid,
 } from "@/util/orderHelper";
 import { formatAmount, getInitials } from "@/util/textHelper";
 import {
@@ -50,10 +51,7 @@ export default function OrderEmail({
   attributes,
 }: {
   content: Content;
-  order: Order & {
-    orderBy: User;
-    promoCodes: PromoCode[];
-  };
+  order: any;
   attributes: (Attribute & {
     Term: Term[];
   })[];
@@ -81,7 +79,7 @@ export default function OrderEmail({
                 </Column>
               </Row>
             </Section>
-            <Hr style={hr} />
+            <Hr />
             {/* <Text style={paragraph}>
               {order.sellerResponse.filter(
                 (z: any) => z.statusHistory.length === 1
@@ -128,6 +126,7 @@ export default function OrderEmail({
             </Section>
             <Hr />
             <Section>
+              <Text style={header}>Seller Info</Text>
               {order.sellerResponse
                 .map((z: any) => {
                   let lastStatus = sortBy(
@@ -161,11 +160,10 @@ export default function OrderEmail({
                       <Column>
                         <Text style={paragraph}>
                           {status.seller.username} (
-                          {
-                            order.cartItems.filter(
-                              (z: CartItem) => z.sellerId === status.sellerId
-                            ).length
-                          }
+                          {order.cartItems
+                            .filter((b: any) => b.sellerId === status.sellerId)
+                            .map((b: any) => b.quantity)
+                            .reduce((a, b) => a + b, 0)}
                           )
                         </Text>
                         <Text style={paragraph}>
@@ -173,7 +171,12 @@ export default function OrderEmail({
                           {formatAmount(
                             order.cartItems
                               .filter(
-                                (z: CartItem) => z.sellerId === status.sellerId
+                                (z: CartItem) =>
+                                  isCartValid(
+                                    order.sellerResponse.find(
+                                      (e: any) => e.sellerId === z.sellerId
+                                    )
+                                  ) && z.sellerId === status.sellerId
                               )
                               .map((z: CartItem) =>
                                 z.salePrice
@@ -189,7 +192,17 @@ export default function OrderEmail({
                           Shipping Cost:{" "}
                           {status.isFreeShipping === true
                             ? "Free Shipping"
-                            : formatAmount(status.shippingFee, "en", true)}
+                            : formatAmount(
+                                isCartValid(
+                                  order.sellerResponse.find(
+                                    (e: any) => e.sellerId === status.sellerId
+                                  )
+                                )
+                                  ? status.shippingFee
+                                  : 0,
+                                "en",
+                                true
+                              )}
                         </Text>
                         {order.discountTotal.find(
                           (z: any) => z.sellerId === status.sellerId
@@ -245,6 +258,92 @@ export default function OrderEmail({
                   </Container>
                 ))}
             </Section>
+            <Hr />
+            <Section>
+              <Row>
+                <Column colSpan={2}>
+                  <Row>
+                    <Column>
+                      <Text style={header}>Billing Address</Text>
+                      <Text style={paragraph}>
+                        Username: {order?.billingAddress?.name}
+                      </Text>
+                      <Text style={paragraph}>
+                        Phone: {order?.billingAddress?.phoneNum}
+                      </Text>
+
+                      {order?.billingAddress?.email && (
+                        <Link
+                          style={{
+                            ...paragraph,
+                            color: "#15c",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          Email: {order?.billingAddress?.email}
+                        </Link>
+                      )}
+
+                      <Text style={paragraph}>
+                        House No: {order?.billingAddress?.houseNo}
+                      </Text>
+                      <Text style={paragraph}>
+                        Street: {order?.billingAddress?.street}
+                      </Text>
+                      <Text style={paragraph}>
+                        Address:
+                        {order?.billingAddress?.townshipStr
+                          ? order.billingAddress.townshipStr
+                          : ""}
+                        {", "}
+                        {order?.billingAddress?.districtStr
+                          ? order.billingAddress.districtStr
+                          : ""}
+                        {", "}
+                        {order?.billingAddress?.stateStr
+                          ? order.billingAddress.stateStr
+                          : ""}{" "}
+                      </Text>
+                    </Column>
+                  </Row>
+                </Column>
+                <Column
+                  align="right"
+                  style={{
+                    verticalAlign: "sub",
+                    paddingLeft: "30px",
+                  }}
+                >
+                  <Text style={header}>Shipping Address</Text>
+                  <Text style={paragraph}>
+                    Name: {order?.shippingAddress?.name}
+                  </Text>
+                  <Text style={paragraph}>
+                    Phone: {order?.shippingAddress?.phoneNum}
+                  </Text>
+                  <Text style={paragraph}>
+                    House No: {order?.shippingAddress?.houseNo}
+                  </Text>
+                  <Text style={paragraph}>
+                    Street: {order?.shippingAddress?.street}
+                  </Text>
+                  <Text style={paragraph}>
+                    Address:
+                    {order?.shippingAddress?.townshipStr
+                      ? order.shippingAddress.townshipStr
+                      : ""}
+                    {", "}
+                    {order?.shippingAddress?.districtStr
+                      ? order.shippingAddress.districtStr
+                      : ""}
+                    {", "}
+                    {order?.shippingAddress?.stateStr
+                      ? order.shippingAddress.stateStr
+                      : ""}{" "}
+                  </Text>
+                </Column>
+              </Row>
+            </Section>
 
             <Button
               pX={10}
@@ -256,7 +355,7 @@ export default function OrderEmail({
             </Button>
             <Hr style={hr} />
             <Section>
-              <Text style={paragraph}>Order Details</Text>
+              <Text style={header}>Order Details</Text>
               {order.cartItems.map((z: any, index) => (
                 <Section key={index}>
                   <Row>
@@ -273,37 +372,142 @@ export default function OrderEmail({
                       />
                     </Column>
                     <Column>
-                      <Text style={paragraph}>
-                        Brand: {z.prodDetail.Brand.name}
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
+                        Name: {z.prodDetail.name}
                       </Text>
-                      <Text style={paragraph}>Name: {z.prodDetail.name}</Text>
-                      <Text style={paragraph}>
+
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
                         SKU:{" "}
                         {z.variation && z.variation.SKU
                           ? z.variation.SKU
                           : z.prodDetail.SKU}
                       </Text>
-                      <Text style={paragraph}>
-                        Condition: {z.prodDetail.Condition.name}
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
+                        Brand: {z.prodDetail.Brand.name}
                       </Text>
+
+                      {z.variation?.attributes?.map((b, index2) => (
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
+                            )
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                          key={index2}
+                        >
+                          {attributes.find((y) => y.id === b.attributeId).name}:{" "}
+                          {b.name}
+                        </Text>
+                      ))}
                       {/* <Text style={paragraph}>Attribute</Text> */}
-                      <Text style={paragraph}>
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
                         Seller: {z.prodDetail.seller?.username}
                       </Text>
                     </Column>
 
-                    <Column align="right">
-                      <Text style={priceStyle}>
+                    <Column
+                      align="right"
+                      style={{
+                        verticalAlign: "sub",
+                      }}
+                    >
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
                         Unit Price: {z.normalPrice}
                       </Text>
                       {z.salePrice && (
-                        <Text style={priceStyle}>
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
+                            )
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
                           Discount:{" "}
                           {z.salePrice ? z.salePrice - z.normalPrice : 0}
                         </Text>
                       )}
-                      <Text style={priceStyle}>Quantity: {z.quantity}</Text>
-                      <Text style={priceStyle}>
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
+                        Quantity: {z.quantity}
+                      </Text>
+                      <Text
+                        style={
+                          isCartValid(
+                            order.sellerResponse.find(
+                              (e: any) => e.sellerId === z.sellerId
+                            )
+                          )
+                            ? paragraph
+                            : rejectParagraph
+                        }
+                      >
                         Total Price:{" "}
                         {z.salePrice
                           ? z.salePrice * z.quantity
@@ -426,9 +630,14 @@ const hr = {
 const paragraph = {
   color: "#525f7f",
 
-  fontSize: "14px",
-  lineHeight: "20px",
+  fontSize: "12px",
+  lineHeight: "14px",
   textAlign: "left" as const,
+};
+
+const rejectParagraph = {
+  ...paragraph,
+  textDecoration: "line-through",
 };
 
 const priceStyle = {
@@ -438,9 +647,10 @@ const priceStyle = {
 
 const header = {
   ...paragraph,
-  fontSize: "18px",
+  fontSize: "14px",
   color: "#E71D2A",
   fontWeight: "600",
+  margin: "10px 0",
 };
 
 const anchor = {

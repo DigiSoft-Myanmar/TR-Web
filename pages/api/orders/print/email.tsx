@@ -14,7 +14,7 @@ export default async function handler(
   try {
     let { orderNo } = req.query;
     if (orderNo) {
-      let order = await prisma.order.findFirst({
+      let order: any = await prisma.order.findFirst({
         include: {
           orderBy: true,
           promoCodes: true,
@@ -43,6 +43,51 @@ export default async function handler(
       });
 
       const content = await prisma.content.findFirst({});
+
+      if (order.billingAddress) {
+        let state = await prisma.state.findFirst({
+          where: {
+            id: order.billingAddress.stateId,
+          },
+        });
+        order.billingAddress.stateStr = state.name;
+
+        let district = await prisma.district.findFirst({
+          where: {
+            id: order.billingAddress.districtId,
+          },
+        });
+        order.billingAddress.districtStr = district.name;
+
+        let township = await prisma.township.findFirst({
+          where: {
+            id: order.billingAddress.townshipId,
+          },
+        });
+        order.billingAddress.townshipStr = township.name;
+      }
+      if (order.shippingAddress) {
+        let state = await prisma.state.findFirst({
+          where: {
+            id: order.shippingAddress.stateId,
+          },
+        });
+        order.shippingAddress.stateStr = state.name;
+
+        let district = await prisma.district.findFirst({
+          where: {
+            id: order.shippingAddress.districtId,
+          },
+        });
+        order.shippingAddress.districtStr = district.name;
+
+        let township = await prisma.township.findFirst({
+          where: {
+            id: order.shippingAddress.townshipId,
+          },
+        });
+        order.shippingAddress.townshipStr = township.name;
+      }
 
       order = await addCartItems(order);
 
