@@ -4,6 +4,13 @@ export enum Action {
   New = "new",
 }
 
+export enum AuctionAction {
+  Publish = "Publish",
+  Unpublish = "Unpublish",
+  Featured = "Featured",
+  NotFeatured = "Not Featured",
+}
+
 export enum ProductAction {
   IncreaseRegularPrice = "Increase Regular Price",
   DecreaseRegularPrice = "Decrease Regular Price",

@@ -225,7 +225,10 @@ function BuyNowHome({
                       : highlightProd.stockType === StockType.OutOfStock
                       ? t("outOfStock")
                       : highlightProd.stockType === StockType.StockLevel
-                      ? formatAmount(highlightProd.stockLevel, locale)
+                      ? t("quantity").replace(
+                          "{data}",
+                          formatAmount(highlightProd.stockLevel, locale)
+                        )
                       : t("inStock")}
                   </p>
                 ) : (

@@ -43,18 +43,43 @@ export default async function handler(
             let prods: Product[] = [];
             let prodDetails: Product[] = [];
             let cartItems: any[] = [];
-            let screenshot: string[] = [];
 
+            let auctionData: any = await prisma.auctionList.findFirst({
+              where: {
+                userId: session.id,
+              },
+            });
+            let dz: any[] = [];
             if (cartData) {
-              let dz = [...cartData.cartItems];
-              for (let i = 0; i < cartData.cartItems.length; i++) {
+              dz = [...cartData.cartItems];
+            }
+            if (auctionData) {
+              dz = [...dz];
+              for (let k = 0; k < auctionData.auctionList.length; k++) {
+                let a = auctionData.auctionList[k];
+                if (
+                  dz.find(
+                    (z) =>
+                      z.productId === a.productId && z.auctionId === a.auctionId
+                  )
+                ) {
+                } else {
+                  dz.push(a);
+                }
+              }
+            }
+
+            let list = [...dz];
+
+            if (list.length > 0) {
+              for (let i = 0; i < list.length; i++) {
                 let p = await prisma.product.findFirst({
                   include: {
                     Brand: true,
                     seller: true,
                   },
                   where: {
-                    id: cartData.cartItems[i].productId,
+                    id: list[i].productId,
                     seller: {
                       sellAllow: true,
                     },
@@ -87,17 +112,17 @@ export default async function handler(
               let sellerIds = Array.from(
                 new Set(prodDetails.map((e: any) => e.sellerId))
               );
-              for (let i = 0; i < prodDetails.length; i++) {
-                if (prodDetails[i].type === ProductType.Fixed) {
+              for (let j = 0; j < prodDetails.length; j++) {
+                if (prodDetails[j].type === ProductType.Fixed) {
                   let c: any = cartData.cartItems.find(
-                    (e: any) => e.productId === prodDetails[i].id
+                    (e: any) => e.productId === prodDetails[j].id
                   );
                   if (
-                    prodDetails[i].stockType === StockType.InStock ||
-                    (prodDetails[i].stockType === StockType.StockLevel &&
-                      prodDetails[i].stockLevel! >= c.quantity)
+                    prodDetails[j].stockType === StockType.InStock ||
+                    (prodDetails[j].stockType === StockType.StockLevel &&
+                      prodDetails[j].stockLevel! >= c.quantity)
                   ) {
-                    let pricing = getPricing(prodDetails[i]);
+                    let pricing = getPricing(prodDetails[j]);
                     if (pricing?.isPromotion === true) {
                       cartItems.push({
                         ...c,
@@ -113,14 +138,14 @@ export default async function handler(
                         normalPrice: pricing.regularPrice,
                       });
                     }
-                    prods.push(prodDetails[i]);
+                    prods.push(prodDetails[j]);
                     dz.splice(c, 1);
                   }
-                } else {
+                } else if (prodDetails[j].type === ProductType.Variable) {
                   let cIndex: any = dz.findIndex(
                     (e: any) =>
-                      e.productId === prodDetails[i].id &&
-                      prodDetails[i].variations.find((z: any) =>
+                      e.productId === prodDetails[j].id &&
+                      prodDetails[j].variations.find((z: any) =>
                         _.isEqual(
                           _.sortBy(z.attributes, (o) => o.attributeId),
                           _.sortBy(e.variation.attributes, (o) => o.attributeId)
@@ -130,7 +155,7 @@ export default async function handler(
                   let c = dz[cIndex];
                   let attributes = c.variation.attributes;
 
-                  let variation: any = prodDetails[i].variations.find(
+                  let variation: any = prodDetails[j].variations.find(
                     (e: any) =>
                       _.isEqual(
                         _.sortBy(e.attributes, (o) => o.attributeId),
@@ -159,15 +184,15 @@ export default async function handler(
                           normalPrice: pricing.regularPrice,
                         });
                       }
-                      prods.push(prodDetails[i]);
+                      prods.push(prodDetails[j]);
                       dz.splice(c, 1);
                     }
                   } else {
-                    let allAnyIndex = prodDetails[i].variations.findIndex(
+                    let allAnyIndex = prodDetails[j].variations.findIndex(
                       (e: any) =>
                         e.attributes.every((z: any) => z.name === "Any")
                     );
-                    let variations: any = [...prodDetails[i].variations];
+                    let variations: any = [...prodDetails[j].variations];
                     if (allAnyIndex >= 0) {
                       variations.splice(allAnyIndex, 1);
                     }
@@ -212,7 +237,7 @@ export default async function handler(
                               normalPrice: pricing.regularPrice,
                             });
                           }
-                          prods.push(prodDetails[i]);
+                          prods.push(prodDetails[j]);
                         }
                       } else {
                         v = undefined;
@@ -221,7 +246,7 @@ export default async function handler(
                     if (v) {
                     } else if (allAnyIndex >= 0) {
                       let currentVariation: any =
-                        prodDetails[i].variations[allAnyIndex];
+                        prodDetails[j].variations[allAnyIndex];
                       if (
                         currentVariation.stockType === StockType.InStock ||
                         (currentVariation.stockType === StockType.StockLevel &&
@@ -243,10 +268,19 @@ export default async function handler(
                             normalPrice: pricing.regularPrice,
                           });
                         }
-                        prods.push(prodDetails[i]);
+                        prods.push(prodDetails[j]);
                       }
                     }
                   }
+                } else if (prodDetails[j].type === ProductType.Auction) {
+                  let c: any = auctionData.auctionList.find(
+                    (e: any) => e.productId === prodDetails[j].id
+                  );
+                  cartItems.push({
+                    ...c,
+                  });
+                  prods.push(prodDetails[j]);
+                  dz.splice(c, 1);
                 }
               }
               for (let b = 0; b < sellerIds.length; b++) {
@@ -424,6 +458,7 @@ export default async function handler(
                 isAddressDiff = order.isAddressDiff;
               }
             }
+
             return res.status(200).json({
               cartItems: cartItems,
               billingAddress: billingAddress,
@@ -431,12 +466,10 @@ export default async function handler(
               isAddressDiff: isAddressDiff,
               shippingFee: shippingFee,
               prodDetails: prods,
-              screenshot: screenshot,
             });
             break;
           case "POST":
             let { type } = req.query;
-            console.log("HERE");
             if (type === "Order") {
               let body = JSON.parse(req.body);
               let data = await prisma.cartItems.findFirst({
@@ -446,14 +479,14 @@ export default async function handler(
               });
 
               if (data) {
-                let order = await prisma.order.findFirst({
+                let currentOrder = await prisma.order.findFirst({
                   orderBy: {
                     orderNo: "desc",
                   },
                 });
                 let orderNo = 1;
-                if (order) {
-                  orderNo = order.orderNo + 1;
+                if (currentOrder) {
+                  orderNo = currentOrder.orderNo + 1;
                 }
                 let sellerResponse: any = [];
 
@@ -519,7 +552,7 @@ export default async function handler(
 
                       if (promoValid === true) {
                         let cartItem = data.cartItems.filter(
-                          (z: CartItem) => z.sellerId === promoCode.sellerId
+                          (z: any) => z.sellerId === promoCode.sellerId
                         );
 
                         let total = cartItem
@@ -572,129 +605,133 @@ export default async function handler(
                     isBillingAddress: false,
                   },
                 });
-                let r = prisma.order
-                  .create({
-                    data: {
-                      orderNo: orderNo,
-                      billingAddress: data.billingAddress!,
-                      shippingAddress: data.shippingAddress
-                        ? data.shippingAddress
-                        : {},
-                      cartItems: data.cartItems,
-                      isAddressDiff: data.isAddressDiff,
-                      orderByUserId: data.userId,
-                      sellerResponse: sellerResponse,
-                      discountTotal: discountTotal,
-                      promoIds: body?.promoIds,
-                    },
-                  })
-                  .then(() => {
-                    let promise1 = prisma.cartItems.delete({
-                      where: {
-                        userId: data!.userId,
-                      },
-                    });
-                    let promise2 = undefined;
+                await prisma.order.create({
+                  data: {
+                    orderNo: orderNo,
+                    billingAddress: data.billingAddress!,
+                    shippingAddress: data.shippingAddress
+                      ? data.shippingAddress
+                      : {},
+                    cartItems: data.cartItems,
+                    isAddressDiff: data.isAddressDiff,
+                    orderByUserId: data.userId,
+                    sellerResponse: sellerResponse,
+                    discountTotal: discountTotal,
+                    promoIds: body?.promoIds,
+                  },
+                });
 
-                    let promise3 = undefined;
-                    let updateInfo: any = {};
-                    let isUpdate = false;
-                    let order: any = { ...data };
+                let auctionL = await prisma.auctionList.findFirst({
+                  where: {
+                    userId: data!.userId,
+                  },
+                });
+                if (auctionL) {
+                  let list: any = auctionL.auctionList;
 
-                    if (user && !user.email) {
-                      updateInfo.email = order!.billingAddress!.email;
-                      isUpdate = true;
-                    }
-                    if (user && !user.stateId) {
-                      updateInfo.stateId = order!.billingAddress!.stateId;
-                      isUpdate = true;
-                    }
-                    if (user && !user.districtId) {
-                      updateInfo.districtId = order!.billingAddress!.districtId;
-                      isUpdate = true;
-                    }
-                    if (user && !user.townshipId) {
-                      updateInfo.townshipId = order!.billingAddress!.townshipId;
-                      isUpdate = true;
-                    }
-                    if (user && !user.houseNo) {
-                      updateInfo.houseNo = order!.billingAddress!.houseNo;
-                      isUpdate = true;
-                    }
-                    if (user && !user.street) {
-                      updateInfo.street = order!.billingAddress!.street;
-                      isUpdate = true;
-                    }
-                    if (isUpdate === true) {
-                      promise3 = prisma.user.update({
-                        where: {
-                          id: user!.id,
-                        },
-                        data: updateInfo,
-                      });
-                    }
-
-                    let promise4 = undefined;
-                    if (!billingInfo) {
-                      promise4 = prisma.userAddress.create({
-                        data: {
-                          ...order!.billingAddress,
-                          userId: data?.userId,
-                          addressName: "Billing Address",
-                          isBillingAddress: true,
-                        },
-                      });
-                    }
-                    let promise5 = undefined;
-                    if (order.isAddressDiff === true) {
-                      let shipping = order.shippingAddress;
-                      if (
-                        shippingAddress.length < 3 &&
-                        shippingAddress.find(
-                          (e) =>
-                            e.stateId !== shipping.stateId ||
-                            e.districtId !== shipping.districtId ||
-                            e.townshipId !== shipping.townshipId ||
-                            e.houseNo !== shipping.houseNo ||
-                            e.street !== shipping.street ||
-                            e.phoneNum !== shipping.phoneNum ||
-                            e.name !== shipping.name
-                        )
-                      ) {
-                        promise5 = prisma.userAddress.create({
-                          data: {
-                            ...order!.shippingAddress,
-                            userId: data?.userId,
-                            addressName: "Shipping Address",
-                            isBillingAddress: false,
-                          },
-                        });
+                  for (let index = 0; index < data.cartItems.length; index++) {
+                    let aItem: any = data.cartItems[index];
+                    if (aItem) {
+                      if (aItem.isAuction === true) {
+                        list = list.filter(
+                          (z) => z.auctionId !== aItem.auctionId
+                        );
                       }
                     }
-                    return Promise.all([
-                      promise1,
-                      promise2,
-                      promise3,
-                      promise4,
-                      promise5,
-                    ])
-                      .then((values) => {
-                        return { isSuccess: true };
-                      })
-                      .catch((e) => {
-                        console.log(e);
-                        return { isSuccess: false };
-                      });
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                    return { isSuccess: false };
+                  }
+
+                  await prisma.auctionList.update({
+                    where: {
+                      userId: data!.userId,
+                    },
+                    data: {
+                      auctionList: list,
+                    },
                   });
-                if ((await r).isSuccess === true) {
-                  return res.status(200).json(Success);
-                } else {
-                  return res.status(400).json(BadRequest);
                 }
+
+                await prisma.cartItems.update({
+                  where: {
+                    userId: data!.userId,
+                  },
+                  data: {
+                    cartItems: [],
+                  },
+                });
+
+                let updateInfo: any = {};
+                let isUpdate = false;
+                let order: any = { ...data };
+
+                if (user && !user.email) {
+                  updateInfo.email = order!.billingAddress!.email;
+                  isUpdate = true;
+                }
+                if (user && !user.stateId) {
+                  updateInfo.stateId = order!.billingAddress!.stateId;
+                  isUpdate = true;
+                }
+                if (user && !user.districtId) {
+                  updateInfo.districtId = order!.billingAddress!.districtId;
+                  isUpdate = true;
+                }
+                if (user && !user.townshipId) {
+                  updateInfo.townshipId = order!.billingAddress!.townshipId;
+                  isUpdate = true;
+                }
+                if (user && !user.houseNo) {
+                  updateInfo.houseNo = order!.billingAddress!.houseNo;
+                  isUpdate = true;
+                }
+                if (user && !user.street) {
+                  updateInfo.street = order!.billingAddress!.street;
+                  isUpdate = true;
+                }
+                if (isUpdate === true) {
+                  await prisma.user.update({
+                    where: {
+                      id: user!.id,
+                    },
+                    data: updateInfo,
+                  });
+                }
+
+                if (!billingInfo) {
+                  await prisma.userAddress.create({
+                    data: {
+                      ...order!.billingAddress,
+                      userId: data?.userId,
+                      addressName: "Billing Address",
+                      isBillingAddress: true,
+                    },
+                  });
+                }
+                if (order.isAddressDiff === true) {
+                  let shipping = order.shippingAddress;
+                  if (
+                    shippingAddress.length < 3 &&
+                    shippingAddress.find(
+                      (e) =>
+                        e.stateId !== shipping.stateId ||
+                        e.districtId !== shipping.districtId ||
+                        e.townshipId !== shipping.townshipId ||
+                        e.houseNo !== shipping.houseNo ||
+                        e.street !== shipping.street ||
+                        e.phoneNum !== shipping.phoneNum ||
+                        e.name !== shipping.name
+                    )
+                  ) {
+                    await prisma.userAddress.create({
+                      data: {
+                        ...order!.shippingAddress,
+                        userId: data?.userId,
+                        addressName: "Shipping Address",
+                        isBillingAddress: false,
+                      },
+                    });
+                  }
+                }
+                return res.status(200).json(Success);
               } else {
                 return res.status(400).json(BadRequest);
               }
@@ -706,13 +743,29 @@ export default async function handler(
                 delete b.user;
               }
               b.userId = session.id;
-              await prisma.cartItems.upsert({
+              let cartItem = await prisma.cartItems.findFirst({
                 where: {
                   userId: session.id,
                 },
-                create: b,
-                update: b,
               });
+              if (cartItem) {
+                await prisma.cartItems.update({
+                  where: {
+                    userId: session.id,
+                  },
+                  data: b,
+                });
+              } else {
+                await prisma.cartItems.create({
+                  data: {
+                    billingAddress: {},
+                    isAddressDiff: false,
+                    shippingAddress: {},
+                    ...b,
+                  },
+                });
+              }
+
               return res.status(200).json(Success);
             }
             break;

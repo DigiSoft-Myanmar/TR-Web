@@ -36,6 +36,7 @@ import { PromoType, isBetween, isTodayBetween } from "@/util/verify";
 import { fileUrl } from "@/types/const";
 import Avatar from "../presentational/Avatar";
 import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
+import { encryptPhone } from "@/util/encrypt";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -142,9 +143,11 @@ const AdsTable = ({
       headerName: "Membership",
       renderCell: ({ row }: any) => {
         let endDate = new Date(row.seller.memberStartDate);
-        endDate.setDate(
-          endDate.getDate() + row.seller.currentMembership.validity
-        );
+        if (row.seller.currentMembership) {
+          endDate.setDate(
+            endDate.getDate() + row.seller.currentMembership.validity
+          );
+        }
 
         return (
           <Tooltip
@@ -209,7 +212,10 @@ const AdsTable = ({
         <div
           className="cursor-pointer"
           onClick={() => {
-            router.push("/account/" + encodeURIComponent(row.seller.phoneNum));
+            router.push(
+              "/account/" +
+                encodeURIComponent(encryptPhone(row.seller.phoneNum))
+            );
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>

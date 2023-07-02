@@ -9,6 +9,7 @@ import ErrorScreen from "@/components/screen/ErrorScreen";
 
 import nextI18nextConfig from "@/next-i18next.config";
 import { RoleNav } from "@/types/role";
+import { encryptPhone } from "@/util/encrypt";
 import { fetcher } from "@/util/fetcher";
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -65,7 +66,9 @@ function Index() {
     ) {
     } else {
       if (session) {
-        router.push("/account/" + session.phoneNum);
+        router.push(
+          "/account/" + encodeURIComponent(encryptPhone(session.phoneNum))
+        );
       }
     }
   }, [session, router.asPath]);

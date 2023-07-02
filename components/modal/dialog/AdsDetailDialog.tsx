@@ -13,6 +13,7 @@ import {
 import { getHeaders } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
+import { encryptPhone } from "@/util/encrypt";
 
 interface Props {
   isModalOpen: boolean;
@@ -169,7 +170,9 @@ function AdsDetailDialog({
                           onClick={() => {
                             router.push(
                               "/account/" +
-                                encodeURIComponent(ads.seller.phoneNum)
+                                encodeURIComponent(
+                                  encryptPhone(ads.seller.phoneNum)
+                                )
                             );
                           }}
                         >

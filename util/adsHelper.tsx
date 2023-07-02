@@ -130,6 +130,7 @@ export function checkExpire(adsLocation: any, sellerMembership: Membership) {
   const differenceDays: number = Math.floor(
     differenceMs / (1000 * 60 * 60 * 24)
   );
+  console.log(differenceDays);
   if (differenceDays <= 1) {
     return true;
   } else {

@@ -1,6 +1,7 @@
 import { Action } from "@/types/action";
 import { ImgType } from "@/types/orderTypes";
 import { RoleNav } from "@/types/role";
+import { encryptPhone } from "@/util/encrypt";
 import { Tooltip } from "@mui/material";
 import { ProductType, Role } from "@prisma/client";
 import { signOut, useSession } from "next-auth/react";
@@ -48,8 +49,8 @@ function AdminSidebar({ isOpen }: Props) {
               href="/"
               className={
                 router.asPath === "/"
-                  ? "active-route bg-gray-100 px-4 py-2 text-gray-700"
-                  : "px-4 py-2 text-gray-700"
+                  ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                  : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
               }
             >
               <div className="flex items-center">
@@ -892,7 +893,7 @@ function AdminSidebar({ isOpen }: Props) {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth="1"
+                strokeWidth="0.7"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <title />
@@ -907,6 +908,38 @@ function AdminSidebar({ isOpen }: Props) {
                 <span className="ml-3 whitespace-nowrap text-sm font-medium">
                   {" "}
                   Auctions{" "}
+                </span>
+              )}
+            </Link>
+          </Tooltip>
+          <Tooltip title="Bid History" placement="right">
+            <Link
+              href={"/bidHistory"}
+              className={
+                router.asPath.includes("/bidHistory")
+                  ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                  : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              }
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="h-5 w-5 opacity-75"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+
+              {isOpen === "open" && (
+                <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                  {" "}
+                  Bid History{" "}
                 </span>
               )}
             </Link>
@@ -1636,7 +1669,8 @@ function AdminSidebar({ isOpen }: Props) {
               <Link
                 href={
                   session && session.role === Role.Seller
-                    ? "/shipping%20Cost/" + encodeURIComponent(session.phoneNum)
+                    ? "/shipping%20Cost/" +
+                      encodeURIComponent(encryptPhone(session.phoneNum))
                     : "/shipping%20Cost"
                 }
                 className={
@@ -2045,9 +2079,14 @@ function AdminSidebar({ isOpen }: Props) {
             >
               <Tooltip title="Profile" placement="right">
                 <Link
-                  href={"/account/" + encodeURIComponent(session.phoneNum)}
+                  href={
+                    "/account/" +
+                    encodeURIComponent(encryptPhone(session.phoneNum))
+                  }
                   className={
-                    router.asPath.includes("/account/" + session.phoneNum)
+                    router.asPath ===
+                    "/account/" +
+                      encodeURIComponent(encryptPhone(session.phoneNum))
                       ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
                       : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                   }
@@ -2078,7 +2117,7 @@ function AdminSidebar({ isOpen }: Props) {
                 <Link
                   href={
                     "/account/" +
-                    encodeURIComponent(session.phoneNum) +
+                    encodeURIComponent(encryptPhone(session.phoneNum)) +
                     "?action=" +
                     Action.Edit +
                     "&step=Password"
@@ -2086,7 +2125,7 @@ function AdminSidebar({ isOpen }: Props) {
                   className={
                     router.asPath ===
                     "/account/" +
-                      encodeURIComponent(session.phoneNum) +
+                      encodeURIComponent(encryptPhone(session.phoneNum)) +
                       "?action=" +
                       Action.Edit +
                       "&step=Password"

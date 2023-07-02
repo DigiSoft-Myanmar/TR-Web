@@ -4,6 +4,7 @@ import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import { Unauthorized } from "@/types/ApiResponseTypes";
 import { OrderStatus } from "@/types/orderTypes";
+import { isCartValid } from "@/util/orderHelper";
 import { Order, Role } from "@prisma/client";
 import { sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -51,13 +52,27 @@ async function addOrderDetails(order: any, sellerId?: string) {
     if (order[i].cartItems) {
       if (sellerId) {
         order[i].total = order[i].cartItems
-          .filter((e: any) => e.sellerId === sellerId)
+          .filter(
+            (e: any) =>
+              isCartValid(
+                order[i].sellerResponse.find(
+                  (e: any) => e.sellerId === sellerId
+                )
+              ) && e.sellerId === sellerId
+          )
           .map((e: any) =>
             e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
           )
           .reduce((a: number, b: number) => a + b, 0);
       } else {
         order[i].total = order[i].cartItems
+          .filter((c: any) =>
+            isCartValid(
+              order[i].sellerResponse.find(
+                (e: any) => e.sellerId === c.sellerId
+              )
+            )
+          )
           .map((e: any) =>
             e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
           )

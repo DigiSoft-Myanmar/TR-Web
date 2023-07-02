@@ -21,6 +21,7 @@ import UserDetailsSection from "@/components/section/user/UserDetailsSection";
 import UserSellerRatingSection from "@/components/section/user/UserSellerRatingSection";
 import UserUsageSection from "@/components/section/user/UserUsageSection";
 import Avatar from "@/components/presentational/Avatar";
+import { useQuery } from "react-query";
 
 enum ShopTab {
   Home,
@@ -32,7 +33,7 @@ enum ShopTab {
   Details,
 }
 
-function Default({ user }: { user: User }) {
+export default function UserScreen({ user }: { user: User }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { locale } = router;
@@ -90,12 +91,6 @@ function Default({ user }: { user: User }) {
 
   return (
     <div>
-      <Head>
-        <title>Shop | Treasure Rush</title>
-        <meta name="description" content={defaultDescription} />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div className="relative max-w-screen-2xl">
         <div className="flex flex-col bg-white px-10 pt-8 gap-5 shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
@@ -106,9 +101,9 @@ function Default({ user }: { user: User }) {
                 isLarge={true}
               />
               <div className="flex flex-col">
-                <h3 className="text-lg font-light">Akame </h3>
+                <h3 className="text-lg font-light">{user.username} </h3>
                 <span className="text-xs font-semibold">
-                  Akame of the Demon Sword Murasame
+                  {user.displayName}
                 </span>
                 <span className="text-xs text-gray-600 mt-2">
                   97% Positive Feedback
@@ -409,7 +404,7 @@ function Default({ user }: { user: User }) {
           </nav>
         </div>
         {currentTab === ShopTab.Home ? (
-          <UserHomeSection />
+          <UserHomeSection user={user} />
         ) : currentTab === ShopTab.Address ? (
           <UserAddressSection />
         ) : currentTab === ShopTab.Ads ? (
@@ -423,26 +418,9 @@ function Default({ user }: { user: User }) {
         ) : currentTab === ShopTab.Usage ? (
           <UserUsageSection />
         ) : (
-          <UserHomeSection />
+          <UserHomeSection user={user} />
         )}
       </div>
     </div>
   );
 }
-
-export async function getServerSideProps({ locale }: any) {
-  const user = await prisma.user.findFirst({
-    where: {
-      role: Role.Trader,
-    },
-  });
-
-  return {
-    props: {
-      user: JSON.parse(JSON.stringify(user)),
-      ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
-    },
-  };
-}
-
-export default Default;

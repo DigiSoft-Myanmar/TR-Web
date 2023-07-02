@@ -9,7 +9,7 @@ import {
   getAllCategories,
   getAllProducts,
   getFeaturedProducts,
-  getProductsByBrand,
+  getProductsBySeller,
   updateAttribute,
   updateProduct,
 } from "@/prisma/models/product";
@@ -35,7 +35,7 @@ export default async function handler(
     let session = await useAuth(req);
     switch (req.method) {
       case "GET":
-        const { type, brandId, isFeatured, id: recentId } = req.query;
+        const { type, sellerId, isFeatured, id: recentId } = req.query;
         if (type === PageType.Featured) {
           let prods = await getFeaturedProducts();
           return res
@@ -91,8 +91,8 @@ export default async function handler(
           return res.status(200).json([]);
         }
 
-        if (brandId) {
-          let prods = await getProductsByBrand(brandId.toString());
+        if (sellerId) {
+          let prods = await getProductsBySeller(sellerId.toString());
           return res
             .status(200)
             .json(
@@ -109,7 +109,8 @@ export default async function handler(
             (session.role === Role.Seller || session.role === Role.Trader)
             ? session.id
             : "",
-          session
+          session,
+          type?.toString()
         );
         for (let i = 0; i < products.length; i++) {
           products[i].action = {
@@ -117,8 +118,6 @@ export default async function handler(
             slug: products[i].slug,
           };
           let stock: any = StockType.InStock;
-          products[i].unitSold = 0;
-          products[i].totalSales = 0;
           products[i].status = {
             isFeatured: products[i].isFeatured,
             isPublished: products[i].seller

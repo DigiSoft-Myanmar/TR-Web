@@ -63,7 +63,7 @@ function ProductCard({ product }: { product: any }) {
 
   return (
     <Link
-      className="max-w-[200px] overflow-hidden flex flex-col gap-3 rounded-md cursor-pointer bg-white relative"
+      className="max-w-[200px] overflow-hidden flex flex-col gap-3 rounded-md cursor-pointer bg-white relative border"
       href={"/marketplace/" + encodeURIComponent(product.slug)}
     >
       {pricingInfo.isPromotion === true && (

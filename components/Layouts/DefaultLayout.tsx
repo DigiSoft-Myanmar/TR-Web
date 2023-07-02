@@ -18,6 +18,7 @@ import { MarketplaceProvider } from "@/context/MarketplaceContext";
 import { useScrollDirection } from "react-use-scroll-direction";
 import { SellerProvider } from "@/context/SellerContext";
 import { AuctionProvider } from "@/context/AuctionContext";
+import { encryptPhone } from "@/util/encrypt";
 
 declare global {
   interface Window {
@@ -102,7 +103,9 @@ function DefaultLayout({ children }: LayoutProps) {
     if (session && session.role === Role.Seller) {
       if (session.isAvailable === false) {
         router.push(
-          "/account/" + encodeURIComponent(session.phoneNum) + "?action=edit"
+          "/account/" +
+            encodeURIComponent(encryptPhone(session.phoneNum)) +
+            "?action=edit"
         );
       }
     }

@@ -40,6 +40,7 @@ import { PromoType, isBetween, isTodayBetween } from "@/util/verify";
 import { fileUrl } from "@/types/const";
 import PromotionModal from "../modal/sideModal/PromotionModal";
 import Avatar from "../presentational/Avatar";
+import { encryptPhone } from "@/util/encrypt";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -230,7 +231,10 @@ const PromoTbl = ({
         <div
           className="cursor-pointer"
           onClick={() => {
-            router.push("/account/" + encodeURIComponent(row.seller.phoneNum));
+            router.push(
+              "/account/" +
+                encodeURIComponent(encryptPhone(row.seller.phoneNum))
+            );
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center" }}>

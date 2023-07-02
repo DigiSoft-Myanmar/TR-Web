@@ -225,7 +225,11 @@ function CartList() {
                             onClick={(evt) => {
                               evt.stopPropagation();
                               evt.preventDefault();
-                              modifyCount(e.productId, 0);
+                              if (e.isAuction === true) {
+                                //TODO AUCTION
+                              } else {
+                                modifyCount(e.productId, 0);
+                              }
                             }}
                             className="rounded-md px-2 py-1 text-error transition-colors duration-200 hover:bg-error hover:text-white flex flex-row items-center mt-1"
                           >
@@ -287,7 +291,7 @@ function CartList() {
                             </div>
                           )}
                           <p className="truncate text-xs font-semibold">
-                            Unit Price:{" "}
+                            {e.isAuction === true ? "My Bid" : "Unit Price"}:{" "}
                             <span className="text-primary text-sm">
                               {formatAmount(
                                 e.salePrice ? e.salePrice : e.normalPrice,
@@ -307,45 +311,49 @@ function CartList() {
 
                           <div className="flex w-full flex-row items-center gap-3"></div>
                         </div>
-                        <div className="flex flex-grow flex-col items-center gap-1">
-                          <button
-                            onClick={(evt) => {
-                              evt.stopPropagation();
-                              evt.preventDefault();
-                              modifyCount(e.productId, e.quantity - 1);
-                            }}
-                            className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5"
+                        {e.isAuction === true ? (
+                          <></>
+                        ) : (
+                          <div className="flex flex-grow flex-col items-center gap-1">
+                            <button
+                              onClick={(evt) => {
+                                evt.stopPropagation();
+                                evt.preventDefault();
+                                modifyCount(e.productId, e.quantity - 1);
+                              }}
+                              className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
                             >
-                              <path d="M6.75 9.25a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" />
-                            </svg>
-                          </button>
-                          <span className="py-2 text-sm leading-6">
-                            {formatAmount(e.quantity, locale, false)}
-                          </span>
-                          <button
-                            onClick={(evt) => {
-                              evt.stopPropagation();
-                              evt.preventDefault();
-                              modifyCount(e.productId, e.quantity + 1);
-                            }}
-                            className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="h-5 w-5"
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className="h-5 w-5"
+                              >
+                                <path d="M6.75 9.25a.75.75 0 000 1.5h6.5a.75.75 0 000-1.5h-6.5z" />
+                              </svg>
+                            </button>
+                            <span className="py-2 text-sm leading-6">
+                              {formatAmount(e.quantity, locale, false)}
+                            </span>
+                            <button
+                              onClick={(evt) => {
+                                evt.stopPropagation();
+                                evt.preventDefault();
+                                modifyCount(e.productId, e.quantity + 1);
+                              }}
+                              className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
                             >
-                              <path d="M10.75 6.75a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" />
-                            </svg>
-                          </button>
-                        </div>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className="h-5 w-5"
+                              >
+                                <path d="M10.75 6.75a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

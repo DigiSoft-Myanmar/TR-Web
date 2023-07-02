@@ -11,6 +11,7 @@ import ErrorScreen from "@/components/screen/ErrorScreen";
 import { useQuery } from "react-query";
 import SellerShippingTbl from "@/components/muiTable/SellerShippingTbl";
 import { useRouter } from "next/router";
+import { encryptPhone } from "@/util/encrypt";
 
 function Default() {
   const { t } = useTranslation("common");
@@ -25,7 +26,9 @@ function Default() {
 
   React.useEffect(() => {
     if (session && session.role === Role.Seller) {
-      router.push("/shipping%20Cost/" + encodeURIComponent(session.phoneNum));
+      router.push(
+        "/shipping%20Cost/" + encodeURIComponent(encryptPhone(session.phoneNum))
+      );
     }
   }, [session]);
 

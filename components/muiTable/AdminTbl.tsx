@@ -52,6 +52,7 @@ import { getPercentage } from "@/util/compareHelper";
 import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
 import { getHeaders } from "@/util/authHelper";
+import { encryptPhone } from "@/util/encrypt";
 
 interface CellType {
   row: any;
@@ -184,7 +185,9 @@ const AdminTbl = ({
               <IconButton
                 size="small"
                 component={Link}
-                href={`/account/${row.phoneNum}?action=view`}
+                href={`/account/${encodeURIComponent(
+                  encryptPhone(row.phoneNum)
+                )}?action=view`}
               >
                 <Icon icon="mdi:eye-outline" fontSize={20} />
               </IconButton>
@@ -200,7 +203,9 @@ const AdminTbl = ({
                 <IconButton
                   size="small"
                   component={Link}
-                  href={`/account/${row.phoneNum}?action=edit`}
+                  href={`/account/${encodeURIComponent(
+                    encryptPhone(row.phoneNum)
+                  )}?action=edit`}
                 >
                   <Icon icon="mdi:edit" fontSize={20} />
                 </IconButton>

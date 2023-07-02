@@ -213,38 +213,6 @@ function BuyerPromoDialog({
                                 ) : (
                                   <span></span>
                                 )}
-
-                                <div className="flex flex-col gap-0.5 relative">
-                                  {getPromoAvailCount(z) > 0 &&
-                                  getPromoAvailCount(z) !==
-                                    Number.POSITIVE_INFINITY ? (
-                                    <>
-                                      <div
-                                        className="absolute bg-primary rounded-md h-1"
-                                        style={{
-                                          width:
-                                            parseFloat(
-                                              (
-                                                (getUsageCount(z) * 100) /
-                                                getPromoCount(z)
-                                              ).toFixed(2)
-                                            ) + "%",
-                                        }}
-                                      ></div>
-
-                                      <div className="bg-gray-500 w-full rounded-md h-1"></div>
-                                    </>
-                                  ) : (
-                                    <></>
-                                  )}
-                                  {getPromoAvailCount(z) > 0 &&
-                                    getPromoAvailCount(z) !==
-                                      Number.POSITIVE_INFINITY && (
-                                      <span className="text-xs text-center">
-                                        Can apply {getPromoAvailCount(z)} times
-                                      </span>
-                                    )}
-                                </div>
                               </div>
                             )
                           )}

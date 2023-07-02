@@ -12,6 +12,7 @@ import { signOut, useSession } from "next-auth/react";
 import { fileUrl } from "@/types/const";
 import { useMarketplace } from "@/context/MarketplaceContext";
 import { isBuyer, isSeller } from "@/util/authHelper";
+import { encryptPhone } from "@/util/encrypt";
 
 interface Props {
   isModalOpen: boolean;
@@ -334,16 +335,22 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                   href={
                                     accessKey
                                       ? "/account/" +
-                                        encodeURIComponent(session.phoneNum) +
+                                        encodeURIComponent(
+                                          encryptPhone(session.phoneNum)
+                                        ) +
                                         "?accessKey=" +
                                         accessKey
                                       : "/account/" +
-                                        encodeURIComponent(session.phoneNum)
+                                        encodeURIComponent(
+                                          encryptPhone(session.phoneNum)
+                                        )
                                   }
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
                                     router.asPath.includes(
                                       "/account/" +
-                                        encodeURIComponent(session.phoneNum)
+                                        encodeURIComponent(
+                                          encryptPhone(session.phoneNum)
+                                        )
                                     )
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"

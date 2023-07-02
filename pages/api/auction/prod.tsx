@@ -57,6 +57,7 @@ export default async function handler(
               currentBid: auction.amount,
               myBid: myBid.amount,
               totalBid: bidCount,
+              id: myBid.id,
             });
           } else {
             return res.status(200).json({

@@ -51,6 +51,7 @@ import {
 import StatsCard from "../card/StatsCard";
 import { getPricing } from "@/util/pricing";
 import { getHeaders } from "@/util/authHelper";
+import { encryptPhone } from "@/util/encrypt";
 
 interface CellType {
   row: any;
@@ -268,7 +269,12 @@ const ReviewTbl = ({
       field: "createdBy",
       headerName: "Rated by",
       renderCell: ({ row }: CellType) => (
-        <Link href={"/account/" + encodeURIComponent(row.createdBy.phoneNum)}>
+        <Link
+          href={
+            "/account/" +
+            encodeURIComponent(encryptPhone(row.createdBy.phoneNum))
+          }
+        >
           <Typography variant="body2">{row.createdBy.username}</Typography>
         </Link>
       ),

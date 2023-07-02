@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import { isInternal } from "@/util/authHelper";
 import Avatar from "@/components/presentational/Avatar";
+import { encryptPhone } from "@/util/encrypt";
 
 type Props = {
   backFn: Function;
@@ -128,7 +129,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                   <h3 className="mt-4 text-lg font-medium sm:text-xl">
                     <Link
                       href={`/account/${encodeURIComponent(
-                        product.seller?.phoneNum
+                        encryptPhone(product.seller?.phoneNum)
                       )}?action=view`}
                       className="hover:underline"
                     >

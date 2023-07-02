@@ -7,7 +7,7 @@ import { useTranslation } from "next-i18next";
 import { defaultDescription } from "@/types/const";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { Product, Role } from "@prisma/client";
+import { Product, ProductType, Role } from "@prisma/client";
 import ErrorScreen from "@/components/screen/ErrorScreen";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
@@ -21,11 +21,16 @@ function Index() {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { data: session }: any = useSession();
-  const { isLoading, error, data, refetch } = useQuery("productsData", () =>
-    fetch("/api/products").then((res) => {
-      let json = res.json();
-      return json;
-    })
+  const { type } = router.query;
+  const { isLoading, error, data, refetch } = useQuery(
+    ["productsData", type],
+    () =>
+      fetch(type ? "/api/products?type=" + type : "/api/products").then(
+        (res) => {
+          let json = res.json();
+          return json;
+        }
+      )
   );
 
   return session &&
@@ -51,6 +56,7 @@ function Index() {
                 refetch={() => {
                   refetch();
                 }}
+                isAuction={type === ProductType.Auction}
               />
             ) : (
               <EmptyScreen

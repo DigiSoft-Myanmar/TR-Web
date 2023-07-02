@@ -20,6 +20,7 @@ import ShippingCostCard from "@/components/card/ShippingCostCard";
 import ShippingCostDialog from "@/components/modal/dialog/ShippingCostDialog";
 import ErrorScreen from "@/components/screen/ErrorScreen";
 import { getHeaders } from "@/util/authHelper";
+import { decryptPhone } from "@/util/encrypt";
 
 function Edit(data: any) {
   const router = useRouter();
@@ -433,7 +434,7 @@ function Edit(data: any) {
 export async function getServerSideProps({ query, locale }: any) {
   const { phoneNum } = query;
   let user = await prisma.user.findFirst({
-    where: { phoneNum: decodeURIComponent(phoneNum) },
+    where: { phoneNum: decryptPhone(decodeURIComponent(phoneNum)) },
     include: {
       state: true,
       district: true,

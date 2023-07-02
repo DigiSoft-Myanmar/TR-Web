@@ -42,8 +42,13 @@ function Header({
   const router = useRouter();
   const { accessKey } = router.query;
   const { t } = useTranslation("common");
-  const { subTotal, cartItems, shippingLocation, setShippingLocation } =
-    useMarketplace();
+  const {
+    subTotal,
+    cartItems,
+    shippingLocation,
+    setShippingLocation,
+    isLoading,
+  } = useMarketplace();
 
   const { locale } = router;
   const searchRef = React.useRef<HTMLDivElement | null>(null);
@@ -499,9 +504,13 @@ function Header({
               >
                 <div className="indicator">
                   <span className="indicator-item badge badge-primary badge-sm text-white">
-                    {cartItems
-                      .map((e) => e.quantity)
-                      .reduce((a, b) => a + b, 0)}
+                    {isLoading === false ? (
+                      cartItems
+                        .map((e) => e.quantity)
+                        .reduce((a, b) => a + b, 0)
+                    ) : (
+                      <span></span>
+                    )}
                   </span>
                   <div className="w-8 h-7 flex items-center justify-center">
                     <svg
@@ -531,7 +540,9 @@ function Header({
                 <div className="flex flex-col items-start space-y-1">
                   <span className="text-xs font-light">{t("total")}</span>
                   <span className="text-sm font-medium">
-                    {formatAmount(subTotal, locale, true)}
+                    {isLoading === false
+                      ? formatAmount(subTotal, locale, true)
+                      : "Calculating..."}
                   </span>
                 </div>
               </button>

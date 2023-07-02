@@ -5,6 +5,7 @@ import AdsDetailList from "../presentational/AdsDetailList";
 import { AdsLocation, AdsPage, checkExpire } from "@/util/adsHelper";
 import AdsPickerDialog from "../modal/dialog/AdsPickerDialog";
 import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
+import AdsCard from "../card/AdsCard";
 
 function AdsPlacementScreen({
   data,
@@ -256,22 +257,48 @@ function AdsPlacementScreen({
     <>
       <div className="flex flex-col lg:flex-row bg-white h-[85vh] max-h-[85vh]">
         <div className="lg:min-w-[75%] lg:max-w-[75%] lg:order-1 px-5 py-3 bg-gray-200 lg:max-h-[85vh] overflow-y-auto">
-          <h3 className="font-semibold text-sm py-3 border-b">
-            Going to Expired
-          </h3>
-          <div className="bg-white h-32">
-            {data
-              .filter((z: any) =>
-                z.adsLocations.find((b: any) =>
-                  checkExpire(b, z.seller.currentMembership)
+          {data.filter((z: any) =>
+            z.adsLocations.find((b: any) =>
+              checkExpire(b, z.seller.currentMembership)
+            )
+          ).length > 0 ? (
+            <>
+              <h3 className="font-semibold text-sm py-3 border-b">
+                Going to Expired (
+                {
+                  data.filter((z: any) =>
+                    z.adsLocations.find((b: any) =>
+                      checkExpire(b, z.seller.currentMembership)
+                    )
+                  ).length
+                }
                 )
-              )
-              .map((b: Ads, index: number) => (
-                <div className="" key={index}>
-                  {b.adsImg}
-                </div>
-              ))}
-          </div>
+              </h3>
+              <div className="bg-white h-36 flex flex-row items-center justify-start gap-3 p-3 overflow-x-auto scrollbar-hide">
+                {data
+                  .filter((z: any) =>
+                    z.adsLocations.find((b: any) =>
+                      checkExpire(b, z.seller.currentMembership)
+                    )
+                  )
+                  .map((b: Ads, index: number) => (
+                    <div
+                      className="border p-2 hover:border-primary cursor-pointer rounded-md"
+                      onClick={() => {
+                        setAds(b);
+                        setAdsDetailOpen(true);
+                      }}
+                      key={index}
+                    >
+                      <AdsCard ads={b} />
+                    </div>
+                  ))}
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
           <div className="flex flex-col bg-gray-200 sticky -top-4 py-3">
             <h3 className="font-semibold text-sm py-3">Ads Placement</h3>
             <div className="flex flex-row items-center overflow-x-auto bg-darkShade rounded-md px-3 py-2 scrollbar-hide">

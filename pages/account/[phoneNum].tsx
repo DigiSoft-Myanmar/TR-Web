@@ -26,6 +26,8 @@ import {
 } from "@/types/permissionTypes";
 import { ProfileProvider } from "@/context/ProfileContext";
 import ProfileScreen from "@/components/screen/ProfileScreen";
+import { decryptPhone } from "@/util/encrypt";
+import UserScreen from "@/components/screen/UserScreen";
 
 function Default({ user }: { user: any }) {
   const { t }: any = useTranslation("common");
@@ -75,7 +77,7 @@ function Default({ user }: { user: any }) {
           <ProfileScreen />
         </ProfileProvider>
       ) : (
-        <div>View</div>
+        <UserScreen user={user} />
       )}
     </div>
   ) : (
@@ -85,7 +87,7 @@ function Default({ user }: { user: any }) {
 
 export async function getServerSideProps({ params, locale }: any) {
   let user: any = await prisma.user.findFirst({
-    where: { phoneNum: decodeURIComponent(params.phoneNum) },
+    where: { phoneNum: decryptPhone(decodeURIComponent(params.phoneNum)) },
     include: {
       state: true,
       district: true,

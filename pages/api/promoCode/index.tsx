@@ -10,6 +10,7 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { otherPermission } from "@/types/permissionTypes";
+import { isBuyer } from "@/util/authHelper";
 import { canAccess } from "@/util/roleHelper";
 import { isTodayBetween } from "@/util/verify";
 import { Role } from "@prisma/client";
@@ -25,8 +26,6 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
     if (allowPermission === false) {
       return res.status(401).json(Unauthorized);
     }
-    let date = new Date();
-
     let filter = {};
 
     if (
@@ -36,7 +35,7 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
         session.role === Role.SuperAdmin)
     ) {
       filter = {};
-    } else {
+    } else if (sellerId) {
       filter = {
         sellerId: sellerId?.toString(),
       };
@@ -63,7 +62,7 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
       });
       data[i].usage = orderCount;
 
-      if (session) {
+      if (isBuyer(session)) {
         let ownCount = await prisma.order.count({
           where: {
             promoIds: {

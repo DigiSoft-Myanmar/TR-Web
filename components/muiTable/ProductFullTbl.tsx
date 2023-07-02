@@ -43,7 +43,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { ProductAction } from "@/types/action";
+import { AuctionAction, ProductAction } from "@/types/action";
 import SetPriceModal from "../modal/sideModal/SetPriceModal";
 import ModifyPriceModal from "../modal/sideModal/ModifyPriceModal";
 import ScheduleModal from "../modal/sideModal/ScheduleModal";
@@ -74,9 +74,11 @@ const date = new Date();
 const ProductFullTbl = ({
   data: parentData,
   refetch,
+  isAuction,
 }: {
   data: any;
   refetch: Function;
+  isAuction: boolean;
 }) => {
   // ** State
   const [value, setValue] = useState<string>("");
@@ -87,7 +89,7 @@ const ProductFullTbl = ({
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
   const [selectionModel, setSelectionModel] = React.useState<any>([]);
-  const [action, setAction] = React.useState(
+  const [action, setAction] = React.useState<any>(
     ProductAction.IncreaseRegularPrice
   );
 
@@ -105,6 +107,14 @@ const ProductFullTbl = ({
 
   const prevYear = new Date();
   prevYear.setFullYear(new Date().getFullYear() - 1);
+
+  React.useEffect(() => {
+    if (isAuction) {
+      setAction(AuctionAction.Publish);
+    } else {
+      setAction(ProductAction.IncreaseRegularPrice);
+    }
+  }, [isAuction]);
 
   React.useEffect(() => {
     if (parentData) {
@@ -131,457 +141,853 @@ const ProductFullTbl = ({
     }
   }, [parentData, value]);
 
-  const columns = [
-    {
-      flex: 0.2,
-      minWidth: 120,
-      field: "productInfo",
-      headerName: "Product",
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img src={fileUrl + row.productInfo?.img} alt={`${row.slug}`} />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {getText(row.productInfo.name, row.productInfo.nameMM, locale)}
-            </Typography>
-            <Typography variant="caption" sx={{ color: "text.disabled" }}>
-              {row.productInfo.brandName}
-            </Typography>
-          </Box>
-        </Box>
-      ),
-    },
-    {
-      flex: 0.15,
-      minWidth: 100,
-      headerName: "SKU",
-      field: "SKU",
-      renderCell: ({ row }: CellType) => (
-        <Typography variant="body2">{row.SKU}</Typography>
-      ),
-    },
-    {
-      flex: 0.15,
-      minWidth: 100,
-      field: "categories",
-      headerName: "Categories",
-      renderCell: ({ row }: CellType) => {
-        return (
-          <p
-            className="truncate"
-            title={row.categories
-              .map((e: Category) => getText(e.name, e.nameMM, locale))
-              .join(", ")}
-          >
-            {row.categories
-              .map((e: Category) => getText(e.name, e.nameMM, locale))
-              .join(", ")}
-          </p>
-        );
-      },
-    },
-    {
-      flex: 0.2,
-      minWidth: 150,
-      field: "pricing",
-      headerName: "Pricing",
-      renderCell: ({ row }: CellType) => {
-        return row.type === ProductType.Auction ? (
-          <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
-            Auction
-          </div>
-        ) : (
-          <>
-            {row.pricing.isPromotion === true ? (
-              <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
-                <div className="flex flex-col gap-1">
-                  {row.pricing.minRegPrice ? (
-                    <>
-                      <span className="text-xs line-through">
-                        {row.pricing.minRegPrice === row.pricing.maxRegPrice
-                          ? formatAmount(row.pricing.minRegPrice, locale, true)
-                          : `${formatAmount(
-                              row.pricing.minRegPrice,
-                              locale,
-                              true
-                            )} - ${formatAmount(
-                              row.pricing.maxRegPrice,
-                              locale,
-                              true
-                            )}`}
-                      </span>
-
-                      <p className="text-sm font-semibold text-primary">
-                        {row.pricing.minSalePrice === row.pricing.maxSalePrice
-                          ? formatAmount(row.pricing.minSalePrice, locale, true)
-                          : `${formatAmount(
-                              row.pricing.minSalePrice,
-                              locale,
-                              true
-                            )} - ${formatAmount(
-                              row.pricing.maxSalePrice,
-                              locale,
-                              true
-                            )}`}
-                      </p>
-                    </>
+  const columns =
+    isAuction === true
+      ? [
+          {
+            flex: 0.2,
+            minWidth: 120,
+            field: "productInfo",
+            headerName: "Product",
+            renderCell: ({ row }: CellType) => (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Img src={fileUrl + row.productInfo?.img} alt={`${row.slug}`} />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                    {getText(
+                      row.productInfo.name,
+                      row.productInfo.nameMM,
+                      locale
+                    )}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                    {row.productInfo.brandName}
+                  </Typography>
+                </Box>
+              </Box>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            headerName: "SKU",
+            field: "SKU",
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">{row.SKU}</Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "categories",
+            headerName: "Categories",
+            renderCell: ({ row }: CellType) => {
+              return (
+                <p
+                  className="truncate"
+                  title={row.categories
+                    .map((e: Category) => getText(e.name, e.nameMM, locale))
+                    .join(", ")}
+                >
+                  {row.categories
+                    .map((e: Category) => getText(e.name, e.nameMM, locale))
+                    .join(", ")}
+                </p>
+              );
+            },
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "Opening Bid",
+            headerName: "Opening Bid",
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {formatAmount(row.openingBid, locale, true)}
+              </Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "Estimated Price",
+            headerName: "Estimated Price",
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {formatAmount(row.estimatedPrice, locale, true)}
+              </Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 180,
+            field: "Auction Period",
+            headerName: "Auction Period",
+            renderCell: ({ row }: CellType) => (
+              <div className="flex flex-col gap-1 text-xs">
+                <span>
+                  {new Date(row.startTime).toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+                <span>
+                  {new Date(row.endTime).toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "status",
+            headerName: "Status",
+            renderCell: ({ row }: CellType) => (
+              <div className="flex flex-row items-center gap-1 text-primary">
+                <Tooltip
+                  title={row.status.isFeatured ? "Featured" : "Not Featured"}
+                >
+                  {row.status.isFeatured ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   ) : (
-                    <>
-                      <span className="text-xs line-through">
-                        {formatAmount(row.pricing.regularPrice, locale, true)}
-                      </span>
-
-                      <p className="text-sm font-semibold text-primary">
-                        {formatAmount(row.pricing.saleAmount, locale, true)}
-                      </p>
-                    </>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        d="M5.27997 18.65L5.84997 16.18C5.97997 15.6 5.74997 14.79 5.32997 14.37L2.84997 11.89C1.38997 10.43 1.85997 8.95001 3.89997 8.61001L7.08997 8.08001C7.61997 7.99001 8.25997 7.52002 8.49997 7.03001L10.26 3.51001C11.21 1.60001 12.77 1.60001 13.73 3.51001L15.49 7.03001C15.6 7.26001 15.81 7.48001 16.04 7.67001"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M20.1 8.60999C22.14 8.94999 22.62 10.43 21.15 11.89L18.67 14.37C18.25 14.79 18.02 15.6 18.15 16.18L18.86 19.25C19.42 21.68 18.13 22.62 15.98 21.35L12.99 19.58C12.45 19.26 11.56 19.26 11.01 19.58L8.02002 21.35"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 2L2 22"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   )}
-                </div>
-                {row.pricing.startDate && (
-                  <div className="flex flex-col items-center justify-between pl-1">
-                    <>
-                      <p className="text-xs font-semibold text-primary">
-                        {new Date(row.pricing.startDate).toLocaleDateString(
-                          "en-ca",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "2-digit",
-                          }
-                        )}
-                      </p>
-                      <p className="text-xs font-semibold text-primary">
-                        {new Date(row.pricing.endDate).toLocaleDateString(
-                          "en-ca",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "2-digit",
-                          }
-                        )}
-                      </p>
-                    </>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1">
-                {row.pricing.minRegPrice ? (
-                  <>
-                    <p className="text-sm font-semibold text-primary">
-                      {row.pricing.minRegPrice === row.pricing.maxRegPrice
-                        ? formatAmount(row.pricing.minRegPrice, locale, true)
-                        : `${formatAmount(
-                            row.pricing.minRegPrice,
-                            locale,
-                            true
-                          )} - ${formatAmount(
-                            row.pricing.maxRegPrice,
-                            locale,
-                            true
-                          )}`}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold text-primary">
-                      {formatAmount(row.pricing.regularPrice, locale, true)}
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
-          </>
-        );
-      },
-    },
-    {
-      flex: 0.15,
-      minWidth: 100,
-      field: "stock",
-      headerName: "Stock",
-      renderCell: ({ row }: CellType) =>
-        row.type === ProductType.Auction ? (
-          <Typography variant="body2">Auction Stock</Typography>
-        ) : (
-          <Typography variant="body2">{t(row.stock)}</Typography>
-        ),
-    },
-    {
-      flex: 0.15,
-      minWidth: 100,
-      field: "Review",
-      headerName: "Rating",
-      renderCell: ({ row }: CellType) => (
-        <Typography variant="body2">
-          {row.Review.length > 0
-            ? `${(
-                row.Review.map((e: Review) => (e.rating ? e.rating : 0)).reduce(
-                  (a: number, b: number) => a + b,
-                  0
-                ) / row.Review.length
-              ).toFixed(1)} (${row.Review.length} ratings)`
-            : "No rating"}
-        </Typography>
-      ),
-    },
-    {
-      flex: 0.15,
-      minWidth: 100,
-      field: "status",
-      headerName: "Status",
-      renderCell: ({ row }: CellType) => (
-        <div className="flex flex-row items-center gap-1 text-primary">
-          <Tooltip title={row.status.isFeatured ? "Featured" : "Not Featured"}>
-            {row.status.isFeatured ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="h-6 w-6"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-              >
-                <path
-                  d="M5.27997 18.65L5.84997 16.18C5.97997 15.6 5.74997 14.79 5.32997 14.37L2.84997 11.89C1.38997 10.43 1.85997 8.95001 3.89997 8.61001L7.08997 8.08001C7.61997 7.99001 8.25997 7.52002 8.49997 7.03001L10.26 3.51001C11.21 1.60001 12.77 1.60001 13.73 3.51001L15.49 7.03001C15.6 7.26001 15.81 7.48001 16.04 7.67001"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M20.1 8.60999C22.14 8.94999 22.62 10.43 21.15 11.89L18.67 14.37C18.25 14.79 18.02 15.6 18.15 16.18L18.86 19.25C19.42 21.68 18.13 22.62 15.98 21.35L12.99 19.58C12.45 19.26 11.56 19.26 11.01 19.58L8.02002 21.35"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M22 2L2 22"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </Tooltip>
-          <Tooltip
-            title={row.status.isPublished ? "Published" : "Not Published"}
-          >
-            {row.status.isPublished ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="h-6 w-6"
-              >
-                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                <path
-                  fillRule="evenodd"
-                  d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-              >
-                <path
-                  d="M14.53 9.47004L9.47004 14.53C8.82004 13.88 8.42004 12.99 8.42004 12C8.42004 10.02 10.02 8.42004 12 8.42004C12.99 8.42004 13.88 8.82004 14.53 9.47004Z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M17.82 5.76998C16.07 4.44998 14.07 3.72998 12 3.72998C8.46997 3.72998 5.17997 5.80998 2.88997 9.40998C1.98997 10.82 1.98997 13.19 2.88997 14.6C3.67997 15.84 4.59997 16.91 5.59997 17.77"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M8.42004 19.5301C9.56004 20.0101 10.77 20.2701 12 20.2701C15.53 20.2701 18.82 18.1901 21.11 14.5901C22.01 13.1801 22.01 10.8101 21.11 9.40005C20.78 8.88005 20.42 8.39005 20.05 7.93005"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M15.5099 12.7C15.2499 14.11 14.0999 15.26 12.6899 15.52"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M9.47 14.53L2 22"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M22 2L14.53 9.47"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            )}
-          </Tooltip>
-          {session &&
-            (session.role === Role.Admin ||
-              session.role === Role.Staff ||
-              session.role === Role.SuperAdmin) && (
-              <Tooltip
-                title={row.status.sellAllow ? "Sell Allow" : "Not Allowed"}
-              >
-                {row.status.sellAllow ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-6 w-6"
-                  >
-                    <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
-                    <path
-                      fillRule="evenodd"
-                      d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                  >
-                    <path
-                      d="M2 8.5H15.24"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M6 16.5H7.29"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M11 16.5H14.5"
-                      strokeMiterlimit="10"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M7.97998 20.4999H17.56C21.12 20.4999 22 19.6199 22 16.1099V6.88989"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M19.99 3.75C19.37 3.57 18.57 3.5 17.56 3.5H6.44C2.89 3.5 2 4.38 2 7.89V16.1C2 18.44 2.39 19.61 3.71 20.13"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M22 2L2 22"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </Tooltip>
-            )}
-        </div>
-      ),
-    },
-    {
-      flex: 0.15,
-      minWidth: 100,
-      field: "action",
-      headerName: "Action",
-      renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Tooltip title="View">
-            <IconButton
-              size="small"
-              component={Link}
-              href={`/products/${row.action.slug}?action=view`}
-            >
-              <Icon icon="mdi:eye-outline" fontSize={20} />
-            </IconButton>
-          </Tooltip>
-          {session &&
-            (session.role === Role.Admin ||
-              session.role === Role.Staff ||
-              session.role === Role.SuperAdmin ||
-              session.role === Role.Seller) && (
-              <Tooltip title="Edit">
-                <IconButton
-                  size="small"
-                  component={Link}
-                  href={`/products/${row.action.slug}?action=edit`}
+                </Tooltip>
+                <Tooltip
+                  title={row.status.isPublished ? "Published" : "Not Published"}
                 >
-                  <Icon icon="mdi:edit" fontSize={20} />
-                </IconButton>
-              </Tooltip>
-            )}
-          {session &&
-            (session.role === Role.Admin ||
-              session.role === Role.Staff ||
-              session.role === Role.SuperAdmin ||
-              session.role === Role.Seller) && (
-              <Tooltip title="Delete">
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    showConfirmationDialog(
-                      t("deleteConfirmation"),
-                      "",
-                      locale,
-                      () => {
-                        fetch(
-                          `/api/products?id=${encodeURIComponent(
-                            row.action.id
-                          )}`,
-                          {
-                            method: "DELETE",
-                            headers: getHeaders(session),
-                          }
-                        ).then(async (data) => {
-                          if (data.status === 200) {
-                            showSuccessDialog(
-                              t("delete") + " " + t("success"),
-                              "",
-                              locale,
-                              () => {
-                                refetch();
-                              }
-                            );
-                          } else {
-                            let json = await data.json();
-                            showErrorDialog(json.error, json.errorMM, locale);
-                          }
-                        });
+                  {row.status.isPublished ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                      <path
+                        fillRule="evenodd"
+                        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        d="M14.53 9.47004L9.47004 14.53C8.82004 13.88 8.42004 12.99 8.42004 12C8.42004 10.02 10.02 8.42004 12 8.42004C12.99 8.42004 13.88 8.82004 14.53 9.47004Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M17.82 5.76998C16.07 4.44998 14.07 3.72998 12 3.72998C8.46997 3.72998 5.17997 5.80998 2.88997 9.40998C1.98997 10.82 1.98997 13.19 2.88997 14.6C3.67997 15.84 4.59997 16.91 5.59997 17.77"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M8.42004 19.5301C9.56004 20.0101 10.77 20.2701 12 20.2701C15.53 20.2701 18.82 18.1901 21.11 14.5901C22.01 13.1801 22.01 10.8101 21.11 9.40005C20.78 8.88005 20.42 8.39005 20.05 7.93005"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M15.5099 12.7C15.2499 14.11 14.0999 15.26 12.6899 15.52"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9.47 14.53L2 22"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 2L14.53 9.47"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </Tooltip>
+                {session &&
+                  (session.role === Role.Admin ||
+                    session.role === Role.Staff ||
+                    session.role === Role.SuperAdmin) && (
+                    <Tooltip
+                      title={
+                        row.status.sellAllow ? "Sell Allow" : "Not Allowed"
                       }
-                    );
-                  }}
+                    >
+                      {row.status.sellAllow ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="h-6 w-6"
+                        >
+                          <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
+                          <path
+                            fillRule="evenodd"
+                            d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                        >
+                          <path
+                            d="M2 8.5H15.24"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M6 16.5H7.29"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M11 16.5H14.5"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M7.97998 20.4999H17.56C21.12 20.4999 22 19.6199 22 16.1099V6.88989"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M19.99 3.75C19.37 3.57 18.57 3.5 17.56 3.5H6.44C2.89 3.5 2 4.38 2 7.89V16.1C2 18.44 2.39 19.61 3.71 20.13"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M22 2L2 22"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </Tooltip>
+                  )}
+              </div>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "action",
+            headerName: "Action",
+            renderCell: ({ row }: CellType) => (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Tooltip title="View">
+                  <IconButton
+                    size="small"
+                    component={Link}
+                    href={`/products/${row.action.slug}?action=view`}
+                  >
+                    <Icon icon="mdi:eye-outline" fontSize={20} />
+                  </IconButton>
+                </Tooltip>
+                {session &&
+                  (session.role === Role.Admin ||
+                    session.role === Role.Staff ||
+                    session.role === Role.SuperAdmin ||
+                    session.role === Role.Seller) && (
+                    <Tooltip title="Edit">
+                      <IconButton
+                        size="small"
+                        component={Link}
+                        href={`/products/${row.action.slug}?action=edit`}
+                      >
+                        <Icon icon="mdi:edit" fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                {session &&
+                  (session.role === Role.Admin ||
+                    session.role === Role.Staff ||
+                    session.role === Role.SuperAdmin ||
+                    session.role === Role.Seller) && (
+                    <Tooltip title="Delete">
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          showConfirmationDialog(
+                            t("deleteConfirmation"),
+                            "",
+                            locale,
+                            () => {
+                              fetch(
+                                `/api/products?id=${encodeURIComponent(
+                                  row.action.id
+                                )}`,
+                                {
+                                  method: "DELETE",
+                                  headers: getHeaders(session),
+                                }
+                              ).then(async (data) => {
+                                if (data.status === 200) {
+                                  showSuccessDialog(
+                                    t("delete") + " " + t("success"),
+                                    "",
+                                    locale,
+                                    () => {
+                                      refetch();
+                                    }
+                                  );
+                                } else {
+                                  let json = await data.json();
+                                  showErrorDialog(
+                                    json.error,
+                                    json.errorMM,
+                                    locale
+                                  );
+                                }
+                              });
+                            }
+                          );
+                        }}
+                      >
+                        <Icon icon="mdi:delete" fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+              </Box>
+            ),
+          },
+        ]
+      : [
+          {
+            flex: 0.2,
+            minWidth: 120,
+            field: "productInfo",
+            headerName: "Product",
+            renderCell: ({ row }: CellType) => (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Img src={fileUrl + row.productInfo?.img} alt={`${row.slug}`} />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                    {getText(
+                      row.productInfo.name,
+                      row.productInfo.nameMM,
+                      locale
+                    )}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                    {row.productInfo.brandName}
+                  </Typography>
+                </Box>
+              </Box>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            headerName: "SKU",
+            field: "SKU",
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">{row.SKU}</Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "categories",
+            headerName: "Categories",
+            renderCell: ({ row }: CellType) => {
+              return (
+                <p
+                  className="truncate"
+                  title={row.categories
+                    .map((e: Category) => getText(e.name, e.nameMM, locale))
+                    .join(", ")}
                 >
-                  <Icon icon="mdi:delete" fontSize={20} />
-                </IconButton>
-              </Tooltip>
-            )}
-        </Box>
-      ),
-    },
-  ];
+                  {row.categories
+                    .map((e: Category) => getText(e.name, e.nameMM, locale))
+                    .join(", ")}
+                </p>
+              );
+            },
+          },
+          {
+            flex: 0.2,
+            minWidth: 150,
+            field: "pricing",
+            headerName: "Pricing",
+            renderCell: ({ row }: CellType) => {
+              return row.type === ProductType.Auction ? (
+                <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
+                  Auction
+                </div>
+              ) : (
+                <>
+                  {row.pricing.isPromotion === true ? (
+                    <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
+                      <div className="flex flex-col gap-1">
+                        {row.pricing.minRegPrice ? (
+                          <>
+                            <span className="text-xs line-through">
+                              {row.pricing.minRegPrice ===
+                              row.pricing.maxRegPrice
+                                ? formatAmount(
+                                    row.pricing.minRegPrice,
+                                    locale,
+                                    true
+                                  )
+                                : `${formatAmount(
+                                    row.pricing.minRegPrice,
+                                    locale,
+                                    true
+                                  )} - ${formatAmount(
+                                    row.pricing.maxRegPrice,
+                                    locale,
+                                    true
+                                  )}`}
+                            </span>
+
+                            <p className="text-sm font-semibold text-primary">
+                              {row.pricing.minSalePrice ===
+                              row.pricing.maxSalePrice
+                                ? formatAmount(
+                                    row.pricing.minSalePrice,
+                                    locale,
+                                    true
+                                  )
+                                : `${formatAmount(
+                                    row.pricing.minSalePrice,
+                                    locale,
+                                    true
+                                  )} - ${formatAmount(
+                                    row.pricing.maxSalePrice,
+                                    locale,
+                                    true
+                                  )}`}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-xs line-through">
+                              {formatAmount(
+                                row.pricing.regularPrice,
+                                locale,
+                                true
+                              )}
+                            </span>
+
+                            <p className="text-sm font-semibold text-primary">
+                              {formatAmount(
+                                row.pricing.saleAmount,
+                                locale,
+                                true
+                              )}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      {row.pricing.startDate && (
+                        <div className="flex flex-col items-center justify-between pl-1">
+                          <>
+                            <p className="text-xs font-semibold text-primary">
+                              {new Date(
+                                row.pricing.startDate
+                              ).toLocaleDateString("en-ca", {
+                                year: "numeric",
+                                month: "short",
+                                day: "2-digit",
+                              })}
+                            </p>
+                            <p className="text-xs font-semibold text-primary">
+                              {new Date(row.pricing.endDate).toLocaleDateString(
+                                "en-ca",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "2-digit",
+                                }
+                              )}
+                            </p>
+                          </>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-1">
+                      {row.pricing.minRegPrice ? (
+                        <>
+                          <p className="text-sm font-semibold text-primary">
+                            {row.pricing.minRegPrice === row.pricing.maxRegPrice
+                              ? formatAmount(
+                                  row.pricing.minRegPrice,
+                                  locale,
+                                  true
+                                )
+                              : `${formatAmount(
+                                  row.pricing.minRegPrice,
+                                  locale,
+                                  true
+                                )} - ${formatAmount(
+                                  row.pricing.maxRegPrice,
+                                  locale,
+                                  true
+                                )}`}
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm font-semibold text-primary">
+                            {formatAmount(
+                              row.pricing.regularPrice,
+                              locale,
+                              true
+                            )}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </>
+              );
+            },
+          },
+
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "Review",
+            headerName: "Rating",
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {row.Review.length > 0
+                  ? `${(
+                      row.Review.map((e: Review) =>
+                        e.rating ? e.rating : 0
+                      ).reduce((a: number, b: number) => a + b, 0) /
+                      row.Review.length
+                    ).toFixed(1)} (${row.Review.length} ratings)`
+                  : "No rating"}
+              </Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "status",
+            headerName: "Status",
+            renderCell: ({ row }: CellType) => (
+              <div className="flex flex-row items-center gap-1 text-primary">
+                <Tooltip
+                  title={row.status.isFeatured ? "Featured" : "Not Featured"}
+                >
+                  {row.status.isFeatured ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        d="M5.27997 18.65L5.84997 16.18C5.97997 15.6 5.74997 14.79 5.32997 14.37L2.84997 11.89C1.38997 10.43 1.85997 8.95001 3.89997 8.61001L7.08997 8.08001C7.61997 7.99001 8.25997 7.52002 8.49997 7.03001L10.26 3.51001C11.21 1.60001 12.77 1.60001 13.73 3.51001L15.49 7.03001C15.6 7.26001 15.81 7.48001 16.04 7.67001"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M20.1 8.60999C22.14 8.94999 22.62 10.43 21.15 11.89L18.67 14.37C18.25 14.79 18.02 15.6 18.15 16.18L18.86 19.25C19.42 21.68 18.13 22.62 15.98 21.35L12.99 19.58C12.45 19.26 11.56 19.26 11.01 19.58L8.02002 21.35"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 2L2 22"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </Tooltip>
+                <Tooltip
+                  title={row.status.isPublished ? "Published" : "Not Published"}
+                >
+                  {row.status.isPublished ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                      <path
+                        fillRule="evenodd"
+                        d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        d="M14.53 9.47004L9.47004 14.53C8.82004 13.88 8.42004 12.99 8.42004 12C8.42004 10.02 10.02 8.42004 12 8.42004C12.99 8.42004 13.88 8.82004 14.53 9.47004Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M17.82 5.76998C16.07 4.44998 14.07 3.72998 12 3.72998C8.46997 3.72998 5.17997 5.80998 2.88997 9.40998C1.98997 10.82 1.98997 13.19 2.88997 14.6C3.67997 15.84 4.59997 16.91 5.59997 17.77"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M8.42004 19.5301C9.56004 20.0101 10.77 20.2701 12 20.2701C15.53 20.2701 18.82 18.1901 21.11 14.5901C22.01 13.1801 22.01 10.8101 21.11 9.40005C20.78 8.88005 20.42 8.39005 20.05 7.93005"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M15.5099 12.7C15.2499 14.11 14.0999 15.26 12.6899 15.52"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9.47 14.53L2 22"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 2L14.53 9.47"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </Tooltip>
+                {session &&
+                  (session.role === Role.Admin ||
+                    session.role === Role.Staff ||
+                    session.role === Role.SuperAdmin) && (
+                    <Tooltip
+                      title={
+                        row.status.sellAllow ? "Sell Allow" : "Not Allowed"
+                      }
+                    >
+                      {row.status.sellAllow ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          className="h-6 w-6"
+                        >
+                          <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
+                          <path
+                            fillRule="evenodd"
+                            d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                        >
+                          <path
+                            d="M2 8.5H15.24"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M6 16.5H7.29"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M11 16.5H14.5"
+                            strokeMiterlimit="10"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M7.97998 20.4999H17.56C21.12 20.4999 22 19.6199 22 16.1099V6.88989"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M19.99 3.75C19.37 3.57 18.57 3.5 17.56 3.5H6.44C2.89 3.5 2 4.38 2 7.89V16.1C2 18.44 2.39 19.61 3.71 20.13"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M22 2L2 22"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </Tooltip>
+                  )}
+              </div>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "action",
+            headerName: "Action",
+            renderCell: ({ row }: CellType) => (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Tooltip title="View">
+                  <IconButton
+                    size="small"
+                    component={Link}
+                    href={`/products/${row.action.slug}?action=view`}
+                  >
+                    <Icon icon="mdi:eye-outline" fontSize={20} />
+                  </IconButton>
+                </Tooltip>
+                {session &&
+                  (session.role === Role.Admin ||
+                    session.role === Role.Staff ||
+                    session.role === Role.SuperAdmin ||
+                    session.role === Role.Seller) && (
+                    <Tooltip title="Edit">
+                      <IconButton
+                        size="small"
+                        component={Link}
+                        href={`/products/${row.action.slug}?action=edit`}
+                      >
+                        <Icon icon="mdi:edit" fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                {session &&
+                  (session.role === Role.Admin ||
+                    session.role === Role.Staff ||
+                    session.role === Role.SuperAdmin ||
+                    session.role === Role.Seller) && (
+                    <Tooltip title="Delete">
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          showConfirmationDialog(
+                            t("deleteConfirmation"),
+                            "",
+                            locale,
+                            () => {
+                              fetch(
+                                `/api/products?id=${encodeURIComponent(
+                                  row.action.id
+                                )}`,
+                                {
+                                  method: "DELETE",
+                                  headers: getHeaders(session),
+                                }
+                              ).then(async (data) => {
+                                if (data.status === 200) {
+                                  showSuccessDialog(
+                                    t("delete") + " " + t("success"),
+                                    "",
+                                    locale,
+                                    () => {
+                                      refetch();
+                                    }
+                                  );
+                                } else {
+                                  let json = await data.json();
+                                  showErrorDialog(
+                                    json.error,
+                                    json.errorMM,
+                                    locale
+                                  );
+                                }
+                              });
+                            }
+                          );
+                        }}
+                      >
+                        <Icon icon="mdi:delete" fontSize={20} />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+              </Box>
+            ),
+          },
+        ];
 
   return (
     data && (
@@ -724,43 +1130,45 @@ const ProductFullTbl = ({
                             leaveTo="opacity-0"
                           >
                             <Listbox.Options className="absolute z-20 mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                              {Object.entries(ProductAction).map(
-                                ([key, value]) => (
-                                  <Listbox.Option
-                                    key={key}
-                                    className={({ active }) =>
-                                      `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
-                                        active
-                                          ? "bg-primary/10 text-primary"
-                                          : "text-gray-900"
-                                      }`
-                                    }
-                                    value={value}
-                                  >
-                                    {({ selected }) => (
-                                      <div className="flex items-center gap-3">
-                                        <span
-                                          className={`block truncate ${
-                                            selected
-                                              ? "font-medium"
-                                              : "font-normal"
-                                          }`}
-                                        >
-                                          {value}
+                              {Object.entries(
+                                isAuction === true
+                                  ? AuctionAction
+                                  : ProductAction
+                              ).map(([key, value]) => (
+                                <Listbox.Option
+                                  key={key}
+                                  className={({ active }) =>
+                                    `relative cursor-pointer select-none py-2 pl-10 pr-4 ${
+                                      active
+                                        ? "bg-primary/10 text-primary"
+                                        : "text-gray-900"
+                                    }`
+                                  }
+                                  value={value}
+                                >
+                                  {({ selected }) => (
+                                    <div className="flex items-center gap-3">
+                                      <span
+                                        className={`block truncate ${
+                                          selected
+                                            ? "font-medium"
+                                            : "font-normal"
+                                        }`}
+                                      >
+                                        {value}
+                                      </span>
+                                      {selected ? (
+                                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
+                                          <CheckIcon
+                                            className="h-5 w-5"
+                                            aria-hidden="true"
+                                          />
                                         </span>
-                                        {selected ? (
-                                          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                            <CheckIcon
-                                              className="h-5 w-5"
-                                              aria-hidden="true"
-                                            />
-                                          </span>
-                                        ) : null}
-                                      </div>
-                                    )}
-                                  </Listbox.Option>
-                                )
-                              )}
+                                      ) : null}
+                                    </div>
+                                  )}
+                                </Listbox.Option>
+                              ))}
                             </Listbox.Options>
                           </Transition>
                         )}

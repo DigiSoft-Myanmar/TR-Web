@@ -34,6 +34,7 @@ import MyanmarMap from "@/components/presentational/MyanmarMapDistrict";
 import { useQuery } from "react-query";
 import BuyNowHome from "@/components/section/Home/BuyNowHome";
 import { getPricing } from "@/util/pricing";
+import { decryptPhone, encrypt, encryptPhone } from "@/util/encrypt";
 
 export function IndexPage({
   sellerList,
@@ -157,6 +158,8 @@ export function IndexPage({
           <meta name="description" content={defaultDescription} />
         </Head>
         <MyanmarMap />
+        <p>{encryptPhone("+959450035222")}</p>
+        <p>{decryptPhone("KJFJEFAADFCCC")}</p>
       </div>
     );
   }

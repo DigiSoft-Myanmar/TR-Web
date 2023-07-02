@@ -60,6 +60,7 @@ type MarketplaceType = {
   canShip: Function;
   refetchCart: Function;
   clearCart: Function;
+  isLoading: boolean;
 };
 
 export type BillingAddress = {
@@ -110,6 +111,7 @@ const MarketplaceContext = createContext<MarketplaceType>({
   canShip: () => {},
   refetchCart: () => {},
   clearCart: () => {},
+  isLoading: false,
 });
 
 export const useMarketplace = () => React.useContext(MarketplaceContext);
@@ -137,7 +139,11 @@ export const MarketplaceProvider = ({
       return json;
     })
   );
-  const { data: cartData, refetch: refetchCart } = useQuery("cartData", () =>
+  const {
+    data: cartData,
+    refetch: refetchCart,
+    isLoading,
+  } = useQuery("cartData", () =>
     fetch("/api/cart").then((res) => {
       let json = res.json();
       return json;
@@ -554,9 +560,18 @@ export const MarketplaceProvider = ({
           c[index].normalPrice = normalPrice;
           c[index].salePrice = salePrice;
           c[index].quantity += quantity;
-        } else {
+        } else if (stockLevel <= 0) {
           let error = OutOfStockError;
           showErrorDialog(error.error, error.errorMM, locale);
+          return;
+        } else {
+          showErrorDialog(
+            "Only " + stockLevel + " is available.",
+            "လက်ကျန်ပစ္စည်းအရေအတွက်သည် " +
+              formatAmount(stockLevel, locale) +
+              " သာကျန်ရှိသည့်အတွက်ပစ္စည်းမလုံလောက်ပါ။",
+            locale
+          );
           return;
         }
       } else {
@@ -582,9 +597,18 @@ export const MarketplaceProvider = ({
               quantity: quantity,
             });
           }
-        } else {
+        } else if (stockLevel <= 0) {
           let error = OutOfStockError;
           showErrorDialog(error.error, error.errorMM, locale);
+          return;
+        } else {
+          showErrorDialog(
+            "Only " + stockLevel + " is available.",
+            "လက်ကျန်ပစ္စည်းအရေအတွက်သည် " +
+              formatAmount(stockLevel, locale) +
+              " သာကျန်ရှိသည့်အတွက်ပစ္စည်းမလုံလောက်ပါ။",
+            locale
+          );
           return;
         }
       }
@@ -694,6 +718,7 @@ export const MarketplaceProvider = ({
         canShip,
         refetchCart,
         clearCart,
+        isLoading,
       }}
     >
       {children}

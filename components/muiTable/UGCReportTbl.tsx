@@ -59,6 +59,7 @@ import {
 import StatsCard from "../card/StatsCard";
 import { getPricing } from "@/util/pricing";
 import { getHeaders } from "@/util/authHelper";
+import { encryptPhone } from "@/util/encrypt";
 
 interface CellType {
   row: any;
@@ -194,7 +195,11 @@ const UGCReportTbl = ({
       field: "createdBy",
       headerName: "Reported by",
       renderCell: ({ row }: CellType) => (
-        <Link href={"/account/" + encodeURIComponent(row.user.phoneNum)}>
+        <Link
+          href={
+            "/account/" + encodeURIComponent(encryptPhone(row.user.phoneNum))
+          }
+        >
           <Typography variant="body2">{row.user?.username}</Typography>
         </Link>
       ),

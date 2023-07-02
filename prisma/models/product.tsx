@@ -53,8 +53,28 @@ export const getAllCategories = async () => {
   return catData;
 };
 
-export const getAllProducts = async (id: string, session: any) => {
+export const getAllProducts = async (
+  id: string,
+  session: any,
+  type: string
+) => {
   if (id) {
+    let filter: any = {
+      sellerId: id,
+    };
+    if (type) {
+      filter = {
+        ...filter,
+        type: type,
+      };
+    } else {
+      filter = {
+        ...filter,
+        type: {
+          not: ProductType.Auction,
+        },
+      };
+    }
     const products = await prisma.product.findMany({
       include: {
         Review: true,
@@ -67,9 +87,7 @@ export const getAllProducts = async (id: string, session: any) => {
           },
         },
       },
-      where: {
-        sellerId: id,
-      },
+      where: filter,
     });
     return products;
   } else {
@@ -80,6 +98,19 @@ export const getAllProducts = async (id: string, session: any) => {
       filter = {
         user: {
           sellAllow: true,
+        },
+      };
+    }
+    if (type) {
+      filter = {
+        ...filter,
+        type: type,
+      };
+    } else {
+      filter = {
+        ...filter,
+        type: {
+          not: ProductType.Auction,
         },
       };
     }
@@ -118,21 +149,23 @@ export const getFeaturedProducts = async () => {
       Condition: true,
       seller: true,
       Review: true,
+      UnitSold: true,
     },
   });
   return products;
 };
 
-export const getProductsByBrand = async (id: string) => {
+export const getProductsBySeller = async (id: string) => {
   const products = await prisma.product.findMany({
     where: {
-      brandId: id,
+      sellerId: id,
     },
     include: {
       Brand: true,
       Condition: true,
       seller: true,
       Review: true,
+      UnitSold: true,
     },
   });
   return products;

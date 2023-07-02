@@ -1,3 +1,4 @@
+import { decryptPhone } from "@/util/encrypt";
 import { capitalizeFirstLetter } from "@/util/textHelper";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -338,9 +339,15 @@ function AuthHeader() {
                       className="block transition hover:text-gray-700"
                     >
                       {" "}
-                      {capitalizeFirstLetter(
-                        decodeURIComponent(e.split("?")[0])
-                      )}{" "}
+                      {path[1] === "account" || path[1] === "shipping%20Cost"
+                        ? capitalizeFirstLetter(
+                            decryptPhone(
+                              decodeURIComponent(path[2]).split("?")[0]
+                            )
+                          )
+                        : capitalizeFirstLetter(
+                            decodeURIComponent(e.split("?")[0])
+                          )}
                     </Link>
                   </li>
                 </React.Fragment>

@@ -9,6 +9,10 @@ export type CartItem = {
   normalPrice: number;
   salePrice: number;
   sellerId: string;
+  SKU?: string;
+  createdAt?: Date;
+  isAuction?: Boolean;
+  auctionId?: string;
 };
 
 export type ShippingFee = {
@@ -27,7 +31,7 @@ export const getCartItems = async (userId: string) => {
 
 export const updateCartItem = async (
   userId: string,
-  cartItems: CartItem[],
+  cartItems: any[],
   billingAddress: BillingAddress,
   shippingAddress: ShippingAddress,
   isAddressDiff: boolean

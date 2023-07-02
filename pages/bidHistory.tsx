@@ -5,39 +5,33 @@ import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { defaultDescription } from "@/types/const";
-import { useRouter } from "next/router";
+import { isInternal } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
-import useSWR from "swr";
-import { fetcher } from "@/util/fetcher";
-import OrderFullTbl from "@/components/muiTable/OrderFullTbl";
-import EmptyScreen from "@/components/screen/EmptyScreen";
-import ErrorScreen from "@/components/screen/ErrorScreen";
-import { Role } from "@prisma/client";
+import { useRouter } from "next/router";
 
-function OrderPage() {
+function Default() {
   const { t } = useTranslation("common");
-  const router = useRouter();
   const { data: session }: any = useSession();
-  const { data } = useSWR("/api/orders", fetcher);
+  const router = useRouter();
 
-  return session ? (
+  return (
     <div>
       <Head>
-        <title>Orders | Treasure Rush</title>
+        <title>Bid History | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div
-        className={`relative mx-auto ${
-          session && session.role === Role.Buyer ? "lg:p-10" : ""
-        }`}
+        className={`relative max-w-screen-2xl ${
+          isInternal(session) ? "" : "mx-6"
+        } py-5`}
       >
-        {data && <OrderFullTbl data={data} />}
+        <section className="flex flex-col space-y-5">
+          <div className="flex">{t("home")}</div>
+        </section>
       </div>
     </div>
-  ) : (
-    <ErrorScreen statusCode={401} />
   );
 }
 
@@ -49,4 +43,4 @@ export async function getServerSideProps({ locale }: any) {
   };
 }
 
-export default OrderPage;
+export default Default;

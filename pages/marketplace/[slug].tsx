@@ -22,6 +22,7 @@ import {
   StockType,
   UnitSold,
   User,
+  WonList,
 } from "@prisma/client";
 import Avatar from "@/components/presentational/Avatar";
 import { getPricing, getPricingSingle } from "@/util/pricing";
@@ -62,6 +63,7 @@ function MarketplacePage({
         UnitSold: UnitSold[];
         categories: Category[];
         Review: Review[];
+        WonList: WonList[];
       });
   attributes: any;
   content: Content;
@@ -300,6 +302,21 @@ function MarketplacePage({
             if (new Date(product.endTime!).valueOf() > new Date().valueOf()) {
               let remainingTime =
                 new Date(product.endTime!).valueOf() - new Date().valueOf();
+              setRemainingTime(convertMsToTime(remainingTime));
+            } else {
+              setRemainingTime(undefined);
+            }
+          }
+        }, 1000);
+
+        // clear interval on re-render to avoid memory leaks
+        return () => clearInterval(intervalId);
+      } else {
+        const intervalId = setInterval(() => {
+          if (product.startTime) {
+            if (new Date(product.startTime!).valueOf() > new Date().valueOf()) {
+              let remainingTime =
+                new Date(product.startTime!).valueOf() - new Date().valueOf();
               setRemainingTime(convertMsToTime(remainingTime));
             } else {
               setRemainingTime(undefined);
@@ -642,37 +659,60 @@ function MarketplacePage({
             </div>
             {product.type === ProductType.Auction ? (
               <div className="bg-primary px-3 py-2 rounded-md flex flex-col items-center justify-between gap-3">
-                <h3 className="text-white font-semibold text-center">
-                  Bidding ends in
-                </h3>
-                <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-white">
-                  {remainingTime?.days > 0 && (
-                    <div className="flex flex-col text-gray-200 text-xs items-center">
-                      <span className="countdown font-mono text-lg text-white">
-                        <span style={getValue(remainingTime?.days)}></span>
-                      </span>
-                      days
+                {remainingTime ? (
+                  <>
+                    <h3 className="text-white font-semibold text-center">
+                      Bidding{" "}
+                      {new Date(product.startTime) > new Date()
+                        ? "starts in"
+                        : "ends in"}
+                    </h3>
+                    <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-white">
+                      {remainingTime?.days > 0 && (
+                        <div className="flex flex-col text-gray-200 text-xs items-center">
+                          <span className="countdown font-mono text-lg text-white">
+                            <span style={getValue(remainingTime?.days)}></span>
+                          </span>
+                          days
+                        </div>
+                      )}
+                      <div className="flex flex-col text-gray-200 text-xs items-center">
+                        <span className="countdown font-mono text-lg text-white">
+                          <span style={getValue(remainingTime?.hours)}></span>
+                        </span>
+                        hours
+                      </div>
+                      <div className="flex flex-col text-gray-200 text-xs items-center">
+                        <span className="countdown font-mono text-lg text-white">
+                          <span style={getValue(remainingTime?.minutes)}></span>
+                        </span>
+                        min
+                      </div>
+                      <div className="flex flex-col text-gray-200 text-xs items-center">
+                        <span className="countdown font-mono text-lg text-white">
+                          <span style={getValue(remainingTime?.seconds)}></span>
+                        </span>
+                        sec
+                      </div>
                     </div>
-                  )}
-                  <div className="flex flex-col text-gray-200 text-xs items-center">
-                    <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(remainingTime?.hours)}></span>
-                    </span>
-                    hours
-                  </div>
-                  <div className="flex flex-col text-gray-200 text-xs items-center">
-                    <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(remainingTime?.minutes)}></span>
-                    </span>
-                    min
-                  </div>
-                  <div className="flex flex-col text-gray-200 text-xs items-center">
-                    <span className="countdown font-mono text-lg text-white">
-                      <span style={getValue(remainingTime?.seconds)}></span>
-                    </span>
-                    sec
-                  </div>
-                </div>
+                  </>
+                ) : new Date() > new Date(product.endTime) ? (
+                  <>
+                    <h3 className="text-white font-semibold text-center">
+                      Bidding ended
+                    </h3>
+                    <div className="flex flex-col gap-3 text-center text-white">
+                      <h3 className="text-sm">
+                        {data?.currentBid === data?.myBid
+                          ? "Congratulations you have won this auction."
+                          : "Sorry you were outbid in the auction."}
+                      </h3>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+
                 <div className="py-3 border-t border-t-white w-full flex flex-col gap-3">
                   {data?.currentBid === 0 ? (
                     <>
@@ -712,6 +752,13 @@ function MarketplacePage({
                     </>
                   )}
                 </div>
+                {data?.currentBid === data?.myBid &&
+                  (!product.WonList ||
+                    !product.WonList.find((z) => z.auctionId === data?.id)) && (
+                    <span className="text-xs text-primaryText text-center p-2 bg-rose-300 rounded-md">
+                      This product will add to your cart after closing the deal.
+                    </span>
+                  )}
               </div>
             ) : pricingInfo &&
               pricingInfo.isPromotion === true &&
@@ -1070,10 +1117,16 @@ function MarketplacePage({
                       <span className="font-semibold text-primaryText">
                         {product.type === ProductType.Fixed
                           ? product.stockType === StockType.StockLevel
-                            ? product.stockLevel
+                            ? t("quantity").replace(
+                                "{data}",
+                                formatAmount(product.stockLevel, locale)
+                              )
                             : t(product.stockType)
                           : currentVariation?.stockType === StockType.StockLevel
-                          ? currentVariation?.stockLevel
+                          ? t("quantity").replace(
+                              "{data}",
+                              formatAmount(currentVariation.stockLevel, locale)
+                            )
                           : t(currentVariation?.stockType)}
                       </span>
                     </div>
@@ -1383,6 +1436,7 @@ export async function getServerSideProps({ locale, params }: any) {
       seller: true,
       UnitSold: true,
       Review: true,
+      WonList: true,
     },
   });
   const attributes = await prisma.attribute.findMany({

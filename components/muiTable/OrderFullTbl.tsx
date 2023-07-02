@@ -154,7 +154,7 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
 
     {
       flex: 0.15,
-      minWidth: 80,
+      minWidth: 200,
       field: "invoiceStatus",
       renderHeader: () => "Status",
       renderCell: ({ row }: any) => {
@@ -164,7 +164,7 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
           let status = getOrderStatus(
             data.filter((e: any) =>
               session && session.role === Role.Seller
-                ? e.brand === session.brand.brandName
+                ? e.seller.id === session.id
                 : true
             )
           );
@@ -177,7 +177,7 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
               title={data
                 .filter((e: any) =>
                   session && session.role === Role.Seller
-                    ? e.brand === session.brand.brandName
+                    ? e.seller.id === session.id
                     : true
                 )
                 .map((e: any, index: number) => (
@@ -193,9 +193,9 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
                       variant="caption"
                       sx={{ color: "common.white", fontWeight: 600 }}
                     >
-                      Brand:
+                      Seller:
                     </Typography>{" "}
-                    {e.brand}
+                    {e.seller.username}
                     <br />
                     <Typography
                       variant="caption"
@@ -212,28 +212,31 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
                     {index !==
                       data.filter((e: any) =>
                         session && session.role === Role.Seller
-                          ? e.brand === session.brand.brandName
+                          ? e.seller.id === session.id
                           : true
                       ).length -
                         1 && <Divider color="#FFF" />}
                   </React.Fragment>
                 ))}
             >
-              <Box
-                color={color}
-                sx={{
-                  width: "1.875rem",
-                  height: "1.875rem",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <Icon icon={invoiceStatusObj[status]?.icon} fontSize="1rem" />
-              </Box>
+              <div className="flex flex-row items-center gap-1">
+                <Box
+                  color={color}
+                  sx={{
+                    width: "1.875rem",
+                    height: "1.875rem",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Icon icon={invoiceStatusObj[status]?.icon} fontSize="1rem" />
+                </Box>
+                <span className="text-sm">{status.status}</span>
+              </div>
             </Tooltip>
           );
-        } else {
+        } else if (data && data.length === 1) {
           let status = data[0];
           const color = invoiceStatusObj[status.status]
             ? invoiceStatusObj[status.status].color
@@ -254,9 +257,9 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
                     variant="caption"
                     sx={{ color: "common.white", fontWeight: 600 }}
                   >
-                    Brand:
+                    Seller:
                   </Typography>{" "}
-                  {status.brand}
+                  {status.seller.username}
                   <br />
                   <Typography
                     variant="caption"
@@ -272,23 +275,28 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
                 </>
               }
             >
-              <Box
-                color={color}
-                sx={{
-                  width: "1.875rem",
-                  height: "1.875rem",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  display: "flex",
-                }}
-              >
-                <Icon
-                  icon={invoiceStatusObj[status.status]?.icon}
-                  fontSize="1rem"
-                />
-              </Box>
+              <div className="flex flex-row items-center gap-1">
+                <Box
+                  color={color}
+                  sx={{
+                    width: "1.875rem",
+                    height: "1.875rem",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Icon
+                    icon={invoiceStatusObj[status.status]?.icon}
+                    fontSize="1rem"
+                  />
+                </Box>
+                <span className="text-sm">{status.status}</span>
+              </div>
             </Tooltip>
           );
+        } else {
+          return <Typography variant="body2">Invalid</Typography>;
         }
       },
     },
@@ -408,49 +416,65 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
             totalCount={data.length}
           />
           <StatsCard
-            label={"Completed Orders"}
+            label={"Shipped Orders"}
             currentCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.every(
-                  (e: any) => e.status === OrderStatus.Completed
-                )
+              data.filter(
+                (e: any) =>
+                  e.createdAt > prevYear.toISOString() &&
+                  e.invoiceStatus.length > 0 &&
+                  e.invoiceStatus.every(
+                    (e: any) => e.status === OrderStatus.Shipped
+                  )
               ).length
             }
             prevCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.every(
-                  (e: any) => e.status === OrderStatus.Completed
-                )
+              data.filter(
+                (e: any) =>
+                  e.createdAt < prevYear.toISOString() &&
+                  e.createdAt > doublePrevYear.toISOString() &&
+                  e.invoiceStatus.length > 0 &&
+                  e.invoiceStatus.every(
+                    (e: any) => e.status === OrderStatus.Shipped
+                  )
               ).length
             }
             totalCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.every(
-                  (e: any) => e.status === OrderStatus.Completed
-                )
+              data.filter(
+                (e: any) =>
+                  e.invoiceStatus.length > 0 &&
+                  e.invoiceStatus.every(
+                    (e: any) => e.status === OrderStatus.Shipped
+                  )
               ).length
             }
           />
           <StatsCard
             label={"Pending Orders"}
             currentCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.every(
-                  (e: any) =>
-                    e.status !== OrderStatus.AutoCancelled &&
-                    e.status !== OrderStatus.Completed &&
-                    e.status !== OrderStatus.Rejected
-                )
+              data.filter(
+                (e: any) =>
+                  e.createdAt > prevYear.toISOString() &&
+                  e.invoiceStatus.every(
+                    (e: any) =>
+                      e.status !== OrderStatus.AutoCancelled &&
+                      e.status !== OrderStatus.Completed &&
+                      e.status !== OrderStatus.Rejected &&
+                      e.status !== OrderStatus.Shipped
+                  )
               ).length
             }
             prevCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.every(
-                  (e: any) =>
-                    e.status !== OrderStatus.AutoCancelled &&
-                    e.status !== OrderStatus.Completed &&
-                    e.status !== OrderStatus.Rejected
-                )
+              data.filter(
+                (e: any) =>
+                  e.createdAt < prevYear.toISOString() &&
+                  e.createdAt > doublePrevYear.toISOString() &&
+                  e.invoiceStatus.every(
+                    (e: any) =>
+                      e.status !== OrderStatus.AutoCancelled &&
+                      e.status !== OrderStatus.Completed &&
+                      e.status !== OrderStatus.Rejected &&
+                      e.status !== OrderStatus.Shipped
+                  )
               ).length
             }
             totalCount={
@@ -459,29 +483,35 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
                   (e: any) =>
                     e.status !== OrderStatus.AutoCancelled &&
                     e.status !== OrderStatus.Completed &&
-                    e.status !== OrderStatus.Rejected
+                    e.status !== OrderStatus.Rejected &&
+                    e.status !== OrderStatus.Shipped
                 )
               ).length
             }
           />
           <StatsCard
-            label={"Incomplete Orders"}
+            label={"Cancelled Orders"}
             currentCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.some(
-                  (e: any) =>
-                    e.status === OrderStatus.AutoCancelled ||
-                    e.status === OrderStatus.Rejected
-                )
+              data.filter(
+                (e: any) =>
+                  e.createdAt > prevYear.toISOString() &&
+                  e.invoiceStatus.some(
+                    (e: any) =>
+                      e.status === OrderStatus.AutoCancelled ||
+                      e.status === OrderStatus.Rejected
+                  )
               ).length
             }
             prevCount={
-              data.filter((e: any) =>
-                e.invoiceStatus.some(
-                  (e: any) =>
-                    e.status === OrderStatus.AutoCancelled ||
-                    e.status === OrderStatus.Rejected
-                )
+              data.filter(
+                (e: any) =>
+                  e.createdAt < prevYear.toISOString() &&
+                  e.createdAt > doublePrevYear.toISOString() &&
+                  e.invoiceStatus.some(
+                    (e: any) =>
+                      e.status === OrderStatus.AutoCancelled ||
+                      e.status === OrderStatus.Rejected
+                  )
               ).length
             }
             totalCount={

@@ -25,6 +25,7 @@ import { getHighlightText, getText } from "@/util/textHelper";
 import prisma from "@/prisma/prisma";
 import { PrivacyType } from "@/types/pageType";
 import MembershipTable from "@/components/presentational/MembershipTable";
+import { encryptPhone } from "@/util/encrypt";
 
 export type Register = {
   username: string;
@@ -132,7 +133,8 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
           let phoneNum: any = regData.phoneNum;
           signIn("credentials", {
             idToken: response.idToken,
-            callbackUrl: "/account/" + encodeURIComponent(phoneNum),
+            callbackUrl:
+              "/account/" + encodeURIComponent(encryptPhone(phoneNum)),
             redirect: true,
           });
           setSubmit(false);

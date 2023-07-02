@@ -59,6 +59,7 @@ import { sortBy } from "lodash";
 import { getHeaders } from "@/util/authHelper";
 import { isTodayBetween } from "@/util/verify";
 import Avatar from "../presentational/Avatar";
+import { encryptPhone } from "@/util/encrypt";
 
 interface CellType {
   row: any;
@@ -174,8 +175,9 @@ const SellerShippingTbl = ({
       headerName: "Membership",
       renderCell: ({ row }: CellType) => {
         let endDate = new Date(row.memberStartDate);
-        endDate.setDate(endDate.getDate() + row.currentMembership.validity);
-
+        if (row.currentMembership) {
+          endDate.setDate(endDate.getDate() + row.currentMembership.validity);
+        }
         return (
           <Tooltip
             title={
@@ -349,7 +351,9 @@ const SellerShippingTbl = ({
             <IconButton
               size="small"
               component={Link}
-              href={`/account/${encodeURIComponent(row.phoneNum)}?action=view`}
+              href={`/account/${encodeURIComponent(
+                encryptPhone(row.phoneNum)
+              )}?action=view`}
             >
               <Icon icon="mdi:eye-outline" fontSize={20} />
             </IconButton>
@@ -362,7 +366,9 @@ const SellerShippingTbl = ({
                 <IconButton
                   size="small"
                   component={Link}
-                  href={`/shipping%20Cost/${encodeURIComponent(row.phoneNum)}`}
+                  href={`/shipping%20Cost/${encodeURIComponent(
+                    encryptPhone(row.phoneNum)
+                  )}`}
                 >
                   <Icon icon="mdi:edit" fontSize={20} />
                 </IconButton>
