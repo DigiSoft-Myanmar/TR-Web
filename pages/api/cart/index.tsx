@@ -618,6 +618,7 @@ export default async function handler(
                     sellerResponse: sellerResponse,
                     discountTotal: discountTotal,
                     promoIds: body?.promoIds,
+                    sellerIds: sellerIds,
                   },
                 });
 

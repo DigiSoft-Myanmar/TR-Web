@@ -34,6 +34,12 @@ enum StockType {
   StockLevel
 }
 
+enum ReviewType {
+  Product
+  Buyer
+  Seller
+}
+
 enum Role {
   Admin
   Seller
@@ -484,17 +490,17 @@ model ShippingCost {
 }
 
 model Review {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  product           Product? @relation(fields: [productId], references: [id])
-  productId         String?  @db.ObjectId
-  createdBy         User     @relation(fields: [createdByUserId], references: [id])
-  createdByUserId   String   @db.ObjectId
-  helpfulUsersId    String[]
-  notHelpfulUsersId String[]
-  rating            Int
-  message           String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  product         Product?   @relation(fields: [productId], references: [id])
+  productId       String?    @db.ObjectId
+  createdBy       User       @relation(fields: [createdByUserId], references: [id])
+  createdByUserId String     @db.ObjectId
+  userId          String?
+  rating          Int
+  reviewType      ReviewType @default(Product)
+  message         String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 }
 
 model Feedback {
@@ -636,6 +642,7 @@ model Order {
 
   promoIds   String[]    @db.ObjectId
   promoCodes PromoCode[] @relation(fields: [promoIds], references: [id])
+  sellerIds  String[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

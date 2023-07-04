@@ -502,3 +502,104 @@ export function toDateTimeLocal(isoString: string) {
     padTo2Digits(date.getMinutes())
   );
 }
+
+export function getNotiTime(
+  isoString: string,
+  locale?: string,
+  disableFull?: boolean
+) {
+  let date = new Date(isoString);
+  let today = new Date();
+
+  let secondDiff = (today.getTime() - date.getTime()) / 1000;
+  if (secondDiff < 60) {
+    if (locale === "mm") {
+      return "လွန်ခဲ့သော စက္ကန့်အနည်းငယ်က";
+    } else {
+      return "A few seconds ago";
+    }
+  } else {
+    let minute = Math.floor(secondDiff / 60);
+    if (minute < 60) {
+      if (locale === "mm") {
+        return "လွန်ခဲ့သော" + formatAmount(minute, "mm") + " မိနစ်ခန့်က";
+      } else if (minute === 1) {
+        return minute + " minute ago";
+      } else {
+        return minute + " minutes ago";
+      }
+    } else {
+      let hour = Math.floor(minute / 60);
+      if (hour < 24) {
+        if (locale === "mm") {
+          return "လွန်ခဲ့သော" + formatAmount(hour, "mm") + " နာရီခန့်က";
+        } else if (hour === 1) {
+          return hour + " hour ago";
+        } else {
+          return hour + " hours ago";
+        }
+      } else {
+        let day = Math.floor(hour / 24);
+        if (day === 1) {
+          if (locale === "mm") {
+            return "လွန်ခဲ့သော တစ်ရက်ခန့်က";
+          } else {
+            return "A day ago";
+          }
+        } else {
+          if (disableFull === true) {
+            return date.toLocaleDateString("en-ca", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            });
+          } else {
+            return date.toLocaleDateString("en-ca", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              hour12: true,
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          }
+        }
+      }
+    }
+  }
+}
+
+export function calculateRating(totalRatings: number, totalComments: number) {
+  if (totalComments > 0) {
+    return (totalRatings / totalComments).toFixed(1);
+  } else {
+    return (0).toFixed(1);
+  }
+}
+
+export function calculateRatingPercentage(ratings) {
+  const ratingCount = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+  };
+
+  // Count the occurrences of each rating
+  ratings?.forEach((item) => {
+    const rating = item.rating;
+    ratingCount[rating]++;
+  });
+
+  const totalCount = ratings?.length;
+  const ratingPercentage = {};
+
+  // Calculate the percentage for each rating
+  for (let i = 1; i <= 5; i++) {
+    const percentage = totalCount > 0 ? (ratingCount[i] / totalCount) * 100 : 0;
+    ratingPercentage[i] = percentage.toFixed(2); // Rounding the percentage to two decimal places
+  }
+
+  return ratingPercentage;
+}

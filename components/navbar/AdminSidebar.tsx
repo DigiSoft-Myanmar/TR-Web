@@ -1,6 +1,7 @@
 import { Action } from "@/types/action";
 import { ImgType } from "@/types/orderTypes";
 import { RoleNav } from "@/types/role";
+import { getHeaders } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
 import { Tooltip } from "@mui/material";
 import { ProductType, Role } from "@prisma/client";
@@ -2159,7 +2160,23 @@ function AdminSidebar({ isOpen }: Props) {
                 <button
                   type="button"
                   onClick={() => {
-                    signOut({ callbackUrl: "/" });
+                    fetch(
+                      "/api/user/" +
+                        encodeURIComponent(session.phoneNum) +
+                        "/stats",
+                      {
+                        method: "PUT",
+                        body: JSON.stringify({
+                          id: session.id,
+                          lastOnlineTime: new Date().toISOString(),
+                        }),
+                        headers: getHeaders(session),
+                      }
+                    ).then((data) => {
+                      signOut({
+                        callbackUrl: "/",
+                      });
+                    });
                   }}
                   className="flex w-full items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
                 >

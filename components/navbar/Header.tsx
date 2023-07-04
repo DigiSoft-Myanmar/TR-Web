@@ -27,7 +27,7 @@ import Avatar from "../presentational/Avatar";
 import DefaultDialog from "../modal/dialog/DefaultDialog";
 import NavModal from "../modal/sideModal/NavModal";
 import CartModal from "../modal/sideModal/CartModal";
-import { isBuyer, isSeller } from "@/util/authHelper";
+import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { showErrorDialog } from "@/util/swalFunction";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
@@ -451,7 +451,25 @@ function Header({
                           type="button"
                           className="ml-1 font-normal hover:font-semibold"
                           onClick={() => {
-                            signOut();
+                            fetch(
+                              "/api/user/" +
+                                encodeURIComponent(session.phoneNum) +
+                                "/stats",
+                              {
+                                method: "PUT",
+                                body: JSON.stringify({
+                                  id: session.id,
+                                  lastOnlineTime: new Date().toISOString(),
+                                }),
+                                headers: getHeaders(session),
+                              }
+                            ).then((data) => {
+                              signOut({
+                                callbackUrl: accessKey
+                                  ? "/?accessKey=" + accessKey
+                                  : "/",
+                              });
+                            });
                           }}
                         >
                           Logout
@@ -598,7 +616,7 @@ function Header({
           className={`hidden lg:flex flex-row items-center justify-between px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 min-h-[52px]`}
         >
           <div className="flex flex-row items-center gap-3">
-            {isSeller(session) ? (
+            {session && session.role === Role.Seller ? (
               <>
                 <Link
                   href={"/marketplace"}

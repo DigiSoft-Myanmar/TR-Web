@@ -12,6 +12,7 @@ import {
 } from "@/util/textHelper";
 import LoadingScreen from "@/components/screen/LoadingScreen";
 import { useMarketplace } from "@/context/MarketplaceContext";
+import { encryptPhone } from "@/util/encrypt";
 
 interface Props {
   isModalOpen: boolean;
@@ -199,7 +200,12 @@ function BuyerPromoDialog({
                                     type="button"
                                     className="text-sm font-semibold bg-warning px-3 py-2 rounded-md text-white hover:bg-warning-content"
                                     onClick={() => {
-                                      router.push("/shop/" + z.seller.phoneNum);
+                                      router.push(
+                                        "/account/" +
+                                          encodeURIComponent(
+                                            encryptPhone(z.seller.phoneNum)
+                                          )
+                                      );
                                     }}
                                   >
                                     Need{" "}

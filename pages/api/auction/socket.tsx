@@ -37,24 +37,16 @@ export default async function SocketHandler(req: NextApiRequest, res: any) {
           },
           include: {
             product: true,
-            AuctionList: {
+            createdBy: {
               include: {
-                user: {
-                  include: {
-                    NotiToken: true,
-                  },
-                },
+                NotiToken: true,
               },
             },
           },
         });
 
-        if (
-          d?.AuctionList &&
-          d.AuctionList.user &&
-          d.AuctionList.user.NotiToken
-        ) {
-          let token = d.AuctionList.user.NotiToken;
+        if (d && d.createdBy && d.createdBy.NotiToken) {
+          let token = d.createdBy.NotiToken;
           await fetch("https://exp.host/--/api/v2/push/send", {
             method: "POST",
             body: JSON.stringify({

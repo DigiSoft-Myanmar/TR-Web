@@ -8,15 +8,25 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
 import React from "react";
 import AddressModal from "../modal/sideModal/AddressModal";
+import { getText } from "@/util/textHelper";
 
 interface Props {
   address: any;
   updateFn: Function;
   isBilling: boolean;
   index?: number;
+  phoneNum: string;
+  userId: string;
 }
 
-function AddressCard({ address, updateFn, isBilling, index }: Props) {
+function AddressCard({
+  address,
+  updateFn,
+  isBilling,
+  index,
+  phoneNum,
+  userId,
+}: Props) {
   const { t } = useTranslation("common");
   const { t: checkoutT } = useTranslation("checkout");
   const { locale } = useRouter();
@@ -25,11 +35,11 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
   const [isDialogOpen, setDialogOpen] = React.useState(false);
   return (
     <>
-      <div className="p-6 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+      <div className="p-3 max-w-sm min-w-[300px]">
         {isBilling === true ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="mb-2 w-6 h-6 text-gray-500 dark:text-gray-400"
+            className="mb-2 w-6 h-6 text-gray-500"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -42,7 +52,7 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="mb-2 w-6 h-6 text-gray-500 dark:text-gray-400"
+            className="mb-2 w-6 h-6 text-gray-500"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -50,11 +60,11 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
             <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
           </svg>
         )}
-        <h5 className="mb-4 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+        <h5 className="mb-4 text-lg font-semibold tracking-tight text-gray-900">
           {isBilling === true ? checkoutT("billing") : checkoutT("shipping")}
         </h5>
-        <div className="flex flex-col gap-3 pt-3 border-t border-t-inputLightBorder dark:border-t-inputDarkBorder">
-          <div className="mb-3 font-normal text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
+        <div className="flex flex-col gap-3 pt-3 border-t border-t-inputLightBorder">
+          <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -71,7 +81,7 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
             </svg>
             <p>{address.name}</p>
           </div>
-          <div className="mb-3 font-normal text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
+          <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -87,9 +97,29 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
               />
             </svg>
 
-            <p>{address.phone}</p>
+            <p>{address.phoneNum}</p>
           </div>
-          <div className="mb-3 font-normal text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
+          {isBilling === true && (
+            <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                />
+              </svg>
+
+              <p>{address.email}</p>
+            </div>
+          )}
+          <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -107,7 +137,7 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
 
             <p>{address.houseNo}</p>
           </div>
-          <div className="mb-3 font-normal text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
+          <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -125,37 +155,42 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
 
             <p>{address.street}</p>
           </div>
-          {address.location &&
-            address.location.state &&
-            address.location.district &&
-            address.location.township && (
-              <div className="mb-3 font-normal text-gray-500 dark:text-gray-400 text-sm flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"
-                  />
-                </svg>
+          {address.state && address.district && address.township && (
+            <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"
+                />
+              </svg>
 
-                <p>
-                  {address.location.state +
-                    "-" +
-                    address.location.district +
-                    "-" +
-                    address.location.township}
-                </p>
-              </div>
-            )}
+              <p>
+                {getText(address.state.name, address.state.nameMM, locale) +
+                  "-" +
+                  getText(
+                    address.district.name,
+                    address.district.nameMM,
+                    locale
+                  ) +
+                  "-" +
+                  getText(
+                    address.township.name,
+                    address.township.nameMM,
+                    locale
+                  )}
+              </p>
+            </div>
+          )}
         </div>
-        <div className="flex space-x-5 justify-end items-center pt-3 border-t border-t-inputLightBorder dark:border-t-inputDarkBorder">
+        <div className="flex space-x-5 justify-end items-center pt-3 border-t border-t-inputLightBorder">
           {isBilling === false && (
             <button
               onClick={(e) => {
@@ -165,14 +200,14 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
                   "",
                   locale,
                   () => {
-                    fetch(
-                      `/api/user/address?isBilling=false&id=${encodeURIComponent(
-                        index!
-                      )}`,
-                      {
-                        method: "DELETE",
-                      }
-                    ).then(async (data) => {
+                    let link =
+                      "/api/user/" + encodeURIComponent(phoneNum) + "/address";
+                    if (address && address.id) {
+                      link += "?id=" + encodeURIComponent(address.id);
+                    }
+                    fetch(link, {
+                      method: "DELETE",
+                    }).then(async (data) => {
                       if (data.status === 200) {
                         updateFn();
                         showSuccessDialog(
@@ -191,7 +226,7 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-brand dark:text-brandLight"
+                className="h-6 w-6 text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -214,7 +249,7 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-brand dark:text-brandLight"
+              className="h-6 w-6 text-primary"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -234,10 +269,11 @@ function AddressCard({ address, updateFn, isBilling, index }: Props) {
         address={currentAddress}
         title={"Edit Address"}
         isBilling={isBilling}
+        userId={userId}
         onClickFn={(currentAddress: any) => {
-          let link = "/api/user/address?isBilling=" + isBilling;
-          if (isBilling === false && index) {
-            link += "&id=" + encodeURIComponent(index);
+          let link = "/api/user/" + encodeURIComponent(phoneNum) + "/address";
+          if (address && address.id) {
+            link += "?id=" + encodeURIComponent(address.id);
           }
           fetch(link, {
             method: "PUT",

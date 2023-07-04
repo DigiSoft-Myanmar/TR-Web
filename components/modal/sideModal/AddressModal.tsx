@@ -1,6 +1,13 @@
 import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
+import { z } from "zod";
+import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FormInput from "@/components/presentational/FormInput";
+import SubmitBtn from "@/components/presentational/SubmitBtn";
+import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 
 interface Props {
   isModalOpen: boolean;
@@ -9,6 +16,7 @@ interface Props {
   title: any;
   onClickFn: Function;
   isBilling: boolean;
+  userId: string;
 }
 
 function AddressModal({
@@ -18,8 +26,74 @@ function AddressModal({
   address,
   onClickFn,
   isBilling,
+  userId,
 }: Props) {
+  const { t } = useTranslation("common");
   const router = useRouter();
+  const [location, setLocation] = React.useState({
+    stateId: "",
+    districtId: "",
+    townshipId: "",
+  });
+
+  const schema = z.object(
+    isBilling === true
+      ? {
+          name: z.string().min(1, { message: t("inputError") }),
+          email: z.string().email({ message: t("inputValidEmailError") }),
+          phoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
+            message: t("inputValidPhoneError"),
+          }),
+          houseNo: z.string().min(1, { message: t("inputError") }),
+          street: z.string().min(1, { message: t("inputError") }),
+        }
+      : {
+          name: z.string().min(1, { message: t("inputError") }),
+          phoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
+            message: t("inputValidPhoneError"),
+          }),
+          houseNo: z.string().min(1, { message: t("inputError") }),
+          street: z.string().min(1, { message: t("inputError") }),
+        }
+  );
+
+  const { register, handleSubmit, watch, formState, reset } = useForm<any>({
+    mode: "onChange",
+    resolver: zodResolver(schema),
+  });
+  const { errors } = formState;
+  const { locale } = useRouter();
+  const watchFields = watch();
+
+  function submit(data: any) {
+    onClickFn({
+      ...data,
+      ...location,
+      userId: userId,
+      isBillingAddress: isBilling,
+    });
+    setModalOpen(false);
+  }
+
+  React.useEffect(() => {
+    if (address) {
+      reset(address);
+      setLocation({
+        stateId: address.stateId,
+        districtId: address.districtId,
+        townshipId: address.townshipId,
+      });
+    } else {
+      reset({
+        phoneNum: "+959",
+      });
+      setLocation({
+        stateId: "",
+        districtId: "",
+        townshipId: "",
+      });
+    }
+  }, [address]);
 
   React.useEffect(() => {
     router.beforePopState(({ as }) => {
@@ -75,13 +149,13 @@ function AddressModal({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="absolute top-0 right-0 bottom-0 flex max-w-md transform overflow-auto rounded-l-xl bg-primary shadow-xl transition-all">
+              <div className="absolute top-0 right-0 bottom-0 flex max-w-lg min-w-[500px] transform overflow-auto rounded-l-xl bg-primary shadow-xl transition-all">
                 <div className="inline-block w-full overflow-y-auto bg-white p-6 text-left align-middle">
                   <Dialog.Title
                     as="div"
                     className="text-darkShade flex items-center text-lg font-medium leading-6"
                   >
-                    <h3 className="flex-grow">Payment successful</h3>
+                    <h3 className="flex-grow">{title}</h3>
                     <button
                       className="bg-lightShade flex rounded-md p-2 focus:outline-none"
                       onClick={() => setModalOpen(false)}
@@ -97,20 +171,85 @@ function AddressModal({
                     </button>
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-darkShade text-sm">
-                      Your payment has been successfully submitted. We’ve sent
-                      you an email with all of the details of your order.
-                    </p>
-                  </div>
+                    <form onSubmit={handleSubmit(submit)}>
+                      <div className="mt-2 flex flex-col gap-3">
+                        <FormInput
+                          label={t("name")}
+                          placeHolder={t("enter") + " " + t("name")}
+                          error={errors.name?.message}
+                          type="text"
+                          defaultValue={address?.name}
+                          formControl={{ ...register("name") }}
+                          currentValue={watchFields.name}
+                        />
+                        <FormInput
+                          label={t("phone")}
+                          placeHolder={t("enter") + " " + t("phone")}
+                          error={errors.phoneNum?.message}
+                          type="text"
+                          defaultValue={address?.phoneNum}
+                          formControl={{ ...register("phoneNum") }}
+                          currentValue={watchFields.phoneNum}
+                        />
+                        {isBilling === true && (
+                          <FormInput
+                            label={t("email")}
+                            placeHolder={t("enter") + " " + t("email")}
+                            error={errors.email?.message}
+                            type="text"
+                            defaultValue={address?.email}
+                            formControl={{ ...register("email") }}
+                            currentValue={watchFields.email}
+                          />
+                        )}
 
-                  <div className="mt-4 flex w-full justify-end ">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-primary/10 px-4 py-2 text-sm font-medium text-info hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
-                      onClick={() => setModalOpen(false)}
-                    >
-                      Got it, thanks!
-                    </button>
+                        <FormInput
+                          label={t("houseNo")}
+                          placeHolder={t("enter") + " " + t("houseNo")}
+                          error={errors.houseNo?.message}
+                          type="text"
+                          defaultValue={address?.houseNo}
+                          formControl={{ ...register("houseNo") }}
+                          currentValue={watchFields.houseNo}
+                        />
+
+                        <FormInput
+                          label={t("street")}
+                          placeHolder={t("enter") + " " + t("street")}
+                          error={errors.street?.message}
+                          type="text"
+                          defaultValue={address?.street}
+                          formControl={{ ...register("street") }}
+                          currentValue={watchFields.street}
+                        />
+
+                        <div>
+                          <LocationPickerFull
+                            selected={{
+                              stateId: location?.stateId,
+                              districtId: location?.districtId,
+                              townshipId: location?.townshipId,
+                            }}
+                            setSelected={(data) => {
+                              setLocation({
+                                stateId: data.stateId,
+                                districtId: data.districtId,
+                                townshipId: data.townshipId,
+                              });
+                            }}
+                            isStart={true}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-4 flex w-full justify-end ">
+                        <SubmitBtn
+                          isSubmit={false}
+                          submitTxt="Loading..."
+                          text={t("submit")}
+                        />
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { fileUrl } from "@/types/const";
 import { encryptPhone } from "@/util/encrypt";
+import { getHeaders } from "@/util/authHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -534,10 +535,24 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                               className="text-primaryText rounded-md p-2 transition-colors hover:bg-primary hover:text-white"
                               type="button"
                               onClick={() => {
-                                signOut({
-                                  callbackUrl: accessKey
-                                    ? "/?accessKey=" + accessKey
-                                    : "/",
+                                fetch(
+                                  "/api/user/" +
+                                    encodeURIComponent(session.phoneNum) +
+                                    "/stats",
+                                  {
+                                    method: "PUT",
+                                    body: JSON.stringify({
+                                      id: session.id,
+                                      lastOnlineTime: undefined,
+                                    }),
+                                    headers: getHeaders(session),
+                                  }
+                                ).then((data) => {
+                                  signOut({
+                                    callbackUrl: accessKey
+                                      ? "/?accessKey=" + accessKey
+                                      : "/",
+                                  });
                                 });
                               }}
                             >

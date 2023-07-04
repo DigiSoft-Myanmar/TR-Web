@@ -82,6 +82,7 @@ async function addSiteVisit(req: NextApiRequest, res: NextApiResponse<any>) {
       };
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const session = await useAuth(req);
+
       if (session) {
         let filter: any = {
           phoneNum: session.phoneNum,
@@ -139,7 +140,7 @@ async function addSiteVisit(req: NextApiRequest, res: NextApiResponse<any>) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);

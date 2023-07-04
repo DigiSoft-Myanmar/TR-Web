@@ -36,6 +36,21 @@ function Default({ user }: { user: any }) {
   const { locale } = router;
   const { action } = router.query;
 
+  if (!session) {
+    return (
+      <div>
+        <Head>
+          <title>
+            {user?.username} | {appName}
+          </title>
+          <meta name="description" content={defaultDescription} />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        <UserScreen user={user} />
+      </div>
+    );
+  }
+
   return session &&
     (session.id === user?.id ||
       isInternal(session) ||
@@ -92,6 +107,8 @@ export async function getServerSideProps({ params, locale }: any) {
       state: true,
       district: true,
       township: true,
+      currentMembership: true,
+      userDefinedRole: true,
     },
   });
   return {

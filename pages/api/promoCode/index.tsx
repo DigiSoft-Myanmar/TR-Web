@@ -32,7 +32,8 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
       session &&
       (session.role === Role.Admin ||
         session.role === Role.Staff ||
-        session.role === Role.SuperAdmin)
+        session.role === Role.SuperAdmin) &&
+      !sellerId
     ) {
       filter = {};
     } else if (sellerId) {

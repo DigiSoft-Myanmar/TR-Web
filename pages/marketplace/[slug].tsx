@@ -48,6 +48,7 @@ import {
 } from "react-share";
 import { showErrorDialog } from "@/util/swalFunction";
 import { useAuction } from "@/context/AuctionContext";
+import { encryptPhone } from "@/util/encrypt";
 
 function MarketplacePage({
   product,
@@ -622,7 +623,9 @@ function MarketplacePage({
                       </p>
                       <Link
                         className="group relative inline-flex items-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary-focus"
-                        href="/shop"
+                        href={`/account/${encodeURIComponent(
+                          encryptPhone(product.seller.phoneNum)
+                        )}`}
                       >
                         <span className="absolute -end-full transition-all group-hover:end-4">
                           <svg

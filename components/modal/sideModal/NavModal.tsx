@@ -11,7 +11,7 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { fileUrl } from "@/types/const";
 import { useMarketplace } from "@/context/MarketplaceContext";
-import { isBuyer, isSeller } from "@/util/authHelper";
+import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
 
 interface Props {
@@ -659,10 +659,22 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                               className="text-primaryText rounded-md p-2 transition-colors hover:bg-primary hover:text-white"
                               type="button"
                               onClick={() => {
-                                signOut({
-                                  callbackUrl: accessKey
-                                    ? "/?accessKey=" + accessKey
-                                    : "/",
+                                fetch(
+                                  "/api/user/" +
+                                    encodeURIComponent(session.phoneNum) +
+                                    "/stats",
+                                  {
+                                    method: "PUT",
+                                    body: JSON.stringify({
+                                      id: session.id,
+                                      lastOnlineTime: new Date().toISOString(),
+                                    }),
+                                    headers: getHeaders(session),
+                                  }
+                                ).then((data) => {
+                                  signOut({
+                                    callbackUrl: "/",
+                                  });
                                 });
                               }}
                             >

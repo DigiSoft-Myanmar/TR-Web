@@ -53,6 +53,7 @@ function DefaultLayout({ children }: LayoutProps) {
   //const { data } = useSWR("/api/configurations", fetcher);
   //const { data: paymentMethods } = useSWR("/api/paymentMethods", fetcher);
   const [device, setDevice] = React.useState<any>();
+  const [isOnline, setIsOnline] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     if (getDevice()) {
@@ -61,17 +62,40 @@ function DefaultLayout({ children }: LayoutProps) {
   }, []);
 
   React.useEffect(() => {
+    function handleOnlineStatus() {
+      setIsOnline(navigator.onLine);
+    }
+
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOnlineStatus);
+
+    return () => {
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOnlineStatus);
+    };
+  });
+
+  React.useEffect(() => {
+    if (session && isOnline === true && session.phoneNum) {
+      fetch("/api/user/" + encodeURIComponent(session.phoneNum) + "/stats", {
+        method: "PUT",
+        body: JSON.stringify({ id: session.id, lastOnlineTime: undefined }),
+        headers: getHeaders(session),
+      });
+    }
+  }, [isOnline, session]);
+
+  React.useEffect(() => {
     if (device) {
       try {
         fetch("https://api.ipify.org/?format=json")
           .then((data) => data.json())
           .then((json) => {
-            let headers = getHeaders(session);
-            if (headers) {
+            if (session) {
               fetch("/api/siteVisit?ip=" + json.ip, {
                 method: "POST",
                 body: JSON.stringify(device),
-                headers: headers,
+                headers: getHeaders(session),
               });
             } else {
               fetch("/api/siteVisit?ip=" + json.ip, {
@@ -82,22 +106,14 @@ function DefaultLayout({ children }: LayoutProps) {
           })
           .catch((e) => {});
       } catch (err) {
-        let headers = getHeaders(session);
-        if (headers) {
-          fetch("/api/siteVisit", {
-            method: "POST",
-            body: JSON.stringify(device),
-            headers: headers,
-          });
-        } else {
-          fetch("/api/siteVisit", {
-            method: "POST",
-            body: JSON.stringify(device),
-          });
-        }
+        fetch("/api/siteVisit", {
+          method: "POST",
+          body: JSON.stringify(device),
+          headers: getHeaders(session),
+        });
       }
     }
-  }, [device]);
+  }, [device, session]);
 
   React.useEffect(() => {
     if (session && session.role === Role.Seller) {

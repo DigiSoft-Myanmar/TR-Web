@@ -98,39 +98,44 @@ function AuctionCard({ product }: { product: any }) {
         </p>
 
         <span className="text-xs border-t pt-3 border-t-gray-500">
-          {new Date(product.startTime) > new Date() ? "Starts in" : "Ending in"}
+          {new Date(product.startTime) > new Date()
+            ? "Starts in"
+            : new Date(product.endTime) > new Date()
+            ? "Ending in"
+            : "Ended"}
         </span>
-
-        <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-primaryText mb-2">
-          {remainingTime?.days > 0 ? (
+        {remainingTime && (
+          <div className="grid grid-flow-col gap-5 text-center auto-cols-max place-items-center text-primaryText mb-2">
+            {remainingTime?.days > 0 ? (
+              <div className="flex flex-col text-gray-600 text-xs items-center">
+                <span className="countdown font-mono text-sm text-primaryText font-bold">
+                  <span style={getValue(remainingTime?.days)}></span>
+                </span>
+                days
+              </div>
+            ) : (
+              <></>
+            )}
             <div className="flex flex-col text-gray-600 text-xs items-center">
               <span className="countdown font-mono text-sm text-primaryText font-bold">
-                <span style={getValue(remainingTime?.days)}></span>
+                <span style={getValue(remainingTime?.hours)}></span>
               </span>
-              days
+              hours
             </div>
-          ) : (
-            <></>
-          )}
-          <div className="flex flex-col text-gray-600 text-xs items-center">
-            <span className="countdown font-mono text-sm text-primaryText font-bold">
-              <span style={getValue(remainingTime?.hours)}></span>
-            </span>
-            hours
+            <div className="flex flex-col text-gray-600 text-xs items-center">
+              <span className="countdown font-mono text-sm text-primaryText font-bold">
+                <span style={getValue(remainingTime?.minutes)}></span>
+              </span>
+              min
+            </div>
+            <div className="flex flex-col text-gray-600 text-xs items-center">
+              <span className="countdown font-mono text-sm text-primaryText font-bold">
+                <span style={getValue(remainingTime?.seconds)}></span>
+              </span>
+              sec
+            </div>
           </div>
-          <div className="flex flex-col text-gray-600 text-xs items-center">
-            <span className="countdown font-mono text-sm text-primaryText font-bold">
-              <span style={getValue(remainingTime?.minutes)}></span>
-            </span>
-            min
-          </div>
-          <div className="flex flex-col text-gray-600 text-xs items-center">
-            <span className="countdown font-mono text-sm text-primaryText font-bold">
-              <span style={getValue(remainingTime?.seconds)}></span>
-            </span>
-            sec
-          </div>
-        </div>
+        )}
       </div>
     </Link>
   );

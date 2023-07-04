@@ -2,23 +2,26 @@ import AuctionCard from "@/components/card/AuctionCard";
 import ProductCard from "@/components/card/ProductCard";
 import ProductImg from "@/components/card/ProductImg";
 import Avatar from "@/components/presentational/Avatar";
-import { isInternal } from "@/util/authHelper";
+import { fileUrl } from "@/types/const";
+import { isInternal, isSeller } from "@/util/authHelper";
 import {
   formatAmount,
   getPromoAvailCount,
   getPromoCount,
   getUsageCount,
 } from "@/util/textHelper";
-import { ProductType, PromoCode, User } from "@prisma/client";
+import { Category, ProductType, PromoCode, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 
 function UserHomeSection({ user }: { user: User }) {
   const { data: session } = useSession();
   const router = useRouter();
   const { locale } = router;
+  const { t } = useTranslation("common");
   const { isLoading, error, data, refetch } = useQuery(
     ["promoData", user.id],
     () =>
@@ -34,6 +37,13 @@ function UserHomeSection({ user }: { user: User }) {
     })
   );
 
+  const { data: categories } = useQuery("categoriesData", () =>
+    fetch("/api/products/categories").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
+
   return (
     <div
       className={`${
@@ -42,6 +52,54 @@ function UserHomeSection({ user }: { user: User }) {
           : "mx-6 px-4 py-5 flex flex-col gap-5"
       }`}
     >
+      {categories && user.preferCategoryIDs.length > 0 ? (
+        <>
+          <h3 className="text-lg ml-3 mt-3">{t("categoriesInfo")}</h3>
+          <div className="bg-white p-3 rounded-md border grid grid-cols-1 lg:grid-cols-3 gap-3">
+            {categories
+              .filter((z) => user.preferCategoryIDs.includes(z.id))
+              .map((z: any, index) => (
+                <div
+                  key={index}
+                  className="border p-3 pr-10 flex flex-row items-center gap-3 rounded-md h-32 relative text-white justify-between cursor-pointer"
+                  style={{
+                    backgroundColor: z.color,
+                  }}
+                  onClick={() => {
+                    if (isInternal(session)) {
+                    } else {
+                      router.push(
+                        "/marketplace?categories=" + encodeURIComponent(z.slug)
+                      );
+                    }
+                  }}
+                >
+                  <div className="flex flex-row items-center gap-3">
+                    <img
+                      src={fileUrl + z.icon}
+                      className="w-5 h-5 rounded-md"
+                    />
+                    <span className="text-lg font-light uppercase">
+                      {z.name}
+                    </span>
+                  </div>
+                  <span className="text-[100px] font-extrabold">
+                    {z.prodCount > 99 ? "99+" : z.prodCount}
+                  </span>
+                </div>
+              ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <h3 className="text-lg ml-3 mt-3">{t("categoriesInfo")}</h3>
+          <div className="grid p-10 bg-white place-content-center rounded-md border">
+            <h1 className="tracking-widest text-gray-500 uppercase">
+              This user doesn't set categories yet.
+            </h1>
+          </div>
+        </>
+      )}
       {data && data.length > 0 && (
         <div className="bg-white p-3 rounded-md border flex flex-col">
           <h3 className="text-lg ml-3 mt-3">Promo Codes</h3>
@@ -118,7 +176,7 @@ function UserHomeSection({ user }: { user: User }) {
           </div>
         </div>
       )}
-      {productData && (
+      {productData && isSeller(user) && (
         <>
           <h3 className="text-lg ml-3 mt-3">Products</h3>
           <div className="bg-white p-3 rounded-md border grid grid-cols-auto200 gap-3">
