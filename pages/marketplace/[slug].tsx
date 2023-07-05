@@ -49,6 +49,14 @@ import {
 import { showErrorDialog } from "@/util/swalFunction";
 import { useAuction } from "@/context/AuctionContext";
 import { encryptPhone } from "@/util/encrypt";
+import ProductReviewSection from "@/components/section/product/ProductReviewSection";
+import ProductBidSection from "@/components/section/product/ProductBidSection";
+
+enum TabList {
+  About,
+  Review,
+  BidList,
+}
 
 function MarketplacePage({
   product,
@@ -87,6 +95,7 @@ function MarketplacePage({
   const router = useRouter();
   const { locale } = router;
   const { type } = router.query;
+  const [currentTab, setCurrentTab] = React.useState(TabList.About);
 
   const [pricingInfo, setPricingInfo] = React.useState(getPricing(product));
 
@@ -453,199 +462,226 @@ function MarketplacePage({
                 aria-label="Tabs"
                 className="flex border-b-2 border-gray-300 text-sm font-medium"
               >
-                <a
-                  href=""
-                  className="-mb-px border-b-2 border-current p-4 text-primary"
+                <button
+                  className={
+                    currentTab === TabList.About
+                      ? "-mb-px border-b-2 border-current p-4 text-primary"
+                      : "-mb-px border-b-2 border-transparent p-4 hover:text-primary"
+                  }
+                  type="button"
+                  onClick={() => {
+                    setCurrentTab(TabList.About);
+                  }}
                 >
                   About Product
-                </a>
+                </button>
 
                 {product.type === ProductType.Auction ? (
-                  <a
-                    href=""
-                    className="-mb-px border-b-2 border-transparent p-4 hover:text-primary"
+                  <button
+                    className={
+                      currentTab === TabList.BidList
+                        ? "-mb-px border-b-2 border-current p-4 text-primary"
+                        : "-mb-px border-b-2 border-transparent p-4 hover:text-primary"
+                    }
+                    type="button"
+                    onClick={() => {
+                      setCurrentTab(TabList.BidList);
+                    }}
                   >
                     Bid Information
-                  </a>
+                  </button>
                 ) : (
                   <></>
                 )}
 
-                <a
-                  href=""
-                  className="-mb-px border-b-2 border-transparent p-4 hover:text-primary"
+                <button
+                  className={
+                    currentTab === TabList.Review
+                      ? "-mb-px border-b-2 border-current p-4 text-primary"
+                      : "-mb-px border-b-2 border-transparent p-4 hover:text-primary"
+                  }
+                  type="button"
+                  onClick={() => {
+                    setCurrentTab(TabList.Review);
+                  }}
                 >
                   Reviews
-                </a>
+                </button>
               </nav>
 
-              <div className="flex flex-col gap-5 p-3 w-full">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  <p className="text-gray-500 text-sm">
-                    Brand:{" "}
-                    <span className="font-semibold text-primaryText">
-                      {getText(
-                        product.Brand.name,
-                        product.Brand.nameMM,
-                        locale
-                      )}
-                    </span>
-                  </p>
-
-                  <p className="text-gray-500 text-sm">
-                    Condition:{" "}
-                    <span className="font-semibold text-primaryText">
-                      {getText(
-                        product.Condition.name,
-                        product.Condition.nameMM,
-                        locale
-                      )}
-                    </span>
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Category:{" "}
-                    <span className="font-semibold text-primaryText">
-                      {product.categories
-                        .map((z) => getText(z.name, z.nameMM, locale))
-                        .join(", ")}
-                    </span>
-                  </p>
-                  {product.tags.length > 0 && (
+              {currentTab === TabList.Review ? (
+                <ProductReviewSection productId={product.id} />
+              ) : currentTab === TabList.BidList ? (
+                <ProductBidSection productId={product.id} />
+              ) : (
+                <div className="flex flex-col gap-5 p-3 w-full">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <p className="text-gray-500 text-sm">
-                      Tags:{" "}
+                      Brand:{" "}
                       <span className="font-semibold text-primaryText">
-                        {product.tags.join(", ")}
+                        {getText(
+                          product.Brand.name,
+                          product.Brand.nameMM,
+                          locale
+                        )}
                       </span>
                     </p>
-                  )}
-                  {product.type === ProductType.Variable && (
+
                     <p className="text-gray-500 text-sm">
-                      Style:{" "}
+                      Condition:{" "}
                       <span className="font-semibold text-primaryText">
-                        Style 1
+                        {getText(
+                          product.Condition.name,
+                          product.Condition.nameMM,
+                          locale
+                        )}
                       </span>
                     </p>
-                  )}
-                  <p className="text-gray-500 text-sm">
-                    SKU:{" "}
-                    <span className="font-semibold text-primaryText">
-                      {product.type !== ProductType.Variable
-                        ? product.SKU
-                        : currentVariation
-                        ? currentVariation?.SKU
-                        : "-"}
-                    </span>
-                  </p>
-                </div>
-                <div
-                  className="text-sm"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      product.shortDescription,
-                      product.shortDescriptionMM,
-                      locale
-                    ),
-                  }}
-                ></div>
-
-                {product.description?.length > 0 && (
-                  <div className="flex flex-col gap-3">
-                    <h3 className="font-semibold text-sm">
-                      Product Description:{" "}
-                    </h3>
-                    <div
-                      className="text-sm"
-                      dangerouslySetInnerHTML={{
-                        __html: getText(
-                          product.description,
-                          product.descriptionMM,
-                          locale
-                        ),
-                      }}
-                    ></div>
-                  </div>
-                )}
-
-                {product.additionalInformation?.length > 0 && (
-                  <div className="flex flex-col gap-3">
-                    <h3 className="font-semibold text-sm">
-                      Additional Information:
-                    </h3>
-                    <div
-                      className="text-sm"
-                      dangerouslySetInnerHTML={{
-                        __html: getText(
-                          product.additionalInformation,
-                          product.additionalInformationMM,
-                          locale
-                        ),
-                      }}
-                    ></div>
-                  </div>
-                )}
-
-                {product.shippingInformation?.length > 0 && (
-                  <div className="flex flex-col gap-3">
-                    <h3 className="font-semibold text-sm">
-                      Shipping Information:{" "}
-                    </h3>
-                    <div
-                      className="text-sm"
-                      dangerouslySetInnerHTML={{
-                        __html: getText(
-                          product.shippingInformation,
-                          product.shippingInformationMM,
-                          locale
-                        ),
-                      }}
-                    ></div>
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-3 pt-5 border-t border-t-gray-500">
-                  <h3 className="font-semibold text-sm">
-                    Seller Information:{" "}
-                  </h3>
-                  <div className="flex flex-row items-start gap-3">
-                    <Avatar
-                      username={product.seller.username}
-                      isLarge={true}
-                      profile={product.seller.profile}
-                    />
-                    <div className="flex flex-col gap-1">
-                      <h3 className="font-semibold">
-                        {product.seller.displayName
-                          ? product.seller.displayName
-                          : product.seller.username}
-                      </h3>
-                      <p className="text-xs mb-1 text-gray-500">
-                        96.7% Positive Feedback
+                    <p className="text-gray-500 text-sm">
+                      Category:{" "}
+                      <span className="font-semibold text-primaryText">
+                        {product.categories
+                          .map((z) => getText(z.name, z.nameMM, locale))
+                          .join(", ")}
+                      </span>
+                    </p>
+                    {product.tags.length > 0 && (
+                      <p className="text-gray-500 text-sm">
+                        Tags:{" "}
+                        <span className="font-semibold text-primaryText">
+                          {product.tags.join(", ")}
+                        </span>
                       </p>
-                      <Link
-                        className="group relative inline-flex items-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary-focus"
-                        href={`/account/${encodeURIComponent(
-                          encryptPhone(product.seller.phoneNum)
-                        )}`}
-                      >
-                        <span className="absolute -end-full transition-all group-hover:end-4">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path d="M2.879 7.121A3 3 0 007.5 6.66a2.997 2.997 0 002.5 1.34 2.997 2.997 0 002.5-1.34 3 3 0 104.622-3.78l-.293-.293A2 2 0 0015.415 2H4.585a2 2 0 00-1.414.586l-.292.292a3 3 0 000 4.243zM3 9.032a4.507 4.507 0 004.5-.29A4.48 4.48 0 0010 9.5a4.48 4.48 0 002.5-.758 4.507 4.507 0 004.5.29V16.5h.25a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75v-3.5a.75.75 0 00-.75-.75h-2.5a.75.75 0 00-.75.75v3.5a.75.75 0 01-.75.75h-4.5a.75.75 0 010-1.5H3V9.032z" />
-                          </svg>
+                    )}
+                    {product.type === ProductType.Variable && (
+                      <p className="text-gray-500 text-sm">
+                        Style:{" "}
+                        <span className="font-semibold text-primaryText">
+                          Style 1
                         </span>
+                      </p>
+                    )}
+                    <p className="text-gray-500 text-sm">
+                      SKU:{" "}
+                      <span className="font-semibold text-primaryText">
+                        {product.type !== ProductType.Variable
+                          ? product.SKU
+                          : currentVariation
+                          ? currentVariation?.SKU
+                          : "-"}
+                      </span>
+                    </p>
+                  </div>
+                  <div
+                    className="text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: getText(
+                        product.shortDescription,
+                        product.shortDescriptionMM,
+                        locale
+                      ),
+                    }}
+                  ></div>
 
-                        <span className="text-sm font-medium transition-all group-hover:me-4">
-                          Visit Store
-                        </span>
-                      </Link>
+                  {product.description?.length > 0 && (
+                    <div className="flex flex-col gap-3">
+                      <h3 className="font-semibold text-sm">
+                        Product Description:{" "}
+                      </h3>
+                      <div
+                        className="text-sm"
+                        dangerouslySetInnerHTML={{
+                          __html: getText(
+                            product.description,
+                            product.descriptionMM,
+                            locale
+                          ),
+                        }}
+                      ></div>
+                    </div>
+                  )}
+
+                  {product.additionalInformation?.length > 0 && (
+                    <div className="flex flex-col gap-3">
+                      <h3 className="font-semibold text-sm">
+                        Additional Information:
+                      </h3>
+                      <div
+                        className="text-sm"
+                        dangerouslySetInnerHTML={{
+                          __html: getText(
+                            product.additionalInformation,
+                            product.additionalInformationMM,
+                            locale
+                          ),
+                        }}
+                      ></div>
+                    </div>
+                  )}
+
+                  {product.shippingInformation?.length > 0 && (
+                    <div className="flex flex-col gap-3">
+                      <h3 className="font-semibold text-sm">
+                        Shipping Information:{" "}
+                      </h3>
+                      <div
+                        className="text-sm"
+                        dangerouslySetInnerHTML={{
+                          __html: getText(
+                            product.shippingInformation,
+                            product.shippingInformationMM,
+                            locale
+                          ),
+                        }}
+                      ></div>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col gap-3 pt-5 border-t border-t-gray-500">
+                    <h3 className="font-semibold text-sm">
+                      Seller Information:{" "}
+                    </h3>
+                    <div className="flex flex-row items-start gap-3">
+                      <Avatar
+                        username={product.seller.username}
+                        isLarge={true}
+                        profile={product.seller.profile}
+                      />
+                      <div className="flex flex-col gap-1">
+                        <h3 className="font-semibold">
+                          {product.seller.displayName
+                            ? product.seller.displayName
+                            : product.seller.username}
+                        </h3>
+                        <p className="text-xs mb-1 text-gray-500">
+                          96.7% Positive Feedback
+                        </p>
+                        <Link
+                          className="group relative inline-flex items-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary-focus"
+                          href={`/account/${encodeURIComponent(
+                            encryptPhone(product.seller.phoneNum)
+                          )}`}
+                        >
+                          <span className="absolute -end-full transition-all group-hover:end-4">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path d="M2.879 7.121A3 3 0 007.5 6.66a2.997 2.997 0 002.5 1.34 2.997 2.997 0 002.5-1.34 3 3 0 104.622-3.78l-.293-.293A2 2 0 0015.415 2H4.585a2 2 0 00-1.414.586l-.292.292a3 3 0 000 4.243zM3 9.032a4.507 4.507 0 004.5-.29A4.48 4.48 0 0010 9.5a4.48 4.48 0 002.5-.758 4.507 4.507 0 004.5.29V16.5h.25a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75v-3.5a.75.75 0 00-.75-.75h-2.5a.75.75 0 00-.75.75v3.5a.75.75 0 01-.75.75h-4.5a.75.75 0 010-1.5H3V9.032z" />
+                            </svg>
+                          </span>
+
+                          <span className="text-sm font-medium transition-all group-hover:me-4">
+                            Visit Store
+                          </span>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 

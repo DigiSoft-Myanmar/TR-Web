@@ -102,9 +102,8 @@ export default async function handler(
             promoCodes: true,
           },
         });
-        let sellerId = session.id;
 
-        let returnOrder: any = await addOrderDetails(order, sellerId);
+        let returnOrder: any = await addOrderDetails(order);
         return res.status(200).json(returnOrder);
       } else if (session.role === Role.Seller) {
         const order = await prisma.order.findMany({

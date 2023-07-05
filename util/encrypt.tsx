@@ -90,3 +90,21 @@ export function decryptPwd(text: { iv: string; encryptedData: string }) {
   decrypted = Buffer.concat([decrypted, decipher.final()]);
   return decrypted.toString();
 }
+
+export function caesarEncrypt(text, shift) {
+  var encryptedText = "";
+  for (var i = 0; i < text.length; i++) {
+    var charCode = text.charCodeAt(i);
+    if (charCode >= 65 && charCode <= 90) {
+      // Uppercase letters (A-Z)
+      encryptedText += String.fromCharCode(((charCode - 65 + shift) % 26) + 65);
+    } else if (charCode >= 97 && charCode <= 122) {
+      // Lowercase letters (a-z)
+      encryptedText += String.fromCharCode(((charCode - 97 + shift) % 26) + 97);
+    } else {
+      // Non-alphabetic characters
+      encryptedText += text.charAt(i);
+    }
+  }
+  return encryptedText;
+}

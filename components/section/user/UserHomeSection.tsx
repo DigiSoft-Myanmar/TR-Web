@@ -162,12 +162,14 @@ function UserHomeSection({ user }: { user: User }) {
                       </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <span className="text-xs">
+                      <span className="text-xs text-center">
                         Minimum Purchase Amount:{" "}
                         {formatAmount(z.minimumPurchasePrice, locale, true)}
                       </span>
                       {z.isShippingFree === true && (
-                        <span className="text-xs">Free shipping: </span>
+                        <span className="text-xs text-center">
+                          Free shipping
+                        </span>
                       )}
                     </div>
                   </div>

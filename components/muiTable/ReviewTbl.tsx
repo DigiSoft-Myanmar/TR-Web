@@ -112,127 +112,26 @@ const ReviewTbl = ({
       field: "product",
       headerName: "Product",
       renderCell: ({ row }: CellType) => (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Img src={fileUrl + row.product?.imgList[0]} alt={`${row.slug}`} />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-              {getText(row.product.name, row.product.nameMM, locale)}
-            </Typography>
-            <Typography variant="caption" sx={{ color: "text.disabled" }}>
-              {row.product.brand.brandName}
-            </Typography>
+        <Link href={row.link}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Img src={fileUrl + row.img} alt={`${row.name}`} />
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                {row.name}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        </Link>
       ),
     },
     {
-      flex: 0.2,
-      minWidth: 150,
-      field: "createdByUserId",
-      headerName: "Pricing",
-      renderCell: ({ row }: CellType) => {
-        let pricing = getPricing(row.product);
-        return (
-          <>
-            {pricing.isPromotion === true ? (
-              <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
-                <div className="flex flex-col gap-1">
-                  {pricing.minRegPrice ? (
-                    <>
-                      <span className="text-xs line-through">
-                        {pricing.minRegPrice === pricing.maxRegPrice
-                          ? formatAmount(pricing.minRegPrice, locale, true)
-                          : `${formatAmount(
-                              pricing.minRegPrice,
-                              locale,
-                              true
-                            )} - ${formatAmount(
-                              pricing.maxRegPrice,
-                              locale,
-                              true
-                            )}`}
-                      </span>
-
-                      <p className="text-sm font-semibold text-primary">
-                        {pricing.minSalePrice === pricing.maxSalePrice
-                          ? formatAmount(pricing.minSalePrice, locale, true)
-                          : `${formatAmount(
-                              pricing.minSalePrice,
-                              locale,
-                              true
-                            )} - ${formatAmount(
-                              pricing.maxSalePrice,
-                              locale,
-                              true
-                            )}`}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-xs line-through">
-                        {formatAmount(pricing.regularPrice, locale, true)}
-                      </span>
-
-                      <p className="text-sm font-semibold text-primary">
-                        {formatAmount(pricing.saleAmount, locale, true)}
-                      </p>
-                    </>
-                  )}
-                </div>
-                {pricing.startDate && (
-                  <div className="flex flex-col items-center justify-between pl-1">
-                    <>
-                      <p className="text-xs font-semibold text-primary">
-                        {new Date(pricing.startDate).toLocaleDateString(
-                          "en-ca",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "2-digit",
-                          }
-                        )}
-                      </p>
-                      <p className="text-xs font-semibold text-primary">
-                        {new Date(pricing.endDate).toLocaleDateString("en-ca", {
-                          year: "numeric",
-                          month: "short",
-                          day: "2-digit",
-                        })}
-                      </p>
-                    </>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1">
-                {pricing.minRegPrice ? (
-                  <>
-                    <p className="text-sm font-semibold text-primary">
-                      {pricing.minRegPrice === pricing.maxRegPrice
-                        ? formatAmount(pricing.minRegPrice, locale, true)
-                        : `${formatAmount(
-                            pricing.minRegPrice,
-                            locale,
-                            true
-                          )} - ${formatAmount(
-                            pricing.maxRegPrice,
-                            locale,
-                            true
-                          )}`}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold text-primary">
-                      {formatAmount(pricing.regularPrice, locale, true)}
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
-          </>
-        );
-      },
+      flex: 0.15,
+      minWidth: 100,
+      field: "Type",
+      headerName: "Type",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">{row.reviewType}</Typography>
+      ),
     },
     {
       flex: 0.15,

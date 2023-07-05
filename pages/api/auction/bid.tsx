@@ -6,9 +6,10 @@ import prisma from "@/prisma/prisma";
 import { BadRequest, Success, Unauthorized } from "@/types/ApiResponseTypes";
 import { DeliveryType, ImgType, OrderStatus } from "@/types/orderTypes";
 import { isInternal } from "@/util/authHelper";
+import { caesarEncrypt } from "@/util/encrypt";
 import { getPricing, getPricingSingle } from "@/util/pricing";
 import { Product, ProductType, Role, StockType, Term } from "@prisma/client";
-import _ from "lodash";
+import _, { sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -18,8 +19,27 @@ export default async function handler(
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
+    const { id } = req.query;
 
-    if (session) {
+    if (id) {
+      let list = await prisma.auctions.findMany({
+        where: {
+          productId: id.toString(),
+        },
+      });
+      return res.status(200).json(
+        sortBy(list, (e) => e.amount)
+          .reverse()
+          .map((z) => {
+            let userId = caesarEncrypt(z.createdByUserId, 5);
+            return {
+              ...z,
+              createdByUserId: userId,
+              isOwn: session.id === z.createdByUserId ? true : false,
+            };
+          })
+      );
+    } else if (session) {
       let filter: any = {};
       if (isInternal(session)) {
         filter = {};
@@ -58,6 +78,7 @@ export default async function handler(
         orderBy: {
           createdAt: "desc",
         },
+        distinct: "productId",
       });
 
       return res.status(200).json(auctionsList);

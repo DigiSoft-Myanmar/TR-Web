@@ -9,18 +9,68 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { otherPermission } from "@/types/permissionTypes";
+import { encryptPhone } from "@/util/encrypt";
 
 import { canAccess } from "@/util/roleHelper";
-import { Role } from "@prisma/client";
+import { ReviewType, Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 async function getRatings(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
-    const { startDate, endDate, allow, productId } = req.query;
+    const { startDate, endDate, allow, productId, id } = req.query;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
-    if (productId) {
+    if (id) {
+      let myReview = undefined;
+      if (session) {
+        myReview = await prisma.review.findFirst({
+          where: {
+            createdByUserId: session.id,
+            reviewType: ReviewType.Product,
+            productId: id.toString(),
+          },
+          include: {
+            createdBy: true,
+          },
+        });
+      }
+      let otherReviews = await prisma.review.findMany({
+        where: {
+          reviewType: ReviewType.Product,
+          productId: id.toString(),
+        },
+        include: {
+          createdBy: true,
+        },
+      });
+      console.log(otherReviews);
+      let order = undefined;
+      if (session) {
+        let orderList = await prisma.order.findMany({
+          where: {
+            orderByUserId: session.id,
+          },
+        });
+        if (
+          orderList.find((z) =>
+            z.cartItems.find((b: any) => b.productId === id)
+          )
+        ) {
+          order = orderList.find((z) =>
+            z.cartItems.find((b: any) => b.productId === id)
+          );
+        }
+
+        return res.status(200).json({
+          myReview: myReview,
+          otherReviews: otherReviews,
+          canReview: order ? true : false,
+        });
+      } else {
+        return res.status(404).json(NotAvailable);
+      }
+    } else if (productId) {
       const data = await prisma.review.findMany({
         where: {
           productId: productId.toString(),
@@ -49,7 +99,7 @@ async function getRatings(req: NextApiRequest, res: NextApiResponse<any>) {
         }
       }
 
-      const data = await prisma.review.findMany({
+      const data: any = await prisma.review.findMany({
         where: filter,
         orderBy: {
           createdAt: "desc",
@@ -64,16 +114,51 @@ async function getRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           createdBy: true,
         },
       });
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].reviewType !== ReviewType.Product) {
+          let user = await prisma.user.findFirst({
+            where: {
+              id: data[i].userId,
+            },
+          });
+          data[i].user = user;
+        }
+      }
 
-      return res.status(200).json(data);
+      return res.status(200).json(
+        data.map((z) => {
+          let img = "";
+          let name = "";
+          let link = "";
+          if (z.reviewType === ReviewType.Product) {
+            if (z.product) {
+              img = z.product.imgList[0];
+              name = z.product.name;
+              link =
+                "/products/" +
+                encodeURIComponent(z.product.slug) +
+                "?action=view";
+            }
+          } else {
+            img = z.user.profile;
+            name = z.user.username;
+            link =
+              "/account/" + encodeURIComponent(encryptPhone(z.user.phoneNum));
+          }
+
+          return { ...z, img: img, name: name, link: link };
+        })
+      );
     }
   } catch (err) {
+    console.log(err);
     res.status(400).json(err);
   }
 }
 
 async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
+    const { id } = req.query;
     let body: any = {};
     if (typeof req.body === "object") {
       body = req.body;
@@ -85,7 +170,7 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
     if (session) {
       let data = await prisma.review.findFirst({
         where: {
-          productId: body.productId,
+          productId: id.toString(),
           createdByUserId: session.id,
         },
       });
@@ -93,20 +178,22 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
       if (data) {
         await prisma.review.update({
           where: {
-            id: body.id,
+            id: data.id,
           },
           data: {
-            rating: body.rating,
+            rating: parseInt(body.rating),
             message: body.message,
+            reviewType: ReviewType.Product,
           },
         });
       } else {
         await prisma.review.create({
           data: {
-            rating: body.rating,
-            productId: body.productId,
+            rating: parseInt(body.rating),
+            productId: id.toString(),
             createdByUserId: session.id,
             message: body.message,
+            reviewType: ReviewType.Product,
           },
         });
       }

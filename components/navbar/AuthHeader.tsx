@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import Avatar from "../presentational/Avatar";
 
 function AuthHeader() {
   const { data: session }: any = useSession();
@@ -410,14 +411,13 @@ function AuthHeader() {
               className="group flex shrink-0 items-center rounded-lg transition"
             >
               <span className="sr-only">Menu</span>
-              <Image
-                alt={""}
-                src={"/assets/dummy/dummy.png"}
-                width={32}
-                height={32}
-                quality={100}
-                className="h-8 w-8 rounded-full object-cover"
-              />
+              <div>
+                <Avatar
+                  username={session.username}
+                  profile={session.profile}
+                  size={32}
+                />
+              </div>
 
               <p className="ml-2 hidden text-left text-xs sm:block">
                 <strong className="block font-medium">

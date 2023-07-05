@@ -5,10 +5,10 @@ import { CartItem, ShippingFee } from "@/prisma/models/cartItems";
 import prisma from "@/prisma/prisma";
 import { BadRequest, Success, Unauthorized } from "@/types/ApiResponseTypes";
 import { DeliveryType, ImgType, OrderStatus } from "@/types/orderTypes";
-import { isInternal } from "@/util/authHelper";
+import { isInternal, isSeller } from "@/util/authHelper";
 import { getPricing, getPricingSingle } from "@/util/pricing";
 import { Product, ProductType, Role, StockType, Term } from "@prisma/client";
-import _ from "lodash";
+import _, { includes, sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -19,7 +19,7 @@ export default async function handler(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
 
-    if (session) {
+    if (isInternal(session) || isSeller(session)) {
       let filter: any = {};
       if (isInternal(session)) {
         filter = {};
@@ -56,14 +56,54 @@ export default async function handler(
         where: filter,
         include: {
           product: true,
-          auction: true,
+          auction: {
+            include: {
+              createdBy: true,
+            },
+          },
         },
         orderBy: {
           updatedAt: "desc",
         },
       });
+      let prodFilter: any = {
+        type: ProductType.Auction,
+        endTime: {
+          lte: new Date(),
+        },
+      };
+      if (isInternal(session)) {
+      } else {
+        prodFilter = {
+          ...prodFilter,
+          sellerId: session.id,
+        };
+      }
 
-      return res.status(200).json(wonList);
+      const prodList = await prisma.product.findMany({
+        where: prodFilter,
+        include: {
+          WonList: true,
+          Auctions: {
+            include: {
+              createdBy: true,
+            },
+          },
+        },
+      });
+      let list = prodList.filter(
+        (a) =>
+          wonList.find((z) => z.product.SKU === a.SKU) === undefined &&
+          a.Auctions.length > 0
+      );
+
+      return res.status(200).json({
+        newList: list.map((z) => {
+          let auction = sortBy(z.Auctions, (b) => b.amount).reverse()[0];
+          return { ...z, isProduct: true, auction: auction };
+        }),
+        wonList: wonList,
+      });
     } else {
       return res.status(401).json(Unauthorized);
     }

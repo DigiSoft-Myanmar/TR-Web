@@ -416,14 +416,15 @@ model CartItems {
 }
 
 model WonList {
-  id        String        @id @default(auto()) @map("_id") @db.ObjectId
-  product   Product?      @relation(fields: [productId], references: [id])
-  productId String?       @db.ObjectId
-  auction   Auctions?     @relation(fields: [auctionId], references: [id])
-  auctionId String?       @db.ObjectId
-  status    AuctionStatus @default(InCart)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  product         Product?      @relation(fields: [productId], references: [id])
+  productId       String?       @db.ObjectId
+  auction         Auctions?     @relation(fields: [auctionId], references: [id])
+  auctionId       String?       @db.ObjectId
+  estimatedAmount Int?
+  status          AuctionStatus @default(InCart)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model AuctionList {

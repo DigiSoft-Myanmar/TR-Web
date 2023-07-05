@@ -8,13 +8,22 @@ import { defaultDescription } from "@/types/const";
 import { isInternal } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
+import ErrorScreen from "@/components/screen/ErrorScreen";
+import AuctionTbl from "@/components/muiTable/AuctionTbl";
 
 function Default() {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
   const router = useRouter();
+  const { isLoading, error, data, refetch } = useQuery("auctionData", () =>
+    fetch("/api/auction/list").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
 
-  return (
+  return session ? (
     <div>
       <Head>
         <title>Auctions | Treasure Rush</title>
@@ -23,15 +32,13 @@ function Default() {
       </Head>
 
       <div
-        className={`relative max-w-screen-2xl ${
-          isInternal(session) ? "" : "mx-6"
-        } py-5`}
+        className={`relative mx-auto ${!isInternal(session) ? "lg:p-10" : ""}`}
       >
-        <section className="flex flex-col space-y-5">
-          <div className="flex">{t("home")}</div>
-        </section>
+        {data && <AuctionTbl data={data} />}
       </div>
     </div>
+  ) : (
+    <ErrorScreen statusCode={401} />
   );
 }
 

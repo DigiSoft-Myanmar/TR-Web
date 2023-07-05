@@ -469,9 +469,9 @@ export function getTotalCountByBrand(brandList: User[], stateList: State[]) {
 
 export function getInitials(name: string) {
   let initials = "";
-  const nameArray = name.split(" ");
+  const nameArray = name?.split(" ");
 
-  nameArray.forEach((word) => {
+  nameArray?.forEach((word) => {
     if (initials.length < 2) {
       initials += word.charAt(0).toUpperCase();
     }
@@ -480,7 +480,7 @@ export function getInitials(name: string) {
   if (initials.length === 2) {
     return initials;
   } else {
-    return `${name.charAt(0).toUpperCase()}${name.charAt(1).toUpperCase()}`;
+    return `${name?.charAt(0).toUpperCase()}${name?.charAt(1).toUpperCase()}`;
   }
 }
 

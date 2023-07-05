@@ -9,6 +9,13 @@ import { CartItem } from "@/prisma/models/cartItems";
 import Image from "next/image";
 import { fileUrl } from "@/types/const";
 import { getPriceDiscount } from "@/util/pricing";
+import {
+  showConfirmationDialog,
+  showErrorDialog,
+  showSuccessDialog,
+} from "@/util/swalFunction";
+import { getHeaders } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
 
 function CartList() {
   const router = useRouter();
@@ -24,10 +31,12 @@ function CartList() {
     subTotal,
     promoTotal,
     totalPrice,
+    refetchCart,
   } = useMarketplace();
   const [isPromoModalOpen, setPromoModalOpen] = React.useState(false);
   const [sellerId, setSellerId] = React.useState("");
   const [seller, setSeller] = React.useState<any>(undefined);
+  const { data: session }: any = useSession();
 
   return (
     <>
@@ -226,7 +235,44 @@ function CartList() {
                               evt.stopPropagation();
                               evt.preventDefault();
                               if (e.isAuction === true) {
-                                //TODO AUCTION
+                                showConfirmationDialog(
+                                  "Are you sure to reject the offer?",
+                                  "",
+                                  locale,
+                                  () => {
+                                    fetch(
+                                      "/api/auction/closeDeal?id=" +
+                                        e.auctionId,
+                                      {
+                                        method: "PUT",
+                                        body: JSON.stringify({
+                                          isAccept: false,
+                                        }),
+                                        headers: getHeaders(session),
+                                      }
+                                    ).then(async (data) => {
+                                      if (data.status === 200) {
+                                        refetchCart();
+                                        showSuccessDialog(
+                                          "The product is in removed from your cart.",
+                                          "",
+                                          locale
+                                        );
+                                      } else {
+                                        let json = await data.json();
+                                        if (json.error) {
+                                          showErrorDialog(
+                                            json.error,
+                                            json.errorMM,
+                                            locale
+                                          );
+                                        } else {
+                                          showErrorDialog(JSON.stringify(json));
+                                        }
+                                      }
+                                    });
+                                  }
+                                );
                               } else {
                                 modifyCount(e.productId, 0);
                               }
