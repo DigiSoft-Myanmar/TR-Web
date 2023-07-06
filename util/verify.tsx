@@ -276,7 +276,7 @@ export enum PromoType {
   Expired,
 }
 
-export function isTodayBetween(startDate: Date, endDate: Date): PromoType {
+export function isPromoTodayBetween(startDate: Date, endDate: Date): PromoType {
   const today = new Date();
   if (today < new Date(startDate)) {
     return PromoType.NotStarted;
@@ -285,6 +285,13 @@ export function isTodayBetween(startDate: Date, endDate: Date): PromoType {
   } else {
     return PromoType.Expired;
   }
+}
+
+export function isTodayBetween(startDate: Date, endDate: Date): boolean {
+  return (
+    new Date(startDate).getTime() <= new Date().getTime() &&
+    new Date(endDate).getTime() >= new Date().getTime()
+  );
 }
 
 export function isBetween(startDate: string, endDate: string) {

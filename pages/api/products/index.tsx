@@ -216,7 +216,11 @@ export default async function handler(
           }
           if (id) {
             let product = await updateProduct(id.toString(), data);
-            return res.status(200).json(product);
+            if (product.isSuccess === true) {
+              return res.status(200).json(product.data);
+            } else {
+              return res.status(400).json(product.data);
+            }
           } else {
             return res.status(400).json(BadRequest);
           }

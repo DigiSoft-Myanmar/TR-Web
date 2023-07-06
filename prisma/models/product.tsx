@@ -1,5 +1,11 @@
 import clientPromise from "@/lib/mongodb";
-import { Exists } from "@/types/ApiResponseTypes";
+import {
+  BadAuction,
+  BadAuctionPrice,
+  BadSKU,
+  Exists,
+  NotAvailable,
+} from "@/types/ApiResponseTypes";
 import {
   Attribute,
   Category,
@@ -284,11 +290,49 @@ export const updateProduct = async (id: string, data: Product) => {
     d.priceIndex = d.openingBid;
   }
 
-  const product = await prisma.product.update({
-    where: { id: id },
-    data: d,
-  });
-  return product;
+  if (d.type === ProductType.Auction) {
+    let product = await prisma.product.findFirst({
+      where: {
+        id: id,
+      },
+      include: {
+        WonList: {
+          include: {
+            auction: true,
+          },
+        },
+        Auctions: true,
+      },
+    });
+    if (product) {
+      if (new Date(product.startTime).getTime() <= new Date().getTime()) {
+        return { isSuccess: false, data: BadAuction };
+      } else if (product.WonList.length > 0) {
+        if (product.WonList.filter((z) => z.auction.SKU === d.SKU)) {
+          return { isSuccess: false, data: BadSKU };
+        }
+      } else if (product.Auctions.length > 0) {
+        let list = product.Auctions.filter((a) => a.SKU === d.SKU);
+        let amount = sortBy(list, (z) => z.amount).reverse();
+        if (amount.length > 0 && amount[0].amount >= product.estimatedPrice) {
+          return { isSuccess: false, data: BadAuctionPrice };
+        }
+      }
+    } else {
+      return { isSuccess: true, data: NotAvailable };
+    }
+    const updateProd = await prisma.product.update({
+      where: { id: id },
+      data: d,
+    });
+    return { isSuccess: true, data: updateProd };
+  } else {
+    const product = await prisma.product.update({
+      where: { id: id },
+      data: d,
+    });
+    return { isSuccess: true, data: product };
+  }
 };
 
 export const getOriginalCategories = async () => {

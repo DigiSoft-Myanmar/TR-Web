@@ -36,7 +36,12 @@ import {
 import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
 import { useTranslation } from "next-i18next";
-import { PromoType, isBetween, isTodayBetween } from "@/util/verify";
+import {
+  PromoType,
+  isBetween,
+  isPromoTodayBetween,
+  isTodayBetween,
+} from "@/util/verify";
 import { fileUrl } from "@/types/const";
 import PromotionModal from "../modal/sideModal/PromotionModal";
 import Avatar from "../presentational/Avatar";
@@ -140,12 +145,12 @@ const PromoTbl = ({
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {row.isScheduled === true && row.startDate && row.endDate ? (
             <>
-              {isTodayBetween(row.startDate, row.endDate) ===
+              {isPromoTodayBetween(row.startDate, row.endDate) ===
               PromoType.Active ? (
                 <div className="bg-primary text-white px-2 py-1 rounded-md text-xs font-semibold">
                   Active
                 </div>
-              ) : isTodayBetween(row.startDate, row.endDate) ===
+              ) : isPromoTodayBetween(row.startDate, row.endDate) ===
                 PromoType.Expired ? (
                 <div className="bg-warning text-white px-2 py-1 rounded-md text-xs font-semibold">
                   Expired

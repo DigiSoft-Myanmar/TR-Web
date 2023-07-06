@@ -66,7 +66,8 @@ async function addBid(req: NextApiRequest, res: NextApiResponse<any>) {
 
       if (product) {
         if (
-          isTodayBetween(new Date(product.startTime), new Date(product.endTime))
+          new Date(product.startTime).getTime() <= new Date().getTime() &&
+          new Date(product.endTime).getTime() >= new Date().getTime()
         ) {
           let auction = await prisma.auctions.findFirst({
             where: {
