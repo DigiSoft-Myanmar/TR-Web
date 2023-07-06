@@ -86,14 +86,8 @@ export default async function handler(
 
               let sellerReviews = await prisma.review.findMany({
                 where: {
-                  OR: [
-                    { userId: user.id, reviewType: ReviewType.Seller },
-                    {
-                      product: {
-                        sellerId: user.id,
-                      },
-                    },
-                  ],
+                  userId: user.id,
+                  reviewType: ReviewType.Seller,
                 },
               });
               stats.sellerReview = sellerReviews

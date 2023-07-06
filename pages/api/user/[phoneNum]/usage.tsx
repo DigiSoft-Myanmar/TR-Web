@@ -34,10 +34,15 @@ export default async function handler(
           });
           if (user) {
             let startDay = new Date(user.memberStartDate);
+            let freeAdsEndDay = new Date(user.memberStartDate);
+            freeAdsEndDay.setDate(
+              freeAdsEndDay.getDate() + user.currentMembership.adsValidity
+            );
             let endDay = new Date(user.memberStartDate);
             endDay.setDate(endDay.getDate() + user.currentMembership.validity);
 
             let usage = {
+              freeAdsUsed: 0,
               adsUsed: 0,
               skuUsed: 0,
               adsListing: [],
@@ -63,23 +68,29 @@ export default async function handler(
               if (
                 ads[i].adsLocations.find(
                   (z: any) =>
-                    startDay.getTime() >= new Date(z.startDate).getTime() &&
+                    startDay.getTime() <= new Date(z.startDate).getTime() &&
                     new Date(z.startDate).getTime() <= endDay.getTime()
                 )
               ) {
                 let adsCount = ads[i].adsLocations.filter(
                   (z: any) =>
-                    startDay.getTime() >= new Date(z.startDate).getTime() &&
+                    startDay.getTime() <= new Date(z.startDate).getTime() &&
                     new Date(z.startDate).getTime() <= endDay.getTime()
                 ).length;
 
+                let freeAdsCount = ads[i].adsLocations.filter(
+                  (z: any) =>
+                    startDay.getTime() <= new Date(z.startDate).getTime() &&
+                    new Date(z.startDate).getTime() <= freeAdsEndDay.getTime()
+                ).length;
+                usage.freeAdsUsed = freeAdsCount;
                 usage.adsUsed += adsCount;
                 ads[i].adsUsed = adsCount;
                 ads[i].isPlaced =
                   ads[i].adsLocations.filter((z: any) => {
                     let endDate = new Date(z.startDate);
                     endDate.setDate(
-                      user.currentMembership.adsValidity + endDate.getDate()
+                      user.currentMembership.adsLifeTime + endDate.getDate()
                     );
                     if (endDate >= new Date()) {
                       return true;

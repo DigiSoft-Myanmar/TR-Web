@@ -15,7 +15,7 @@ function ProductBidSection({ productId }: { productId: string }) {
         }
       )
   );
-  return (
+  return bidList ? (
     <div className="flex flex-col gap-5 p-3 w-full">
       <h3 className="font-semibold text-sm">
         Total Bids: <span>{bidList.length}</span>
@@ -25,9 +25,11 @@ function ProductBidSection({ productId }: { productId: string }) {
           <div className="flex flex-row items-center justify-between gap-3 text-sm flex-wrap">
             <p>
               {z.createdByUserId}{" "}
-              <span className="text-info bg-info/20 rounded-md text-xs px-2 py-1 ml-3">
-                {z.isOwn ? "Bidded by me" : ""}
-              </span>
+              {z.isOwn === true && (
+                <span className="text-info bg-info/20 rounded-md text-xs px-2 py-1 ml-3">
+                  {z.isOwn ? "Bidded by me" : ""}
+                </span>
+              )}
             </p>
             <span>{formatAmount(z.amount, locale, true)}</span>
           </div>
@@ -44,6 +46,8 @@ function ProductBidSection({ productId }: { productId: string }) {
         </div>
       ))}
     </div>
+  ) : (
+    <></>
   );
 }
 

@@ -59,7 +59,7 @@ function UserAdsSection({ user }: { user: User }) {
                 </svg>
               </button>
             </div>
-            <div className="bg-white p-3 rounded-md border flex flex-col gap-3 w-fit">
+            <div className="bg-white p-3 rounded-md border flex flex-row w-fit flex-wrap items-center justify-between gap-3">
               {adsData?.map((z: Ads, index) => (
                 <div
                   key={index}
@@ -98,7 +98,7 @@ function UserAdsSection({ user }: { user: User }) {
                 </svg>
               </button>
             </div>
-            <div className="bg-white p-3 rounded-md border flex flex-col gap-3 w-fit">
+            <div className="bg-white p-3 rounded-md border flex flex-row w-fit flex-wrap items-center justify-between gap-3">
               {adsData
                 ?.filter((z: Ads) => z.adsLocations.length === 0)
                 .map((z: Ads, index) => (

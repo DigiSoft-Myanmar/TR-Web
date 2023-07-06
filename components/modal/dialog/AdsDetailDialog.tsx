@@ -209,10 +209,10 @@ function AdsDetailDialog({
                     </h3>
                     <div className="grid grid-cols-auto200 gap-3">
                       {ads?.adsLocations.map((z: any, index) => {
-                        const adsValidity =
-                          ads?.seller?.currentMembership?.adsValidity;
+                        const adsLifeTime =
+                          ads?.seller?.currentMembership?.adsLifeTime;
                         const adsEndDate = new Date(z.startDate);
-                        adsEndDate.setDate(adsEndDate.getDate() + adsValidity);
+                        adsEndDate.setDate(adsEndDate.getDate() + adsLifeTime);
 
                         return (
                           <div

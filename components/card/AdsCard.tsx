@@ -49,13 +49,6 @@ function AdsCard({ ads }: { ads: any }) {
               locale
             )}
           </p>
-          <p className="text-xs">
-            Used / Free: {1} /{" "}
-            {
-              membershipData?.find((z: any) => z.id === ads.seller.membershipId)
-                .freeAdsLimit
-            }
-          </p>
         </div>
       </div>
     </div>

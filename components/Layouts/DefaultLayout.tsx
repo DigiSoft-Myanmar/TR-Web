@@ -226,7 +226,7 @@ function DefaultLayout({ children }: LayoutProps) {
                 : "font-myanmarAngoun"
             }`}
           >
-            <Header content={content} categories={categories} />
+            <Header content={content} categories={categories} device={device} />
 
             {children}
             {showBtn === true && (

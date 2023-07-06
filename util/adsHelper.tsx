@@ -124,13 +124,12 @@ export function getImageSizeFromFileInput(fileInput) {
 
 export function checkExpire(adsLocation: any, sellerMembership: Membership) {
   let startDate = new Date(adsLocation.startDate);
-  let adsValidity = sellerMembership.adsValidity;
-  startDate.setDate(startDate.getDate() + adsValidity);
+  let adsLifeTime = sellerMembership.adsLifeTime;
+  startDate.setDate(startDate.getDate() + adsLifeTime);
   const differenceMs: number = startDate.getTime() - new Date().getTime();
   const differenceDays: number = Math.floor(
     differenceMs / (1000 * 60 * 60 * 24)
   );
-  console.log(differenceDays);
   if (differenceDays <= 1) {
     return true;
   } else {

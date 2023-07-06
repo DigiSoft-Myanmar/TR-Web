@@ -29,15 +29,18 @@ import NavModal from "../modal/sideModal/NavModal";
 import CartModal from "../modal/sideModal/CartModal";
 import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { showErrorDialog } from "@/util/swalFunction";
+import { getMobileOperatingSystem } from "@/util/getDevice";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
 function Header({
   content,
   categories,
+  device,
 }: {
   content: any;
   categories: Category[];
+  device: any;
 }) {
   const router = useRouter();
   const { accessKey } = router.query;
@@ -77,6 +80,7 @@ function Header({
 
   const [scrollPosition, setScrollPosition] = React.useState(0);
   const { data: banner } = useSWR("/api/siteManagement/banner", fetcher);
+  const deviceInfo = getMobileOperatingSystem(device);
 
   React.useEffect(() => {
     if (banner && banner.length > 1) {
@@ -729,11 +733,20 @@ function Header({
             </Link>
           </div>
           <div className="flex flex-row items-center gap-3">
-            <Link
-              href={"/marketplace"}
+            <button
+              type="button"
               className={`whitespace-nowrap ${
                 isSeller(session) ? "border-r pr-3 border-r-neutral" : ""
               } hover:text-primary hover:underline flex flex-row items-center gap-2`}
+              onClick={() => {
+                if (deviceInfo === "android") {
+                  alert("Android");
+                } else if (deviceInfo === "ios") {
+                  alert("IOS");
+                } else {
+                  alert("default");
+                }
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -750,7 +763,7 @@ function Header({
                 />
               </svg>
               <span>Get Apps</span>
-            </Link>
+            </button>
             <div className="whitespace-nowrap hover:text-primary flex flex-row items-center gap-2 flex-grow">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

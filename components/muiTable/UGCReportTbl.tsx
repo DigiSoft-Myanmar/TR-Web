@@ -60,6 +60,7 @@ import StatsCard from "../card/StatsCard";
 import { getPricing } from "@/util/pricing";
 import { getHeaders } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
+import Avatar from "../presentational/Avatar";
 
 interface CellType {
   row: any;
@@ -126,38 +127,62 @@ const UGCReportTbl = ({
       headerName: "Report",
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          {row.feedbackInfo.type === FeedbackType.Product ? (
-            <>
-              <Img
-                src={fileUrl + row.product?.imgList[0]}
-                alt={`${row.product?.slug}`}
-              />
+          {row.feedbackType === FeedbackType.Product ? (
+            <Link
+              href={
+                "/products/" +
+                encodeURIComponent(row.product.slug) +
+                "?action=view"
+              }
+              className="flex flex-row items-center gap-3"
+            >
+              <div className="w-5 h-5 min-w-[20px] min-h-[20px] max-w-[20px] max-h-[20px]">
+                <Img
+                  src={fileUrl + row.product?.imgList[0]}
+                  alt={`${row.product?.slug}`}
+                />
+              </div>
               <Box sx={{ display: "flex", flexDirection: "column" }}>
                 <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
                   {getText(row.product.name, row.product.nameMM, locale)}
                 </Typography>
-                <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                  {row.product.brand.brandName}
-                </Typography>
               </Box>
-            </>
+            </Link>
           ) : (
-            <>
-              <Img
-                src={fileUrl + row.brand?.brandLogo}
-                alt={`${row.brand?.slug}`}
-              />
+            <Link
+              href={
+                "/account/" +
+                encodeURIComponent(encryptPhone(row.seller?.phoneNum)) +
+                "?action=view"
+              }
+              className="flex flex-row items-center gap-3"
+            >
+              <div>
+                <Avatar
+                  username={row.seller?.username}
+                  profile={row.seller?.profile}
+                />
+              </div>
               <Box sx={{ display: "flex", flexDirection: "column" }}>
                 <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-                  {row.brand.brandName}
+                  {row.seller?.username}
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.disabled" }}>
-                  {row.brand.user.username}
+                  {row.seller?.phoneNum}
                 </Typography>
               </Box>
-            </>
+            </Link>
           )}
         </Box>
+      ),
+    },
+    {
+      flex: 0.15,
+      minWidth: 100,
+      field: "type",
+      headerName: "Type",
+      renderCell: ({ row }: CellType) => (
+        <Typography variant="body2">{row.feedbackType}</Typography>
       ),
     },
     {
@@ -358,15 +383,17 @@ const UGCReportTbl = ({
                 data.filter(
                   (e: any) =>
                     e.feedbackType === FeedbackType.Product &&
-                    e.createdAt.toISOString() > prevYear.toISOString()
+                    new Date(e.createdAt).toISOString() > prevYear.toISOString()
                 ).length
               }
               prevCount={
                 data.filter(
                   (e: any) =>
                     e.feedbackType === FeedbackType.Product &&
-                    e.createdAt < prevYear.toISOString() &&
-                    e.createdAt > doublePrevYear.toISOString()
+                    new Date(e.createdAt).toISOString() <
+                      prevYear.toISOString() &&
+                    new Date(e.createdAt).toISOString() >
+                      doublePrevYear.toISOString()
                 ).length
               }
               totalCount={
@@ -375,24 +402,24 @@ const UGCReportTbl = ({
               }
             />
             <StatsCard
-              label="Brand Reports"
+              label="User Reports"
               currentCount={
                 data.filter(
                   (e: any) =>
-                    e.feedbackType === FeedbackType.Brand &&
+                    e.feedbackType === FeedbackType.User &&
                     e.createdAt > prevYear.toISOString()
                 ).length
               }
               prevCount={
                 data.filter(
                   (e: any) =>
-                    e.feedbackType === FeedbackType.Brand &&
+                    e.feedbackType === FeedbackType.User &&
                     e.createdAt < prevYear.toISOString() &&
                     e.createdAt > doublePrevYear.toISOString()
                 ).length
               }
               totalCount={
-                data.filter((e: any) => e.feedbackType === FeedbackType.Brand)
+                data.filter((e: any) => e.feedbackType === FeedbackType.User)
                   .length
               }
             />

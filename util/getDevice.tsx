@@ -48,6 +48,22 @@ export function getDevice() {
   };
 }
 
+export function getMobileOperatingSystem(device: any) {
+  if (device?.isMobile === true) {
+    const userAgent = navigator.userAgent || navigator.vendor;
+
+    if (/android/i.test(userAgent)) {
+      // User is on Android
+      return "android";
+    } else if (/iPad|iPhone|iPod/.test(userAgent)) {
+      // User is on iOS
+      return "ios";
+    }
+  } else {
+    return "unknown";
+  }
+}
+
 function matchItem(string: string, data: any) {
   var i = 0,
     j = 0,

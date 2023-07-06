@@ -31,13 +31,13 @@ async function getRatings(req: NextApiRequest, res: NextApiResponse<any>) {
       },
     });
     for (let i = 0; i < feedbacks.length; i++) {
-      feedbacks[i].feedbackInfo = {
-        type: feedbacks[i].feedbackType,
-        info:
-          feedbacks[i].feedbackType === FeedbackType.Brand
-            ? feedbacks[i].brand
-            : feedbacks[i].product,
-      };
+      let user = undefined;
+      if (feedbacks[i].feedbackType === FeedbackType.User) {
+        user = await prisma.user.findFirst({
+          where: { id: feedbacks[i].sellerId },
+        });
+        feedbacks[i].seller = user;
+      }
     }
     return res.status(200).json(feedbacks);
   } catch (err) {
@@ -57,49 +57,19 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
     if (session) {
-      if (body.productId) {
-        let data = await prisma.feedback.findFirst({
-          where: {
-            productId: body.productId,
-            userId: session.id,
-          },
-        });
-
-        if (data) {
-          await prisma.feedback.update({
-            where: {
-              id: body.id,
-            },
-            data: body,
-          });
-        } else {
-          await prisma.feedback.create({
-            data: body,
-          });
-        }
-      } else if (body.brandId) {
-        let data = await prisma.feedback.findFirst({
-          where: {
-            sellerId: body.brandId,
-            userId: session.id,
-          },
-        });
-
-        if (data) {
-          await prisma.feedback.update({
-            where: {
-              id: body.id,
-            },
-            data: body,
-          });
-        } else {
-          await prisma.feedback.create({
-            data: body,
-          });
-        }
-      }
-
+      await prisma.feedback.create({
+        data: {
+          productId: body.productId,
+          details: body.details,
+          feedbackType: body.feedbackType,
+          reasons: body.reasons,
+          userId: session.id,
+          sellerId: body.sellerId,
+        },
+      });
       return res.status(200).json(Success);
+    } else {
+      return res.status(401).json(Unauthorized);
     }
   } catch (err) {
     console.log(err);
@@ -135,20 +105,87 @@ export default async function handler(
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
-
-  if (req.method === "POST") {
-    return addRatings(req, res);
-  }
-  if (
-    session &&
-    (session.role === Role.Admin ||
-      session.role === Role.SuperAdmin ||
-      session.role === Role.Staff)
-  ) {
+  const { id, type } = req.query;
+  try {
+    if (req.method === "POST") {
+      return addRatings(req, res);
+    }
     switch (req.method) {
       case "GET":
-        return getRatings(req, res);
+        if (id && type) {
+          let feedback = await prisma.feedback.findFirst({
+            where: {
+              userId: session.id,
+              OR: [
+                {
+                  productId: id.toString(),
+                },
+                {
+                  sellerId: id.toString(),
+                },
+              ],
+            },
+          });
+          if (feedback) {
+            return res.status(200).json({
+              feedback: feedback,
+              canReport: true,
+            });
+          } else {
+            let order = undefined;
+            if (type === FeedbackType.Product) {
+              let orderList = await prisma.order.findMany({
+                where: {
+                  orderByUserId: session.id,
+                },
+              });
+              if (
+                orderList.find((z) =>
+                  z.cartItems.find((b: any) => b.productId === id)
+                )
+              ) {
+                order = orderList.find((z) =>
+                  z.cartItems.find((b: any) => b.productId === id)
+                );
+              }
 
+              return res.status(200).json({
+                feedback: undefined,
+                canReport: order ? true : false,
+              });
+            } else if (type === FeedbackType.User) {
+              order = await prisma.order.findFirst({
+                where: {
+                  OR: [
+                    { orderByUserId: id.toString() },
+                    {
+                      sellerIds: {
+                        has: id.toString(),
+                      },
+                    },
+                  ],
+                },
+              });
+              return res.status(200).json({
+                feedback: undefined,
+                canReport: order ? true : false,
+              });
+            } else {
+              return res.status(400).json(BadRequest);
+            }
+          }
+        } else {
+          if (
+            session &&
+            (session.role === Role.Admin ||
+              session.role === Role.SuperAdmin ||
+              session.role === Role.Staff)
+          ) {
+            return getRatings(req, res);
+          } else {
+            return res.status(401).json(Unauthorized);
+          }
+        }
       case "DELETE":
         if (
           session &&
@@ -163,5 +200,8 @@ export default async function handler(
       default:
         return res.status(405).json(NotAvailable);
     }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json(err);
   }
 }

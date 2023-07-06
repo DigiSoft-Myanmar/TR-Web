@@ -68,7 +68,9 @@ async function getRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           canReview: order ? true : false,
         });
       } else {
-        return res.status(404).json(NotAvailable);
+        return res.status(200).json({
+          otherReviews: otherReviews,
+        });
       }
     } else if (productId) {
       const data = await prisma.review.findMany({

@@ -36,7 +36,7 @@ function Default({ user }: { user: any }) {
   const { locale } = router;
   const { action } = router.query;
 
-  if (session.id !== user.id) {
+  if (session?.id !== user.id && isInternal(session) === false) {
     return (
       <div>
         <Head>

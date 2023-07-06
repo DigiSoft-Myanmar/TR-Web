@@ -170,12 +170,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Free Ads Listing :{" "}
-                {formatAmount(
-                  user.currentMembership.freeAdsLimit,
-                  locale,
-                  false
-                )}
+                Free Ads Used : {formatAmount(data?.freeAdsUsed, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">
@@ -195,7 +190,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Ads Used : {formatAmount(data?.adsUsed, locale, false)}
+                Total Ads Used : {formatAmount(data?.adsUsed, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">
@@ -242,8 +237,8 @@ function UserUsageSection({
               <span>
                 Total Ads Cost:{" "}
                 {formatAmount(
-                  data?.adsUsed - user.currentMembership.freeAdsLimit > 0
-                    ? (data?.adsUsed - user.currentMembership.freeAdsLimit) *
+                  data?.adsUsed - data?.freeAdsUsed > 0
+                    ? (data?.adsUsed - data?.freeAdsUsed) *
                         user.currentMembership.extraAdsPricing
                     : 0,
                   locale,
@@ -294,7 +289,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                SKU Used : {formatAmount(data?.skuUsed, locale, false)}
+                Total SKU Used : {formatAmount(data?.skuUsed, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">
