@@ -212,7 +212,12 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       headerName: "Estimated Amount",
       renderCell: ({ row }: CellType) => (
         <Typography>
-          {formatAmount(row.estimatedPrice, locale, true, false)}
+          {formatAmount(
+            row.estimatedPrice ? row.estimatedPrice : row.estimatedAmount,
+            locale,
+            true,
+            false
+          )}
         </Typography>
       ),
     },

@@ -103,7 +103,3 @@ export default async function handler(
     console.log(err);
   }
 }
-
-export async function generateHTML(order: any) {
-  return "";
-}

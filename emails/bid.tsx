@@ -1,3 +1,4 @@
+import { Colors } from "@/types/color";
 import { formatAmount } from "@/util/textHelper";
 import {
   Auctions,
@@ -29,21 +30,23 @@ const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000/";
 
-export default function AuctionEmail({
+export default function BidEmail({
   content,
-  wonList,
+  auction,
+  toBuyer,
+  buyerId,
 }: {
   content: Content;
-  wonList: WonList & {
+  auction: Auctions & {
     product: Product & {
       Brand: Brand;
       Condition: Condition;
       seller: User;
     };
-    auction: Auctions & {
-      createdBy: User;
-    };
+    createdBy: User;
   };
+  toBuyer: boolean;
+  buyerId: string;
 }) {
   return (
     <Html>
@@ -74,46 +77,34 @@ export default function AuctionEmail({
               <Row>
                 <Column>
                   <Text style={header}>
-                    {wonList.status === "AutoCancelled"
-                      ? "Auto-Cancelled: Inaction Leads to Cancellation"
-                      : wonList.status === "InCart"
-                      ? "In Cart: Ready for Checkout"
-                      : wonList.status === "LowPrice"
-                      ? "Waiting for Seller Confirmation"
-                      : wonList.status === "Purchased"
-                      ? "Already Purchased"
-                      : wonList.status === "RejectByBuyer"
-                      ? "Rejected by buyer"
-                      : wonList.status === "RejectBySeller"
-                      ? "Rejected by seller"
-                      : ""}
+                    Current Bid Amount :{" "}
+                    {formatAmount(auction.amount, "en", true)}
                   </Text>
                   <Text style={paragraph}>
-                    {wonList.status === "AutoCancelled"
-                      ? "We are sorry to inform you that since there was no action from the seller, the system automatically cancelled the offer."
-                      : wonList.status === "InCart"
-                      ? "Congratulations. The product is in " +
-                        wonList.auction.createdBy.username +
-                        " cart."
-                      : wonList.status === "LowPrice"
-                      ? wonList.auction.createdBy.username +
-                        " won the product with highest bid " +
-                        formatAmount(wonList.auction.amount, "en", true) +
-                        ". We are waiting for the seller to confirm the offer."
-                      : wonList.status === "Purchased"
-                      ? wonList.auction.createdBy.username +
-                        " has already purchased the product."
-                      : wonList.status === "RejectByBuyer"
-                      ? wonList.auction.createdBy.username +
-                        " has rejected the offer."
-                      : wonList.status === "RejectBySeller"
-                      ? wonList.product.seller.username +
-                        " has rejected the offer."
-                      : ""}
+                    {toBuyer === true
+                      ? buyerId === auction.createdByUserId
+                        ? "You are now leading. Keep in track until the time runs out."
+                        : "You are outbidded. Hurry up before the time runs out."
+                      : auction.createdBy.username +
+                        " bids " +
+                        formatAmount(auction.amount, "en", true)}
+                  </Text>
+                  <Text style={paragraph}>
+                    The auction will ends in{" "}
+                    {new Date(auction.product.endTime).toLocaleDateString(
+                      "en-ca",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )}
                   </Text>
                   <Text style={paragraph}>
                     - on{" "}
-                    {new Date(wonList.updatedAt).toLocaleDateString("en-ca", {
+                    {new Date(auction.createdAt).toLocaleDateString("en-ca", {
                       year: "numeric",
                       month: "short",
                       day: "2-digit",
@@ -126,8 +117,22 @@ export default function AuctionEmail({
             </Section>
             <Hr />
 
-            <Button pX={10} pY={10} style={button} href={baseUrl + "/auctions"}>
-              View Auction
+            <Button
+              pX={10}
+              pY={10}
+              style={button}
+              href={
+                toBuyer
+                  ? baseUrl +
+                    "/marketplace/" +
+                    encodeURIComponent(auction.product.slug)
+                  : baseUrl +
+                    "/products/" +
+                    encodeURIComponent(auction.product.slug) +
+                    "?action=view"
+              }
+            >
+              {toBuyer ? "Place Bid" : "See Products"}
             </Button>
             <Hr style={hr} />
             <Section>
@@ -144,10 +149,10 @@ export default function AuctionEmail({
                 <Row>
                   <Column>
                     <Img
-                      src={`${baseUrl}/api/files/${wonList.product.imgList[0]}`}
+                      src={`${baseUrl}/api/files/${auction.product.imgList[0]}`}
                       height="100"
                       width="100"
-                      alt={wonList.product.name}
+                      alt={auction.product.name}
                       style={{
                         border: "1px #E71D2A solid",
                         borderRadius: 10,
@@ -156,34 +161,29 @@ export default function AuctionEmail({
                     />
                   </Column>
                   <Column>
-                    <Text style={paragraph}>Name: {wonList.product.name}</Text>
+                    <Text style={paragraph}>Name: {auction.product.name}</Text>
 
-                    <Text style={paragraph}>SKU: {wonList.auction.SKU}</Text>
+                    <Text style={paragraph}>SKU: {auction.SKU}</Text>
                     <Text style={paragraph}>
-                      Brand: {wonList.product.Brand.name}
+                      Brand: {auction.product.Brand.name}
                     </Text>
 
                     <Text style={paragraph}>
-                      Seller: {wonList.product.seller?.username}
+                      Seller: {auction.product.seller?.username}
                     </Text>
                   </Column>
                   <Column align="right">
                     <Text style={priceStyle}>Bid Amount </Text>
-                    <Text>
-                      {formatAmount(wonList.auction.amount, "en", true)}
-                    </Text>
+                    <Text>{formatAmount(auction.amount, "en", true)}</Text>
                     <Text style={priceStyle}>Bid Time </Text>
                     <Text>
-                      {new Date(wonList.auction.createdAt).toLocaleDateString(
-                        "en-ca",
-                        {
-                          year: "numeric",
-                          month: "short",
-                          day: "2-digit",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }
-                      )}
+                      {new Date(auction.createdAt).toLocaleDateString("en-ca", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </Text>
                   </Column>
                 </Row>
