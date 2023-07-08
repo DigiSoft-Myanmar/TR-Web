@@ -362,6 +362,7 @@ model Product {
   isPublished Boolean @default(false)
   isFeatured  Boolean @default(false)
   priceIndex  Float?
+  ratingIndex Float?
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt

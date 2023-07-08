@@ -32,6 +32,7 @@ import { useQuery } from "react-query";
 import BuyNowHome from "@/components/section/Home/BuyNowHome";
 import { getPricing } from "@/util/pricing";
 import { decryptPhone, encrypt, encryptPhone } from "@/util/encrypt";
+import AdminDashboard from "@/components/screen/AdminDashboard";
 
 export function IndexPage({
   sellerList,
@@ -154,9 +155,7 @@ export function IndexPage({
           <link rel="icon" href="/favicon.ico" />
           <meta name="description" content={defaultDescription} />
         </Head>
-        <MyanmarMap />
-        <p>{encryptPhone("+959450035222")}</p>
-        <p>{decryptPhone("KJFJEFAADFCCC")}</p>
+        <AdminDashboard />
       </div>
     );
   }

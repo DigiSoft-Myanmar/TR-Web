@@ -14,17 +14,8 @@ export enum SortByType {
   SortByPriceDesc = "SortByPriceDesc",
   SortByNewest = "SortByNewest",
   SortByOldest = "SortByOldest",
-  SortByViewAsc = "SortByViewAsc",
-  SortByViewDesc = "SortByViewDesc",
-  SortByBrandAsc = "SortByBrandAsc",
-  SortByBrandDesc = "SortByBrandDesc",
-  SortByStock = "SortByStock",
   SortByRatingAsc = "SortByRatingAsc",
   SortByRatingDesc = "SortByRatingDesc",
-  SortByRatingCountAsc = "SortByRatingCountAsc",
-  SortByRatingCountDesc = "SortByRatingCountDesc",
-  SortBySalesAsc = "SortBySalesAsc",
-  SortBySalesDesc = "SortBySalesDesc",
 }
 
 export type SortType = {

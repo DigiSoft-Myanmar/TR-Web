@@ -11,6 +11,7 @@ import {
 } from "@/types/ApiResponseTypes";
 import { AdsLocation, AdsPage } from "@/util/adsHelper";
 import { Role } from "@prisma/client";
+import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -124,12 +125,44 @@ export default async function handler(
           }
         case "DELETE":
           if (id) {
-            await prisma.ads.delete({
+            const { deleteId } = req.query;
+            let d = await prisma.ads.findFirst({
               where: {
                 id: id.toString(),
               },
             });
-            return res.status(200).json(Success);
+            if (d) {
+              const db = (await clientPromise).db();
+              let gallery = await db.collection("gallery").findOne({
+                filename: d.adsImg,
+              });
+              if (gallery) {
+                let f = await db.collection("photos.files").findOne({
+                  filename: gallery.filename,
+                });
+                let c = await db.collection("photos.chunks").findOne({
+                  files_id: f._id,
+                });
+                await db.collection("gallery").deleteOne({
+                  id: gallery._id,
+                });
+                await db.collection("photos.files").deleteOne({
+                  _id: f._id,
+                });
+                await db.collection("photos.chunks").deleteOne({
+                  _id: c._id,
+                });
+              }
+              await prisma.ads.delete({
+                where: {
+                  id: id.toString(),
+                },
+              });
+
+              return res.status(200).json(Success);
+            } else {
+              return res.status(404).json(NotAvailable);
+            }
           } else {
             return res.status(400).json(BadRequest);
           }

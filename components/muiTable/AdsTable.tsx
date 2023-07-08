@@ -294,7 +294,9 @@ const AdsTable = ({
                       locale,
                       () => {
                         fetch(
-                          `/api/promoCode?id=${encodeURIComponent(row.id)}`,
+                          `/api/siteManagement/ads?id=${encodeURIComponent(
+                            row.id
+                          )}`,
                           {
                             method: "DELETE",
                           }

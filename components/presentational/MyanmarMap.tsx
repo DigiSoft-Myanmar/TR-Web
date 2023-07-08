@@ -88,7 +88,7 @@ function MyanmarMap() {
                   setCurrentState("Sagaing");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -110,7 +110,7 @@ function MyanmarMap() {
                   setCurrentState("Kachin");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -132,7 +132,7 @@ function MyanmarMap() {
                   setCurrentState("Tanintharyi");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -154,7 +154,7 @@ function MyanmarMap() {
                   setCurrentState("Shan");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -176,7 +176,7 @@ function MyanmarMap() {
                   setCurrentState("Magway");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -198,7 +198,7 @@ function MyanmarMap() {
                   setCurrentState("Ayeyarwady");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -220,7 +220,7 @@ function MyanmarMap() {
                   setCurrentState("Chin");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -242,7 +242,7 @@ function MyanmarMap() {
                   setCurrentState("Rakhine");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -264,7 +264,7 @@ function MyanmarMap() {
                   setCurrentState("Mon");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -286,7 +286,7 @@ function MyanmarMap() {
                   setCurrentState("Yangon");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -308,7 +308,7 @@ function MyanmarMap() {
                   setCurrentState("Bago");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -330,7 +330,7 @@ function MyanmarMap() {
                   setCurrentState("Mandalay");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -352,7 +352,7 @@ function MyanmarMap() {
                   setCurrentState("Kayin");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>
@@ -374,7 +374,7 @@ function MyanmarMap() {
                   setCurrentState("Kayah");
                 }}
                 strokeWidth={"1"}
-                stroke={"#302D26"}
+                stroke={"#6b7280"}
                 style={{ transition: "fill 0.5s ease" }}
               />
             </g>

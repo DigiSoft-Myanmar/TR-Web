@@ -44,7 +44,6 @@ async function getRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           createdBy: true,
         },
       });
-      console.log(otherReviews);
       let order = undefined;
       if (session) {
         let orderList = await prisma.order.findMany({
@@ -200,6 +199,32 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
         });
       }
 
+      let prod = await prisma.product.findFirst({
+        where: {
+          id: id.toString(),
+        },
+      });
+      if (prod) {
+        let reviews = await prisma.review.findMany({
+          where: {
+            productId: prod.id,
+          },
+        });
+        let totalReviews = reviews
+          .map((z) => z.rating)
+          .reduce((a, b) => a + b, 0);
+        let reviewCount = reviews.length;
+
+        await prisma.product.update({
+          where: {
+            id: id.toString(),
+          },
+          data: {
+            ratingIndex: totalReviews / reviewCount,
+          },
+        });
+      }
+
       return res.status(200).json(Success);
     }
   } catch (err) {
@@ -221,6 +246,33 @@ async function deleteRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           id: id.toString(),
         },
       });
+      if (data.reviewType === ReviewType.Product) {
+        let prod = await prisma.product.findFirst({
+          where: {
+            id: data.productId,
+          },
+        });
+        if (prod) {
+          let reviews = await prisma.review.findMany({
+            where: {
+              productId: prod.id,
+            },
+          });
+          let totalReviews = reviews
+            .map((z) => z.rating)
+            .reduce((a, b) => a + b, 0);
+          let reviewCount = reviews.length;
+
+          await prisma.product.update({
+            where: {
+              id: id.toString(),
+            },
+            data: {
+              ratingIndex: totalReviews / reviewCount,
+            },
+          });
+        }
+      }
       return res.status(200).json(Success);
     } else {
       return res.status(400).json(BadRequest);

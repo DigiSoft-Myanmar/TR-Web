@@ -603,3 +603,29 @@ export function calculateRatingPercentage(ratings) {
 
   return ratingPercentage;
 }
+
+export function getPageNumbers(currentPage: number, totalPages: number) {
+  const displayRange = 5; // Number of page numbers to display
+  const halfDisplayRange = Math.floor(displayRange / 2);
+
+  let startPage = currentPage - halfDisplayRange;
+  let endPage = currentPage + halfDisplayRange;
+
+  if (startPage < 1) {
+    startPage = 1;
+    endPage = Math.min(displayRange, totalPages);
+  } else if (endPage > totalPages) {
+    endPage = totalPages;
+    startPage = Math.max(1, totalPages - displayRange + 1);
+  }
+
+  let returnVal = Array(endPage - startPage + 1)
+    .fill(0)
+    .map((_, index) => startPage + index);
+
+  console.log(returnVal);
+
+  return Array(endPage - startPage + 1)
+    .fill(0)
+    .map((_, index) => startPage + index);
+}
