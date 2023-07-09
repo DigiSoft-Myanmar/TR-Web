@@ -10,6 +10,12 @@ import {
 } from "@prisma/client";
 import { sortBy } from "lodash";
 
+export function isCompleted(sellerResponse: any, sellerId: string) {
+  return sellerResponse
+    .find((z) => z.sellerId === sellerId)
+    ?.statusHistory.find((z) => z.status === OrderStatus.Shipped);
+}
+
 export function getOrderStatus(data: any, sellerId?: string) {
   let sellerResponse = data.sellerResponse;
 
