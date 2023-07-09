@@ -13,6 +13,7 @@ import { fileUrl } from "@/types/const";
 import { useMarketplace } from "@/context/MarketplaceContext";
 import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
+import { ProductNavType } from "@/types/productTypes";
 
 interface Props {
   isModalOpen: boolean;
@@ -237,13 +238,13 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                             <li>
                               <Link
                                 href={
-                                  accessKey
-                                    ? "/marketplace?deals=Hot&accessKey=" +
-                                      accessKey
-                                    : "/marketplace?deals=Hot"
+                                  "/marketplace?type=" +
+                                  ProductNavType.Promotion
                                 }
                                 className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                  router.asPath === "/marketplace?deals=Hot"
+                                  router.asPath ===
+                                  "/marketplace?type=" +
+                                    ProductNavType.Promotion
                                     ? "bg-gray-100"
                                     : "hover:bg-gray-100 hover:text-gray-700"
                                 } `}
@@ -255,12 +256,13 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                             <li>
                               <Link
                                 href={
-                                  accessKey
-                                    ? "/sell?accessKey=" + accessKey
-                                    : "/sell"
+                                  "/marketplace?type=" + ProductNavType.Auction
                                 }
                                 className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                  router.asPath.includes("/sell")
+                                  router.asPath.includes(
+                                    "/marketplace?type=" +
+                                      ProductNavType.Auction
+                                  )
                                     ? "bg-gray-100"
                                     : "hover:bg-gray-100 hover:text-gray-700"
                                 } `}
@@ -271,13 +273,9 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
 
                             <li>
                               <Link
-                                href={
-                                  accessKey
-                                    ? "/recent?accessKey=" + accessKey
-                                    : "/recent"
-                                }
+                                href={"/sell"}
                                 className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                  router.asPath === "/recent"
+                                  router.asPath === "/sell"
                                     ? "bg-gray-100"
                                     : "hover:bg-gray-100 hover:text-gray-700"
                                 } `}

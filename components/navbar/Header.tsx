@@ -30,6 +30,7 @@ import CartModal from "../modal/sideModal/CartModal";
 import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { showErrorDialog } from "@/util/swalFunction";
 import { getMobileOperatingSystem } from "@/util/getDevice";
+import { ProductNavType } from "@/types/productTypes";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -684,18 +685,27 @@ function Header({
                     {categories?.map((e: any, index) => (
                       <li key={index} className="group">
                         {e.subCategory && e.subCategory.length > 0 ? (
-                          <Link href={"/marketplace"}>
+                          <Link
+                            href={
+                              "/marketplace?categories=" +
+                              encodeURIComponent(e.slug)
+                            }
+                          >
                             <SubCategoryDropdown
                               id={e.id}
                               name={getText(e.name, e.nameMM, locale)}
                               subCategory={e.subCategory}
                               open={open}
+                              slug={e.slug}
                               setOpen={setOpen}
                             />
                           </Link>
                         ) : (
                           <Link
-                            href={"/marketplace"}
+                            href={
+                              "/marketplace?categories=" +
+                              encodeURIComponent(e.slug)
+                            }
                             className="group-hover:text-primary max-w-[288px] text-ellipsis"
                           >
                             {getText(e.name, e.nameMM, locale)}
@@ -706,19 +716,19 @@ function Header({
                   </ul>
                 </div>
                 <Link
-                  href={"/marketplace"}
+                  href={"/marketplace?type=" + ProductNavType.Promotion}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Promotions
                 </Link>
                 <Link
-                  href={"/marketplace"}
+                  href={"/marketplace?type=" + ProductNavType.Auction}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Live Auctions
                 </Link>
                 <Link
-                  href={"/marketplace"}
+                  href={"/sell"}
                   className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Sell on Treasure Rush
@@ -726,10 +736,10 @@ function Header({
               </>
             )}
             <Link
-              href={"/marketplace"}
+              href={"/faqs"}
               className="hidden xl:flex whitespace-nowrap hover:text-primary hover:underline "
             >
-              Help
+              FAQs
             </Link>
           </div>
           <div className="flex flex-row items-center gap-3">

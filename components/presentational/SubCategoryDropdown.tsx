@@ -10,19 +10,22 @@ function SubCategoryDropdown({
   subCategory,
   open,
   setOpen,
+  slug,
 }: {
   id: string;
   name: string;
   subCategory: Category[];
   open: string;
   setOpen: Function;
+  slug: string;
 }) {
   const { locale } = useRouter();
   const [isHover, setHover] = React.useState(false);
   const [isDetailHover, setDetailHover] = React.useState(false);
   return (
     <div className="group">
-      <div
+      <Link
+        href={"/marketplace?categories=" + encodeURIComponent(slug)}
         tabIndex={0}
         className="min-w-[260px] group-hover:text-primary max-w-[288px] text-ellipsis"
         onMouseEnter={() => {
@@ -31,7 +34,7 @@ function SubCategoryDropdown({
         }}
       >
         {name}
-      </div>
+      </Link>
       {(isHover === true || isDetailHover === true) && open === id && (
         <div
           tabIndex={0}
@@ -47,7 +50,7 @@ function SubCategoryDropdown({
           {subCategory.map((z: any, index) => (
             <div key={index} className="flex flex-col gap-1">
               <Link
-                href="/marketplace"
+                href={"/marketplace?categories=" + encodeURIComponent(z.slug)}
                 className="font-semibold text-primary hover:text-primary p-3"
               >
                 {getText(z.name, z.nameMM, locale)}
@@ -55,7 +58,9 @@ function SubCategoryDropdown({
               {z.subCategory &&
                 z.subCategory.map((b: any, index1: number) => (
                   <Link
-                    href={"/marketplace"}
+                    href={
+                      "/marketplace?categories=" + encodeURIComponent(b.slug)
+                    }
                     key={index1}
                     className="text-sm hover:text-primary px-3"
                   >
