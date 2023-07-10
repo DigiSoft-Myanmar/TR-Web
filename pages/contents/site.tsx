@@ -41,7 +41,7 @@ enum Page {
   Ads,
 }
 
-function ContactPage({ data }: { data: Content }) {
+function ContactPage({ data }: { data?: Content }) {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
   const router = useRouter();
@@ -1701,10 +1701,6 @@ function ContactPage({ data }: { data: Content }) {
 
 export async function getServerSideProps({ locale }: any) {
   let data = await prisma.content.findFirst({});
-
-  Object.keys(data).forEach((i) =>
-    data[i] === null ? (data[i] = "") : data[i]
-  );
 
   return {
     props: {
