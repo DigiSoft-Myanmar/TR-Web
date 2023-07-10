@@ -837,7 +837,7 @@ export function IndexPage({
   );
 }
 
-export async function getStaticProps({ locale }) {
+export async function getServerSideProps({ locale }: any) {
   const sellerList = await prisma.user.findMany({
     where: {
       sellAllow: true,
