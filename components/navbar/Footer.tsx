@@ -35,7 +35,7 @@ function Footer({ content }: { content: Content }) {
   const [subscribe, setSubscribe] = React.useState<SelectType>(all);
   const mailInputRef = React.useRef<HTMLInputElement | null>(null);
 
-  return (
+  return content ? (
     <footer className="bg-white border-t-4 border-t-primary">
       <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="lg:flex lg:gap-8">
@@ -302,6 +302,8 @@ function Footer({ content }: { content: Content }) {
         </div>
       </div>
     </footer>
+  ) : (
+    <></>
   );
 }
 

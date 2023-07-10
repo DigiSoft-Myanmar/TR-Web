@@ -20,6 +20,7 @@ type Props = {
 
 type Profile = {
   username?: string;
+  displayName?: string;
   email?: string;
   phoneNum?: string;
   houseNo?: string;
@@ -245,6 +246,32 @@ function ProfileSection({ nextFn, submitRef }: Props) {
           defaultValue={profile?.username}
           formControl={{ ...register("username") }}
           currentValue={watchFields.username}
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+              />
+            </svg>
+          }
+        />
+
+        <FormInput
+          label={t("displayName")}
+          placeHolder={t("enter") + " " + t("displayName")}
+          error={errors.displayName?.message}
+          type="text"
+          defaultValue={profile?.displayName}
+          formControl={{ ...register("displayName") }}
+          currentValue={watchFields.displayName}
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"

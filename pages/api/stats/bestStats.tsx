@@ -135,9 +135,8 @@ async function getBestStats(startDate: Date, endDate: Date) {
         }: any
       ) => {
         if (
-          !acc[productId] &&
-          isAuction === true &&
-          acc[productId].SKU !== SKU
+          (!acc[productId] && isAuction === true) ||
+          (acc[productId] && acc[productId].SKU !== SKU)
         ) {
           acc[productId] = {
             productId,
@@ -145,9 +144,9 @@ async function getBestStats(startDate: Date, endDate: Date) {
             totalProfit,
             SKU: SKU,
           };
+          acc[productId].quantity += bidCount;
+          acc[productId].totalProfit += totalProfit;
         }
-        acc[productId].quantity += bidCount;
-        acc[productId].totalProfit += totalProfit;
         return acc;
       },
       {}
