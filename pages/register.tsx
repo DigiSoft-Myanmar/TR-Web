@@ -317,7 +317,7 @@ function Register({
 
               <div className="flex flex-row items-center justify-center">
                 <Link
-                  href="/sell"
+                  href="/memberships"
                   className="group relative inline-flex items-center overflow-hidden rounded px-3 py-2 text-primary focus:outline-none focus:ring active:text-primary"
                 >
                   <span className="absolute right-0 translate-x-full transition-transform group-hover:-translate-x-1">

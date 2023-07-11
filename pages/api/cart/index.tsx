@@ -5,6 +5,7 @@ import { CartItem, ShippingFee } from "@/prisma/models/cartItems";
 import prisma from "@/prisma/prisma";
 import { BadRequest, Success, Unauthorized } from "@/types/ApiResponseTypes";
 import { DeliveryType, ImgType, OrderStatus } from "@/types/orderTypes";
+import { isBuyer } from "@/util/authHelper";
 import { getPricing, getPricingSingle } from "@/util/pricing";
 import { Product, ProductType, Role, StockType, Term } from "@prisma/client";
 import _ from "lodash";
@@ -19,7 +20,7 @@ export default async function handler(
     const session = await useAuth(req);
 
     if (session) {
-      if (session && session.role === Role.Buyer) {
+      if (isBuyer(session)) {
         switch (req.method) {
           case "GET":
             let cartData: any = await prisma.cartItems.findFirst({

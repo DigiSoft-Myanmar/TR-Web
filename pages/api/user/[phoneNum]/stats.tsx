@@ -66,9 +66,7 @@ export default async function handler(
                 where: {
                   isPublished: true,
                   sellerId: user.id,
-                  type: {
-                    in: [ProductType.Fixed, ProductType.Variable],
-                  },
+                  type: ProductType.Auction,
                 },
               });
               let unitSold = await prisma.unitSold.findMany({

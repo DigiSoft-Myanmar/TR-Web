@@ -4,6 +4,7 @@ import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import { Unauthorized } from "@/types/ApiResponseTypes";
 import { OrderStatus } from "@/types/orderTypes";
+import { isSeller } from "@/util/authHelper";
 import { isCartValid } from "@/util/orderHelper";
 import { Order, Role } from "@prisma/client";
 import { sortBy } from "lodash";
@@ -90,8 +91,9 @@ export default async function handler(
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
+    const { isBuyer } = req.query;
     if (session) {
-      if (session.role === Role.Buyer) {
+      if (session.role === Role.Buyer || isBuyer === "true") {
         const order = await prisma.order.findMany({
           orderBy: { createdAt: "desc" },
           where: {
@@ -105,7 +107,7 @@ export default async function handler(
 
         let returnOrder: any = await addOrderDetails(order);
         return res.status(200).json(returnOrder);
-      } else if (session.role === Role.Seller) {
+      } else if (isSeller(session)) {
         const order = await prisma.order.findMany({
           orderBy: { createdAt: "desc" },
           include: {

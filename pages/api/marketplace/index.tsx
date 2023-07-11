@@ -327,9 +327,7 @@ export default async function handler(
             },
           },
         },
-        orderBy: {
-          createdAt: "asc",
-        },
+        orderBy: sortQry,
         take: pageCount,
         skip: offset,
         where: filter,

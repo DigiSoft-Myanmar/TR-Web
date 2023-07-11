@@ -70,20 +70,22 @@ function ReportDialog({ isModalOpen, setModalOpen, type, id }: Props) {
   }, [router, isModalOpen]);
 
   React.useEffect(() => {
-    if (session && reportData && reportData.canReport === true) {
-    } else if (
-      session &&
-      reportData &&
-      reportData.canReport === false &&
-      isInternal(session) === false
-    ) {
-      showErrorDialog(
-        "Cannot report since you have no past purchased with this " +
-          (type === FeedbackType.Product ? "product." : " user.")
-      );
-      setModalOpen(false);
+    if (isModalOpen === true) {
+      if (session && reportData && reportData.canReport === true) {
+      } else if (
+        session &&
+        reportData &&
+        reportData.canReport === false &&
+        isInternal(session) === false
+      ) {
+        showErrorDialog(
+          "Cannot report since you have no past purchased with this " +
+            (type === FeedbackType.Product ? "product." : " user.")
+        );
+        setModalOpen(false);
+      }
     }
-  }, [reportData, session]);
+  }, [reportData, session, isModalOpen]);
 
   function submitReview(data: any) {
     fetch("/api/feedbacks/ugcReports", {

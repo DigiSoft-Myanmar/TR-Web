@@ -57,6 +57,8 @@ import ProductBidSection from "@/components/section/product/ProductBidSection";
 import ReportDialog from "@/components/modal/dialog/ReportDialog";
 import AdsHere from "@/components/Ads/AdsHere";
 import { AdsLocation, AdsPage } from "@/util/adsHelper";
+import AuctionCard from "@/components/card/AuctionCard";
+import ProductCard from "@/components/card/ProductCard";
 
 enum TabList {
   About,
@@ -151,6 +153,24 @@ function MarketplacePage({
   const [isAvailable, setAvailable] = React.useState(false);
   const { newBid } = useAuction();
   const [isReportOpen, setReportOpen] = React.useState(false);
+
+  const { data: relatedProd } = useQuery(
+    ["relatedProducts", product.id, product.seller.id],
+    () => {
+      const params: any = {
+        categories: product.categoryIds,
+        productId: product.id,
+        sellerId: product.seller.id,
+      };
+      let d: any = new URLSearchParams(params).toString();
+      console.log("/api/marketplace/related?" + d);
+
+      return fetch("/api/marketplace/related?" + d).then((res) => {
+        let json = res.json();
+        return json;
+      });
+    }
+  );
 
   React.useEffect(() => {
     if (newBid) {
@@ -1514,39 +1534,41 @@ function MarketplacePage({
                   </div>
                 </div>
               </div>
-              <button
-                className="text-xs text-gray-500 flex gap-0.5 flex-wrap items-center justify-center pb-[2px] hover:pb-0 group"
-                type="button"
-                onClick={() => {
-                  if (session) {
-                    setReportOpen(true);
-                  } else {
-                    showErrorDialog(
-                      "Please login to continue.",
-                      "ရှေ့ဆက်ရန် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။",
-                      locale,
-                      () => {
-                        router.push("/login");
-                      }
-                    );
-                  }
-                }}
-              >
-                Any problem with this product?{" "}
-                <span className="flex flex-row items-center gap-0.5 cursor-pointer text-primary group-hover:border-b group-hover:border-b-current">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="w-3 h-3"
-                  >
-                    <path d="M3.5 2.75a.75.75 0 00-1.5 0v14.5a.75.75 0 001.5 0v-4.392l1.657-.348a6.449 6.449 0 014.271.572 7.948 7.948 0 005.965.524l2.078-.64A.75.75 0 0018 12.25v-8.5a.75.75 0 00-.904-.734l-2.38.501a7.25 7.25 0 01-4.186-.363l-.502-.2a8.75 8.75 0 00-5.053-.439l-1.475.31V2.75z" />
-                  </svg>
-                  <span className="text-xs font-medium transition-all">
-                    Report
+              {product.sellerId !== session.id && (
+                <button
+                  className="text-xs text-gray-500 flex gap-0.5 flex-wrap items-center justify-center pb-[2px] hover:pb-0 group"
+                  type="button"
+                  onClick={() => {
+                    if (session) {
+                      setReportOpen(true);
+                    } else {
+                      showErrorDialog(
+                        "Please login to continue.",
+                        "ရှေ့ဆက်ရန် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။",
+                        locale,
+                        () => {
+                          router.push("/login");
+                        }
+                      );
+                    }
+                  }}
+                >
+                  Any problem with this product?{" "}
+                  <span className="flex flex-row items-center gap-0.5 cursor-pointer text-primary group-hover:border-b group-hover:border-b-current">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="w-3 h-3"
+                    >
+                      <path d="M3.5 2.75a.75.75 0 00-1.5 0v14.5a.75.75 0 001.5 0v-4.392l1.657-.348a6.449 6.449 0 014.271.572 7.948 7.948 0 005.965.524l2.078-.64A.75.75 0 0018 12.25v-8.5a.75.75 0 00-.904-.734l-2.38.501a7.25 7.25 0 01-4.186-.363l-.502-.2a8.75 8.75 0 00-5.053-.439l-1.475.31V2.75z" />
+                    </svg>
+                    <span className="text-xs font-medium transition-all">
+                      Report
+                    </span>
                   </span>
-                </span>
-              </button>
+                </button>
+              )}
             </div>
           </section>
           <AdsHere
@@ -1568,7 +1590,24 @@ function MarketplacePage({
               ),
             ]}
           />
-          <div>Related Products</div>
+          {relatedProd && (
+            <div className="flex flex-col gap-3">
+              <h3 className="font-semibold text-lg text-gray-600">
+                More from this seller
+              </h3>
+              <div className="flex flex-row items-start gap-5 overflow-x-auto scrollbar-hide">
+                {relatedProd.sellerProducts.map((z, index) => (
+                  <React.Fragment key={index}>
+                    {z.type === ProductType.Auction ? (
+                      <AuctionCard product={z} />
+                    ) : (
+                      <ProductCard product={z} />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
           <AdsHere
             column={4}
             adsLocations={[
@@ -1604,6 +1643,25 @@ function MarketplacePage({
               ),
             ]}
           />
+
+          {relatedProd && (
+            <div className="flex flex-col gap-3">
+              <h3 className="font-semibold text-lg text-gray-600">
+                Related Products
+              </h3>
+              <div className="flex flex-row items-start gap-5 overflow-x-auto scrollbar-hide">
+                {relatedProd.relatedProducts.map((z, index) => (
+                  <React.Fragment key={index}>
+                    {z.type === ProductType.Auction ? (
+                      <AuctionCard product={z} />
+                    ) : (
+                      <ProductCard product={z} />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <ReportDialog

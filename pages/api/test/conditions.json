@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "643f872c482d1aab933d8afb",
+    "name": "100% New (With Tag)",
+    "nameMM": "100% အသစ် (တံဆိပ်ပါ)"
+  },
+  {
+    "_id": "646d7593c609fc90e27d9965",
+    "name": "Used (Good Condition)",
+    "nameMM": "အသုံးပြုပြီး(အသစ်နီးပါး)"
+  },
+  {
+    "_id": "646d75b2c609fc90e27d9966",
+    "name": "Used (Fair Condition)",
+    "nameMM": "အသုံးပြုပြီး(အသင့်အတင့်)"
+  },
+  {
+    "_id": "646d7620c609fc90e27d9969",
+    "name": "Refurbished",
+    "nameMM": "ပြင်ဆင်မွန်းမံထားသောပစ္စည်း"
+  },
+  {
+    "_id": "646d76c3c609fc90e27d9972",
+    "name": "Damaged",
+    "nameMM": "အနည်းငယ်ထိခိုက်ထားသည့်"
+  },
+  {
+    "_id": "646d77cdc609fc90e27d997d",
+    "name": "Display Model",
+    "nameMM": "Display Model"
+  },
+  {
+    "_id": "646d78ebc609fc90e27d997f",
+    "name": "100% New (Without Tag)",
+    "nameMM": "၁၀၀% အသစ်(တံဆိပ်မပါ)"
+  }
+]

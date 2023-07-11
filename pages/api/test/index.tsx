@@ -9,7 +9,7 @@ export default async function handler(
   try {
     let data = require("./categories.json");
     for (let i = 0; i < data.length; i++) {
-      /* let d = await prisma.category.upsert({
+      let d = await prisma.category.upsert({
         where: {
           slug: data[i].slug,
         },
@@ -28,11 +28,10 @@ export default async function handler(
           nameMM: data[i].nameMM,
         },
       });
-      console.log(d.id); */
       if (data[i].subCategories) {
         for (let j = 0; j < data[i].subCategories.length; j++) {
           let subCat = data[i].subCategories[j];
-          /* let category = await prisma.category.findFirst({
+          let category = await prisma.category.findFirst({
             where: {
               slug: data[i].slug,
             },
@@ -59,7 +58,7 @@ export default async function handler(
                 parentId: category.id,
               },
             });
-          } */
+          }
           if (data[i].subCategories[j].subCategories) {
             for (
               let m = 0;
@@ -74,7 +73,7 @@ export default async function handler(
               });
 
               if (category1 && subCat2 && subCat2.slug) {
-                /* await prisma.category.upsert({
+                await prisma.category.upsert({
                   where: {
                     slug: subCat2.slug,
                   },
@@ -94,7 +93,7 @@ export default async function handler(
                     nameMM: subCat2.nameMM,
                     parentId: category1.id,
                   },
-                }); */
+                });
               }
             }
           }

@@ -282,13 +282,9 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
 
                             <li>
                               <Link
-                                href={
-                                  accessKey
-                                    ? "/sell?accessKey=" + accessKey
-                                    : "/sell"
-                                }
+                                href={"/memberships"}
                                 className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                  router.asPath.includes("/sell")
+                                  router.asPath.includes("/memberships")
                                     ? "bg-gray-100"
                                     : "hover:bg-gray-100 hover:text-gray-700"
                                 } `}

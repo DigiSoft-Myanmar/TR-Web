@@ -1,0 +1,109 @@
+[
+  {
+    "_id": "643f91e6482d1aab933d8b3a",
+    "type": "Color",
+    "name": "Color",
+    "nameMM": "အရောင်",
+    "prodCount": 10,
+    "terms": []
+  },
+  {
+    "_id": "643f98f4482d1aab933d8b88",
+    "type": "Button",
+    "name": "Taste",
+    "nameMM": "အရသာ",
+    "prodCount": 11,
+    "terms": [
+      {
+        "_id": "647a0576aafb5ec93171d7b8",
+        "attrId": "643f98f4482d1aab933d8b88",
+        "name": "Normal",
+        "nameMM": "ပုံမှန်အရသာ",
+        "prodCount": 0
+      },
+      {
+        "_id": "647a05bcaafb5ec93171d7b9",
+        "attrId": "643f98f4482d1aab933d8b88",
+        "name": "Salty",
+        "nameMM": "အငံအရသာ",
+        "prodCount": 0
+      }
+    ]
+  },
+  {
+    "_id": "645dbf1a8b0892561d2800cc",
+    "type": "Button",
+    "name": "Type",
+    "nameMM": "အမျိုးအစား",
+    "prodCount": 31,
+    "terms": []
+  },
+  {
+    "_id": "6466fcf690caa433b1eb8813",
+    "type": "Button",
+    "name": "Size",
+    "nameMM": "အရွယ်အစား",
+    "prodCount": 13,
+    "terms": [
+      {
+        "_id": "646e148ec609fc90e27d9af6",
+        "attrId": "6466fcf690caa433b1eb8813",
+        "name": "32",
+        "nameMM": "၃၂",
+        "prodCount": 1
+      },
+      {
+        "_id": "646e1499c609fc90e27d9af7",
+        "attrId": "6466fcf690caa433b1eb8813",
+        "name": "34",
+        "nameMM": "၃၄",
+        "prodCount": 1
+      },
+      {
+        "_id": "646e14b0c609fc90e27d9af8",
+        "attrId": "6466fcf690caa433b1eb8813",
+        "name": "36",
+        "nameMM": "၃၆",
+        "prodCount": 1
+      },
+      {
+        "_id": "646e14c3c609fc90e27d9af9",
+        "attrId": "6466fcf690caa433b1eb8813",
+        "name": "38",
+        "nameMM": "၃၈",
+        "prodCount": 1
+      }
+    ]
+  },
+  {
+    "_id": "6474586e6dbf7e6d4a5ff696",
+    "type": "Button",
+    "name": "Scent",
+    "nameMM": "ရနံ့",
+    "prodCount": 2,
+    "terms": []
+  },
+  {
+    "_id": "647a05daaafb5ec93171d7ba",
+    "type": "Button",
+    "name": "Quantity",
+    "nameMM": "အရေအတွက်",
+    "prodCount": 1,
+    "terms": [
+      {
+        "_id": "647a0d20aafb5ec93171d7c7",
+        "attrId": "647a05daaafb5ec93171d7ba",
+        "name": "5",
+        "nameMM": "၅",
+        "prodCount": 1
+      },
+      {
+        "_id": "647a0d2baafb5ec93171d7c8",
+        "attrId": "647a05daaafb5ec93171d7ba",
+        "name": "10",
+        "nameMM": "၁၀",
+        "prodCount": 1
+      }
+    ]
+  }
+]

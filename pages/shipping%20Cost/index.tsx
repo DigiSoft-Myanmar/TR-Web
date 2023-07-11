@@ -12,6 +12,7 @@ import { useQuery } from "react-query";
 import SellerShippingTbl from "@/components/muiTable/SellerShippingTbl";
 import { useRouter } from "next/router";
 import { encryptPhone } from "@/util/encrypt";
+import { isInternal, isSeller } from "@/util/authHelper";
 
 function Default() {
   const { t } = useTranslation("common");
@@ -25,14 +26,14 @@ function Default() {
   );
 
   React.useEffect(() => {
-    if (session && session.role === Role.Seller) {
+    if (isSeller(session)) {
       router.push(
         "/shipping%20Cost/" + encodeURIComponent(encryptPhone(session.phoneNum))
       );
     }
   }, [session]);
 
-  return session && session.role !== Role.Buyer ? (
+  return isInternal(session) ? (
     <div>
       <Head>
         <title>Shipping Cost | Treasure Rush</title>

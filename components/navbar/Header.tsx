@@ -31,6 +31,7 @@ import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { showErrorDialog } from "@/util/swalFunction";
 import { getMobileOperatingSystem } from "@/util/getDevice";
 import { ProductNavType } from "@/types/productTypes";
+import { encryptPhone } from "@/util/encrypt";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -337,7 +338,10 @@ function Header({
                       <span className="text-xs font-bold p-2">GENERAL</span>
                       <li>
                         <Link
-                          href={"/account/"}
+                          href={
+                            "/account/" +
+                            encodeURIComponent(encryptPhone(session.phoneNum))
+                          }
                           className="ml-1 font-normal hover:font-semibold"
                         >
                           Profile
@@ -347,7 +351,7 @@ function Header({
                         session.role === Role.Trader) && (
                         <li>
                           <Link
-                            href={"/account/"}
+                            href={"/wishlist/"}
                             className="ml-1 font-normal hover:font-semibold"
                           >
                             Wishlist
@@ -374,7 +378,13 @@ function Header({
                           <span className="text-xs font-bold p-2">Buyer</span>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={
+                                "/account/" +
+                                encodeURIComponent(
+                                  encryptPhone(session.phoneNum)
+                                ) +
+                                "#address"
+                              }
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Address
@@ -382,7 +392,7 @@ function Header({
                           </li>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={"/orders/purchasedHistory"}
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Purchase History
@@ -390,7 +400,7 @@ function Header({
                           </li>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={"/bidHistory"}
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Bids
@@ -408,7 +418,7 @@ function Header({
                           <span className="text-xs font-bold p-2">Seller</span>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={"/products/"}
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Product Listing
@@ -416,7 +426,7 @@ function Header({
                           </li>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={"/orders/"}
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Sales History
@@ -424,7 +434,7 @@ function Header({
                           </li>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={"/auctions/"}
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Offers
@@ -432,7 +442,7 @@ function Header({
                           </li>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={"/shipping%20Cost/"}
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Shipping Cost
@@ -440,7 +450,13 @@ function Header({
                           </li>
                           <li>
                             <Link
-                              href={"/account/"}
+                              href={
+                                "/account/" +
+                                encodeURIComponent(
+                                  encryptPhone(session.phoneNum)
+                                ) +
+                                "#ads"
+                              }
                               className="ml-1 font-normal hover:font-semibold"
                             >
                               Ads
@@ -728,7 +744,7 @@ function Header({
                   Live Auctions
                 </Link>
                 <Link
-                  href={"/sell"}
+                  href={isSeller(session) ? "/products" : "/memberships"}
                   className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Sell on Treasure Rush

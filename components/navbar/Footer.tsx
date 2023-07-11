@@ -15,6 +15,7 @@ import { PrivacyType } from "@/types/pageType";
 import Image from "next/image";
 import { SocialIcon } from "react-social-icons";
 import { Colors } from "@/types/color";
+import { isSeller } from "@/util/authHelper";
 
 export const subscribeList = [
   { name: "allUpdates", value: "All" },
@@ -144,7 +145,7 @@ function Footer({ content }: { content: Content }) {
 
                 <li>
                   <Link
-                    href={"/sell"}
+                    href={isSeller(session) ? "/products" : "/memberships"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
                     Sell on Treasure Rush
@@ -177,7 +178,7 @@ function Footer({ content }: { content: Content }) {
 
                 <li>
                   <Link
-                    href={"/sell"}
+                    href={"/memberships"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
                     Membership

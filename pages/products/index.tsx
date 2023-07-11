@@ -16,6 +16,7 @@ import ProductCard from "@/components/card/ProductCard";
 import ProductFullTbl from "@/components/muiTable/ProductFullTbl";
 import { useQuery } from "react-query";
 import LoadingScreen from "@/components/screen/LoadingScreen";
+import { isSeller } from "@/util/authHelper";
 
 function Index() {
   const { t } = useTranslation("common");
@@ -35,7 +36,7 @@ function Index() {
 
   return session &&
     (session.role === Role.Admin ||
-      session.role === Role.Seller ||
+      isSeller(session) ||
       session.role === Role.Staff ||
       session.role === Role.SuperAdmin) ? (
     <div>
@@ -49,7 +50,11 @@ function Index() {
         {!data ? (
           <LoadingScreen />
         ) : (
-          <section className="flex flex-col space-y-5">
+          <section
+            className={`flex flex-col space-y-5 ${
+              isSeller(session) ? "max-w-screen-xl mx-auto p-5" : ""
+            }`}
+          >
             {data && data.length > 0 ? (
               <ProductFullTbl
                 data={data}

@@ -137,7 +137,11 @@ function AdsHere({
   const router = useRouter();
 
   return (
-    <div className="flex flex-row items-center justify-between gap-3 my-5 max-w-screen-xl mx-auto w-full">
+    <div
+      className={`flex flex-row items-center ${
+        router.asPath === "/" ? "max-w-screen-xl" : ""
+      } justify-between gap-3 my-5 mx-auto w-full`}
+    >
       {imgList?.map((z: any, index: number) => (
         <div
           key={index}
@@ -152,7 +156,7 @@ function AdsHere({
                 session &&
                 (session.role === Role.Seller || session.role === Role.Trader)
                   ? "/ads"
-                  : "/sell"
+                  : "/memberships"
               }
             >
               <img

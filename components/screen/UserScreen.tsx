@@ -165,39 +165,41 @@ export default function UserScreen({ user }: { user: any }) {
                       </span>
                     </div>
                   </div>
-                  <button
-                    className="text-xs text-gray-500 flex flex-wrap items-center gap-3 pb-[1px] w-full px-3"
-                    type="button"
-                    onClick={() => {
-                      if (session) {
-                        setReportOpen(true);
-                      } else {
-                        showErrorDialog(
-                          "Please login to continue.",
-                          "ရှေ့ဆက်ရန် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။",
-                          locale,
-                          () => {
-                            router.push("/login");
-                          }
-                        );
-                      }
-                    }}
-                  >
-                    <span>Any problem with this user? </span>
-                    <span className="flex flex-row items-center gap-0.5 cursor-pointer text-primary pb-[1px] hover:pb-0 hover:border-b hover:border-b-current">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="w-3 h-3"
-                      >
-                        <path d="M3.5 2.75a.75.75 0 00-1.5 0v14.5a.75.75 0 001.5 0v-4.392l1.657-.348a6.449 6.449 0 014.271.572 7.948 7.948 0 005.965.524l2.078-.64A.75.75 0 0018 12.25v-8.5a.75.75 0 00-.904-.734l-2.38.501a7.25 7.25 0 01-4.186-.363l-.502-.2a8.75 8.75 0 00-5.053-.439l-1.475.31V2.75z" />
-                      </svg>
-                      <span className="text-xs font-medium transition-all">
-                        Report
+                  {user.id !== session.id && (
+                    <button
+                      className="text-xs text-gray-500 flex flex-wrap items-center gap-3 pb-[1px] w-full px-3"
+                      type="button"
+                      onClick={() => {
+                        if (session) {
+                          setReportOpen(true);
+                        } else {
+                          showErrorDialog(
+                            "Please login to continue.",
+                            "ရှေ့ဆက်ရန် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ။",
+                            locale,
+                            () => {
+                              router.push("/login");
+                            }
+                          );
+                        }
+                      }}
+                    >
+                      <span>Any problem with this user? </span>
+                      <span className="flex flex-row items-center gap-0.5 cursor-pointer text-primary pb-[1px] hover:pb-0 hover:border-b hover:border-b-current">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="w-3 h-3"
+                        >
+                          <path d="M3.5 2.75a.75.75 0 00-1.5 0v14.5a.75.75 0 001.5 0v-4.392l1.657-.348a6.449 6.449 0 014.271.572 7.948 7.948 0 005.965.524l2.078-.64A.75.75 0 0018 12.25v-8.5a.75.75 0 00-.904-.734l-2.38.501a7.25 7.25 0 01-4.186-.363l-.502-.2a8.75 8.75 0 00-5.053-.439l-1.475.31V2.75z" />
+                        </svg>
+                        <span className="text-xs font-medium transition-all">
+                          Report
+                        </span>
                       </span>
-                    </span>
-                  </button>
+                    </button>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 lg:col-span-2 p-3 gap-3">

@@ -13,6 +13,7 @@ import OrderFullTbl from "@/components/muiTable/OrderFullTbl";
 import EmptyScreen from "@/components/screen/EmptyScreen";
 import ErrorScreen from "@/components/screen/ErrorScreen";
 import { Role } from "@prisma/client";
+import { isInternal } from "@/util/authHelper";
 
 function OrderPage() {
   const { t } = useTranslation("common");
@@ -29,8 +30,8 @@ function OrderPage() {
       </Head>
 
       <div
-        className={`relative mx-auto ${
-          session && session.role === Role.Buyer ? "lg:p-10" : ""
+        className={`flex flex-col space-y-5 ${
+          isInternal(session) ? "" : "max-w-screen-xl mx-auto p-5"
         }`}
       >
         {data && <OrderFullTbl data={data} />}

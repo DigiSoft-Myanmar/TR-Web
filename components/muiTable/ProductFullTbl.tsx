@@ -438,7 +438,9 @@ const ProductFullTbl = ({
                   <IconButton
                     size="small"
                     component={Link}
-                    href={`/products/${row.action.slug}?action=view`}
+                    href={`/products/${encodeURIComponent(
+                      row.action.slug
+                    )}?action=view`}
                   >
                     <Icon icon="mdi:eye-outline" fontSize={20} />
                   </IconButton>
@@ -452,7 +454,9 @@ const ProductFullTbl = ({
                       <IconButton
                         size="small"
                         component={Link}
-                        href={`/products/${row.action.slug}?action=edit`}
+                        href={`/products/${encodeURIComponent(
+                          row.action.slug
+                        )}?action=edit`}
                       >
                         <Icon icon="mdi:edit" fontSize={20} />
                       </IconButton>
@@ -915,7 +919,9 @@ const ProductFullTbl = ({
                   <IconButton
                     size="small"
                     component={Link}
-                    href={`/products/${row.action.slug}?action=view`}
+                    href={`/products/${encodeURIComponent(
+                      row.action.slug
+                    )}?action=view`}
                   >
                     <Icon icon="mdi:eye-outline" fontSize={20} />
                   </IconButton>
@@ -929,7 +935,9 @@ const ProductFullTbl = ({
                       <IconButton
                         size="small"
                         component={Link}
-                        href={`/products/${row.action.slug}?action=edit`}
+                        href={`/products/${encodeURIComponent(
+                          row.action.slug
+                        )}?action=edit`}
                       >
                         <Icon icon="mdi:edit" fontSize={20} />
                       </IconButton>

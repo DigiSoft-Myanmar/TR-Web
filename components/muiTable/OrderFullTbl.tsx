@@ -64,7 +64,13 @@ export const invoiceStatusObj: InvoiceStatusObj = {
   Pending: { color: Colors.info, icon: "mi:list" },
 };
 
-const OrderFullTbl = ({ data: parentData }: { data: any }) => {
+const OrderFullTbl = ({
+  data: parentData,
+  isBuyer,
+}: {
+  data: any;
+  isBuyer?: boolean;
+}) => {
   // ** State
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -347,7 +353,9 @@ const OrderFullTbl = ({ data: parentData }: { data: any }) => {
       <Card>
         <div className="flex w-full flex-row flex-wrap items-center px-5 pt-5">
           <div className="flex flex-grow flex-row items-end gap-3">
-            <h3 className="text-xl font-semibold">Orders</h3>
+            <h3 className="text-xl font-semibold">
+              {isBuyer ? "Purchased History" : "Sales History"}
+            </h3>
           </div>
           <div className="flex flex-row items-center gap-3">
             <button
