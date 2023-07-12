@@ -41,7 +41,7 @@ function StatusHistory({ e, index }: { e: any; index: number }) {
       <div className="text-sm">{e.note}</div>
       {(isInternal(session) || isSeller(session)) && e.updatedUser && (
         <span className="text-xs text-gray-500">
-          - {e.updatedUser.username}{" "}
+          - {isInternal(session) ? e.updatedUser.username : e.updatedUser.role}{" "}
           {isInternal(session) ? "[" + e.updatedUser.role + "]" : ""}
         </span>
       )}

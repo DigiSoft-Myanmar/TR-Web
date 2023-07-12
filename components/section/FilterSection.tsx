@@ -5,10 +5,12 @@ import { Brand, Category, Condition, State } from "@prisma/client";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
+import { SortByType } from "../presentational/SortSelectBox";
 
 type CategoryCheckBoxProps = {
   name: string;
   nameMM: string;
+  slug: string;
   id: string;
   subCategory: Category[];
 };
@@ -16,11 +18,25 @@ type CategoryCheckBoxProps = {
 function CategoryCheckBox({
   name,
   nameMM,
+  slug,
   id,
   subCategory,
 }: CategoryCheckBoxProps) {
   const [isOpen, setOpen] = React.useState(false);
-  const { locale } = useRouter();
+  const router = useRouter();
+  const { locale } = router;
+  const {
+    page,
+    brands: pathBrands,
+    categories,
+    startPrice,
+    endPrice,
+    type,
+    conditions: pathConditions,
+    qry,
+    sort,
+  } = router.query;
+
   return (
     <div className="flex flex-col space-y-3">
       <div className="form-control flex flex-row items-center">
@@ -28,6 +44,43 @@ function CategoryCheckBox({
           <input
             type="checkbox"
             className="checkbox-primary checkbox checkbox-sm"
+            checked={
+              categories
+                ? typeof categories === "string"
+                  ? categories === slug
+                  : categories.includes(slug)
+                : false
+            }
+            onChange={() => {
+              let cat = [];
+              if (categories) {
+                if (typeof categories === "string") {
+                  cat = [categories];
+                } else {
+                  cat = categories;
+                }
+              }
+              if (cat.includes(slug)) {
+                cat = cat.filter((z) => z !== slug);
+              } else {
+                cat = [...cat, slug];
+              }
+
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: cat,
+                  brands: pathBrands,
+                  startPrice: startPrice,
+                  endPrice: endPrice,
+                  type: type,
+                  conditions: pathConditions,
+                  qry: qry,
+                  sort: sort,
+                },
+              });
+            }}
           />
           <span className="label-text">{getText(name, nameMM, locale)}</span>
         </label>
@@ -99,7 +152,7 @@ function FilterSection({
   let priceRangeList = [
     {
       startPrice: 0,
-      endPrice: Number.POSITIVE_INFINITY,
+      endPrice: -1,
       name: "Any Price",
       nameMM: "စျေးနှုန်းမသတ်မှတ်ထားပါ",
     },
@@ -135,11 +188,43 @@ function FilterSection({
     },
     {
       startPrice: 25000,
-      endPrice: Number.POSITIVE_INFINITY,
-      name: "between 20000 - 25000 MMK",
-      nameMM: "၂၀၀၀၀ ကျပ်နှင့် ၂၅၀၀၀ ကျပ်အတွင်း",
+      endPrice: -1,
+      name: "above 25000 MMK",
+      nameMM: "၂၅၀၀၀ ကျပ်အထက်",
     },
   ];
+
+  const router = useRouter();
+
+  const {
+    page,
+    brands: pathBrands,
+    categories: pathCategories,
+    startPrice,
+    endPrice,
+    type,
+    conditions: pathConditions,
+    qry,
+    sort,
+  } = router.query;
+
+  const [brandQry, setBrandQry] = React.useState("");
+  const [conditionQry, setConditionQry] = React.useState("");
+
+  /* router.push({
+    pathname: "/marketplace",
+    query: {
+      page: 1,
+      categories: pathCategories,
+      brands: pathBrands,
+      startPrice: startPrice,
+      endPrice: endPrice,
+      type: type,
+      conditions: pathConditions,
+      qry: qry,
+      sort: sort,
+    },
+  }); */
 
   return (
     <div className="flex w-full flex-col space-y-5 bg-white p-5 shadow-md">
@@ -150,7 +235,22 @@ function FilterSection({
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
-            onClick={() => {}}
+            onClick={() => {
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: pathCategories,
+                  brands: pathBrands,
+                  startPrice: startPrice,
+                  endPrice: endPrice,
+                  type: "",
+                  conditions: pathConditions,
+                  qry: qry,
+                  sort: sort,
+                },
+              });
+            }}
           >
             Reset
           </button>
@@ -166,6 +266,40 @@ function FilterSection({
                 <input
                   type="checkbox"
                   className="checkbox-primary checkbox checkbox-sm"
+                  checked={type && type === e}
+                  onChange={() => {
+                    if (type?.toString() === e) {
+                      router.push({
+                        pathname: "/marketplace",
+                        query: {
+                          page: 1,
+                          categories: pathCategories,
+                          brands: pathBrands,
+                          startPrice: startPrice,
+                          endPrice: endPrice,
+                          type: "",
+                          conditions: pathConditions,
+                          qry: qry,
+                          sort: sort,
+                        },
+                      });
+                    } else {
+                      router.push({
+                        pathname: "/marketplace",
+                        query: {
+                          page: 1,
+                          categories: pathCategories,
+                          brands: pathBrands,
+                          startPrice: startPrice,
+                          endPrice: endPrice,
+                          type: e,
+                          conditions: pathConditions,
+                          qry: qry,
+                          sort: sort,
+                        },
+                      });
+                    }
+                  }}
                 />
                 <span className="label-text">{e}</span>
               </label>
@@ -180,7 +314,22 @@ function FilterSection({
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
-            onClick={() => {}}
+            onClick={() => {
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: pathCategories,
+                  brands: pathBrands,
+                  startPrice: "",
+                  endPrice: "",
+                  type: type,
+                  conditions: pathConditions,
+                  qry: qry,
+                  sort: sort,
+                },
+              });
+            }}
           >
             Reset
           </button>
@@ -193,6 +342,50 @@ function FilterSection({
                   <input
                     type="checkbox"
                     className="checkbox-primary checkbox checkbox-sm"
+                    checked={
+                      startPrice &&
+                      endPrice &&
+                      parseInt(startPrice.toString()) === e.startPrice &&
+                      parseInt(endPrice.toString()) === e.endPrice
+                    }
+                    onChange={() => {
+                      if (
+                        startPrice &&
+                        endPrice &&
+                        parseInt(startPrice.toString()) === e.startPrice &&
+                        parseInt(endPrice.toString()) === e.endPrice
+                      ) {
+                        router.push({
+                          pathname: "/marketplace",
+                          query: {
+                            page: 1,
+                            categories: pathCategories,
+                            brands: pathBrands,
+                            startPrice: "",
+                            endPrice: "",
+                            type: type,
+                            conditions: pathConditions,
+                            qry: qry,
+                            sort: sort,
+                          },
+                        });
+                      } else {
+                        router.push({
+                          pathname: "/marketplace",
+                          query: {
+                            page: 1,
+                            categories: pathCategories,
+                            brands: pathBrands,
+                            startPrice: e.startPrice,
+                            endPrice: e.endPrice,
+                            type: type,
+                            conditions: pathConditions,
+                            qry: qry,
+                            sort: sort,
+                          },
+                        });
+                      }
+                    }}
                   />
                   <span className="label-text">{e.name}</span>
                 </label>
@@ -207,7 +400,22 @@ function FilterSection({
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
-            onClick={() => {}}
+            onClick={() => {
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: "",
+                  brands: pathBrands,
+                  startPrice: startPrice,
+                  endPrice: endPrice,
+                  type: type,
+                  conditions: pathConditions,
+                  qry: qry,
+                  sort: sort,
+                },
+              });
+            }}
           >
             Reset
           </button>
@@ -226,13 +434,28 @@ function FilterSection({
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
-            onClick={() => {}}
+            onClick={() => {
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: pathCategories,
+                  brands: pathBrands,
+                  startPrice: startPrice,
+                  endPrice: endPrice,
+                  type: type,
+                  conditions: pathConditions,
+                  qry: qry,
+                  sort: sort,
+                },
+              });
+            }}
           >
             Reset
           </button>
         </div>
-        <div className="flex flex-col space-y-3">
-          <div className="relative">
+        <div className="relative flex flex-col space-y-3 max-h-[200px] overflow-y-auto scrollbar-hide">
+          <div className="sticky top-0 bg-white">
             <label htmlFor="Search" className="sr-only">
               {" "}
               Search{" "}
@@ -242,6 +465,9 @@ function FilterSection({
               type="text"
               id="Search"
               className="w-full rounded-md border-gray-200 pr-10 shadow-sm sm:text-sm"
+              onChange={(e) => {
+                setBrandQry(e.currentTarget.value);
+              }}
             />
 
             <span className="pointer-events-none absolute inset-y-0 right-0 grid w-10 place-content-center text-gray-500">
@@ -263,17 +489,60 @@ function FilterSection({
           </div>
 
           {brands &&
-            brands.map((e: Brand, index: number) => (
-              <div className="form-control" key={index}>
-                <label className="flex cursor-pointer items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    className="checkbox-primary checkbox checkbox-sm"
-                  />
-                  <span className="label-text">{e.name}</span>
-                </label>
-              </div>
-            ))}
+            brands
+              .filter(
+                (z) =>
+                  z.name.toLowerCase().includes(brandQry.toLowerCase()) ||
+                  z.nameMM?.includes(brandQry.toLowerCase())
+              )
+              .map((e: Brand, index: number) => (
+                <div className="form-control" key={index}>
+                  <label className="flex cursor-pointer items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      className="checkbox-primary checkbox checkbox-sm"
+                      checked={
+                        pathBrands
+                          ? typeof pathBrands === "string"
+                            ? pathBrands === e.name
+                            : pathBrands.includes(e.name)
+                          : false
+                      }
+                      onChange={() => {
+                        let cat = [];
+                        if (pathBrands) {
+                          if (typeof pathBrands === "string") {
+                            cat = [pathBrands];
+                          } else {
+                            cat = pathBrands;
+                          }
+                        }
+                        if (cat.includes(e.name)) {
+                          cat = cat.filter((z) => z !== e.name);
+                        } else {
+                          cat = [...cat, encodeURIComponent(e.name)];
+                        }
+
+                        router.push({
+                          pathname: "/marketplace",
+                          query: {
+                            page: 1,
+                            categories: pathCategories,
+                            brands: cat,
+                            startPrice: startPrice,
+                            endPrice: endPrice,
+                            type: type,
+                            conditions: pathConditions,
+                            qry: qry,
+                            sort: sort,
+                          },
+                        });
+                      }}
+                    />
+                    <span className="label-text">{e.name}</span>
+                  </label>
+                </div>
+              ))}
         </div>
       </div>
 
@@ -290,7 +559,7 @@ function FilterSection({
           </button>
         </div>
         <div className="flex flex-col space-y-3">
-          <div className="relative">
+          {/* <div className="relative">
             <label htmlFor="Search" className="sr-only">
               {" "}
               Search{" "}
@@ -318,7 +587,7 @@ function FilterSection({
                 />
               </svg>
             </span>
-          </div>
+          </div> */}
 
           {conditions &&
             conditions.map((e: Condition, index: number) => (
@@ -327,11 +596,140 @@ function FilterSection({
                   <input
                     type="checkbox"
                     className="checkbox-primary checkbox checkbox-sm"
+                    checked={
+                      pathConditions
+                        ? typeof pathConditions === "string"
+                          ? pathConditions === e.name
+                          : pathConditions.includes(e.name)
+                        : false
+                    }
+                    onChange={() => {
+                      let cat = [];
+                      if (pathConditions) {
+                        if (typeof pathConditions === "string") {
+                          cat = [pathConditions];
+                        } else {
+                          cat = pathConditions;
+                        }
+                      }
+                      if (cat.includes(e.name)) {
+                        cat = cat.filter((z) => z !== e.name);
+                      } else {
+                        cat = [...cat, encodeURIComponent(e.name)];
+                      }
+
+                      router.push({
+                        pathname: "/marketplace",
+                        query: {
+                          page: 1,
+                          categories: pathCategories,
+                          brands: pathBrands,
+                          startPrice: startPrice,
+                          endPrice: endPrice,
+                          type: type,
+                          conditions: cat,
+                          qry: qry,
+                          sort: sort,
+                        },
+                      });
+                    }}
                   />
                   <span className="label-text">{e.name}</span>
                 </label>
               </div>
             ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-3">
+        <div className="flex flex-row border-b pb-2">
+          <label className="test-primaryText flex-grow text-sm font-semibold">
+            Type
+          </label>
+          <button
+            className="text-primaryText text-xs font-light hover:text-primary"
+            onClick={() => {
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: pathCategories,
+                  brands: pathBrands,
+                  startPrice: startPrice,
+                  endPrice: endPrice,
+                  type: type,
+                  conditions: pathConditions,
+                  qry: qry,
+                  sort: "",
+                },
+              });
+            }}
+          >
+            Reset
+          </button>
+        </div>
+        <div className="flex flex-col space-y-3">
+          {[
+            SortByType.SortByDefault,
+            SortByType.SortByNewest,
+            SortByType.SortByOldest,
+            SortByType.SortByNameAsc,
+            SortByType.SortByNameDesc,
+            SortByType.SortByPriceAsc,
+            SortByType.SortByPriceDesc,
+            SortByType.SortByRatingAsc,
+            SortByType.SortByRatingDesc,
+          ].map((e, index: number) => (
+            <div className="form-control" key={index}>
+              <label className="flex cursor-pointer items-center space-x-3">
+                <input
+                  type="checkbox"
+                  className="checkbox-primary checkbox checkbox-sm"
+                  checked={
+                    e === SortByType.SortByDefault
+                      ? !sort
+                        ? true
+                        : sort === SortByType.SortByDefault
+                      : sort && sort === e
+                  }
+                  onChange={() => {
+                    if (sort?.toString() === e) {
+                      router.push({
+                        pathname: "/marketplace",
+                        query: {
+                          page: 1,
+                          categories: pathCategories,
+                          brands: pathBrands,
+                          startPrice: startPrice,
+                          endPrice: endPrice,
+                          type: type,
+                          conditions: pathConditions,
+                          qry: qry,
+                          sort: "",
+                        },
+                      });
+                    } else {
+                      router.push({
+                        pathname: "/marketplace",
+                        query: {
+                          page: 1,
+                          categories: pathCategories,
+                          brands: pathBrands,
+                          startPrice: startPrice,
+                          endPrice: endPrice,
+                          type: type,
+                          conditions: pathConditions,
+                          qry: qry,
+                          sort: e,
+                        },
+                      });
+                    }
+                  }}
+                />
+                <span className="label-text">{e}</span>
+              </label>
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ export enum BuyerPermission {
   buyerUpdateAllow = "Buyer Update",
   buyerDeleteAllow = "Buyer Delete",
   buyerViewAllow = "Buyer View",
+  buyerNotiAllow = "Buyer Notification",
   buyerExportAllow = "Buyer Export",
 }
 

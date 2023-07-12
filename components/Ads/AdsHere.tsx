@@ -139,7 +139,9 @@ function AdsHere({
   return (
     <div
       className={`flex flex-row items-center ${
-        router.asPath === "/" ? "max-w-screen-xl" : ""
+        router.asPath === "/" || router.asPath === "/memberships"
+          ? "max-w-screen-xl"
+          : ""
       } justify-between gap-3 my-5 mx-auto w-full`}
     >
       {imgList?.map((z: any, index: number) => (

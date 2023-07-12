@@ -10,8 +10,20 @@ import {
   Success,
   Unauthorized,
 } from "@/types/ApiResponseTypes";
+import {
+  BuyerPermission,
+  ProductPermission,
+  SellerPermission,
+  TraderPermission,
+} from "@/types/permissionTypes";
 import { isBuyer, isInternal, isSeller } from "@/util/authHelper";
-import { ProductType, Role } from "@prisma/client";
+import { encryptPhone } from "@/util/encrypt";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
+import { NotiType, ProductType, ReviewType, Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -29,6 +41,51 @@ export default async function handler(
           if (userId || productId) {
             let body = JSON.parse(req.body);
             if (userId) {
+              const user = await prisma.user.findFirst({
+                where: {
+                  id: userId?.toString(),
+                },
+              });
+              let adminList = await getAdminIdList();
+              let staffList = await getStaffIdList(
+                user.role === Role.Seller
+                  ? SellerPermission.sellerNotiAllow
+                  : user.role === Role.Trader
+                  ? TraderPermission.traderNotiAllow
+                  : user.role === Role.Buyer
+                  ? BuyerPermission.buyerNotiAllow
+                  : ""
+              );
+
+              let review =
+                body.reviewType === ReviewType.Buyer ? "Buyer" : "Seller";
+
+              let reviewType =
+                body.reviewType === ReviewType.Buyer
+                  ? "buyerRatings"
+                  : "sellerRatings";
+
+              let msg: any = {
+                body: "New Review with rating: " + body.rating,
+                createdAt: new Date().toISOString(),
+                title: "New " + review + " Review",
+                type: NotiType.NewUserReview,
+                requireInteraction: false,
+                sendList: [...adminList, ...staffList, userId.toString()],
+                details: {
+                  web:
+                    "/account/" +
+                    encodeURIComponent(encryptPhone(user.phoneNum)) +
+                    "#" +
+                    reviewType,
+                  mobile: {
+                    screen: "Account",
+                    slug: user.phoneNum,
+                  },
+                },
+              };
+              await addNotification(msg, "");
+
               await prisma.review.create({
                 data: {
                   rating: body.rating,
@@ -39,6 +96,37 @@ export default async function handler(
                 },
               });
             } else if (productId) {
+              let product = await prisma.product.findFirst({
+                where: {
+                  id: productId.toString(),
+                },
+              });
+
+              let adminList = await getAdminIdList();
+              let staffList = await getStaffIdList(
+                ProductPermission.productNotiAllow
+              );
+
+              let msg: any = {
+                body: "New Review with rating: " + body.rating,
+                createdAt: new Date().toISOString(),
+                title: "New Product Review",
+                type: NotiType.NewProductReview,
+                requireInteraction: false,
+                sendList: [...adminList, ...staffList, product.sellerId],
+                details: {
+                  web:
+                    "/products/" +
+                    encodeURIComponent(product.slug) +
+                    "#reviews",
+                  mobile: {
+                    screen: "Products",
+                    slug: product.slug,
+                  },
+                },
+              };
+              await addNotification(msg, "");
+
               await prisma.review.create({
                 data: {
                   rating: body.rating,
@@ -56,6 +144,63 @@ export default async function handler(
         case "PUT":
           if (reviewId) {
             let body = JSON.parse(req.body);
+            if (userId) {
+              const user = await prisma.user.findFirst({
+                where: {
+                  id: userId?.toString(),
+                },
+              });
+              let adminList = await getAdminIdList();
+              let staffList = await getStaffIdList(
+                user.role === Role.Seller
+                  ? SellerPermission.sellerNotiAllow
+                  : user.role === Role.Trader
+                  ? TraderPermission.traderNotiAllow
+                  : user.role === Role.Buyer
+                  ? BuyerPermission.buyerNotiAllow
+                  : ""
+              );
+
+              let review =
+                body.reviewType === ReviewType.Buyer ? "Buyer" : "Seller";
+
+              let reviewType =
+                body.reviewType === ReviewType.Buyer
+                  ? "buyerRatings"
+                  : "sellerRatings";
+
+              let msg: any = {
+                body: "Update Review with rating: " + body.rating,
+                createdAt: new Date().toISOString(),
+                title: "Update " + review + " Review",
+                type: NotiType.UpdateUserReview,
+                requireInteraction: false,
+                sendList: [...adminList, ...staffList, userId.toString()],
+                details: {
+                  web:
+                    "/account/" +
+                    encodeURIComponent(encryptPhone(user.phoneNum)) +
+                    "#" +
+                    reviewType,
+                  mobile: {
+                    screen: "Account",
+                    slug: user.phoneNum,
+                  },
+                },
+              };
+              await addNotification(msg, "");
+
+              await prisma.review.create({
+                data: {
+                  rating: body.rating,
+                  createdByUserId: session.id,
+                  message: body.message,
+                  userId: userId?.toString(),
+                  reviewType: body.reviewType,
+                },
+              });
+            }
+
             await prisma.review.update({
               where: {
                 id: reviewId.toString(),

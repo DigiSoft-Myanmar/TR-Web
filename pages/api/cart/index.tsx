@@ -5,11 +5,28 @@ import { CartItem, ShippingFee } from "@/prisma/models/cartItems";
 import prisma from "@/prisma/prisma";
 import { BadRequest, Success, Unauthorized } from "@/types/ApiResponseTypes";
 import { DeliveryType, ImgType, OrderStatus } from "@/types/orderTypes";
+import { OrderPermission } from "@/types/permissionTypes";
 import { isBuyer } from "@/util/authHelper";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
 import { getPricing, getPricingSingle } from "@/util/pricing";
-import { Product, ProductType, Role, StockType, Term } from "@prisma/client";
+import {
+  NotiType,
+  Product,
+  ProductType,
+  Role,
+  StockType,
+  Term,
+} from "@prisma/client";
 import _ from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { render } from "@react-email/render";
+import async from "async";
+import { sendEmailNodeFn, sendOrderEmail } from "@/util/emailNodeHelper";
+import OrderEmail from "@/emails/order";
 
 export default async function handler(
   req: NextApiRequest,
@@ -606,7 +623,7 @@ export default async function handler(
                     isBillingAddress: false,
                   },
                 });
-                await prisma.order.create({
+                let newOrder = await prisma.order.create({
                   data: {
                     orderNo: orderNo,
                     billingAddress: data.billingAddress!,
@@ -620,6 +637,9 @@ export default async function handler(
                     discountTotal: discountTotal,
                     promoIds: body?.promoIds,
                     sellerIds: sellerIds,
+                  },
+                  include: {
+                    orderBy: true,
                   },
                 });
 
@@ -733,6 +753,46 @@ export default async function handler(
                     });
                   }
                 }
+
+                let adminList = await getAdminIdList();
+                let staffList = await getStaffIdList(
+                  OrderPermission.orderNotiAllow
+                );
+
+                let msg: any = {
+                  body:
+                    newOrder.orderBy.username +
+                    " created a new order with " +
+                    newOrder.orderNo +
+                    " at " +
+                    new Date().toLocaleDateString("en-ca", {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }),
+                  createdAt: new Date().toISOString(),
+                  title: "New Order " + newOrder.orderNo,
+                  type: NotiType.NewOrder,
+                  requireInteraction: false,
+                  sendList: [
+                    ...adminList,
+                    ...staffList,
+                    newOrder.orderByUserId,
+                    [...sellerIds],
+                  ],
+                  details: {
+                    web: "/orders/" + encodeURIComponent(newOrder.orderNo),
+                    mobile: {
+                      screen: "Orders",
+                      slug: newOrder.orderNo,
+                    },
+                  },
+                };
+                await addNotification(msg, "");
+                await sendOrderEmail(newOrder, "New Order " + newOrder.orderNo);
+
                 return res.status(200).json(Success);
               } else {
                 return res.status(400).json(BadRequest);

@@ -27,6 +27,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { Navigation, Pagination, Autoplay } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+
 type PhoneLogin = {
   phoneNum?: string;
   otp?: string;
@@ -226,19 +233,45 @@ function Login({ siteInfo }: { siteInfo: Content }) {
           <meta name="description" content={defaultDescription} />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <section className="relative flex w-full flex-row flex-wrap items-stretch justify-start bg-red-600">
-          <div className="absolute top-0 bottom-0 left-0 right-0">
-            {/* <Image
-              src={fileUrl + siteInfo?.loginImg}
-              width={1080}
-              height={500}
-              alt="banner"
-              className="h-full min-h-[500px] w-full bg-cover bg-center bg-no-repeat"
-            /> */}
-            <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25 lg:hidden"></div>
+        <section className="relative flex w-full flex-row items-stretch justify-start">
+          <div className="hidden lg:flex flex-col bg-white w-1/2 px-4 py-32 sm:px-6 lg:items-center lg:px-8">
+            <Swiper
+              // install Swiper modules
+              modules={[Navigation, Pagination, Autoplay]}
+              autoplay={{
+                delay: 2500,
+                disableOnInteraction: true,
+                pauseOnMouseEnter: true,
+              }}
+              slidesPerView={1}
+              rewind={true}
+              pagination={{ clickable: true }}
+              scrollbar={{ draggable: true }}
+            >
+              {siteInfo?.credentialFeatures.map((e: any, index: number) => (
+                <SwiperSlide key={index} className={`w-full`}>
+                  <div className=" flex flex-col items-center">
+                    <Image
+                      src={fileUrl + e.icon}
+                      width={1080}
+                      height={300}
+                      alt="banner"
+                      className="h-full min-h-[300px] w-full max-h-[300px] object-contain"
+                    />
+                    <h3 className="text-primaryText whitespace-nowrap text-lg font-semibold mt-10">
+                      {getText(e.title, e.titleMM, locale)}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {getText(e.description, e.descriptionMM, locale)}
+                    </p>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
+
           {/* <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25"></div> */}
-          <div className="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8">
+          <div className="relative w-full lg:w-1/2 px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8 bg-red-600">
             <div
               className={`mx-auto min-w-[400px] max-w-lg rounded-lg bg-white pt-10 shadow-2xl lg:min-w-[500px]`}
             >

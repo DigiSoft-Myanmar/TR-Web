@@ -17,9 +17,16 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
 import prisma from "@/prisma/prisma";
-import { Content, PromoCode } from "@prisma/client";
+import { Content, PromoCode, Role } from "@prisma/client";
 import { formatAmount, getText } from "@/util/textHelper";
 import { PrivacyType } from "@/types/pageType";
+
+import { Navigation, Pagination, Autoplay } from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 export type RegisterType = {
   username: string;
@@ -39,6 +46,7 @@ function Register({
   const { t } = useTranslation("common");
   const { accessKey } = useRouter().query;
   const [isOTP, setOTP] = React.useState(false);
+  const roleList = [Role.Trader, Role.Buyer, Role.Seller];
 
   const registerShema = z.object({
     username: z.string().min(1, { message: t("inputError") }),
@@ -53,7 +61,6 @@ function Register({
             .min(1, { message: t("inputError") })
             .optional()
             .or(z.literal("")),
-    isCheck: z.boolean(),
   });
   const [isSubmit, setSubmit] = React.useState(false);
   const { register, handleSubmit, watch, formState } = useForm<RegisterType>({
@@ -63,6 +70,7 @@ function Register({
   });
   const { errors }: any = formState;
   const watchFields: any = watch();
+  const [role, setRole] = React.useState<any>(Role.Buyer);
 
   const captchaContainer = React.useRef<HTMLDivElement | null>(null);
 
@@ -93,7 +101,7 @@ function Register({
       if (data.otp) {
         setSubmit(true);
 
-        let response = await registerWithOTP(data);
+        let response = await registerWithOTP({ ...data, role: role });
         if (response.isSuccess === true) {
           signIn("credentials", {
             idToken: response.idToken,
@@ -118,51 +126,95 @@ function Register({
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="relative flex w-full flex-row flex-wrap items-stretch justify-start">
-        <div className="absolute top-0 bottom-0 left-0 right-0">
-          {/*  <Image
-            src={fileUrl + siteInfo?.registerImg}
-            width={1080}
-            height={500}
-            alt="banner"
-            className="h-full min-h-[500px] w-full bg-cover bg-center bg-no-repeat"
-          /> */}
-          <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25 lg:hidden"></div>
+      <section className="relative flex w-full flex-row items-stretch justify-start">
+        <div className="hidden lg:flex flex-col bg-white w-1/2 px-4 py-32 sm:px-6 lg:items-center lg:px-8">
+          <Swiper
+            // install Swiper modules
+            modules={[Navigation, Pagination, Autoplay]}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: true,
+              pauseOnMouseEnter: true,
+            }}
+            slidesPerView={1}
+            rewind={true}
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+          >
+            {siteInfo.credentialFeatures.map((e: any, index: number) => (
+              <SwiperSlide key={index} className={`w-full`}>
+                <div className=" flex flex-col items-center">
+                  <Image
+                    src={fileUrl + e.icon}
+                    width={1080}
+                    height={300}
+                    alt="banner"
+                    className="h-full min-h-[300px] w-full max-h-[300px] object-contain"
+                  />
+                  <h3 className="text-primaryText whitespace-nowrap text-lg font-semibold mt-10">
+                    {getText(e.title, e.titleMM, locale)}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {getText(e.description, e.descriptionMM, locale)}
+                  </p>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
         {/* <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25"></div> */}
-        <div className="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8">
+        <div className="relative lg:w-1/2 w-full px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8 bg-primary">
           <div className="mx-auto max-w-lg rounded-lg bg-white pt-10 shadow-2xl">
             <h1 className="text-center text-2xl font-bold text-primary sm:text-3xl">
               {getText("Create an account", "အကောင့်အသစ်ပြုလုပ်မည်။", locale)}
             </h1>
-
-            <p className="mx-auto mt-4 max-w-md text-center text-gray-600">
-              {promoCode
-                ? getText(
-                    `Let's get started with your first purchase ${
-                      promoCode.isPercent === true
-                        ? promoCode.discount + "%"
-                        : formatAmount(promoCode.discount, locale, true)
-                    } discount.`,
-                    `သင်၏ ပထမဆုံးဝယ်ယူမှုအား ${
-                      promoCode.isPercent === true
-                        ? promoCode.discount + "%"
-                        : formatAmount(promoCode.discount, locale, true)
-                    } လျှော့စျေးဖြင့်၀ယ်ယူလိုက်ပါ။`,
-                    locale
-                  )
-                : ""}
-            </p>
 
             <form
               onSubmit={handleSubmit(registerSubmit)}
               onKeyDown={(e) => checkKeyDown(e)}
               className="mt-6 mb-0 space-y-4 rounded-lg border-t bg-white p-8"
             >
-              <p className="text-lg font-medium">
-                {getText("Register buyer", "၀ယ်ယူသူအသစ်ပြုလုပ်မည်", locale)}
-              </p>
-
+              <div>
+                <label className={`text-sm font-medium text-gray-400`}>
+                  Role
+                  <span className="text-primary">*</span>
+                </label>
+                <div className="mt-1 flex flex-wrap items-center justify-start gap-3">
+                  {roleList.map((elem, index) => (
+                    <div
+                      className={`flex cursor-pointer items-start space-x-3 rounded-lg border p-4 px-3 shadow-sm transition-colors hover:bg-primary/50 hover:text-white ${
+                        role === elem
+                          ? "border-primary text-primary ring-1 ring-primary"
+                          : "border-gray-200"
+                      } `}
+                      key={index}
+                      onClick={(e) => {
+                        setRole(elem);
+                      }}
+                    >
+                      <label
+                        className={`block flex-grow cursor-pointer px-4 text-sm font-medium`}
+                      >
+                        <span className="whitespace-nowrap"> {t(elem)} </span>
+                      </label>
+                      {elem === role && (
+                        <svg
+                          className="top-4 right-4 h-5 w-5 cursor-pointer"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
               <FormInput
                 label={"Username"}
                 placeHolder={"Enter Username"}
@@ -246,25 +298,6 @@ function Register({
                 />
               )}
 
-              <div>
-                <label htmlFor="MarketingAccept" className="flex gap-4">
-                  <input
-                    type="checkbox"
-                    id="MarketingAccept"
-                    className="checkbox-primary checkbox"
-                    {...register("isCheck")}
-                  />
-
-                  <span className="text-sm text-gray-700">
-                    {getText(
-                      "I want to receive emails about discounts, product updates and announcements.",
-                      "လျော့စျေးများ၊ ထုတ်ကုန်အသစ်များနှင့် ကြေငြာချက်များ၏ အီးမေးလ်များ လက်ခံရယူလိုပါသည်",
-                      locale
-                    )}
-                  </span>
-                </label>
-              </div>
-
               <div className="w-full">
                 <p className="text-sm text-gray-500">
                   {getText(
@@ -314,38 +347,6 @@ function Register({
                     : getText("Request OTP", "OTP ရယူရန်", locale)
                 }
               />
-
-              <div className="flex flex-row items-center justify-center">
-                <Link
-                  href="/memberships"
-                  className="group relative inline-flex items-center overflow-hidden rounded px-3 py-2 text-primary focus:outline-none focus:ring active:text-primary"
-                >
-                  <span className="absolute right-0 translate-x-full transition-transform group-hover:-translate-x-1">
-                    <svg
-                      className="h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                      />
-                    </svg>
-                  </span>
-
-                  <span className="text-sm font-medium transition-all group-hover:mr-4">
-                    {getText(
-                      "Register as Seller",
-                      "ရောင်းချသူအဖြစ် အကောင့်အသစ်ပြုလုပ်ရန်",
-                      locale
-                    )}
-                  </span>
-                </Link>
-              </div>
 
               <p className="text-center text-sm text-gray-500">
                 {getText(

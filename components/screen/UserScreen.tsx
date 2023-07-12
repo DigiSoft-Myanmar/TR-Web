@@ -25,10 +25,14 @@ import { useQuery } from "react-query";
 import { has } from "lodash";
 import ReportDialog from "../modal/dialog/ReportDialog";
 import { showErrorDialog } from "@/util/swalFunction";
+import UserWishlistSection from "../section/user/UserWishlistSection";
+import Link from "next/link";
+import { encryptPhone } from "@/util/encrypt";
 
 enum ShopTab {
   Home,
   Address,
+  Wishlist,
   Ads,
   BuyerRating,
   SellerRating,
@@ -60,6 +64,11 @@ export default function UserScreen({ user }: { user: any }) {
             isBuyer(user) &&
             (isInternal(session) || session.id === user.id):
             setCurrentTab(ShopTab.Address);
+            break;
+          case hash.includes("wishlist") &&
+            isBuyer(user) &&
+            (isInternal(session) || session.id === user.id):
+            setCurrentTab(ShopTab.Wishlist);
             break;
           case hash.includes("ads") &&
             isSeller(user) &&
@@ -165,7 +174,8 @@ export default function UserScreen({ user }: { user: any }) {
                       </span>
                     </div>
                   </div>
-                  {user.id !== session.id && (
+
+                  {user.id !== session?.id && (
                     <button
                       className="text-xs text-gray-500 flex flex-wrap items-center gap-3 pb-[1px] w-full px-3"
                       type="button"
@@ -359,6 +369,34 @@ export default function UserScreen({ user }: { user: any }) {
                       </span>
                     </h3>
                   </div>
+                  {(user.id === session.id || isInternal(session)) && (
+                    <Link
+                      href={
+                        "/account/" +
+                        encodeURIComponent(encryptPhone(user.phoneNum)) +
+                        "?action=edit"
+                      }
+                      className="lg:col-span-2 bg-primary rounded-md px-3 py-2 text-white hover:bg-primary-focus w-fit flex flex-row items-center gap-3 text-sm"
+                    >
+                      <span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                          />
+                        </svg>
+                      </span>
+                      <span>Edit Profile</span>
+                    </Link>
+                  )}
                 </div>
               </div>
             )}
@@ -386,6 +424,30 @@ export default function UserScreen({ user }: { user: any }) {
               >
                 Home
               </div>
+
+              {isBuyer(user) &&
+                (isInternal(session) || session?.id === user.id) && (
+                  <div
+                    className={`-mb-px border-b-4 ${
+                      currentTab === ShopTab.Wishlist
+                        ? "border-current text-primary"
+                        : "border-transparent hover:text-primary"
+                    } p-4 whitespace-nowrap cursor-pointer`}
+                    onClick={() => {
+                      router.replace(
+                        {
+                          pathname: router.pathname,
+                          query: router.query,
+                          hash: "wishlist",
+                        },
+                        undefined,
+                        { shallow: true }
+                      );
+                    }}
+                  >
+                    Wishlist
+                  </div>
+                )}
 
               {isBuyer(user) &&
                 (isInternal(session) || session?.id === user.id) && (
@@ -532,6 +594,8 @@ export default function UserScreen({ user }: { user: any }) {
             <UserHomeSection user={user} />
           ) : currentTab === ShopTab.Address ? (
             <UserAddressSection user={user} />
+          ) : currentTab === ShopTab.Wishlist ? (
+            <UserWishlistSection user={user} />
           ) : currentTab === ShopTab.Ads ? (
             <UserAdsSection user={user} />
           ) : currentTab === ShopTab.BuyerRating ? (

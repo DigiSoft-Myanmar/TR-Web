@@ -20,7 +20,7 @@ export async function getAdminIdList() {
     .filter(
       (e) =>
         (e.isBlocked === false || e.isBlocked === null) &&
-        (e.isDeleted === false || e.isDeleted === null),
+        (e.isDeleted === false || e.isDeleted === null)
     )
     .map((e) => e.id.toString());
   return adminIdList;
@@ -42,6 +42,26 @@ export async function getStaffIdList(permission: any) {
   return Array.from(new Set(idList));
 }
 
+export async function getAdminEmailList() {
+  let adminList = await prisma.user.findMany({
+    where: {
+      OR: [{ role: Role.Admin }, { role: Role.SuperAdmin }],
+      email: {
+        isSet: true,
+      },
+    },
+  });
+
+  let adminEmailList = adminList
+    .filter(
+      (e) =>
+        (e.isBlocked === false || e.isBlocked === null) &&
+        (e.isDeleted === false || e.isDeleted === null)
+    )
+    .map((e) => e.email.toString());
+  return adminEmailList;
+}
+
 export async function getStaffEmailList(permission: any) {
   let idList: any = [];
   let users = await prisma.user.findMany({
@@ -51,6 +71,9 @@ export async function getStaffEmailList(permission: any) {
         permission: {
           has: permission,
         },
+      },
+      email: {
+        isSet: true,
       },
     },
   });
@@ -79,7 +102,7 @@ export async function addNotification(msg: any, token?: any) {
     type: msg.type,
   });
   let msgCount = sameNoti.filter((e: any) =>
-    isEqual(e.sendList.sort(), msg.sendList.sort()),
+    isEqual(e.sendList.sort(), msg.sendList.sort())
   ).length;
   let response = [];
 
@@ -97,11 +120,12 @@ export async function addNotification(msg: any, token?: any) {
         });
         if (user) {
           if (user.NotiToken) {
-            for (let j = 0; j < user.NotiToken.length; j++) {
+            if (user.NotiToken.length > 0) {
               let res = await fetch("https://exp.host/--/api/v2/push/send", {
                 method: "POST",
                 body: JSON.stringify({
-                  to: user.NotiToken[j].notificationToken,
+                  to: user.NotiToken[user.NotiToken.length - 1]
+                    .notificationToken,
                   title: msg.title,
                   body: msg.body,
                 }),

@@ -19,8 +19,20 @@ import {
   Unauthorized,
   UsersExists,
 } from "@/types/ApiResponseTypes";
+import {
+  BuyerPermission,
+  SellerPermission,
+  TraderPermission,
+} from "@/types/permissionTypes";
 import { RoleNav } from "@/types/role";
-import { Gender, Role, User } from "@prisma/client";
+import { isInternal, isSeller } from "@/util/authHelper";
+import { encryptPhone } from "@/util/encrypt";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
+import { Gender, NotiType, Role, User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 async function addShippingInfo(user: any) {
@@ -138,40 +150,81 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     let data = JSON.parse(req.body);
     if (data.role) {
-      let body = {
-        email: data.email,
-        emailVerified: false,
-        phoneNumber: data.phoneNum,
-        password: data.password,
-        disabled: false,
-      };
-      let result = await firebaseAdmin
-        .auth()
-        .createUser(body)
-        .then(async (a) => {
-          let user = undefined;
-          let b = { ...data };
-          if (b.password) {
-            delete b.password;
+      if (data.email) {
+        let body = {
+          email: data.email,
+          emailVerified: false,
+          phoneNumber: data.phoneNum,
+          password: data.password,
+          disabled: false,
+        };
+        let result = await firebaseAdmin
+          .auth()
+          .createUser(body)
+          .then(async (a) => {
+            let user = undefined;
+            let b = { ...data };
+            if (b.password) {
+              delete b.password;
+            }
+            if (b.confirmPassword) {
+              delete b.confirmPassword;
+            }
+            if (!b.gender) {
+              b.gender = Gender.Male;
+            }
+            user = await prisma.user.create({
+              data: b,
+            });
+            return { isError: false, data: user };
+          })
+          .catch((err) => {
+            return { isError: true, data: err };
+          });
+        if (result.isError === true) {
+          return res.status(400).json(result.data);
+        } else {
+          return res.status(200).json(Success);
+        }
+      } else {
+        let b: any = { ...data };
+        if (b.otp) {
+          delete b.otp;
+        }
+        if (isInternal(b)) {
+          return res.status(400).json(BadRequest);
+        } else {
+          if (b.role === Role.Seller || b.role === Role.Trader) {
+            let adminList = await getAdminIdList();
+            let staffList = await getStaffIdList(
+              b.role === Role.Seller
+                ? SellerPermission.sellerNotiAllow
+                : b.role === Role.Trader
+                ? TraderPermission.traderNotiAllow
+                : ""
+            );
+
+            let msg: any = {
+              body: b.username + ", " + b.phoneNum + " was registered.",
+              createdAt: new Date().toISOString(),
+              title: "New " + b.role,
+              type: NotiType.NewUser,
+              requireInteraction: false,
+              sendList: [...adminList, ...staffList],
+              details: {
+                web:
+                  b.role === Role.Seller
+                    ? "/users/" + RoleNav.Sellers
+                    : "/users/" + RoleNav.Traders,
+              },
+            };
+            await addNotification(msg, "");
           }
-          if (b.confirmPassword) {
-            delete b.confirmPassword;
-          }
-          if (!b.gender) {
-            b.gender = Gender.Male;
-          }
-          user = await prisma.user.create({
+          let user = await prisma.user.create({
             data: b,
           });
-          return { isError: false, data: user };
-        })
-        .catch((err) => {
-          return { isError: true, data: err };
-        });
-      if (result.isError === true) {
-        return res.status(400).json(result.data);
-      } else {
-        return res.status(200).json(Success);
+          return res.status(200).json(Success);
+        }
       }
     }
     return res.status(200).json(data);
@@ -202,6 +255,64 @@ export default async function Handler(
           },
         });
         if (user) {
+          if (isSeller(user) && user.membershipId !== data.membershipId) {
+            let adminList = await getAdminIdList();
+            let staffList = await getStaffIdList(
+              user.role === Role.Seller
+                ? SellerPermission.sellerNotiAllow
+                : user.role === Role.Trader
+                ? TraderPermission.traderNotiAllow
+                : ""
+            );
+
+            let msg: any = {
+              body: "Membership for " + user.username + " was updated",
+              createdAt: new Date().toISOString(),
+              title: "Membership Updated",
+              type: NotiType.UpdateMembership,
+              requireInteraction: false,
+              sendList: [...adminList, ...staffList],
+              details: {
+                web:
+                  "/account/" + encodeURIComponent(encryptPhone(user.phoneNum)),
+              },
+            };
+            await addNotification(msg, "");
+          }
+
+          if (
+            isInternal(session) &&
+            data.sellAllow === true &&
+            user.sellAllow === false
+          ) {
+            let adminList = await getAdminIdList();
+            let staffList = await getStaffIdList(
+              user.role === Role.Seller
+                ? SellerPermission.sellerNotiAllow
+                : user.role === Role.Trader
+                ? TraderPermission.traderNotiAllow
+                : ""
+            );
+
+            let msg: any = {
+              body: "You can now list your products.",
+              createdAt: new Date().toISOString(),
+              title: "Allow Selling",
+              type: NotiType.UpdateMembership,
+              requireInteraction: false,
+              sendList: [...adminList, ...staffList, user.id],
+              details: {
+                web:
+                  "/account/" + encodeURIComponent(encryptPhone(user.phoneNum)),
+                mobile: {
+                  screen: "Account",
+                  slug: user.phoneNum,
+                },
+              },
+            };
+            await addNotification(msg, "");
+          }
+
           let u = await prisma.user.update({
             where: {
               id: user.id,

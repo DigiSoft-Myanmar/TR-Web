@@ -1,6 +1,12 @@
 import React, { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
+import { fetcher } from "@/util/fetcher";
+import useSWR from "swr";
+import NotiCard from "@/components/card/NotiCard";
+import { isInternal } from "@/util/authHelper";
+import { useSession } from "next-auth/react";
+import { sortBy } from "lodash";
 
 interface Props {
   isModalOpen: boolean;
@@ -9,6 +15,8 @@ interface Props {
 
 function NotiModal({ isModalOpen, setModalOpen }: Props) {
   const router = useRouter();
+  const { data: session }: any = useSession();
+  const { data } = useSWR("/api/notifications/list", fetcher);
 
   React.useEffect(() => {
     router.beforePopState(({ as }) => {
@@ -64,13 +72,15 @@ function NotiModal({ isModalOpen, setModalOpen }: Props) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="absolute top-0 right-0 bottom-0 flex max-w-md transform overflow-auto rounded-l-xl bg-primary shadow-xl transition-all">
-                <div className="inline-block w-full overflow-y-auto bg-white p-6 text-left align-middle">
+              <div className="absolute top-0 right-0 bottom-0 flex max-w-md min-w-[400px] transform overflow-auto rounded-l-xl bg-primary shadow-xl transition-all">
+                <div
+                  className={`inline-block w-full overflow-y-auto bg-gray-100 text-left align-middle`}
+                >
                   <Dialog.Title
                     as="div"
-                    className="text-darkShade flex items-center text-lg font-medium leading-6"
+                    className={`text-primaryText bg-white flex items-center text-lg font-medium leading-6 shadow-lg p-6 sticky top-0 z-10`}
                   >
-                    <h3 className="flex-grow">Payment successful</h3>
+                    <h3 className="flex-grow">Notifications</h3>
                     <button
                       className="bg-lightShade flex rounded-md p-2 focus:outline-none"
                       onClick={() => setModalOpen(false)}
@@ -85,21 +95,18 @@ function NotiModal({ isModalOpen, setModalOpen }: Props) {
                       </svg>
                     </button>
                   </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-darkShade text-sm">
-                      Your payment has been successfully submitted. We’ve sent
-                      you an email with all of the details of your order.
-                    </p>
-                  </div>
-
-                  <div className="mt-4 flex w-full justify-end ">
-                    <button
-                      type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-primary/10 px-4 py-2 text-sm font-medium text-info hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-info focus-visible:ring-offset-2"
-                      onClick={() => setModalOpen(false)}
-                    >
-                      Got it, thanks!
-                    </button>
+                  <div
+                    className={`flex flex-col space-y-5 mb-10 p-3 bg-gray-100 `}
+                  >
+                    {data ? (
+                      sortBy(data, (e) => e.createdAt)
+                        .reverse()
+                        .map((elem: any, index: number) => (
+                          <NotiCard data={elem} key={index} />
+                        ))
+                    ) : (
+                      <p>No Notification</p>
+                    )}
                   </div>
                 </div>
               </div>

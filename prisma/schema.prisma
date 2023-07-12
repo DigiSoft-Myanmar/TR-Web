@@ -47,27 +47,32 @@ enum Role {
   Trader
   Staff
   SuperAdmin
+  System
 }
 
 enum NotiType {
-  ContactMsg
-  Feedback
-  NewUser
-  LowStock
-  NewSubscriber
-  NewUserReview
-  NewProductReview
-  UpdateUserReview
-  UpdateProductReview
-  UpdateMembership
-  NewOrder
   NewProduct
   UpdateProduct
+  NewSubscriber
+  NewUser
+  LowStock
+  ContactMsg
+  Feedback
+  UpdateMembership
+  UpdateUserReview
+  UpdateProductReview
+  NewUserReview
+  NewProductReview
+  NewOrder
   UpdateOrder
+  NewBid
+  AuctionWon
+  AuctionRejectedBySeller
+  AuctionRejectedByBuyer
+  AuctionAutoCancelled
   MembershipExpired
   MembershipNearExpired
-  RemindOrder
-  CancelOrder
+  AutoCancelledOrder
 }
 
 enum UGCReportType {

@@ -8,11 +8,16 @@ import {
   Success,
   Unauthorized,
 } from "@/types/ApiResponseTypes";
-import { otherPermission } from "@/types/permissionTypes";
+import { ProductPermission, otherPermission } from "@/types/permissionTypes";
 import { encryptPhone } from "@/util/encrypt";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
 
 import { canAccess } from "@/util/roleHelper";
-import { ReviewType, Role } from "@prisma/client";
+import { NotiType, ReviewType, Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -174,7 +179,31 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           productId: id.toString(),
           createdByUserId: session.id,
         },
+        include: {
+          product: true,
+        },
       });
+
+      let adminList = await getAdminIdList();
+      let staffList = await getStaffIdList(ProductPermission.productNotiAllow);
+
+      let msg: any = {
+        body: (data ? "Update" : "New") + " Review with rating: " + body.rating,
+        createdAt: new Date().toISOString(),
+        title: "New Product Review",
+        type: data ? NotiType.UpdateProductReview : NotiType.NewProductReview,
+        requireInteraction: false,
+        sendList: [...adminList, ...staffList, data.product.sellerId],
+        details: {
+          web:
+            "/products/" + encodeURIComponent(data.product.slug) + "#reviews",
+          mobile: {
+            screen: "Products",
+            slug: data.product.slug,
+          },
+        },
+      };
+      await addNotification(msg, "");
 
       if (data) {
         await prisma.review.update({

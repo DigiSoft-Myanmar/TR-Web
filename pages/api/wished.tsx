@@ -2,6 +2,7 @@ import useAuth from "@/hooks/useAuth";
 import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import { NotAvailable, Success, Unauthorized } from "@/types/ApiResponseTypes";
+import { isBuyer } from "@/util/authHelper";
 import { Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 
@@ -11,7 +12,7 @@ import { getSession } from "next-auth/react";
 async function getWishedItems(req: NextApiRequest, res: NextApiResponse<any>) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
-  if (session && session.role === Role.Buyer) {
+  if (isBuyer(session)) {
     const wishedItems = await prisma.wishedItems.findFirst({
       where: {
         userId: session.id,
@@ -48,6 +49,7 @@ async function modifyWishedList(
   const session = await useAuth(req);
   if (session) {
     let body = JSON.parse(req.body);
+
     await prisma.wishedItems.upsert({
       where: {
         userId: session.id,
@@ -77,7 +79,7 @@ export default async function handler(
     case "POST": {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const session = await useAuth(req);
-      if (session && session.role === Role.Buyer) {
+      if (isBuyer(session)) {
         return modifyWishedList(req, res);
       } else {
         return res.status(401).json(Unauthorized);

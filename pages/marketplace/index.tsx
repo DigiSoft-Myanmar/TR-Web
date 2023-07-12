@@ -30,6 +30,7 @@ function Default({
   categories,
   brands,
   conditions,
+  orgCategories,
 }: {
   content: Content;
   categories: Category[] & {
@@ -39,11 +40,22 @@ function Default({
   };
   brands: Brand[];
   conditions: Condition[];
+  orgCategories: Category[];
 }) {
   const { t } = useTranslation("common");
   const router = useRouter();
   const { locale } = router;
-  const { page } = router.query;
+  const {
+    page,
+    brands: pathBrands,
+    categories: pathCategories,
+    startPrice,
+    endPrice,
+    type,
+    conditions: pathConditions,
+    qry,
+    sort,
+  } = router.query;
 
   const { data: adsData } = useQuery("adsDataProduct", () =>
     fetch("/api/siteManagement/ads?placement=" + AdsPage.Marketplace).then(
@@ -54,12 +66,71 @@ function Default({
     )
   );
 
-  const { data: productData } = useQuery("productData", () => {
-    return fetch("/api/marketplace").then((res) => {
-      let json = res.json();
-      return json;
-    });
-  });
+  const { data: productData } = useQuery(
+    [
+      "productData",
+      page,
+      pathBrands,
+      pathCategories,
+      startPrice,
+      endPrice,
+      pathConditions,
+      type,
+      qry,
+      sort,
+    ],
+    () => {
+      const params: any = {
+        page: page ? page : 1,
+        qry: qry ? qry : "",
+        categories: pathCategories
+          ? orgCategories
+              .filter((z) =>
+                typeof pathCategories === "string"
+                  ? pathCategories === z.slug
+                  : pathCategories.includes(z.slug)
+              )
+              .map((z) => z.id)
+          : "",
+        brands: pathBrands
+          ? brands
+              .filter((z) =>
+                typeof pathBrands === "string"
+                  ? pathBrands === z.name
+                  : pathBrands.includes(z.name)
+              )
+              .map((z) => z.id)
+          : "",
+        conditions: pathConditions
+          ? conditions
+              .filter((z) =>
+                typeof pathConditions === "string"
+                  ? pathConditions === z.name
+                  : pathConditions.includes(z.name)
+              )
+              .map((z) => z.id)
+          : "",
+        type: type ? type : "",
+        startPrice:
+          startPrice && typeof startPrice === "string"
+            ? parseInt(startPrice.toString())
+            : "",
+        endPrice:
+          endPrice && typeof endPrice === "string"
+            ? parseInt(endPrice.toString())
+            : "",
+        sort: sort ? sort : "",
+      };
+      let d: any = new URLSearchParams(params).toString();
+
+      console.log("/api/marketplace?" + d);
+
+      return fetch("/api/marketplace?" + d).then((res) => {
+        let json = res.json();
+        return json;
+      });
+    }
+  );
 
   return (
     <div>
@@ -108,10 +179,20 @@ function Default({
                     : true) && (
                     <li>
                       <Link
-                        href={
-                          "/marketplace?page=" +
-                          (page ? parseInt(page.toString()) - 1 : 1)
-                        }
+                        href={{
+                          pathname: "/marketplace",
+                          query: {
+                            page: page ? parseInt(page.toString()) - 1 : 1,
+                            categories: pathCategories,
+                            brands: pathBrands,
+                            startPrice: startPrice,
+                            endPrice: endPrice,
+                            type: type,
+                            conditions: pathConditions,
+                            qry: qry,
+                            sort: sort,
+                          },
+                        }}
                         className="inline-flex h-8 w-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180 hover:bg-primary/10 transition"
                       >
                         <span className="sr-only">Prev Page</span>
@@ -136,7 +217,20 @@ function Default({
                   ).map((e, index) => (
                     <li key={index}>
                       <Link
-                        href={"/marketplace"}
+                        href={{
+                          pathname: "/marketplace",
+                          query: {
+                            page: e,
+                            categories: pathCategories,
+                            brands: pathBrands,
+                            startPrice: startPrice,
+                            endPrice: endPrice,
+                            type: type,
+                            conditions: pathConditions,
+                            qry: qry,
+                            sort: sort,
+                          },
+                        }}
                         className={`block h-8 w-8 rounded border border-gray-100 ${
                           (page ? e === parseInt(page.toString()) : e === 1)
                             ? "bg-primary text-white"
@@ -152,7 +246,24 @@ function Default({
                     : true) && (
                     <li>
                       <Link
-                        href={"/"}
+                        href={{
+                          pathname: "/marketplace",
+                          query: {
+                            page:
+                              parseInt(page.toString()) >=
+                              productData.totalPages
+                                ? parseInt(page.toString()) + 1
+                                : parseInt(productData.totalPages),
+                            categories: pathCategories,
+                            brands: pathBrands,
+                            startPrice: startPrice,
+                            endPrice: endPrice,
+                            type: type,
+                            conditions: pathConditions,
+                            qry: qry,
+                            sort: sort,
+                          },
+                        }}
                         className="inline-flex h-8 w-8 items-center justify-center rounded border border-gray-100 bg-white text-gray-900 rtl:rotate-180 hover:bg-primary/10 transition"
                       >
                         <span className="sr-only">Next Page</span>
@@ -192,6 +303,7 @@ function Default({
 
 export async function getServerSideProps({ locale }: any) {
   let content = await prisma.content.findFirst({});
+  let orgCategories = await prisma.category.findMany({});
   let categories = await prisma.category.findMany({
     include: {
       subCategory: {
@@ -211,6 +323,7 @@ export async function getServerSideProps({ locale }: any) {
 
   return {
     props: {
+      orgCategories: JSON.parse(JSON.stringify(orgCategories)),
       content: JSON.parse(JSON.stringify(content)),
       categories: JSON.parse(JSON.stringify(categories)),
       brands: JSON.parse(JSON.stringify(brands)),

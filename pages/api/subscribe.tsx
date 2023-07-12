@@ -3,11 +3,19 @@ import useAuth from "@/hooks/useAuth";
 import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import { AlreadyExists, NotAvailable, Success } from "@/types/ApiResponseTypes";
+import { SubscribePermission } from "@/types/permissionTypes";
+import { RoleNav } from "@/types/role";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
+import { NotiType } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     switch (req.method) {
@@ -25,6 +33,24 @@ export default async function handler(
         if (exists) {
           return res.status(400).json(AlreadyExists);
         } else {
+          let adminList = await getAdminIdList();
+          let staffList = await getStaffIdList(
+            SubscribePermission.subscribeNotiAllow
+          );
+
+          let msg: any = {
+            body: body.email + " was subscribed.",
+            createdAt: new Date().toISOString(),
+            title: "New Subscriber",
+            type: NotiType.NewSubscriber,
+            requireInteraction: false,
+            sendList: [...adminList, ...staffList],
+            details: {
+              web: "/users/" + RoleNav.Subscribe,
+            },
+          };
+          await addNotification(msg, "");
+
           await prisma.subscribe.create({
             data: {
               email: body.email,

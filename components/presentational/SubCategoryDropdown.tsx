@@ -24,8 +24,7 @@ function SubCategoryDropdown({
   const [isDetailHover, setDetailHover] = React.useState(false);
   return (
     <div className="group">
-      <Link
-        href={"/marketplace?categories=" + encodeURIComponent(slug)}
+      <div
         tabIndex={0}
         className="min-w-[260px] group-hover:text-primary max-w-[288px] text-ellipsis"
         onMouseEnter={() => {
@@ -33,8 +32,10 @@ function SubCategoryDropdown({
           setOpen(id);
         }}
       >
-        {name}
-      </Link>
+        <Link href={"/marketplace?categories=" + encodeURIComponent(slug)}>
+          {name}
+        </Link>
+      </div>
       {(isHover === true || isDetailHover === true) && open === id && (
         <div
           tabIndex={0}
@@ -47,8 +48,8 @@ function SubCategoryDropdown({
             setHover(false);
           }}
         >
-          {subCategory.map((z: any, index) => (
-            <div key={index} className="flex flex-col gap-1">
+          {subCategory.map((z: any, index2) => (
+            <div key={index2} className="flex flex-col gap-1">
               <Link
                 href={"/marketplace?categories=" + encodeURIComponent(z.slug)}
                 className="font-semibold text-primary hover:text-primary p-3"

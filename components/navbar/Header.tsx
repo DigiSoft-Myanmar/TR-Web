@@ -7,7 +7,7 @@ import { useScrollDirection } from "react-use-scroll-direction";
 
 import Navbar from "./Navbar";
 import { signOut, useSession } from "next-auth/react";
-import { Category, Role } from "@prisma/client";
+import { Category, Content, Role } from "@prisma/client";
 import {
   formatAmount,
   getHighlightText,
@@ -32,6 +32,8 @@ import { showErrorDialog } from "@/util/swalFunction";
 import { getMobileOperatingSystem } from "@/util/getDevice";
 import { ProductNavType } from "@/types/productTypes";
 import { encryptPhone } from "@/util/encrypt";
+import NotiModal from "../modal/sideModal/NotiModal";
+import { useNoti } from "@/context/NotificationContext";
 //import BuyerDrawer from "../modal/drawerModal/BuyerDrawer";
 //import NotiModal from "../modal/sideModal/NotiModal";
 
@@ -40,7 +42,7 @@ function Header({
   categories,
   device,
 }: {
-  content: any;
+  content: Content;
   categories: Category[];
   device: any;
 }) {
@@ -59,7 +61,7 @@ function Header({
   const searchRef = React.useRef<HTMLDivElement | null>(null);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
 
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const { isNotiPing } = useNoti();
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { data: session }: any = useSession();
   const [isNotiModalOpen, setNotiModalOpen] = React.useState(false);
@@ -276,14 +278,22 @@ function Header({
           </div>
 
           <div className="flex flex-1 items-center lg:justify-end gap-3">
-            <div className="flex-grow rounded-md flex flex-row items-stretch pl-5">
+            <form
+              className="flex-grow rounded-md flex flex-row items-stretch pl-5"
+              onSubmit={(e: any) => {
+                e.preventDefault();
+                const qry = e.target.qry.value;
+                router.push("/marketplace?qry=" + encodeURIComponent(qry));
+              }}
+            >
               <input
                 className="w-full border-gray-200 border-2 border-r-0 rounded-l-full focus:ring-0 focus:border-primary-focus text-sm py-2 lg:px-5"
                 type="search"
                 placeholder="Search for the ultimate shopping experience..."
+                name="qry"
               />
               <button
-                type="button"
+                type="submit"
                 className="bg-primary rounded-r-full flex flex-row items-center px-2 py-2.5 text-white text-sm gap-3 pr-5 hover:bg-primary-focus"
               >
                 <svg
@@ -302,7 +312,7 @@ function Header({
                 </svg>
                 <span className="hidden lg:flex">Search</span>
               </button>
-            </div>
+            </form>
             <nav
               aria-label="Global"
               className="hidden lg:flex items-center lg:gap-4 lg:text-xs lg:font-bold lg:uppercase lg:tracking-wide lg:text-gray-500"
@@ -359,17 +369,18 @@ function Header({
                         </li>
                       )}
                       <li>
-                        <Link
-                          href={"/account/"}
-                          className="ml-1 font-normal hover:font-semibold"
+                        <button
+                          className="ml-1 font-normal hover:font-semibold cursor-pointer"
+                          type="button"
+                          onClick={() => {
+                            setNotiModalOpen(true);
+                          }}
                         >
                           Notifications{" "}
                           <span className="indicator-item badge badge-primary badge-sm text-white">
-                            {cartItems
-                              .map((e) => e.quantity)
-                              .reduce((a, b) => a + b, 0)}
+                            {isNotiPing}
                           </span>
-                        </Link>
+                        </button>
                       </li>
                       {session.role === Role.Buyer ||
                       session.role === Role.Trader ? (
@@ -701,21 +712,14 @@ function Header({
                     {categories?.map((e: any, index) => (
                       <li key={index} className="group">
                         {e.subCategory && e.subCategory.length > 0 ? (
-                          <Link
-                            href={
-                              "/marketplace?categories=" +
-                              encodeURIComponent(e.slug)
-                            }
-                          >
-                            <SubCategoryDropdown
-                              id={e.id}
-                              name={getText(e.name, e.nameMM, locale)}
-                              subCategory={e.subCategory}
-                              open={open}
-                              slug={e.slug}
-                              setOpen={setOpen}
-                            />
-                          </Link>
+                          <SubCategoryDropdown
+                            id={e.id}
+                            name={getText(e.name, e.nameMM, locale)}
+                            subCategory={e.subCategory}
+                            open={open}
+                            slug={e.slug}
+                            setOpen={setOpen}
+                          />
                         ) : (
                           <Link
                             href={
@@ -766,11 +770,11 @@ function Header({
               } hover:text-primary hover:underline flex flex-row items-center gap-2`}
               onClick={() => {
                 if (deviceInfo === "android") {
-                  alert("Android");
+                  window.open(content.playStoreURL, "_blank");
                 } else if (deviceInfo === "ios") {
-                  alert("IOS");
+                  window.open(content.appStoreURL, "_blank");
                 } else {
-                  alert("default");
+                  window.scrollTo(0, document.body.scrollHeight);
                 }
               }}
             >
@@ -913,6 +917,10 @@ function Header({
       <CartModal
         isModalOpen={isCartModalOpen}
         setModalOpen={setCartModalOpen}
+      />
+      <NotiModal
+        isModalOpen={isNotiModalOpen}
+        setModalOpen={setNotiModalOpen}
       />
     </>
   );

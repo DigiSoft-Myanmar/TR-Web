@@ -54,7 +54,7 @@ async function addProductClick(req: NextApiRequest, res: NextApiResponse<any>) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   switch (req.method) {
     case "POST":

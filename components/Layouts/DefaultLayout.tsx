@@ -86,6 +86,20 @@ function DefaultLayout({ children }: LayoutProps) {
   }, [isOnline, session]);
 
   React.useEffect(() => {
+    if (session) {
+      if (!isInternal(session)) {
+        if (!session.nrcFront) {
+          router.push(
+            "/account/" +
+              encodeURIComponent(encryptPhone(session.phoneNum)) +
+              "?action=edit"
+          );
+        }
+      }
+    }
+  }, [session, router.asPath]);
+
+  React.useEffect(() => {
     if (device) {
       try {
         fetch("https://api.ipify.org/?format=json")

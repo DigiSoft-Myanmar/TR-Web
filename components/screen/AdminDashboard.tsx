@@ -10,7 +10,7 @@ function AdminDashboard() {
       <SaleOverviewCard />
       <WeeklySiteVisitCard />
       <BestSellerCard />
-      <RegionStatsCard />
+      {/* <RegionStatsCard /> */}
     </div>
   );
 }

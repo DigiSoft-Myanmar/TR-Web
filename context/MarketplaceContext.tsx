@@ -150,7 +150,7 @@ export const MarketplaceProvider = ({
     })
   );
 
-  const { data: wishedItems } = useQuery("cartData", () =>
+  const { data: wishedItems } = useQuery("wishedData", () =>
     fetch("/api/wished").then((res) => {
       let json = res.json();
       return json;

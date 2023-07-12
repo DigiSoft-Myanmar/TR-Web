@@ -26,6 +26,10 @@ function ProductImg({
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
+    setError(false);
+  }, [imgUrl]);
+
+  React.useEffect(() => {
     if (imgEle && imgEle.current) {
       const fac = new FastAverageColor();
       fac

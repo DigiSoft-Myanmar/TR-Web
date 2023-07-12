@@ -533,252 +533,265 @@ function Default({
                 } bg-white p-3 rounded-md shadow flex flex-col gap-3`}
               >
                 <h3 className="font-semibold text-primary">Seller Info</h3>
-                {sellerList.map((seller, index) => (
-                  <details
-                    className={`flex flex-col gap-3 group cursor-pointer ${
-                      index < sellerList.length - 1
-                        ? "border-b pb-3 border-b-gray-500"
-                        : ""
-                    }`}
-                    key={index}
-                    open={seller.id === session.id}
-                    onToggle={(e) => {
-                      setContent("");
-                    }}
-                  >
-                    <summary className="flex flex-row items-center gap-3 justify-between flex-wrap">
-                      <div className="flex flex-row items-center gap-3 flex-grow">
-                        <Avatar
-                          username={seller.username}
-                          profile={seller.profile}
-                          size={40}
-                        />
-                        <div className="flex flex-col gap-1">
-                          <p className="text-sm">{seller.username}</p>
-                          <p className="text-xs">{seller.phoneNum}</p>
+                {sellerList
+                  .filter((z) =>
+                    isInternal(session) ? true : z.id === session.id
+                  )
+                  .map((seller, index) => (
+                    <details
+                      className={`flex flex-col gap-3 group cursor-pointer ${
+                        index < sellerList.length - 1
+                          ? "border-b pb-3 border-b-gray-500"
+                          : ""
+                      }`}
+                      key={index}
+                      open={seller.id === session.id}
+                      onToggle={(e) => {
+                        setContent("");
+                      }}
+                    >
+                      <summary className="flex flex-row items-center gap-3 justify-between flex-wrap">
+                        <div className="flex flex-row items-center gap-3 flex-grow">
+                          <Avatar
+                            username={seller.username}
+                            profile={seller.profile}
+                            size={40}
+                          />
+                          <div className="flex flex-col gap-1">
+                            <p className="text-sm">{seller.username}</p>
+                            <p className="text-xs">{seller.phoneNum}</p>
 
-                          <div className="flex flex-row gap-1">
-                            <span className="text-primary">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                className="w-4 h-4"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                            </span>
-                            <span className="text-xs">5.0</span>
+                            <div className="flex flex-row gap-1">
+                              <span className="text-primary">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                  className="w-4 h-4"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </span>
+                              <span className="text-xs">5.0</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex flex-row items-center justify-start gap-3">
-                        {isInternal(session) === false && (
-                          <button className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus">
-                            Submit Review
+                        <div className="flex flex-row items-center justify-start gap-3">
+                          {isInternal(session) === false && (
+                            <button className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus">
+                              Submit Review
+                            </button>
+                          )}
+                          <button>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              className="w-6 h-6"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
                           </button>
-                        )}
-                        <button>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className="w-6 h-6"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10.5 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm0 6a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                      <div className="border-t pt-3 flex flex-row items-center gap-1 justify-between w-full">
-                        <p className="text-xs flex-grow">
-                          {getOrderStatus(order, seller.id).status} on{" "}
-                          {new Date(
-                            getOrderStatus(order, seller.id).updatedDate
-                          ).toLocaleDateString("en-ca", {
-                            year: "numeric",
-                            month: "short",
-                            day: "2-digit",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                        <span className="rounded-full bg-white">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="h-5 w-5 flex-shrink-0 transition duration-300 group-open:-rotate-180"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </span>
-                      </div>
-                    </summary>
-
-                    {(isInternal(session) || isSeller(session)) && (
-                      <div className="border-t pt-3 mt-3">
-                        <h3 className="text-sm font-semibold text-primary">
-                          Status
-                        </h3>
-                        <div>
-                          <StatusSelectBox
-                            data={[
-                              OrderStatus.Accepted,
-                              OrderStatus.Shipped,
-                              OrderStatus.Rejected,
-                            ]}
-                            selected={
-                              statusHistory.find(
-                                (a) => a.sellerId === seller.id
-                              )?.status
-                            }
-                            setSelected={(status) => {
-                              setStatusHistory((prevValue) => {
-                                let currentSeller = prevValue.find(
-                                  (z) => z.sellerId == seller.id
-                                );
-                                currentSeller.status = status;
-                                return [
-                                  ...prevValue.filter(
-                                    (z) => z.sellerId !== seller.id
-                                  ),
-                                  currentSeller,
-                                ];
-                              });
-                            }}
-                          />
                         </div>
-                        <div className="flex flex-col gap-1 mt-3">
-                          <label className="text-sm font-medium text-gray-500">
-                            Note
-                          </label>
-                          <textarea
-                            value={content}
-                            onChange={(e) => {
-                              setContent(e.currentTarget.value);
-                            }}
-                            className="border border-gray-400 rounded-md min-h-[200px]"
-                          ></textarea>
+                        <div className="border-t pt-3 flex flex-row items-center gap-1 justify-between w-full">
+                          <p className="text-xs flex-grow">
+                            {getOrderStatus(order, seller.id).status} on{" "}
+                            {new Date(
+                              getOrderStatus(order, seller.id).updatedDate
+                            ).toLocaleDateString("en-ca", {
+                              year: "numeric",
+                              month: "short",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                          <span className="rounded-full bg-white">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5 flex-shrink-0 transition duration-300 group-open:-rotate-180"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </span>
                         </div>
-                        <div className="flex flex-row items-center justify-end mt-3">
-                          <SubmitBtn
-                            isSubmit={isSubmit}
-                            submitTxt={"Loading..."}
-                            text="Submit"
-                            disabled={isSubmit}
-                            onClick={() => {
-                              const sellerResponse: any = [
-                                ...order.sellerResponse,
-                              ];
-                              let statusHis: any = sellerResponse.find(
-                                (z: any) => z.sellerId === seller.id
-                              ).statusHistory;
-                              let lastStatus = sortBy(
-                                statusHis,
-                                (e) => e.updatedDate
-                              ).reverse()[0];
-                              let newStatus = statusHistory.find(
-                                (z) => z.sellerId === seller.id
-                              );
-                              if (
-                                lastStatus.status === OrderStatus.Shipped ||
-                                lastStatus.status === OrderStatus.Rejected ||
-                                lastStatus.status === OrderStatus.AutoCancelled
-                              ) {
-                                showErrorDialog(
-                                  "Cannot change status since the order is completed",
-                                  "",
-                                  locale
-                                );
-                                return;
-                              }
+                      </summary>
 
-                              let statusList = [
-                                OrderStatus.OrderReceived,
+                      {(isInternal(session) || isSeller(session)) && (
+                        <div className="border-t pt-3 mt-3">
+                          <h3 className="text-sm font-semibold text-primary">
+                            Status
+                          </h3>
+                          <div>
+                            <StatusSelectBox
+                              data={[
                                 OrderStatus.Accepted,
                                 OrderStatus.Shipped,
                                 OrderStatus.Rejected,
-                                OrderStatus.AutoCancelled,
-                              ];
-
-                              if (
-                                statusList.findIndex(
-                                  (z) => z === newStatus.status
-                                ) <
-                                statusList.findIndex(
-                                  (z) => z === lastStatus.status
-                                )
-                              ) {
-                                showErrorDialog(
-                                  "Cannot rollback status",
-                                  "",
-                                  locale
-                                );
-                                return;
+                              ]}
+                              selected={
+                                statusHistory.find(
+                                  (a) => a.sellerId === seller.id
+                                )?.status
                               }
-
-                              if (newStatus.status !== lastStatus.status) {
-                                statusHis.push({
-                                  status: newStatus.status,
-                                  updatedDate: new Date().toISOString(),
-                                  updatedBy: session.id,
-                                  note: content,
+                              setSelected={(status) => {
+                                setStatusHistory((prevValue) => {
+                                  let currentSeller = prevValue.find(
+                                    (z) => z.sellerId == seller.id
+                                  );
+                                  currentSeller.status = status;
+                                  return [
+                                    ...prevValue.filter(
+                                      (z) => z.sellerId !== seller.id
+                                    ),
+                                    currentSeller,
+                                  ];
                                 });
-                                setSubmit(true);
-                                fetch("/api/orders/" + order.orderNo, {
-                                  method: "PUT",
-                                  body: JSON.stringify({
-                                    sellerResponse: sellerResponse,
-                                  }),
-                                  headers: getHeaders(session),
-                                }).then((data) => {
-                                  setSubmit(false);
-                                  if (data.status === 200) {
-                                    router.reload();
-                                  } else {
-                                    showErrorDialog("Error");
-                                  }
-                                });
-                              } else {
-                                showErrorDialog(
-                                  "Cannot submit since the status is same",
-                                  "",
-                                  locale
+                              }}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1 mt-3">
+                            <label className="text-sm font-medium text-gray-500">
+                              Note
+                            </label>
+                            <textarea
+                              value={content}
+                              onChange={(e) => {
+                                setContent(e.currentTarget.value);
+                              }}
+                              className="border border-gray-400 rounded-md min-h-[200px]"
+                            ></textarea>
+                          </div>
+                          <div className="flex flex-row items-center justify-end mt-3">
+                            <SubmitBtn
+                              isSubmit={isSubmit}
+                              submitTxt={"Loading..."}
+                              text="Submit"
+                              disabled={isSubmit}
+                              onClick={() => {
+                                const sellerResponse: any = [
+                                  ...order.sellerResponse,
+                                ];
+                                let statusHis: any = sellerResponse.find(
+                                  (z: any) => z.sellerId === seller.id
+                                ).statusHistory;
+                                let lastStatus = sortBy(
+                                  statusHis,
+                                  (e) => e.updatedDate
+                                ).reverse()[0];
+                                let newStatus = statusHistory.find(
+                                  (z) => z.sellerId === seller.id
                                 );
-                              }
-                            }}
-                          />
+                                if (
+                                  lastStatus.status === OrderStatus.Shipped ||
+                                  lastStatus.status === OrderStatus.Rejected ||
+                                  lastStatus.status ===
+                                    OrderStatus.AutoCancelled
+                                ) {
+                                  showErrorDialog(
+                                    "Cannot change status since the order is completed",
+                                    "",
+                                    locale
+                                  );
+                                  return;
+                                }
+
+                                let statusList = [
+                                  OrderStatus.OrderReceived,
+                                  OrderStatus.Accepted,
+                                  OrderStatus.Shipped,
+                                  OrderStatus.Rejected,
+                                  OrderStatus.AutoCancelled,
+                                ];
+
+                                if (
+                                  statusList.findIndex(
+                                    (z) => z === newStatus.status
+                                  ) <
+                                  statusList.findIndex(
+                                    (z) => z === lastStatus.status
+                                  )
+                                ) {
+                                  showErrorDialog(
+                                    "Cannot rollback status",
+                                    "",
+                                    locale
+                                  );
+                                  return;
+                                }
+
+                                if (newStatus.status !== lastStatus.status) {
+                                  statusHis.push({
+                                    status: newStatus.status,
+                                    updatedDate: new Date().toISOString(),
+                                    updatedBy: session.id,
+                                    note: content,
+                                  });
+                                  setSubmit(true);
+                                  fetch(
+                                    "/api/orders/" +
+                                      order.orderNo +
+                                      "?sellerId=" +
+                                      seller.id +
+                                      "&status=" +
+                                      newStatus.status,
+                                    {
+                                      method: "PUT",
+                                      body: JSON.stringify({
+                                        sellerResponse: sellerResponse,
+                                      }),
+                                      headers: getHeaders(session),
+                                    }
+                                  ).then((data) => {
+                                    setSubmit(false);
+                                    if (data.status === 200) {
+                                      router.reload();
+                                    } else {
+                                      showErrorDialog("Error");
+                                    }
+                                  });
+                                } else {
+                                  showErrorDialog(
+                                    "Cannot submit since the status is same",
+                                    "",
+                                    locale
+                                  );
+                                }
+                              }}
+                            />
+                          </div>
                         </div>
+                      )}
+                      <div className={`px-5 relative mt-3 border-t pt-3`}>
+                        <ol className="sticky left-5 right-0 border-l border-gray-200">
+                          {sortBy(
+                            order.sellerResponse.find(
+                              (b: any) => b.sellerId === seller.id
+                            )?.statusHistory,
+                            (e) => e.updatedDate
+                          )
+                            .reverse()
+                            .map((b, index) => (
+                              <StatusHistory e={b} key={index} index={index} />
+                            ))}
+                        </ol>
                       </div>
-                    )}
-                    <div className={`px-5 relative mt-3 border-t pt-3`}>
-                      <ol className="sticky left-5 right-0 border-l border-gray-200">
-                        {sortBy(
-                          order.sellerResponse.find(
-                            (b: any) => b.sellerId === seller.id
-                          )?.statusHistory,
-                          (e) => e.updatedDate
-                        )
-                          .reverse()
-                          .map((b, index) => (
-                            <StatusHistory e={b} key={index} index={index} />
-                          ))}
-                      </ol>
-                    </div>
-                  </details>
-                ))}
+                    </details>
+                  ))}
               </div>
             </section>
           </div>
@@ -881,6 +894,11 @@ export async function getServerSideProps({ locale, params }: any) {
           if (user) {
             item.statusHistory[j].updatedUser = user;
           }
+        } else {
+          item.statusHistory[j].updatedUser = {
+            username: "System",
+            role: Role.System,
+          };
         }
       }
 

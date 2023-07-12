@@ -9,8 +9,15 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { OrderStatus } from "@/types/orderTypes";
+import { OrderPermission, ProductPermission } from "@/types/permissionTypes";
 import { isInternal, isSeller } from "@/util/authHelper";
-import { Order, ProductType, Role, StockType } from "@prisma/client";
+import { sendOrderEmail } from "@/util/emailNodeHelper";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
+import { NotiType, Order, ProductType, Role, StockType } from "@prisma/client";
 import { sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -59,6 +66,9 @@ async function addUnitSold(order: any, sellerId: string) {
 
 async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
   let cartItems = order.cartItems.filter((z: any) => z.sellerId === sellerId);
+  let conf = await prisma.configuration.findFirst({});
+  let lowStock = conf?.lowStockLimit ? conf.lowStockLimit : 10;
+
   for (let i = 0; i < cartItems.length; i++) {
     let product = await prisma.product.findFirst({
       where: {
@@ -79,6 +89,32 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
           }
         } else {
           stockLevel = stockLevel + cartItems[i].quantity;
+        }
+        if (stockLevel <= lowStock) {
+          let adminList = await getAdminIdList();
+          let staffList = await getStaffIdList(
+            ProductPermission.productNotiAllow
+          );
+
+          let msg: any = {
+            body:
+              product.name +
+              " was low on stock. Current stock is " +
+              stockLevel,
+            createdAt: new Date().toISOString(),
+            title: "Low Stock: " + product.name,
+            type: NotiType.LowStock,
+            requireInteraction: false,
+            sendList: [...adminList, ...staffList, product.sellerId],
+            details: {
+              web: "/products/" + encodeURIComponent(product.slug),
+              mobile: {
+                screen: "Products",
+                slug: product.slug,
+              },
+            },
+          };
+          await addNotification(msg, "");
         }
 
         await prisma.product.update({
@@ -106,6 +142,34 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
               stockLevel = stockLevel + cartItems[i].quantity;
             }
             variations[variableIndex].stockLevel = stockLevel;
+
+            if (stockLevel <= lowStock) {
+              let adminList = await getAdminIdList();
+              let staffList = await getStaffIdList(
+                ProductPermission.productNotiAllow
+              );
+
+              let msg: any = {
+                body:
+                  product.name +
+                  " was low on stock. Current stock is " +
+                  stockLevel,
+                createdAt: new Date().toISOString(),
+                title: "Low Stock: " + product.name,
+                type: NotiType.LowStock,
+                requireInteraction: false,
+                sendList: [...adminList, ...staffList, product.sellerId],
+                details: {
+                  web: "/products/" + encodeURIComponent(product.slug),
+                  mobile: {
+                    screen: "Products",
+                    slug: product.slug,
+                  },
+                },
+              };
+              await addNotification(msg, "");
+            }
+
             await prisma.product.update({
               where: { id: product.id },
               data: {
@@ -126,7 +190,7 @@ export default async function handler(
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
-    const { orderNo } = req.query;
+    const { orderNo, sellerId, status } = req.query;
     if (orderNo) {
       if (session) {
         let order = await prisma.order.findFirst({
@@ -140,6 +204,12 @@ export default async function handler(
               return res.status(200).json(Success);
             case "PUT":
               if (isSeller(session) || isInternal(session)) {
+                const seller = await prisma.user.findFirst({
+                  where: {
+                    id: sellerId.toString(),
+                  },
+                });
+
                 let body = JSON.parse(req.body);
                 let newOrder: any = await prisma.order.update({
                   where: {
@@ -149,6 +219,60 @@ export default async function handler(
                     sellerResponse: body.sellerResponse,
                   },
                 });
+
+                let adminList = await getAdminIdList();
+                let staffList = await getStaffIdList(
+                  OrderPermission.orderNotiAllow
+                );
+
+                let msg: any = {
+                  body:
+                    seller.username +
+                    " changed the status to " +
+                    status.toString() +
+                    " for #" +
+                    newOrder.orderNo +
+                    " at " +
+                    new Date().toLocaleDateString("en-ca", {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }),
+                  createdAt: new Date().toISOString(),
+                  title:
+                    seller.username +
+                    " " +
+                    status.toString() +
+                    " for #" +
+                    newOrder.orderNo,
+                  type: NotiType.UpdateOrder,
+                  requireInteraction: false,
+                  sendList: [
+                    ...adminList,
+                    ...staffList,
+                    newOrder.orderByUserId,
+                    sellerId,
+                  ],
+                  details: {
+                    web: "/orders/" + encodeURIComponent(order.orderNo),
+                    mobile: {
+                      screen: "Orders",
+                      slug: order.orderNo,
+                    },
+                  },
+                };
+                await addNotification(msg, "");
+                await sendOrderEmail(
+                  newOrder,
+                  seller.username +
+                    " " +
+                    status.toString() +
+                    " for #" +
+                    newOrder.orderNo
+                );
+
                 if (newOrder.sellerResponse) {
                   for (let i = 0; i < newOrder.sellerResponse.length; i++) {
                     let orderStatus = sortBy(

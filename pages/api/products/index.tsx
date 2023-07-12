@@ -21,8 +21,21 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { PageType } from "@/types/pageType";
+import { ProductPermission } from "@/types/permissionTypes";
+import { isSeller } from "@/util/authHelper";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
 import { getPricing } from "@/util/pricing";
-import { Membership, ProductType, Role, StockType } from "@prisma/client";
+import {
+  Membership,
+  NotiType,
+  ProductType,
+  Role,
+  StockType,
+} from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -203,6 +216,29 @@ export default async function handler(
         if (session && session.role !== Role.Buyer) {
           let newData = JSON.parse(req.body);
           let product = await createProduct(newData);
+          if (isSeller(session)) {
+            let adminList = await getAdminIdList();
+            let staffList = await getStaffIdList(
+              ProductPermission.productNotiAllow
+            );
+
+            let msg: any = {
+              body: product.name + " was created by " + product.seller.username,
+              createdAt: new Date().toISOString(),
+              title: "New Product: " + product.name,
+              type: NotiType.NewProduct,
+              requireInteraction: false,
+              sendList: [...adminList, ...staffList],
+              details: {
+                web: "/products/" + encodeURIComponent(product.slug),
+                mobile: {
+                  screen: "Products",
+                  slug: product.slug,
+                },
+              },
+            };
+            await addNotification(msg, "");
+          }
           return res.status(200).json(product);
         } else {
           return res.status(401).json(Unauthorized);
@@ -215,8 +251,29 @@ export default async function handler(
             delete data.id;
           }
           if (id) {
-            let product = await updateProduct(id.toString(), data);
+            let product: any = await updateProduct(id.toString(), data);
             if (product.isSuccess === true) {
+              let adminList = await getAdminIdList();
+              let staffList = await getStaffIdList(
+                ProductPermission.productNotiAllow
+              );
+
+              let msg: any = {
+                body: product.data.name + " was updated by " + session.username,
+                createdAt: new Date().toISOString(),
+                title: "Update Product: " + product.data.name,
+                type: NotiType.UpdateProduct,
+                requireInteraction: false,
+                sendList: [...adminList, ...staffList, product.data.sellerId],
+                details: {
+                  web: "/products/" + encodeURIComponent(product.data.slug),
+                  mobile: {
+                    screen: "Products",
+                    slug: product.data.slug,
+                  },
+                },
+              };
+              await addNotification(msg, "");
               return res.status(200).json(product.data);
             } else {
               return res.status(400).json(product.data);

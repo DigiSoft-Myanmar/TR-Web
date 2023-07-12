@@ -225,6 +225,9 @@ export const createProduct = async (data: Product) => {
 
   const product = await prisma.product.create({
     data: d,
+    include: {
+      seller: true,
+    },
   });
   return product;
 };

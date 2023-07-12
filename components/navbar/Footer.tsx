@@ -58,7 +58,32 @@ function Footer({ content }: { content: Content }) {
             </div>
 
             <div className="col-span-2 lg:col-span-3 lg:flex lg:items-end">
-              <form className="w-full">
+              <form
+                className="w-full"
+                onSubmit={(e: any) => {
+                  e.preventDefault();
+                  const email = e.target.email.value;
+                  fetch("/api/subscribe", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      email: email,
+                    }),
+                  }).then((data) => {
+                    if (data.status === 200) {
+                      showSuccessDialog(
+                        "You have successfully subscribed to our list.",
+                        "သင်သည် ကျွန်ုပ်တို့၏စာရင်းတွင် အောင်မြင်စွာ စာရင်းသွင်းပြီးပါပြီ။"
+                      );
+                    } else {
+                      showErrorDialog(
+                        "This email address is already in our subscription list.",
+                        "ဤအီးမေးလ်လိပ်စာသည် ကျွန်ုပ်တို့၏ စာရင်းသွင်းမှုစာရင်းတွင် ရှိနှင့်ပြီးဖြစ်သည်။",
+                        locale
+                      );
+                    }
+                  });
+                }}
+              >
                 <label htmlFor="UserEmail" className="sr-only">
                   {" "}
                   Email{" "}
@@ -66,6 +91,7 @@ function Footer({ content }: { content: Content }) {
 
                 <div className="border border-gray-100 p-2 focus-within:ring sm:flex sm:items-center sm:gap-4">
                   <input
+                    name="email"
                     type="email"
                     id="UserEmail"
                     placeholder="john@rhcp.com"
@@ -73,7 +99,7 @@ function Footer({ content }: { content: Content }) {
                   />
 
                   <button className="mt-1 w-full bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-none hover:bg-primary-focus sm:mt-0 sm:w-auto sm:shrink-0">
-                    Sign Up
+                    Subscribe
                   </button>
                 </div>
               </form>
@@ -99,7 +125,7 @@ function Footer({ content }: { content: Content }) {
 
               <ul className="mt-8 flex gap-6">
                 {content?.socialUrl?.map((e: string, index: number) => (
-                  <li>
+                  <li key={index}>
                     <SocialIcon
                       url={e}
                       key={index}

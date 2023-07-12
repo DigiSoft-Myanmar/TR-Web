@@ -8,6 +8,7 @@ import { getText } from "@/util/textHelper";
 import { useRouter } from "next/router";
 
 export enum SortByType {
+  SortByDefault = "SortByDefault",
   SortByNameAsc = "SortByNameAsc",
   SortByNameDesc = "SortByNameDesc",
   SortByPriceAsc = "SortByPriceAsc",

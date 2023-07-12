@@ -9,9 +9,14 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { otherPermission } from "@/types/permissionTypes";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
 
 import { canAccess } from "@/util/roleHelper";
-import { FeedbackType, Role } from "@prisma/client";
+import { FeedbackType, NotiType, Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -57,7 +62,7 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
     if (session) {
-      await prisma.feedback.create({
+      let feedback = await prisma.feedback.create({
         data: {
           productId: body.productId,
           details: body.details,
@@ -66,7 +71,44 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           userId: session.id,
           sellerId: body.sellerId,
         },
+        include: {
+          user: true,
+          product: true,
+        },
       });
+
+      let user = undefined;
+
+      if (body.feedbackType === FeedbackType.User) {
+        user = await prisma.user.findFirst({
+          where: {
+            id: body.sellerId,
+          },
+        });
+      }
+
+      let adminList = await getAdminIdList();
+      let staffList = await getStaffIdList(otherPermission.feedbacksView);
+
+      let feedbackTitle =
+        body.feedbackType === FeedbackType.User && body.sellerId
+          ? user.username
+          : feedback.product.name;
+
+      let msg: any = {
+        body:
+          feedback.user.username + " provides feedbacks for " + +feedbackTitle,
+        createdAt: new Date().toISOString(),
+        title: "New Feedback",
+        type: NotiType.Feedback,
+        requireInteraction: false,
+        sendList: [...adminList, ...staffList],
+        details: {
+          web: "/feedbacks/UGC",
+        },
+      };
+      await addNotification(msg, "");
+
       return res.status(200).json(Success);
     } else {
       return res.status(401).json(Unauthorized);
