@@ -17,6 +17,35 @@ async function seedUsers() {
       gender: Gender.Male,
     },
   });
+  await prisma.user.upsert({
+    where: { email: "hninyushwe@gmail.com" },
+    update: {
+      username: "Hnin Yu",
+      email: "hninyushwe@gmail.com",
+      role: Role.SuperAdmin,
+    },
+    create: {
+      username: "Hnin Yu",
+      email: "hninyushwe@gmail.com",
+      role: Role.SuperAdmin,
+      gender: Gender.Female,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "thandar.phyu@gmail.com" },
+    update: {
+      username: "Thandar Phyu",
+      email: "thandar.phyu@gmail.com",
+      role: Role.SuperAdmin,
+    },
+    create: {
+      username: "Thandar Phyu",
+      email: "thandar.phyu@gmail.com",
+      role: Role.SuperAdmin,
+      gender: Gender.Female,
+    },
+  });
 }
 
 async function seedTownships() {
