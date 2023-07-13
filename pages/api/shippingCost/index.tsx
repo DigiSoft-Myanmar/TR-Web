@@ -277,7 +277,7 @@ export default async function handler(
                 });
               } else {
                 return res.status(200).json({
-                  shippingIncluded: false,
+                  shippingIncluded: true,
                 });
               }
             } else {
@@ -291,7 +291,7 @@ export default async function handler(
                 });
               } else {
                 return res.status(200).json({
-                  shippingIncluded: false,
+                  shippingIncluded: true,
                 });
               }
             }

@@ -9,9 +9,11 @@ export const useProduct = () => React.useContext(ProductContext);
 
 export const ProductProvider = ({
   productDetail,
+  attributes,
   children,
 }: {
   productDetail?: any;
+  attributes;
   children: React.ReactNode;
 }) => {
   const { data: settingsData } = useSWR("/api/configurations", fetcher);
@@ -117,6 +119,7 @@ export const ProductProvider = ({
         pricingValid,
         attributeValid,
         maxAuctionPeriod,
+        attributes,
       }}
     >
       {children}

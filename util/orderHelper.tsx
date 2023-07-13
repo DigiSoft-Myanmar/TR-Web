@@ -29,9 +29,7 @@ export function getOrderStatus(data: any, sellerId?: string) {
     return responseData[0];
   } else {
     let responseData = sellerResponse.map(
-      (b) =>
-        sortBy(b.statusHistory, (obj: any) => obj.updatedDate).reverse()[0]
-          .status
+      (b) => sortBy(b.statusHistory, (obj: any) => obj.updatedDate).reverse()[0]
     );
     if (Array.from(new Set(responseData)).length === 1) {
       return responseData[0];
@@ -40,9 +38,13 @@ export function getOrderStatus(data: any, sellerId?: string) {
         (b) => b === OrderStatus.Shipped || b === OrderStatus.Rejected
       )
     ) {
-      return OrderStatus.Completed;
+      return {
+        status: OrderStatus.Completed,
+      };
     } else {
-      return OrderStatus.Processing;
+      return {
+        status: OrderStatus.Processing,
+      };
     }
   }
 }
@@ -184,7 +186,21 @@ export function getSubTotal(order: any, sellerId?: string) {
   }
 }
 
-export function getShippingFeeTotal(order: any) {
+export function getShippingFeeTotal(order: any, sellerId?: string) {
+  if (sellerId) {
+    return order.sellerResponse
+      .filter((z) => z.sellerId === sellerId)
+      .map((z: any) =>
+        z.shippingFee && z.isFreeShipping === false
+          ? isCartValid(
+              order.sellerResponse.find((e: any) => e.sellerId === z.sellerId)
+            )
+            ? z.shippingFee
+            : 0
+          : 0
+      )
+      .reduce((a, b) => a + b, 0);
+  }
   return order.sellerResponse
     .map((z: any) =>
       z.shippingFee && z.isFreeShipping === false
@@ -198,12 +214,17 @@ export function getShippingFeeTotal(order: any) {
     .reduce((a, b) => a + b, 0);
 }
 
-export function getPromoTotal(order: any) {
+export function getPromoTotal(order: any, sellerId?: string) {
   return order.discountTotal
+    .filter((z: any) => (sellerId ? z.sellerId === sellerId : true))
     .map((z: any) => z.discount)
     .reduce((a, b) => a + b, 0);
 }
 
-export function getPriceTotal(order: any) {
-  return getSubTotal(order) + getShippingFeeTotal(order) - getPromoTotal(order);
+export function getPriceTotal(order: any, sellerId?: string) {
+  return (
+    getSubTotal(order, sellerId) +
+    getShippingFeeTotal(order, sellerId) -
+    getPromoTotal(order, sellerId)
+  );
 }

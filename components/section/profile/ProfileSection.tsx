@@ -4,6 +4,7 @@ import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { useProfile } from "@/context/ProfileContext";
 import { fileUrl } from "@/types/const";
 import { showErrorDialog } from "@/util/swalFunction";
+import { getText } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender, Role } from "@prisma/client";
 import { useTranslation } from "next-i18next";
@@ -102,6 +103,7 @@ function ProfileSection({ nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -147,6 +149,7 @@ function ProfileSection({ nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -197,6 +200,7 @@ function ProfileSection({ nextFn, submitRef }: Props) {
                 <input
                   id="dropzone-file"
                   type="file"
+                  accept="image/*"
                   className="hidden"
                   multiple={false}
                   onChange={(e) => {

@@ -335,9 +335,7 @@ function Header({
                           {session.username}
                         </span>
                         <span className="indicator-item badge badge-primary badge-sm text-white">
-                          {cartItems
-                            .map((e) => e.quantity)
-                            .reduce((a, b) => a + b, 0)}
+                          {isNotiPing > 99 ? "99+" : isNotiPing}
                         </span>
                       </div>
                     </div>
@@ -378,7 +376,7 @@ function Header({
                         >
                           Notifications{" "}
                           <span className="indicator-item badge badge-primary badge-sm text-white">
-                            {isNotiPing}
+                            {isNotiPing > 99 ? "99+" : isNotiPing}
                           </span>
                         </button>
                       </li>

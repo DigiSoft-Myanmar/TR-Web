@@ -6,6 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import OrderEmail from "@/emails/order";
 import { addCartItems } from ".";
 import { sendEmailNodeFn } from "@/util/emailNodeHelper";
+import { Role } from "@prisma/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -107,6 +108,21 @@ export default async function handler(
           />
         );
 
+        const sellerList = await prisma.user.findMany({
+          where: {
+            role: {
+              in: [Role.Seller, Role.Trader],
+            },
+            email: {
+              isSet: true,
+            },
+            id: {
+              in: order.sellerIds,
+            },
+          },
+        });
+        let sellerEmail = sellerList.map((z) => z.email);
+
         //return res.send(emailHtml);
         let sendList = [];
 
@@ -122,9 +138,23 @@ export default async function handler(
 
         for (let i = 0; i < sendList.length; i++) {
           res.write(`data: Sending email to ${sendList[i]}...\n\n`);
-          await sendEmailNodeFn("Order #" + order.orderNo, emailHtml, [
-            sendList[i],
-          ]);
+          if (sellerEmail.find((z) => z === sendList[i])) {
+            let sellerHtml = render(
+              <OrderEmail
+                content={content!}
+                order={order!}
+                attributes={attributes}
+                sellerId={sellerList.find((z) => z.email === sendList[i]).id}
+              />
+            );
+            await sendEmailNodeFn("Order #" + order.orderNo, sellerHtml, [
+              sendList[i],
+            ]);
+          } else {
+            await sendEmailNodeFn("Order #" + order.orderNo, emailHtml, [
+              sendList[i],
+            ]);
+          }
           res.write(`data: Email sent to ${sendList[i]}.\n\n`);
         }
 

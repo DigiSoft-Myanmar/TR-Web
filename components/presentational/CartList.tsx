@@ -111,12 +111,15 @@ function CartList() {
                           {shippingFee.find((e) => e.sellerId === b.id)
                             .isFreeShipping === true
                             ? "Free Shipping"
-                            : formatAmount(
+                            : shippingFee.find((e) => e.sellerId === b.id)
+                                .shippingFee
+                            ? formatAmount(
                                 shippingFee.find((e) => e.sellerId === b.id)
                                   .shippingFee,
                                 locale,
                                 true
-                              )}
+                              )
+                            : "Paid by recipient on delivery"}
                         </span>
                       )}
                     </div>

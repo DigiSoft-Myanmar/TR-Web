@@ -31,6 +31,7 @@ import { showWarningDialog } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
 import { useTranslation } from "next-i18next";
+import { isSeller } from "@/util/authHelper";
 
 interface Props {
   invoiceData: Order[];
@@ -59,9 +60,10 @@ export const invoiceStatusObj: InvoiceStatusObj = {
   "Order Received": { color: Colors.primary, icon: "mdi:message" },
   Rejected: { color: Colors.warning, icon: "mdi:thumb-down" },
   Completed: { color: Colors.success, icon: "mdi:check-circle" },
-  Refund: { color: Colors.error, icon: "mdi:money-off" },
+  "Auto Cancelled": { color: Colors.error, icon: "mdi:money-off" },
   Cancelled: { color: Colors.error, icon: "mdi:cancel" },
-  Pending: { color: Colors.info, icon: "mi:list" },
+  Processing: { color: Colors.info, icon: "mi:clock" },
+  Invalid: { color: Colors.error, icon: "mdi:cancel" },
 };
 
 const OrderFullTbl = ({
@@ -150,7 +152,7 @@ const OrderFullTbl = ({
       flex: 0.25,
       minWidth: 90,
       field: "total",
-      headerName: "Total",
+      headerName: "Sub Total",
       renderCell: ({ row }: any) => (
         <Typography variant="body2">
           {formatAmount(row.total, locale, true, false)}
@@ -164,66 +166,59 @@ const OrderFullTbl = ({
       field: "invoiceStatus",
       renderHeader: () => "Status",
       renderCell: ({ row }: any) => {
-        const data = row.invoiceStatus;
+        let data = row.invoiceStatus;
 
         if (data && data.length > 1) {
-          let status = getOrderStatus(
-            data.filter((e: any) =>
-              session && session.role === Role.Seller
-                ? e.seller.id === session.id
-                : true
-            )
+          let sellerId = row.sellerIds.find((z) => z === session.id);
+          data = row.invoiceStatus.filter((z) =>
+            sellerId ? z.seller.id === sellerId : true
           );
+          let status = getOrderStatus(row, sellerId).status;
+          console.log(getOrderStatus(row, sellerId));
           const color = invoiceStatusObj[status]
             ? invoiceStatusObj[status].color
             : "primary";
 
           return (
             <Tooltip
-              title={data
-                .filter((e: any) =>
-                  session && session.role === Role.Seller
-                    ? e.seller.id === session.id
-                    : true
-                )
-                .map((e: any, index: number) => (
-                  <React.Fragment key={index}>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "common.white", fontWeight: 600 }}
-                    >
-                      {e.status}
-                    </Typography>
-                    <br />
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "common.white", fontWeight: 600 }}
-                    >
-                      Seller:
-                    </Typography>{" "}
-                    {e.seller.username}
-                    <br />
-                    <Typography
-                      variant="caption"
-                      sx={{ color: "common.white", fontWeight: 600 }}
-                    >
-                      Updated Date:
-                    </Typography>{" "}
-                    {new Date(e.updatedDate).toLocaleDateString("en-ca", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                    <br />
-                    {index !==
-                      data.filter((e: any) =>
-                        session && session.role === Role.Seller
-                          ? e.seller.id === session.id
-                          : true
-                      ).length -
-                        1 && <Divider color="#FFF" />}
-                  </React.Fragment>
-                ))}
+              title={data.map((e: any, index: number) => (
+                <React.Fragment key={index}>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "common.white", fontWeight: 600 }}
+                  >
+                    {e.status}
+                  </Typography>
+                  <br />
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "common.white", fontWeight: 600 }}
+                  >
+                    Seller:
+                  </Typography>{" "}
+                  {e.seller.username}
+                  <br />
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "common.white", fontWeight: 600 }}
+                  >
+                    Updated Date:
+                  </Typography>{" "}
+                  {new Date(e.updatedDate).toLocaleDateString("en-ca", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                  <br />
+                  {index !==
+                    data.filter((e: any) =>
+                      session && session.role === Role.Seller
+                        ? e.seller.id === session.id
+                        : true
+                    ).length -
+                      1 && <Divider color="#FFF" />}
+                </React.Fragment>
+              ))}
             >
               <div className="flex flex-row items-center gap-1">
                 <Box
@@ -238,7 +233,7 @@ const OrderFullTbl = ({
                 >
                   <Icon icon={invoiceStatusObj[status]?.icon} fontSize="1rem" />
                 </Box>
-                <span className="text-sm">{status.status}</span>
+                <span className="text-sm">{status}</span>
               </div>
             </Tooltip>
           );
@@ -302,7 +297,26 @@ const OrderFullTbl = ({
             </Tooltip>
           );
         } else {
-          return <Typography variant="body2">Invalid</Typography>;
+          return (
+            <div className="flex flex-row items-center gap-1">
+              <Box
+                color={invoiceStatusObj["Invalid"].color}
+                sx={{
+                  width: "1.875rem",
+                  height: "1.875rem",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  display: "flex",
+                }}
+              >
+                <Icon
+                  icon={invoiceStatusObj["Invalid"]?.icon}
+                  fontSize="1rem"
+                />
+              </Box>
+              <span className="text-sm">Invalid</span>
+            </div>
+          );
         }
       },
     },

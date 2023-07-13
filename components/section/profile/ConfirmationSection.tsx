@@ -1,17 +1,23 @@
+import Avatar from "@/components/presentational/Avatar";
 import { useProfile } from "@/context/ProfileContext";
 import { authErrors } from "@/types/authErrors";
-import { getHeaders } from "@/util/authHelper";
+import { fileUrl } from "@/types/const";
+import { getHeaders, isSeller } from "@/util/authHelper";
+import { fetcher } from "@/util/fetcher";
 import {
   showErrorDialog,
   showSuccessDialog,
   showUnauthorizedDialog,
 } from "@/util/swalFunction";
+import { formatAmount, getText } from "@/util/textHelper";
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 
 type Props = {
   backFn: Function;
@@ -20,10 +26,19 @@ type Props = {
 
 function ConfirmationSection({ backFn, currentStep }: Props) {
   const { t } = useTranslation("common");
-  const { user: profile, profileImg, nrcFront, nrcBack } = useProfile();
+  const {
+    user: profile,
+    profileImg,
+    nrcFront,
+    nrcBack,
+    locationStr,
+  } = useProfile();
   const [isSubmit, setSubmit] = React.useState(false);
   const router = useRouter();
+  const { locale } = router;
   const { data: session }: any = useSession();
+  const { data } = useSWR("/api/products/categories", fetcher);
+  const { data: membershipData } = useSWR("/api/memberships", fetcher);
 
   return (
     <div className="flex flex-col">
@@ -121,6 +136,222 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
           }
         }}
       >
+        <div>
+          <div className="flex justify-center">
+            {profileImg ? (
+              <img
+                draggable={false}
+                className="h-32 w-32 rounded-full object-cover shadow-md"
+                src={URL.createObjectURL(profileImg)}
+              />
+            ) : profile.profile ? (
+              <Avatar
+                username={profile.username}
+                profile={profile.profile}
+                size={128}
+              />
+            ) : (
+              <></>
+            )}
+          </div>
+          <div className="flex flex-col gap-3 mt-5">
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("username")}</h3>
+              <p>{profile.username}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("displayName")}</h3>
+              <p>{profile.displayName}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("phoneNum")}</h3>
+              <p>{profile.phoneNum}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("email")}</h3>
+              <p>{profile.email}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("dob")}</h3>
+              <p>
+                {new Date(profile.dob).toLocaleDateString("en-ca", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                })}
+              </p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("houseNo")}</h3>
+              <p>{profile.houseNo}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("street")}</h3>
+              <p>{profile.street}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("location")}</h3>
+              <p>{locationStr}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("gender")}</h3>
+              <p>{profile.gender}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 mt-5 border-t pt-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              {nrcFront ? (
+                <img
+                  draggable={false}
+                  className="h-40 w-full rounded-md border object-contain p-2"
+                  src={URL.createObjectURL(nrcFront)}
+                />
+              ) : profile.nrcFront ? (
+                <Image
+                  src={fileUrl + profile.nrcFront}
+                  width={300}
+                  height={160}
+                  alt="nrcFront"
+                  quality={100}
+                  className="h-40 w-full rounded-md border object-contain p-2"
+                />
+              ) : (
+                <></>
+              )}
+
+              {nrcBack ? (
+                <img
+                  draggable={false}
+                  className="h-40 w-full rounded-md border object-contain p-2"
+                  src={URL.createObjectURL(nrcBack)}
+                />
+              ) : profile.nrcBack ? (
+                <Image
+                  src={fileUrl + profile.nrcBack}
+                  width={300}
+                  height={160}
+                  alt="nrcBack"
+                  quality={100}
+                  className="h-40 w-full rounded-md border object-contain p-2"
+                />
+              ) : (
+                <></>
+              )}
+            </div>
+
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("nrc")}</h3>
+              <p>
+                {profile.nrcState} / {profile.nrcTownship} ({profile.nrcType}){" "}
+                {profile.nrcNumber}
+              </p>
+            </div>
+          </div>
+
+          {data && (
+            <div className="flex flex-col gap-3 mt-5 border-t pt-5">
+              <div className="flex flex-row items-center justify-between gap-3">
+                <h3 className="font-semibold text-sm">{t("categoriesInfo")}</h3>
+              </div>
+              <p>
+                {data
+                  .filter((z) => profile.preferCategoryIDs.includes(z.id))
+                  .map((b) => getText(b.name, b.nameMM, locale))
+                  .join(", ")}
+              </p>
+            </div>
+          )}
+          {isSeller(profile) && (
+            <div className="flex flex-col gap-3 mt-5 border-t pt-5">
+              <div className="flex flex-row items-center justify-between gap-3">
+                <h3 className="font-semibold text-sm">{t("membership")}</h3>
+                <p>
+                  {getText(
+                    membershipData.find((z) => z.id === profile.membershipId)
+                      .name,
+                    membershipData.find((z) => z.id === profile.membershipId)
+                      .nameMM,
+                    locale
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-row items-center justify-between gap-3">
+                <h3 className="font-semibold text-sm">
+                  {t("memberStartDate")}
+                </h3>
+                <p>
+                  {new Date(profile.memberStartDate).toLocaleDateString(
+                    "en-ca",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                    }
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-row items-center justify-between gap-3">
+                <h3 className="font-semibold text-sm">
+                  {t("shippingIncluded")}
+                </h3>
+                <p>{profile.shippingIncluded ? "Enabled" : "Disabled"}</p>
+              </div>
+              {profile.shippingIncluded ? (
+                <>
+                  <div className="flex flex-row items-center justify-between gap-3">
+                    <h3 className="font-semibold text-sm">
+                      {t("defaultShippingCost")}
+                    </h3>
+                    <p>
+                      {formatAmount(profile.defaultShippingCost, locale, true)}
+                    </p>
+                  </div>
+                  <div className="flex flex-row items-center justify-between gap-3">
+                    <h3 className="font-semibold text-sm">
+                      {t("isOfferFreeShipping")}
+                    </h3>
+                    <p>
+                      {profile.isOfferFreeShipping ? "Enabled" : "Disabled"}
+                    </p>
+                  </div>
+                  {profile.isOfferFreeShipping ? (
+                    <div className="flex flex-row items-center justify-between gap-3">
+                      <h3 className="font-semibold text-sm">
+                        {t("freeShippingCost")}
+                      </h3>
+                      <p>
+                        {formatAmount(profile.freeShippingCost, locale, true)}
+                      </p>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-3 mt-5 border-t pt-5">
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("isBlocked")}</h3>
+              <p>{profile.isBlocked ? "Blocked" : "Active"}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("isDeleted")}</h3>
+              <p>{profile.isDeleted ? "Deleted" : "Active"}</p>
+            </div>
+            {isSeller(profile) && (
+              <div className="flex flex-row items-center justify-between gap-3">
+                <h3 className="font-semibold text-sm">{t("sellAllow")}</h3>
+                <p>{profile.sellAllow ? "Allow" : "Disabled"}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button
             className={`inline-block rounded-l-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}

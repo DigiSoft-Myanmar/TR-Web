@@ -195,12 +195,41 @@ export async function sendOrderEmail(sendOrder: Order, title: string) {
       },
     },
   });
-  emailSendList = [...emailSendList, ...sellerList.map((z) => z.email)];
+  emailSendList = [...emailSendList];
 
   async.each(
     emailSendList,
     function (email: any, callback) {
       sendEmailNodeFn(title, emailHtml, [email]);
+    },
+    function (error) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email Sent Successfully.");
+      }
+    }
+  );
+
+  let sellerEmail = sellerList.map((z) => {
+    const sellerEmailHtml = render(
+      <OrderEmail
+        content={content!}
+        order={order!}
+        attributes={attributes}
+        sellerId={z.id}
+      />
+    );
+    return {
+      emailHtml: sellerEmailHtml,
+      email: z.email,
+    };
+  });
+
+  async.each(
+    sellerEmail,
+    function (email, callback) {
+      sendEmailNodeFn(title, email.emailHtml, [email.email]);
     },
     function (error) {
       if (error) {

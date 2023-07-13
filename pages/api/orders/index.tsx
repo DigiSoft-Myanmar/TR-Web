@@ -125,7 +125,7 @@ export default async function handler(
                 )
             )
         );
-        let returnOrder: any = await addOrderDetails(sellerOrders);
+        let returnOrder: any = await addOrderDetails(sellerOrders, session.id);
         return res.status(200).json(returnOrder);
       } else {
         const order = await prisma.order.findMany({

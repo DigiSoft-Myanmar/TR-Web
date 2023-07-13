@@ -623,6 +623,8 @@ export default async function handler(
                     isBillingAddress: false,
                   },
                 });
+                console.log(data.cartItems);
+
                 let newOrder = await prisma.order.create({
                   data: {
                     orderNo: orderNo,
@@ -637,6 +639,7 @@ export default async function handler(
                     discountTotal: discountTotal,
                     promoIds: body?.promoIds,
                     sellerIds: sellerIds,
+                    buyerNote: body?.orderNote,
                   },
                   include: {
                     orderBy: true,
@@ -762,7 +765,7 @@ export default async function handler(
                 let msg: any = {
                   body:
                     newOrder.orderBy.username +
-                    " created a new order with " +
+                    " created a new order with #" +
                     newOrder.orderNo +
                     " at " +
                     new Date().toLocaleDateString("en-ca", {
@@ -773,14 +776,14 @@ export default async function handler(
                       minute: "2-digit",
                     }),
                   createdAt: new Date().toISOString(),
-                  title: "New Order " + newOrder.orderNo,
+                  title: "New Order #" + newOrder.orderNo,
                   type: NotiType.NewOrder,
                   requireInteraction: false,
                   sendList: [
                     ...adminList,
                     ...staffList,
                     newOrder.orderByUserId,
-                    [...sellerIds],
+                    ...sellerIds,
                   ],
                   details: {
                     web: "/orders/" + encodeURIComponent(newOrder.orderNo),

@@ -1,5 +1,7 @@
+import { fetcher } from "@/util/fetcher";
 import { Brand, Membership, Role, User } from "@prisma/client";
 import React, { createContext } from "react";
+import useSWR from "swr";
 
 type IProfile = {
   user: User | undefined;
@@ -18,6 +20,8 @@ type IProfile = {
   isProfileValid: boolean;
   isCategoriesValid: boolean;
   isSellerValid: boolean;
+  locationStr: string;
+  setLocationStr: Function;
 };
 
 const ProfileContext = createContext<IProfile>({
@@ -37,6 +41,8 @@ const ProfileContext = createContext<IProfile>({
   isNRCValid: false,
   isProfileValid: false,
   isSellerValid: false,
+  locationStr: "",
+  setLocationStr: () => {},
 });
 
 export const useProfile = () => React.useContext(ProfileContext);
@@ -48,12 +54,15 @@ export const ProfileProvider = ({
   user: User;
   children: React.ReactNode;
 }) => {
+  const { data } = useSWR("/api/townships?allow=true", fetcher);
+
   const [user, setUser] = React.useState<User | undefined>(parentUser);
   const [profileImg, setProfileImg] = React.useState<any>();
   const [nrcFront, setNRCFront] = React.useState<any>();
   const [nrcBack, setNRCBack] = React.useState<any>();
   const [nrcAvailable, setNRCAvailable] = React.useState(false);
   const [membership, setMembership] = React.useState<Membership | null>(null);
+  const [locationStr, setLocationStr] = React.useState("");
 
   const isCategoriesValid = React.useMemo(
     () => user && user.preferCategoryIDs.length === 3,
@@ -99,8 +108,29 @@ export const ProfileProvider = ({
   );
 
   React.useEffect(() => {
+    if (parentUser) {
+      if (
+        parentUser.districtId &&
+        parentUser.townshipId &&
+        parentUser.stateId
+      ) {
+        if (data) {
+          let state = data.find((z) => z.id === parentUser.stateId);
+          let stateStr = state.name;
+          let district = state.districts.find(
+            (z) => z.id === parentUser.districtId
+          );
+          let districtStr = district.name;
+          let township = district.townships.find(
+            (z) => z.id === parentUser.townshipId
+          );
+          let townshipStr = township.name;
+          setLocationStr(stateStr + "-" + districtStr + "-" + townshipStr);
+        }
+      }
+    }
     setUser(parentUser);
-  }, [parentUser]);
+  }, [parentUser, data]);
 
   return (
     <ProfileContext.Provider
@@ -121,6 +151,8 @@ export const ProfileProvider = ({
         isNRCValid,
         isProfileValid,
         isSellerValid,
+        locationStr,
+        setLocationStr,
       }}
     >
       {children}

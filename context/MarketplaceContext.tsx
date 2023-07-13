@@ -176,6 +176,8 @@ export const MarketplaceProvider = ({
   const isAddressDiff: boolean = useMemo(() => {
     if (cartData?.isAddressDiff === true) {
       return true;
+    } else if (cartData?.isAddressDiff === false) {
+      return false;
     } else {
       if (
         billingAddress.stateId === shippingLocation.stateId &&
@@ -340,7 +342,6 @@ export const MarketplaceProvider = ({
     billingAddress: BillingAddress,
     isAddressDiff: boolean,
     showDialog: boolean,
-
     shippingLocation?: any
   ) {
     fetch("/api/cart", {

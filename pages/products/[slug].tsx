@@ -36,7 +36,10 @@ function ProductDetails(param: any) {
         <>
           {action === "view" ? (
             <div className="bg-white">
-              <ProductProvider productDetail={param.product}>
+              <ProductProvider
+                productDetail={param.product}
+                attributes={param.attributes}
+              >
                 <ConfirmationSection
                   isDisable={true}
                   backFn={() => {}}
@@ -45,7 +48,10 @@ function ProductDetails(param: any) {
               </ProductProvider>
             </div>
           ) : (
-            <ProductProvider productDetail={param.product}>
+            <ProductProvider
+              productDetail={param.product}
+              attributes={param.attributes}
+            >
               <ProductScreen />
             </ProductProvider>
           )}
@@ -102,9 +108,15 @@ export async function getServerSideProps({ locale, params }: any) {
       }
     }
   }
+  const attributes = await prisma.attribute.findMany({
+    include: {
+      Term: true,
+    },
+  });
 
   return {
     props: {
+      attributes: JSON.parse(JSON.stringify(attributes)),
       product: JSON.parse(JSON.stringify(product)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },

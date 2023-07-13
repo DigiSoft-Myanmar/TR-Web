@@ -66,6 +66,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -108,6 +109,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -156,6 +158,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -202,6 +205,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -244,6 +248,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;
@@ -292,6 +297,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                   id="dropzone-file"
                   type="file"
                   className="hidden"
+                  accept="image/*"
                   multiple={false}
                   onChange={(e) => {
                     let fileList = e.currentTarget.files;

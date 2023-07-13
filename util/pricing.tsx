@@ -50,15 +50,18 @@ export function getPricingSingle(product: any) {
         pricing = {
           ...pricing,
           isPromotion: true,
-          discount:
-            100 -
-            parseFloat(
-              (
-                ((pricing.regularPrice - pricing.salePrice) /
-                  pricing.regularPrice) *
-                100
-              ).toFixed(2)
-            ),
+          discount: parseFloat(
+            (
+              100 -
+              parseFloat(
+                (
+                  ((pricing.regularPrice - pricing.salePrice) /
+                    pricing.regularPrice) *
+                  100
+                ).toFixed(2)
+              )
+            ).toFixed(2)
+          ),
         };
       }
     }
@@ -80,15 +83,18 @@ export function getPricingSingle(product: any) {
     pricing = {
       ...pricing,
       isPromotion: true,
-      discount:
-        100 -
-        parseFloat(
-          (
-            ((pricing.regularPrice - pricing.salePrice) /
-              pricing.regularPrice) *
-            100
-          ).toFixed(2)
-        ),
+      discount: parseFloat(
+        (
+          100 -
+          parseFloat(
+            (
+              ((pricing.regularPrice - pricing.salePrice) /
+                pricing.regularPrice) *
+              100
+            ).toFixed(2)
+          )
+        ).toFixed(2)
+      ),
     };
   }
   return pricing;

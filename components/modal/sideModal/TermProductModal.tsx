@@ -288,6 +288,7 @@ function TermProductModal({
                                     id="dropzone-file"
                                     type="file"
                                     className="hidden"
+                                    accept="image/*"
                                     multiple={false}
                                     onChange={(e) => {
                                       setFileSrc("");

@@ -1,4 +1,5 @@
 import { CartItem } from "@/prisma/models/cartItems";
+import { Colors } from "@/types/color";
 import { OrderStatus } from "@/types/orderTypes";
 import {
   getPriceTotal,
@@ -49,12 +50,14 @@ export default function OrderEmail({
   content,
   order,
   attributes,
+  sellerId,
 }: {
   content: Content;
   order: any;
   attributes: (Attribute & {
     Term: Term[];
   })[];
+  sellerId?: string;
 }) {
   return (
     <Html>
@@ -128,6 +131,7 @@ export default function OrderEmail({
             <Section>
               <Text style={header}>Seller Info</Text>
               {order.sellerResponse
+                .filter((z: any) => (sellerId ? z.sellerId === sellerId : true))
                 .map((z: any) => {
                   let lastStatus = sortBy(
                     z.statusHistory,
@@ -192,7 +196,8 @@ export default function OrderEmail({
                           Shipping Cost:{" "}
                           {status.isFreeShipping === true
                             ? "Free Shipping"
-                            : formatAmount(
+                            : status.shippingFee
+                            ? formatAmount(
                                 isCartValid(
                                   order.sellerResponse.find(
                                     (e: any) => e.sellerId === status.sellerId
@@ -202,7 +207,8 @@ export default function OrderEmail({
                                   : 0,
                                 "en",
                                 true
-                              )}
+                              )
+                            : "Paid by recipient on delivery"}
                         </Text>
                         {order.discountTotal.find(
                           (z: any) => z.sellerId === status.sellerId
@@ -254,7 +260,15 @@ export default function OrderEmail({
                         )}
                       </Column>
                     </Row>
-                    {index < order.sellerResponse.length - 1 ? <Hr /> : <></>}
+                    {index <
+                    order.sellerResponse.filter((z: any) =>
+                      sellerId ? z.sellerId === sellerId : true
+                    ).length -
+                      1 ? (
+                      <Hr />
+                    ) : (
+                      <></>
+                    )}
                   </Container>
                 ))}
             </Section>
@@ -307,43 +321,54 @@ export default function OrderEmail({
                     </Column>
                   </Row>
                 </Column>
-                <Column
-                  align="right"
-                  style={{
-                    verticalAlign: "sub",
-                    paddingLeft: "30px",
-                  }}
-                >
-                  <Text style={header}>Shipping Address</Text>
-                  <Text style={paragraph}>
-                    Name: {order?.shippingAddress?.name}
-                  </Text>
-                  <Text style={paragraph}>
-                    Phone: {order?.shippingAddress?.phoneNum}
-                  </Text>
-                  <Text style={paragraph}>
-                    House No: {order?.shippingAddress?.houseNo}
-                  </Text>
-                  <Text style={paragraph}>
-                    Street: {order?.shippingAddress?.street}
-                  </Text>
-                  <Text style={paragraph}>
-                    Address:
-                    {order?.shippingAddress?.townshipStr
-                      ? order.shippingAddress.townshipStr
-                      : ""}
-                    {", "}
-                    {order?.shippingAddress?.districtStr
-                      ? order.shippingAddress.districtStr
-                      : ""}
-                    {", "}
-                    {order?.shippingAddress?.stateStr
-                      ? order.shippingAddress.stateStr
-                      : ""}{" "}
-                  </Text>
-                </Column>
+                {order?.isAddressDiff === true && (
+                  <Column
+                    align="right"
+                    style={{
+                      verticalAlign: "sub",
+                      paddingLeft: "30px",
+                    }}
+                  >
+                    <Text style={header}>Shipping Address</Text>
+                    <Text style={paragraph}>
+                      Name: {order?.shippingAddress?.name}
+                    </Text>
+                    <Text style={paragraph}>
+                      Phone: {order?.shippingAddress?.phoneNum}
+                    </Text>
+                    <Text style={paragraph}>
+                      House No: {order?.shippingAddress?.houseNo}
+                    </Text>
+                    <Text style={paragraph}>
+                      Street: {order?.shippingAddress?.street}
+                    </Text>
+                    <Text style={paragraph}>
+                      Address:
+                      {order?.shippingAddress?.townshipStr
+                        ? order.shippingAddress.townshipStr
+                        : ""}
+                      {", "}
+                      {order?.shippingAddress?.districtStr
+                        ? order.shippingAddress.districtStr
+                        : ""}
+                      {", "}
+                      {order?.shippingAddress?.stateStr
+                        ? order.shippingAddress.stateStr
+                        : ""}{" "}
+                    </Text>
+                  </Column>
+                )}
               </Row>
             </Section>
+            {order.buyerNote && (
+              <>
+                <Hr />
+                <Section>
+                  <Text style={header}>Order Note</Text>
+                  <Text style={paragraph}>{order.buyerNote}</Text>
+                </Section>
+              </>
+            )}
 
             <Button
               pX={10}
@@ -356,119 +381,24 @@ export default function OrderEmail({
             <Hr style={hr} />
             <Section>
               <Text style={header}>Order Details</Text>
-              {order.cartItems.map((z: any, index) => (
-                <Section key={index}>
-                  <Row>
-                    <Column>
-                      <Img
-                        src={
-                          z.variation && z.variation.img
-                            ? `${baseUrl}/api/files/${z.variation.img}`
-                            : `${baseUrl}/api/files/${z.prodDetail.imgList[0]}`
-                        }
-                        width={100}
-                        height={100}
-                        alt={z.prodDetail.name}
-                      />
-                    </Column>
-                    <Column>
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
-                            )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
-                      >
-                        Name: {z.prodDetail.name}
-                      </Text>
-
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
-                            )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
-                      >
-                        SKU:{" "}
-                        {z.variation && z.variation.SKU
-                          ? z.variation.SKU
-                          : z.prodDetail.SKU}
-                      </Text>
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
-                            )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
-                      >
-                        Brand: {z.prodDetail.Brand.name}
-                      </Text>
-
-                      {z.variation?.attributes?.map((b, index2) => (
-                        <Text
-                          style={
-                            isCartValid(
-                              order.sellerResponse.find(
-                                (e: any) => e.sellerId === z.sellerId
-                              )
-                            )
-                              ? paragraph
-                              : rejectParagraph
+              {order.cartItems
+                .filter((z) => (sellerId ? z.sellerId === sellerId : true))
+                .map((z: any, index) => (
+                  <Section key={index}>
+                    <Row>
+                      <Column>
+                        <Img
+                          src={
+                            z.variation && z.variation.img
+                              ? `${baseUrl}/api/files/${z.variation.img}`
+                              : `${baseUrl}/api/files/${z.prodDetail.imgList[0]}`
                           }
-                          key={index2}
-                        >
-                          {attributes.find((y) => y.id === b.attributeId).name}:{" "}
-                          {b.name}
-                        </Text>
-                      ))}
-                      {/* <Text style={paragraph}>Attribute</Text> */}
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
-                            )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
-                      >
-                        Seller: {z.prodDetail.seller?.username}
-                      </Text>
-                    </Column>
-
-                    <Column
-                      align="right"
-                      style={{
-                        verticalAlign: "sub",
-                      }}
-                    >
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
-                            )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
-                      >
-                        Unit Price: {z.normalPrice}
-                      </Text>
-                      {z.salePrice && (
+                          width={100}
+                          height={100}
+                          alt={z.prodDetail.name}
+                        />
+                      </Column>
+                      <Column>
                         <Text
                           style={
                             isCartValid(
@@ -480,44 +410,152 @@ export default function OrderEmail({
                               : rejectParagraph
                           }
                         >
-                          Discount:{" "}
-                          {z.salePrice ? z.salePrice - z.normalPrice : 0}
+                          Name: {z.prodDetail.name}
                         </Text>
-                      )}
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
+
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
                             )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
-                      >
-                        Quantity: {z.quantity}
-                      </Text>
-                      <Text
-                        style={
-                          isCartValid(
-                            order.sellerResponse.find(
-                              (e: any) => e.sellerId === z.sellerId
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
+                          SKU:{" "}
+                          {z.variation && z.variation.SKU
+                            ? z.variation.SKU
+                            : z.prodDetail.SKU}
+                        </Text>
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
                             )
-                          )
-                            ? paragraph
-                            : rejectParagraph
-                        }
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
+                          Brand: {z.prodDetail.Brand.name}
+                        </Text>
+
+                        {z.variation?.attributes?.map((b, index2) => (
+                          <Text
+                            style={
+                              isCartValid(
+                                order.sellerResponse.find(
+                                  (e: any) => e.sellerId === z.sellerId
+                                )
+                              )
+                                ? paragraph
+                                : rejectParagraph
+                            }
+                            key={index2}
+                          >
+                            {
+                              attributes.find((y) => y.id === b.attributeId)
+                                .name
+                            }
+                            : {b.name}
+                          </Text>
+                        ))}
+                        {/* <Text style={paragraph}>Attribute</Text> */}
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
+                            )
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
+                          Seller: {z.prodDetail.seller?.username}
+                        </Text>
+                      </Column>
+
+                      <Column
+                        align="right"
+                        style={{
+                          verticalAlign: "sub",
+                        }}
                       >
-                        Total Price:{" "}
-                        {z.salePrice
-                          ? z.salePrice * z.quantity
-                          : z.normalPrice * z.quantity}
-                      </Text>
-                    </Column>
-                  </Row>
-                  {index < order.cartItems.length - 1 ? <Hr /> : <></>}
-                </Section>
-              ))}
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
+                            )
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
+                          Unit Price: {z.normalPrice}
+                        </Text>
+                        {z.salePrice && (
+                          <Text
+                            style={
+                              isCartValid(
+                                order.sellerResponse.find(
+                                  (e: any) => e.sellerId === z.sellerId
+                                )
+                              )
+                                ? paragraph
+                                : rejectParagraph
+                            }
+                          >
+                            Discount:{" "}
+                            {z.salePrice ? z.salePrice - z.normalPrice : 0}
+                          </Text>
+                        )}
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
+                            )
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
+                          Quantity: {z.quantity}
+                        </Text>
+                        <Text
+                          style={
+                            isCartValid(
+                              order.sellerResponse.find(
+                                (e: any) => e.sellerId === z.sellerId
+                              )
+                            )
+                              ? paragraph
+                              : rejectParagraph
+                          }
+                        >
+                          Total Price:{" "}
+                          {z.salePrice
+                            ? z.salePrice * z.quantity
+                            : z.normalPrice * z.quantity}
+                        </Text>
+                      </Column>
+                    </Row>
+                    {index <
+                    order.cartItems.filter((z) =>
+                      sellerId ? z.sellerId === sellerId : true
+                    ).length -
+                      1 ? (
+                      <Hr />
+                    ) : (
+                      <></>
+                    )}
+                  </Section>
+                ))}
             </Section>
 
             <Hr />
@@ -526,28 +564,38 @@ export default function OrderEmail({
               <Row>
                 <Column align="right">
                   <Text style={priceStyle}>
-                    Subtotal : {formatAmount(getSubTotal(order), "en", true)}
+                    Subtotal :{" "}
+                    {formatAmount(getSubTotal(order, sellerId), "en", true)}
                   </Text>
                   <Text style={priceStyle}>
                     Shipping Total:{" "}
-                    {formatAmount(getShippingFeeTotal(order), "en", true)}
+                    {formatAmount(
+                      getShippingFeeTotal(order, sellerId),
+                      "en",
+                      true
+                    )}
                   </Text>
                   <Text style={priceStyle}>
-                    Discount: {formatAmount(getPromoTotal(order), "en", true)}
+                    Discount:{" "}
+                    {formatAmount(getPromoTotal(order, sellerId), "en", true)}
                   </Text>
                   <Text style={priceStyle}>
-                    Total: {formatAmount(getPriceTotal(order), "en", true)}
+                    Total:{" "}
+                    {formatAmount(getPriceTotal(order, sellerId), "en", true)}
                   </Text>
                 </Column>
               </Row>
             </Section>
 
             <Hr />
-
+            <Text style={highlightParagraph}>
+              Seller မတူပါက သီးခြားငွေပေးချေရမည်ဖြစ်ပါသည်။
+            </Text>
             <Text style={paragraph}>
               ဝယ်ယူအားပေးမှုအတွက် ကျေးဇူးတင်ရှိပါသည်။
             </Text>
             <Text style={paragraph}>ပို့ဆောင်ခအပြောင်းအလဲရှိနိုင်ပါသည်။</Text>
+
             <Text style={paragraph}>— Treasure Rush Team</Text>
             <Hr style={hr} />
 
@@ -690,4 +738,9 @@ const footerCopyright = {
   textAlign: "center" as const,
   fontSize: "12px",
   color: "rgb(102,102,102)",
+};
+
+const highlightParagraph = {
+  ...paragraph,
+  color: Colors.primary,
 };

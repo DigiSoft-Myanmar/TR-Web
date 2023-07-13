@@ -19,6 +19,7 @@ import { useScrollDirection } from "react-use-scroll-direction";
 import { SellerProvider } from "@/context/SellerContext";
 import { AuctionProvider } from "@/context/AuctionContext";
 import { encryptPhone } from "@/util/encrypt";
+import { NotiProvider } from "@/context/NotificationContext";
 
 declare global {
   interface Window {
@@ -87,7 +88,7 @@ function DefaultLayout({ children }: LayoutProps) {
 
   React.useEffect(() => {
     if (session) {
-      if (!isInternal(session)) {
+      /* if (!isInternal(session)) {
         if (!session.nrcFront) {
           router.push(
             "/account/" +
@@ -95,7 +96,7 @@ function DefaultLayout({ children }: LayoutProps) {
               "?action=edit"
           );
         }
-      }
+      } */
     }
   }, [session, router.asPath]);
 
@@ -130,18 +131,6 @@ function DefaultLayout({ children }: LayoutProps) {
   }, [device, session]);
 
   React.useEffect(() => {
-    if (session && session.role === Role.Seller) {
-      if (session.isAvailable === false) {
-        router.push(
-          "/account/" +
-            encodeURIComponent(encryptPhone(session.phoneNum)) +
-            "?action=edit"
-        );
-      }
-    }
-  }, [session, router.asPath]);
-
-  React.useEffect(() => {
     window.addEventListener("scroll", () => {
       if (window.pageYOffset > 300) {
         setShowBtn(true);
@@ -156,125 +145,133 @@ function DefaultLayout({ children }: LayoutProps) {
   }
 
   return session && isInternal(session) ? (
-    <div
-      className={`bg-gray-100 ${
-        router.locale && router.locale === "en"
-          ? "font-poppins"
-          : "font-myanmarAngoun"
-      }`}
-    >
-      <div className="relative flex h-screen flex-row items-start overflow-y-auto">
-        <div
-          className={`${
-            isOpen === "open"
-              ? "min-w-[100%] md:min-w-[250px] md:max-w-[250px]"
-              : "min-w-[60px] max-w-[60px]"
-          } sticky top-0 left-0 bottom-0 h-screen overflow-y-auto border-r bg-white scrollbar-hide`}
-        >
-          <AdminSidebar isOpen={isOpen} />
-        </div>
-        <button
-          className={
-            isOpen === "open"
-              ? "fixed right-[20px] top-8 z-30 rounded-md bg-[#fad1d4] p-2 text-primary md:top-4 md:left-[230px] md:right-auto"
-              : "fixed left-[40px] top-4 z-30 rounded-md bg-[#fad1d4] p-2 text-primary"
-          }
-          onClick={() =>
-            setOpen((prevValue: string) =>
-              prevValue === "open" ? "close" : "open"
-            )
-          }
-        >
-          {isOpen === "open" ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-4 w-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-4 w-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
-              />
-            </svg>
-          )}
-        </button>
-        <div
-          className={`flex ${
-            isOpen === "open"
-              ? "w-[calc(100%-250px)]"
-              : "max-w-[calc(100%-60px)]"
-          }  flex-grow flex-col`}
-        >
-          <AuthHeader />
-          <main className="m-5">{children}</main>
+    <NotiProvider>
+      <div
+        className={`bg-gray-50 ${
+          router.locale && router.locale === "en"
+            ? "font-poppins"
+            : "font-myanmarAngoun"
+        }`}
+      >
+        <div className="relative flex h-screen flex-row items-start overflow-y-auto">
+          <div
+            className={`${
+              isOpen === "open"
+                ? "min-w-[100%] md:min-w-[250px] md:max-w-[250px]"
+                : "min-w-[60px] max-w-[60px]"
+            } sticky top-0 left-0 bottom-0 h-screen overflow-y-auto border-r bg-white scrollbar-hide`}
+          >
+            <AdminSidebar isOpen={isOpen} />
+          </div>
+          <button
+            className={
+              isOpen === "open"
+                ? "fixed right-[20px] top-8 z-30 rounded-md bg-[#fad1d4] p-2 text-primary md:top-4 md:left-[230px] md:right-auto"
+                : "fixed left-[40px] top-4 z-30 rounded-md bg-[#fad1d4] p-2 text-primary"
+            }
+            onClick={() =>
+              setOpen((prevValue: string) =>
+                prevValue === "open" ? "close" : "open"
+              )
+            }
+          >
+            {isOpen === "open" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            )}
+          </button>
+          <div
+            className={`flex ${
+              isOpen === "open"
+                ? "w-[calc(100%-250px)]"
+                : "max-w-[calc(100%-60px)]"
+            }  flex-grow flex-col`}
+          >
+            <AuthHeader />
+            <main className="m-5">{children}</main>
+          </div>
         </div>
       </div>
-    </div>
+    </NotiProvider>
   ) : (
     <SellerProvider>
-      <MarketplaceProvider>
-        <AuctionProvider>
-          <div
-            className={`min-h-screen bg-gray-50 ${
-              router.locale && router.locale === "en"
-                ? "font-poppins"
-                : "font-myanmarAngoun"
-            }`}
-          >
-            <Header content={content} categories={categories} device={device} />
+      <NotiProvider>
+        <MarketplaceProvider>
+          <AuctionProvider>
+            <div
+              className={`min-h-screen bg-gray-50 ${
+                router.locale && router.locale === "en"
+                  ? "font-poppins"
+                  : "font-myanmarAngoun"
+              }`}
+            >
+              <Header
+                content={content}
+                categories={categories}
+                device={device}
+              />
 
-            {children}
-            {showBtn === true && (
-              <button
-                className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-[#f0777f] text-white hover:bg-primary-focus"
-                onClick={() => {
-                  if (window) {
-                    window.scrollTo({
-                      top: 0,
-                      behavior: "smooth",
-                    });
-                  }
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
+              {children}
+              {showBtn === true && (
+                <button
+                  className="fixed right-5 bottom-24 z-50 flex h-10 w-10 items-center justify-center rounded-md bg-[#f0777f] text-white hover:bg-primary-focus"
+                  onClick={() => {
+                    if (window) {
+                      window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M7 11l5-5m0 0l5 5m-5-5v12"
-                  />
-                </svg>
-              </button>
-            )}
-            <Footer content={content} />
-          </div>
-        </AuctionProvider>
-      </MarketplaceProvider>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 11l5-5m0 0l5 5m-5-5v12"
+                    />
+                  </svg>
+                </button>
+              )}
+              <Footer content={content} />
+            </div>
+          </AuctionProvider>
+        </MarketplaceProvider>
+      </NotiProvider>
     </SellerProvider>
   );
 }

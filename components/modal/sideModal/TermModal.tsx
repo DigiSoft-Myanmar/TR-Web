@@ -349,6 +349,7 @@ function TermModal({
                                   <input
                                     id="dropzone-file"
                                     type="file"
+                                    accept="image/*"
                                     className="hidden"
                                     multiple={false}
                                     onChange={(e) => {

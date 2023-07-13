@@ -10,7 +10,7 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { otherPermission } from "@/types/permissionTypes";
-import { isBuyer } from "@/util/authHelper";
+import { isBuyer, isInternal } from "@/util/authHelper";
 import { canAccess } from "@/util/roleHelper";
 import { isTodayBetween } from "@/util/verify";
 import { Role } from "@prisma/client";
@@ -49,9 +49,12 @@ async function getPromotions(req: NextApiRequest, res: NextApiResponse<any>) {
       },
     });
 
-    data = data.filter((z) =>
-      z.startDate && z.endDate ? isTodayBetween(z.startDate, z.endDate) : true
-    );
+    if (isInternal(session)) {
+    } else {
+      data = data.filter((z) =>
+        z.startDate && z.endDate ? isTodayBetween(z.startDate, z.endDate) : true
+      );
+    }
 
     for (let i = 0; i < data.length; i++) {
       let orderCount = await prisma.order.count({

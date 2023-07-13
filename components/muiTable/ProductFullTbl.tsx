@@ -438,9 +438,7 @@ const ProductFullTbl = ({
                   <IconButton
                     size="small"
                     component={Link}
-                    href={`/products/${encodeURIComponent(
-                      row.action.slug
-                    )}?action=view`}
+                    href={`/marketplace/${encodeURIComponent(row.action.slug)}`}
                   >
                     <Icon icon="mdi:eye-outline" fontSize={20} />
                   </IconButton>
@@ -919,9 +917,7 @@ const ProductFullTbl = ({
                   <IconButton
                     size="small"
                     component={Link}
-                    href={`/products/${encodeURIComponent(
-                      row.action.slug
-                    )}?action=view`}
+                    href={`/marketplace/${encodeURIComponent(row.action.slug)}`}
                   >
                     <Icon icon="mdi:eye-outline" fontSize={20} />
                   </IconButton>

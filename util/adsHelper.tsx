@@ -122,7 +122,11 @@ export function getImageSizeFromFileInput(fileInput) {
   });
 }
 
-export function checkExpire(adsLocation: any, sellerMembership: Membership) {
+export function checkExpire(
+  adsLocation: any,
+  sellerMembership: Membership,
+  isExpired?: boolean
+) {
   let startDate = new Date(adsLocation.startDate);
   let adsLifeTime = sellerMembership.adsLifeTime;
   startDate.setDate(startDate.getDate() + adsLifeTime);
@@ -130,6 +134,9 @@ export function checkExpire(adsLocation: any, sellerMembership: Membership) {
   const differenceDays: number = Math.floor(
     differenceMs / (1000 * 60 * 60 * 24)
   );
+  if (isExpired === true) {
+    return differenceDays <= 0;
+  }
   if (differenceDays <= 1) {
     return true;
   } else {

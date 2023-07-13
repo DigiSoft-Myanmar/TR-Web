@@ -1,6 +1,6 @@
-import { decryptPhone } from "@/util/encrypt";
+import { decryptPhone, encryptPhone } from "@/util/encrypt";
 import { capitalizeFirstLetter } from "@/util/textHelper";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -426,41 +426,74 @@ function AuthHeader() {
                   )}
                 </button>
               </div>
-
-              <button
-                type="button"
-                className="group flex shrink-0 items-center rounded-lg transition"
-              >
-                <span className="sr-only">Menu</span>
-                <div>
-                  <Avatar
-                    username={session.username}
-                    profile={session.profile}
-                    size={32}
-                  />
-                </div>
-
-                <p className="ml-2 hidden text-left text-xs sm:block">
-                  <strong className="block font-medium">
-                    {session?.user.name ? session.user.name : session.username}{" "}
-                  </strong>
-
-                  <span className="text-gray-500"> {session?.user.email} </span>
-                </p>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="ml-4 hidden h-5 w-5 text-gray-500 transition group-hover:text-gray-700 sm:block"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
+              <div className="dropdown">
+                <button
+                  tabIndex={0}
+                  type="button"
+                  className="group flex shrink-0 items-center rounded-lg transition"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+                  <span className="sr-only">Menu</span>
+                  <div>
+                    <Avatar
+                      username={session.username}
+                      profile={session.profile}
+                      size={32}
+                    />
+                  </div>
+
+                  <p className="ml-2 hidden text-left text-xs sm:block">
+                    <strong className="block font-medium">
+                      {session?.user.name
+                        ? session.user.name
+                        : session.username}{" "}
+                    </strong>
+
+                    <span className="text-gray-500">
+                      {" "}
+                      {session?.user.email}{" "}
+                    </span>
+                  </p>
+
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="ml-4 hidden h-5 w-5 text-gray-500 transition group-hover:text-gray-700 sm:block"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <Link
+                      href={
+                        "/account/" +
+                        encodeURIComponent(encryptPhone(session.phoneNum))
+                      }
+                    >
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        signOut({
+                          callbackUrl: "/",
+                        });
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

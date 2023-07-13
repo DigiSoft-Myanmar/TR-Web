@@ -6,13 +6,15 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { render } from "@react-email/render";
 import OrderEmail from "@/emails/order";
 import { addCartItems } from "..";
+import useAuth from "@/hooks/useAuth";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   try {
-    let { orderNo } = req.query;
+    const session = await useAuth(req);
+    let { orderNo, isSeller } = req.query;
     if (orderNo) {
       let order: any = await prisma.order.findFirst({
         include: {
@@ -91,9 +93,20 @@ export default async function handler(
 
       order = await addCartItems(order);
 
-      const emailHtml = render(
+      let emailHtml = render(
         <OrderEmail content={content!} order={order!} attributes={attributes} />
       );
+
+      if (isSeller === "true") {
+        emailHtml = render(
+          <OrderEmail
+            content={content!}
+            order={order!}
+            attributes={attributes}
+            sellerId={session.id}
+          />
+        );
+      }
 
       return res.send(emailHtml);
     } else {

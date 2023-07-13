@@ -413,7 +413,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                   />
                 </div>
 
-                <div className="sticky top-0">
+                <div className="sticky top-0 flex flex-row flex-wrap gap-3">
                   {product.categories?.map((e: Category, index: number) => (
                     <strong
                       className="rounded-full border border-primary bg-gray-100 px-3 py-0.5 text-xs font-medium tracking-wide text-primary"
@@ -608,44 +608,110 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                     </div>
                   )}
 
-                  {pricingInfo ? (
-                    <div className="mt-5 flex items-center gap-3">
-                      {pricingInfo.isPromotion === false ? (
-                        <p className="font-semibold">
-                          {formatAmount(pricingInfo.regularPrice, locale, true)}
+                  {product.type === ProductType.Auction ? (
+                    <>
+                      <div className="flex flex-col gap-1 mt-5">
+                        <h3 className="text-sm font-semibold">
+                          {t("openingBid")}
+                        </h3>
+                        <p>{formatAmount(product.openingBid, locale, true)}</p>
+                      </div>
+                      <div className="flex flex-col gap-1 mt-3">
+                        <h3 className="text-sm font-semibold">
+                          {t("estimatedPrice")}
+                        </h3>
+                        <p>
+                          {formatAmount(product.estimatedPrice, locale, true)}
                         </p>
-                      ) : (
-                        <p className="font-semibold">
-                          {formatAmount(pricingInfo.saleAmount, locale, true)}{" "}
-                          <span className="text-xs line-through">
-                            {formatAmount(
-                              pricingInfo.regularPrice,
-                              locale,
-                              true
-                            )}
-                          </span>
+                      </div>
+                      <div className="flex flex-col gap-1 mt-3">
+                        <h3 className="text-sm font-semibold">
+                          {t("startTime")}
+                        </h3>
+                        <p>
+                          {new Date(product.startTime).toLocaleDateString(
+                            "en-ca",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
                         </p>
-                      )}
-                      <strong className="rounded-md border border-primary bg-primary/10 px-3 py-2 text-xs font-medium tracking-wide text-primary">
-                        {product.type === ProductType.Fixed
-                          ? product.stockType === StockType.StockLevel
-                            ? product.stockLevel === 0
-                              ? t("OutOfStock")
-                              : t("InStock") + " | " + product.stockLevel
-                            : t(product.stockType)
-                          : currentVariation.stockType === StockType.StockLevel
-                          ? currentVariation.stockLevel === 0
-                            ? t("OutOfStock")
-                            : t("InStock") + " | " + currentVariation.stockLevel
-                          : t(currentVariation.stockType)}
-                      </strong>
-                    </div>
+                      </div>
+                      <div className="flex flex-col gap-1 mt-3">
+                        <h3 className="text-sm font-semibold">
+                          {t("endTime")}
+                        </h3>
+                        <p>
+                          {new Date(product.endTime).toLocaleDateString(
+                            "en-ca",
+                            {
+                              year: "numeric",
+                              month: "short",
+                              day: "2-digit",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </p>
+                      </div>
+                    </>
                   ) : (
-                    product.type === ProductType.Variable && (
-                      <h3 className="mt-5 text-xs font-semibold leading-6">
-                        {t("chooseAttributes")}
-                      </h3>
-                    )
+                    <>
+                      {pricingInfo ? (
+                        <div className="mt-5 flex items-center gap-3">
+                          {pricingInfo.isPromotion === false ? (
+                            <p className="font-semibold">
+                              {formatAmount(
+                                pricingInfo.regularPrice,
+                                locale,
+                                true
+                              )}
+                            </p>
+                          ) : (
+                            <p className="font-semibold">
+                              {formatAmount(
+                                pricingInfo.saleAmount,
+                                locale,
+                                true
+                              )}{" "}
+                              <span className="text-xs line-through">
+                                {formatAmount(
+                                  pricingInfo.regularPrice,
+                                  locale,
+                                  true
+                                )}
+                              </span>
+                            </p>
+                          )}
+                          <strong className="rounded-md border border-primary bg-primary/10 px-3 py-2 text-xs font-medium tracking-wide text-primary">
+                            {product.type === ProductType.Fixed
+                              ? product.stockType === StockType.StockLevel
+                                ? product.stockLevel === 0
+                                  ? t("OutOfStock")
+                                  : t("InStock") + " | " + product.stockLevel
+                                : t(product.stockType)
+                              : currentVariation.stockType ===
+                                StockType.StockLevel
+                              ? currentVariation.stockLevel === 0
+                                ? t("OutOfStock")
+                                : t("InStock") +
+                                  " | " +
+                                  currentVariation.stockLevel
+                              : t(currentVariation.stockType)}
+                          </strong>
+                        </div>
+                      ) : (
+                        product.type === ProductType.Variable && (
+                          <h3 className="mt-5 text-xs font-semibold leading-6">
+                            {t("chooseAttributes")}
+                          </h3>
+                        )
+                      )}
+                    </>
                   )}
                   <div className="my-5 flex flex-col space-y-3">
                     {product.description && (

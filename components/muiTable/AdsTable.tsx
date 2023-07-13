@@ -37,6 +37,7 @@ import { fileUrl } from "@/types/const";
 import Avatar from "../presentational/Avatar";
 import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
 import { encryptPhone } from "@/util/encrypt";
+import LoadingScreen from "../screen/LoadingScreen";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -68,7 +69,7 @@ const AdsTable = ({
   // ** Var
   const open = Boolean(anchorEl);
   const [value, setValue] = useState<string>("");
-  const [data, setData] = React.useState<Ads[]>();
+  const [data, setData] = React.useState<Ads[]>(undefined);
   const router = useRouter();
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
@@ -383,45 +384,49 @@ const AdsTable = ({
           </button>
         </div>
       </div>
-      <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
-        <StatsCard
-          label="Total Ads"
-          currentCount={
-            data?.filter((e: any) => e.createdAt > prevYear.toISOString())
-              .length
-          }
-          prevCount={
-            data?.filter(
-              (e: any) =>
-                e.createdAt < prevYear.toISOString() &&
-                e.createdAt > doublePrevYear.toISOString()
-            ).length
-          }
-          totalCount={data?.length}
-        />
-        <StatsCard
-          label={"Ads Placed"}
-          currentCount={
-            data?.filter((e: Ads) => e.adsLocations.length > 0).length
-          }
-          prevCount={data?.filter((e: any) => e.adsLocations.length > 0).length}
-          totalCount={
-            data?.filter((e: any) => e.adsLocations.length > 0).length
-          }
-        />
-        <StatsCard
-          label={"Ads not placed"}
-          currentCount={
-            data?.filter((e: Ads) => e.adsLocations.length === 0).length
-          }
-          prevCount={
-            data?.filter((e: Ads) => e.adsLocations.length === 0).length
-          }
-          totalCount={
-            data?.filter((e: Ads) => e.adsLocations.length === 0).length
-          }
-        />
-      </div>
+      {data && (
+        <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
+          <StatsCard
+            label="Total Ads"
+            currentCount={
+              data?.filter((e: any) => e.createdAt > prevYear.toISOString())
+                .length
+            }
+            prevCount={
+              data?.filter(
+                (e: any) =>
+                  e.createdAt < prevYear.toISOString() &&
+                  e.createdAt > doublePrevYear.toISOString()
+              ).length
+            }
+            totalCount={data?.length}
+          />
+          <StatsCard
+            label={"Ads Placed"}
+            currentCount={
+              data?.filter((e: Ads) => e.adsLocations?.length > 0).length
+            }
+            prevCount={
+              data?.filter((e: any) => e.adsLocations?.length > 0).length
+            }
+            totalCount={
+              data?.filter((e: any) => e.adsLocations?.length > 0).length
+            }
+          />
+          <StatsCard
+            label={"Ads not placed"}
+            currentCount={
+              data?.filter((e: Ads) => e.adsLocations?.length === 0).length
+            }
+            prevCount={
+              data?.filter((e: Ads) => e.adsLocations?.length === 0).length
+            }
+            totalCount={
+              data?.filter((e: Ads) => e.adsLocations?.length === 0).length
+            }
+          />
+        </div>
+      )}
       <CardContent>
         <div className="flex flex-row items-center justify-between">
           <div className="flex w-fit flex-row flex-wrap items-center gap-3"></div>
@@ -481,7 +486,7 @@ const AdsTable = ({
       /> */}
     </Card>
   ) : (
-    <></>
+    <LoadingScreen />
   );
 };
 

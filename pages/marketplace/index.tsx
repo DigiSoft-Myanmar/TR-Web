@@ -249,11 +249,12 @@ function Default({
                         href={{
                           pathname: "/marketplace",
                           query: {
-                            page:
-                              parseInt(page.toString()) >=
-                              productData.totalPages
+                            page: page
+                              ? parseInt(page.toString()) >=
+                                productData.totalPages
                                 ? parseInt(page.toString()) + 1
-                                : parseInt(productData.totalPages),
+                                : parseInt(productData.totalPages)
+                              : 0,
                             categories: pathCategories,
                             brands: pathBrands,
                             startPrice: startPrice,
