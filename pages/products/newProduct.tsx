@@ -9,8 +9,9 @@ import { useSession } from "next-auth/react";
 import { ProductType, Role } from "@prisma/client";
 import ErrorScreen from "@/components/screen/ErrorScreen";
 import { isSeller } from "@/util/authHelper";
+import prisma from "@/prisma/prisma";
 
-function NewProduct() {
+function NewProduct({ attributes }: { attributes: any }) {
   const { data: session }: any = useSession();
 
   return session &&
@@ -25,6 +26,7 @@ function NewProduct() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ProductProvider
+        attributes={attributes}
         productDetail={
           isSeller(session)
             ? {
@@ -46,8 +48,15 @@ function NewProduct() {
 }
 
 export async function getServerSideProps({ locale }: any) {
+  const attributes = await prisma.attribute.findMany({
+    include: {
+      Term: true,
+    },
+  });
+
   return {
     props: {
+      attributes: JSON.parse(JSON.stringify(attributes)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };
