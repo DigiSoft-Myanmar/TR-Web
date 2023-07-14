@@ -18,7 +18,7 @@ export type FeatureType = {
 };
 
 export enum PrivacyType {
-  cookie = "Cookie",
+  cookie = "Cookies",
   privacy = "Privacy Policy",
   termsNConditions = "Terms & Conditions",
 }
