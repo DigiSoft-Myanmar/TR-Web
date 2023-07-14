@@ -9,42 +9,40 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { Role } from "@prisma/client";
-import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-async function addProductClick(req: NextApiRequest, res: NextApiResponse<any>) {
+async function addAdsClick(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
-    let db = (await clientPromise).db();
-    const { productId, ip: queryIp } = req.query;
-    if (productId && queryIp) {
+    const { adsId, ip: queryIp, adsLocation } = req.query;
+    if (adsId && queryIp) {
       let b = {
         address: queryIp!.toString(),
         clickedDate: new Date().toLocaleDateString("en-ca"),
-        productId: productId.toString(),
+        adsId: adsId.toString(),
+        adsLocation: adsLocation.toString(),
       };
       // eslint-disable-next-line react-hooks/rules-of-hooks
       let session = await useAuth(req);
-      let prod = await prisma.product.findFirst({
-        where: {
-          id: productId.toString(),
-        },
-      });
 
       if (
         session &&
         (session.role === Role.Admin ||
           session.role === Role.Staff ||
-          session.role === Role.SuperAdmin ||
-          (prod && prod.sellerId === session.id))
+          session.role === Role.SuperAdmin)
       ) {
       } else {
-        let isExists = await prisma.productView.findFirst({
+        let isExists = await prisma.adsClick.findFirst({
           where: b,
         });
         if (isExists) {
         } else {
-          await prisma.productView.create({
-            data: b,
+          await prisma.adsClick.create({
+            data: {
+              address: queryIp!.toString(),
+              clickedDate: new Date().toLocaleDateString("en-ca"),
+              adsId: adsId.toString(),
+              adsLocation: adsLocation.toString(),
+            },
           });
         }
         return res.status(200).json(Success);
@@ -63,7 +61,7 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "POST":
-      return addProductClick(req, res);
+      return addAdsClick(req, res);
     default:
       return res.status(405).json(NotAvailable);
   }

@@ -549,6 +549,15 @@ const ProductFullTbl = ({
           {
             flex: 0.15,
             minWidth: 100,
+            headerName: "Type",
+            field: "Type",
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">{row.type}</Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
             field: "categories",
             headerName: "Categories",
             renderCell: ({ row }: CellType) => {

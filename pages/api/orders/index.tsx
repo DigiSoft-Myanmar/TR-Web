@@ -27,7 +27,7 @@ export async function addCartItems(order: any) {
   return order;
 }
 
-async function addOrderDetails(order: any, sellerId?: string) {
+export async function addOrderDetails(order: any, sellerId?: string) {
   for (let i = 0; i < order.length; i++) {
     let statusArr = [];
     for (let j = 0; j < order[i].sellerResponse.length; j++) {

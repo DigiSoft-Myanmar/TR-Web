@@ -61,7 +61,7 @@ function Header({
   const searchRef = React.useRef<HTMLDivElement | null>(null);
   const menuRef = React.useRef<HTMLDivElement | null>(null);
 
-  const { isNotiPing } = useNoti();
+  const { isNotiPing, turnOffNotiPing } = useNoti();
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const { data: session }: any = useSession();
   const [isNotiModalOpen, setNotiModalOpen] = React.useState(false);
@@ -371,6 +371,11 @@ function Header({
                           className="ml-1 font-normal hover:font-semibold cursor-pointer"
                           type="button"
                           onClick={() => {
+                            turnOffNotiPing();
+                            fetch("/api/notifications/update", {
+                              method: "POST",
+                              headers: getHeaders(session),
+                            });
                             setNotiModalOpen(true);
                           }}
                         >

@@ -158,6 +158,30 @@ export function getStock(product: Product) {
   }
 }
 
+export function getSubTotalCompleted(order: any, sellerId?: string) {
+  if (sellerId) {
+    let isCompleted = order.sellerResponse
+      .find((z) => z.sellerId === sellerId)
+      .statusHistory.find((z) => z.status === OrderStatus.Shipped);
+    if (isCompleted) {
+      return order.cartItems
+        .filter((z) => z.sellerId === sellerId)
+        .map((z) =>
+          z.salePrice ? z.salePrice * z.quantity : z.normalPrice * z.quantity
+        )
+        .reduce((a, b) => a + b, 0);
+    } else {
+      return 0;
+    }
+  } else {
+    return order.cartItems
+      .map((z) =>
+        z.salePrice ? z.salePrice * z.quantity : z.normalPrice * z.quantity
+      )
+      .reduce((a, b) => a + b, 0);
+  }
+}
+
 export function getSubTotal(order: any, sellerId?: string) {
   if (sellerId) {
     return order.cartItems
