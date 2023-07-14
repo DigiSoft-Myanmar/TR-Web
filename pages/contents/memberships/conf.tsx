@@ -170,11 +170,11 @@ function ConfPage({ data }: { data: Content }) {
                       break;
                     case PrivacyType.BuyerProfileReport:
                       updateBody.buyerReportDetails = content;
-                      updateBody.buyerReportDetails = contentMM;
+                      updateBody.buyerReportDetailsMM = contentMM;
                       break;
                     case PrivacyType.CategoryReport:
                       updateBody.saleReportDetails = content;
-                      updateBody.saleReportDetails = contentMM;
+                      updateBody.saleReportDetailsMM = contentMM;
                       break;
                     case PrivacyType.CustomerService:
                       updateBody.customerServiceDetails = content;

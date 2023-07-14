@@ -93,7 +93,7 @@ function ProductCard({ product }: { product: any }) {
           <p className="text-sm">
             {product.type === ProductType.Fixed
               ? getPricing(product).isPromotion === true
-                ? formatAmount(getPricing(product).salePrice, locale, true)
+                ? formatAmount(getPricing(product).saleAmount, locale, true)
                 : formatAmount(getPricing(product).regularPrice, locale, true)
               : getPricing(product).isPromotion === true &&
                 getPricing(product).minSalePrice ===
