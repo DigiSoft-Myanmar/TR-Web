@@ -160,7 +160,6 @@ function Configurations({
               formControl={{
                 ...register("senderEmailPassword"),
               }}
-              currentValue={""}
             />
 
             <FormInput

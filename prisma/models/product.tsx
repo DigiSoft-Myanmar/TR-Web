@@ -102,8 +102,10 @@ export const getAllProducts = async (
       filter = {};
     } else {
       filter = {
-        user: {
+        seller: {
           sellAllow: true,
+          isBlocked: false,
+          isDeleted: false,
         },
       };
     }

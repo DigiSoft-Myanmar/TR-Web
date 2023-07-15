@@ -97,7 +97,7 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
             },
           });
 
-          await prisma.product.updateMany({
+          /* await prisma.product.updateMany({
             where: {
               sellerId: user[i].id,
             },
@@ -105,7 +105,7 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
               isPublished: false,
               isFeatured: false,
             },
-          });
+          }); */
         } else if (startDate < beforeOneWeek) {
           let sellerNoti: any = {
             body:

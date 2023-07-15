@@ -89,6 +89,16 @@ function ContactPage({ data }: { data: any }) {
       .min(1, { message: t("inputError") })
       .optional()
       .or(z.literal("")),
+    playStoreURL: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
+    appStoreURL: z
+      .string()
+      .min(1, { message: t("inputError") })
+      .optional()
+      .or(z.literal("")),
   });
 
   const { register, handleSubmit, watch, formState, reset } = useForm<any>({
@@ -265,6 +275,26 @@ function ContactPage({ data }: { data: any }) {
               defaultValue={data?.workingHourWeekend}
               formControl={{ ...register("workingHourWeekend") }}
               currentValue={watchFields.workingHourWeekend}
+            />
+
+            <FormInput
+              label={"Playstore URL"}
+              placeHolder={"Enter Playstore URL"}
+              error={errors.playStoreURL?.message}
+              type="text"
+              defaultValue={data?.playStoreURL}
+              formControl={{ ...register("playStoreURL") }}
+              currentValue={watchFields.playStoreURL}
+            />
+
+            <FormInput
+              label={"App Store URL"}
+              placeHolder={"Enter App Store URL"}
+              error={errors.appStoreURL?.message}
+              type="text"
+              defaultValue={data?.appStoreURL}
+              formControl={{ ...register("appStoreURL") }}
+              currentValue={watchFields.appStoreURL}
             />
 
             <div className="mt-5 flex flex-col gap-3 border-t pt-5">

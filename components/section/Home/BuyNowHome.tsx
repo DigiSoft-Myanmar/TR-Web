@@ -132,7 +132,7 @@ function BuyNowHome({
                 ),
               }}
             />
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 w-full">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 w-full mt-5">
               <div className="flex flex-col gap-3 items-center flex-1">
                 <div className="flex flex-row items-center gap-3">
                   <h3 className="font-medium text-gray-200">{t("price")}</h3>
@@ -154,7 +154,7 @@ function BuyNowHome({
                 <p className="text-xl font-bold">
                   {pricingInfo.isPromotion &&
                   highlightProd.type === ProductType.Fixed
-                    ? formatAmount(pricingInfo.salePrice, locale, true)
+                    ? formatAmount(pricingInfo.saleAmount, locale, true)
                     : pricingInfo.isPromotion === true &&
                       pricingInfo.minSalePrice !== pricingInfo.maxSalePrice
                     ? formatAmount(pricingInfo.minSalePrice, locale, false) +

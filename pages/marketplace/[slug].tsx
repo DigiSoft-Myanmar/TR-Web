@@ -520,7 +520,7 @@ function MarketplacePage({
                       setCurrentTab(TabList.About);
                     }}
                   >
-                    About Product
+                    Product Details
                   </button>
 
                   {product.type === ProductType.Auction ? (
@@ -600,24 +600,6 @@ function MarketplacePage({
                           </span>
                         </p>
                       )}
-                      {product.type === ProductType.Variable && (
-                        <p className="text-gray-500 text-sm">
-                          Style:{" "}
-                          <span className="font-semibold text-primaryText">
-                            Style 1
-                          </span>
-                        </p>
-                      )}
-                      <p className="text-gray-500 text-sm">
-                        SKU:{" "}
-                        <span className="font-semibold text-primaryText">
-                          {product.type !== ProductType.Variable
-                            ? product.SKU
-                            : currentVariation
-                            ? currentVariation?.SKU
-                            : "-"}
-                        </span>
-                      </p>
                     </div>
                     <div
                       className="text-sm"
@@ -926,7 +908,7 @@ function MarketplacePage({
 
               <div className="bg-white flex flex-col gap-3 p-1 rounded-md border">
                 <h3 className="text-sm font-semibold text-center py-3 border-b border-b-gray-500">
-                  Product Details
+                  Quick Purchase
                 </h3>
                 <div className="flex flex-row items-center gap-3 px-3">
                   <img
@@ -943,6 +925,52 @@ function MarketplacePage({
                         ? currentVariation?.SKU
                         : "-"}
                     </span>
+                    {product.type !== ProductType.Auction &&
+                      ((product.type === ProductType.Variable &&
+                        currentVariation) ||
+                        product.type === ProductType.Fixed) && (
+                        <span
+                          className={
+                            product.type === ProductType.Fixed
+                              ? product.stockType === StockType.InStock
+                                ? "bg-green-200 text-green-500 rounded-md"
+                                : product.stockType === StockType.OutOfStock ||
+                                  (product.stockType === StockType.StockLevel &&
+                                    product.stockLevel <= 0)
+                                ? "bg-error/20 text-error rounded-md"
+                                : "bg-warning/20 text-warning rounded-md"
+                              : currentVariation.stockType === StockType.InStock
+                              ? "bg-green-200 text-green-500 rounded-md"
+                              : currentVariation.stockType ===
+                                  StockType.OutOfStock ||
+                                (currentVariation.stockType ===
+                                  StockType.StockLevel &&
+                                  currentVariation.stockLevel <= 0)
+                              ? "bg-error/20 text-error rounded-md"
+                              : "bg-warning/20 text-warning rounded-md"
+                          }
+                        >
+                          <span className="text-xs px-2 py-1">
+                            {product.type === ProductType.Fixed
+                              ? product.stockType === StockType.StockLevel
+                                ? t("quantity").replace(
+                                    "{data}",
+                                    formatAmount(product.stockLevel, locale)
+                                  )
+                                : t(product.stockType)
+                              : currentVariation?.stockType ===
+                                StockType.StockLevel
+                              ? t("quantity").replace(
+                                  "{data}",
+                                  formatAmount(
+                                    currentVariation.stockLevel,
+                                    locale
+                                  )
+                                )
+                              : t(currentVariation?.stockType)}
+                          </span>
+                        </span>
+                      )}
                   </div>
                 </div>
                 {product.type === ProductType.Auction ? (
@@ -1237,29 +1265,6 @@ function MarketplacePage({
                       ) : (
                         <></>
                       )}
-
-                      <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">
-                        <p className="text-gray-500">Stock</p>
-                        <span className="font-semibold text-primaryText">
-                          {product.type === ProductType.Fixed
-                            ? product.stockType === StockType.StockLevel
-                              ? t("quantity").replace(
-                                  "{data}",
-                                  formatAmount(product.stockLevel, locale)
-                                )
-                              : t(product.stockType)
-                            : currentVariation?.stockType ===
-                              StockType.StockLevel
-                            ? t("quantity").replace(
-                                "{data}",
-                                formatAmount(
-                                  currentVariation.stockLevel,
-                                  locale
-                                )
-                              )
-                            : t(currentVariation?.stockType)}
-                        </span>
-                      </div>
                     </div>
                     <div className="flex flex-col gap-3 py-3 border-t border-t-gray-500">
                       <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">

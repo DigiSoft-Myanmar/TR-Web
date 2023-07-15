@@ -186,7 +186,7 @@ function Footer({ content }: { content: Content }) {
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
                   <Link
-                    href={"/contact"}
+                    href={"/about#contact"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
                     Contact

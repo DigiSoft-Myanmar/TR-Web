@@ -59,6 +59,11 @@ export default async function handler(
               },
             },
           ],
+          seller: {
+            sellAllow: true,
+            isBlocked: false,
+            isDeleted: false,
+          },
         };
         let c: any = [];
         if (categories) {

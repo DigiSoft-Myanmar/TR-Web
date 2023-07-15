@@ -29,7 +29,7 @@ import ProfileScreen from "@/components/screen/ProfileScreen";
 import { decryptPhone } from "@/util/encrypt";
 import UserScreen from "@/components/screen/UserScreen";
 
-function Default({ user }: { user: any }) {
+function Default({ user, content }: { user: any; content: any }) {
   const { t }: any = useTranslation("common");
   const { data: session }: any = useSession();
   const router = useRouter();
@@ -89,7 +89,7 @@ function Default({ user }: { user: any }) {
       </Head>
       {action?.toString().toLowerCase() === "edit" ? (
         <ProfileProvider user={user}>
-          <ProfileScreen />
+          <ProfileScreen content={content} />
         </ProfileProvider>
       ) : (
         <UserScreen user={user} />
@@ -111,9 +111,12 @@ export async function getServerSideProps({ params, locale }: any) {
       userDefinedRole: true,
     },
   });
+
+  let content = await prisma.content.findFirst({});
   return {
     props: {
       user: JSON.parse(JSON.stringify(user)),
+      content: JSON.parse(JSON.stringify(content)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
   };

@@ -98,7 +98,7 @@ export default async function handler(
               let term = await prisma.term.findFirst({
                 where: {
                   attributeId: attr.id,
-                  name: data[i].attributes[j].terms[j].name,
+                  name: data[i].attributes[j].terms[k].name,
                 },
               });
               if (term) {
@@ -106,9 +106,9 @@ export default async function handler(
               } else {
                 attr.Term.push({
                   attributeId: attr.id,
-                  name: data[i].attributes[j].terms[j].name,
+                  name: data[i].attributes[j].terms[k].name,
                   nameMM: data[i].attributes[j].terms[j].nameMM,
-                  value: data[i].attributes[j].terms[j].value,
+                  value: data[i].attributes[j].terms[k].value,
                 });
               }
             }

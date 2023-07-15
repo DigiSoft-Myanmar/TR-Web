@@ -369,7 +369,7 @@ export default function UserScreen({ user }: { user: any }) {
                       </span>
                     </h3>
                   </div>
-                  {(user.id === session.id || isInternal(session)) && (
+                  {(user.id === session?.id || isInternal(session)) && (
                     <Link
                       href={
                         "/account/" +

@@ -321,7 +321,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Home Hero Section
+                      Home Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -372,42 +372,45 @@ function ContactPage({ data }: { data?: Content }) {
                         />
                       </div>
                     </div>
-
-                    {content?.homeHeroImg ? (
-                      <Image
-                        src={fileUrl + encodeURIComponent(content?.homeHeroImg)}
-                        alt="Home Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : data?.homeHeroImg ? (
-                      <Image
-                        src={fileUrl + encodeURIComponent(data?.homeHeroImg)}
-                        alt="Home Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("homeHeroImg");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("homeHeroImg");
+                      }}
+                    >
+                      {content?.homeHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(content?.homeHeroImg)
+                          }
+                          alt="Home Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : data?.homeHeroImg ? (
+                        <Image
+                          src={fileUrl + encodeURIComponent(data?.homeHeroImg)}
+                          alt="Home Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -415,7 +418,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Auction Hero Section
+                      Auction Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -494,44 +497,48 @@ function ContactPage({ data }: { data?: Content }) {
                         />
                       </div>
                     </div>
-
-                    {content?.auctionHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(content?.auctionHeroImg)
-                        }
-                        alt="Auction Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : data?.auctionHeroImg ? (
-                      <Image
-                        src={fileUrl + encodeURIComponent(data?.auctionHeroImg)}
-                        alt="Auction Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("auctionHeroImg");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("auctionHeroImg");
+                      }}
+                    >
+                      {content?.auctionHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.auctionHeroImg)
+                          }
+                          alt="Auction Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : data?.auctionHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(data?.auctionHeroImg)
+                          }
+                          alt="Auction Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -539,7 +546,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Feature Hero Section
+                      Feature Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -619,44 +626,48 @@ function ContactPage({ data }: { data?: Content }) {
                         />
                       </div>
                     </div>
-
-                    {content?.featureHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(content?.featureHeroImg)
-                        }
-                        alt="Featured Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : data?.featureHeroImg ? (
-                      <Image
-                        src={fileUrl + encodeURIComponent(data?.featureHeroImg)}
-                        alt="Featured Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("featureHeroImg");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("featureHeroImg");
+                      }}
+                    >
+                      {content?.featureHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.featureHeroImg)
+                          }
+                          alt="Featured Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : data?.featureHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(data?.featureHeroImg)
+                          }
+                          alt="Featured Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -664,7 +675,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Promotion Hero Section
+                      Promotion Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -746,47 +757,48 @@ function ContactPage({ data }: { data?: Content }) {
                         />
                       </div>
                     </div>
-
-                    {content?.promotionHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl +
-                          encodeURIComponent(content?.promotionHeroImg)
-                        }
-                        alt="Promotion Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : data?.promotionHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(data?.promotionHeroImg)
-                        }
-                        alt="Promotion Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("promotionHeroImg");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("promotionHeroImg");
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {content?.promotionHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.promotionHeroImg)
+                          }
+                          alt="Promotion Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : data?.promotionHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(data?.promotionHeroImg)
+                          }
+                          alt="Promotion Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -794,7 +806,7 @@ function ContactPage({ data }: { data?: Content }) {
                 {/* <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Mobile Hero Section
+                      Mobile Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -876,7 +888,7 @@ function ContactPage({ data }: { data?: Content }) {
                     {content?.mobileImg ? (
                       <Image
                         src={fileUrl + encodeURIComponent(content?.mobileImg)}
-                        alt="Mobile Hero Image"
+                        alt="Mobile Image"
                         className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
                         width={400}
                         height={400}
@@ -884,7 +896,7 @@ function ContactPage({ data }: { data?: Content }) {
                     ) : data?.mobileImg ? (
                       <Image
                         src={fileUrl + encodeURIComponent(data?.mobileImg)}
-                        alt="Mobile Hero Image"
+                        alt="Mobile Image"
                         className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
                         width={400}
                         height={400}
@@ -917,7 +929,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Membership Hero Section
+                      Membership Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -990,47 +1002,48 @@ function ContactPage({ data }: { data?: Content }) {
                         />
                       </div>
                     </div>
-
-                    {content?.membershipHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl +
-                          encodeURIComponent(content?.membershipHeroImg)
-                        }
-                        alt="Membership Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : data?.membershipHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(data?.promotionHeroImg)
-                        }
-                        alt="Membership Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={400}
-                        height={400}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("membershipHeroImg");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("membershipHeroImg");
+                      }}
+                    >
+                      {content?.membershipHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.membershipHeroImg)
+                          }
+                          alt="Membership Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : data?.membershipHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(data?.promotionHeroImg)
+                          }
+                          alt="Membership Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={400}
+                          height={400}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -1274,7 +1287,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      About Hero Section
+                      About Section
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg
@@ -1376,46 +1389,48 @@ function ContactPage({ data }: { data?: Content }) {
                     role="homeHero"
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
-                    {content?.defaultAdsOneCol ? (
-                      <Image
-                        src={
-                          fileUrl +
-                          encodeURIComponent(content?.defaultAdsOneCol)
-                        }
-                        alt="Home Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={1200}
-                        height={300}
-                      />
-                    ) : data?.defaultAdsOneCol ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(data?.defaultAdsOneCol)
-                        }
-                        alt="Home Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={1200}
-                        height={300}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("defaultAdsOneCol");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("defaultAdsOneCol");
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {content?.defaultAdsOneCol ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.defaultAdsOneCol)
+                          }
+                          alt="Home Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={1200}
+                          height={300}
+                        />
+                      ) : data?.defaultAdsOneCol ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(data?.defaultAdsOneCol)
+                          }
+                          alt="Home Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={1200}
+                          height={300}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -1444,46 +1459,48 @@ function ContactPage({ data }: { data?: Content }) {
                     role="actionHero"
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
-                    {content?.defaultAdsTwoCol ? (
-                      <Image
-                        src={
-                          fileUrl +
-                          encodeURIComponent(content?.defaultAdsTwoCol)
-                        }
-                        alt="defaultAdsTwoCol"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={700}
-                        height={300}
-                      />
-                    ) : data?.auctionHeroImg ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(data?.defaultAdsTwoCol)
-                        }
-                        alt="defaultAdsTwoCol"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={700}
-                        height={300}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("defaultAdsTwoCol");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("defaultAdsTwoCol");
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {content?.defaultAdsTwoCol ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.defaultAdsTwoCol)
+                          }
+                          alt="defaultAdsTwoCol"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={700}
+                          height={300}
+                        />
+                      ) : data?.auctionHeroImg ? (
+                        <Image
+                          src={
+                            fileUrl + encodeURIComponent(data?.defaultAdsTwoCol)
+                          }
+                          alt="defaultAdsTwoCol"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={700}
+                          height={300}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>
@@ -1513,46 +1530,49 @@ function ContactPage({ data }: { data?: Content }) {
                     role="featureHero"
                     className="space-y-8 md:space-y-0 md:space-x-8 md:flex md:items-center bg-gray-100 p-3 mt-3"
                   >
-                    {content?.defaultAdsThreeCol ? (
-                      <Image
-                        src={
-                          fileUrl +
-                          encodeURIComponent(content?.defaultAdsThreeCol)
-                        }
-                        alt="Featured Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={300}
-                        height={300}
-                      />
-                    ) : data?.defaultAdsThreeCol ? (
-                      <Image
-                        src={
-                          fileUrl + encodeURIComponent(data?.defaultAdsThreeCol)
-                        }
-                        alt="Featured Hero Image"
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        width={300}
-                        height={300}
-                      />
-                    ) : (
-                      <div
-                        className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
-                        onClick={() => {
-                          setUploadModalOpen(true);
-                          setImgType("defaultAdsThreeCol");
-                        }}
-                      >
-                        <svg
-                          className="w-12 h-12 text-gray-200"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                          fill="currentColor"
-                          viewBox="0 0 640 512"
-                        >
-                          <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div
+                      onClick={() => {
+                        setUploadModalOpen(true);
+                        setImgType("defaultAdsThreeCol");
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {content?.defaultAdsThreeCol ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(content?.defaultAdsThreeCol)
+                          }
+                          alt="Featured Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={300}
+                          height={300}
+                        />
+                      ) : data?.defaultAdsThreeCol ? (
+                        <Image
+                          src={
+                            fileUrl +
+                            encodeURIComponent(data?.defaultAdsThreeCol)
+                          }
+                          alt="Featured Image"
+                          className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96"
+                          width={300}
+                          height={300}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center w-full h-48 bg-gray-300 rounded sm:w-96">
+                          <svg
+                            className="w-12 h-12 text-gray-200"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                            fill="currentColor"
+                            viewBox="0 0 640 512"
+                          >
+                            <path d="M480 80C480 35.82 515.8 0 560 0C604.2 0 640 35.82 640 80C640 124.2 604.2 160 560 160C515.8 160 480 124.2 480 80zM0 456.1C0 445.6 2.964 435.3 8.551 426.4L225.3 81.01C231.9 70.42 243.5 64 256 64C268.5 64 280.1 70.42 286.8 81.01L412.7 281.7L460.9 202.7C464.1 196.1 472.2 192 480 192C487.8 192 495 196.1 499.1 202.7L631.1 419.1C636.9 428.6 640 439.7 640 450.9C640 484.6 612.6 512 578.9 512H55.91C25.03 512 .0006 486.1 .0006 456.1L0 456.1z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     <span className="sr-only">Loading...</span>
                   </div>
                 </details>

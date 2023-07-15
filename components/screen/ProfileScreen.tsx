@@ -23,7 +23,7 @@ enum Step {
   Confirmation,
 }
 
-function ProfileScreen() {
+function ProfileScreen({ content }: { content: any }) {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
 
@@ -500,6 +500,7 @@ function ProfileScreen() {
                   backFn={backFn}
                   nextFn={nextFn}
                   submitRef={submitSellerRef}
+                  content={content}
                 />
               ) : currentStep === Step.Status ? (
                 <StatusSection

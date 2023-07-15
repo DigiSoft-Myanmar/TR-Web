@@ -5,6 +5,7 @@ import {
   showSuccessDialog,
 } from "@/util/swalFunction";
 import { formatAmount, getText } from "@/util/textHelper";
+import { Tooltip } from "@mui/material";
 import { Content, Membership } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -191,19 +192,38 @@ function MembershipTable({
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row gap-3 text-primary font-semibold">
               <h3>{t("SKUListing")}</h3>
               {content?.SKUDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.SKUDetails,
-                      content?.SKUDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.SKUDetails,
+                          content?.SKUDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -219,19 +239,38 @@ function MembershipTable({
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row gap-3 text-primary font-semibold">
               <h3>{t("SKUListing")}</h3>
               {content?.SKUDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.SKUDetails,
-                      content?.SKUDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.SKUDetails,
+                          content?.SKUDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -331,19 +370,38 @@ function MembershipTable({
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row gap-3 text-primary font-semibold">
               <h3>{t("Ads")}</h3>
               {content?.adsDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.adsDetails,
-                      content?.adsDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.adsDetails,
+                          content?.adsDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -359,19 +417,38 @@ function MembershipTable({
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row text-primary font-semibold">
               <h3>{t("Ads")}</h3>
               {content?.adsDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.adsDetails,
-                      content?.adsDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.adsDetails,
+                          content?.adsDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -555,19 +632,38 @@ function MembershipTable({
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row gap-3 text-primary font-semibold">
               <h3>{t("topSearch")}</h3>
               {content?.topSearchDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.topSearchDetails,
-                      content?.topSearchDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.topSearchDetails,
+                          content?.topSearchDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -583,19 +679,38 @@ function MembershipTable({
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row text-primary font-semibold">
               <h3>{t("topSearch")}</h3>
               {content?.topSearchDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.topSearchDetails,
-                      content?.topSearchDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.topSearchDetails,
+                          content?.topSearchDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -693,19 +808,38 @@ function MembershipTable({
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row gap-3 text-primary font-semibold">
               <h3>{t("reports")}</h3>
               {content?.saleReportDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.saleReportDetails,
-                      content?.saleReportDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.saleReportDetails,
+                          content?.saleReportDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -721,19 +855,38 @@ function MembershipTable({
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row text-primary font-semibold">
               <h3>{t("reports")}</h3>
               {content?.saleReportDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.saleReportDetails,
-                      content?.saleReportDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.saleReportDetails,
+                          content?.saleReportDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -807,16 +960,35 @@ function MembershipTable({
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col font-semibold text-sm">
               <h3>{t("buyerProfileReport")}</h3>
               {content?.buyerReportDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.buyerReportDetails,
-                      content?.buyerReportDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.buyerReportDetails,
+                          content?.buyerReportDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -900,19 +1072,38 @@ function MembershipTable({
           {/* Start */}
 
           <tr className="flex lg:hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row gap-3 text-primary font-semibold">
               <h3>{t("onBoarding")}</h3>
               {content?.onBoardingDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.onBoardingDetails,
-                      content?.onBoardingDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.onBoardingDetails,
+                          content?.onBoardingDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -928,19 +1119,38 @@ function MembershipTable({
           </tr>
 
           <tr className="lg:flex hidden text-left">
-            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
+            <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 border-r-0 bg-gray-100 border-gray-300 lg:flex flex-row text-primary font-semibold">
               <h3>{t("onBoarding")}</h3>
               {content?.onBoardingDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.onBoardingDetails,
-                      content?.onBoardingDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.onBoardingDetails,
+                          content?.onBoardingDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -1013,17 +1223,37 @@ function MembershipTable({
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col font-semibold text-sm">
               <h3>{t("dedicatedAccountManager")}</h3>
+
               {content?.customerServiceDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.customerServiceDetails,
-                      content?.customerServiceDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.customerServiceDetails,
+                          content?.customerServiceDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </td>
             {data?.map((z: Membership, index: number) => (
@@ -1044,17 +1274,37 @@ function MembershipTable({
               className="sticky left-0 hidden min-w-[300px] max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col"
             >
               <h3>{t("dedicatedAccountManager")}</h3>
+
               {content?.customerServiceDetails?.length > 0 && (
-                <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
-                  dangerouslySetInnerHTML={{
-                    __html: getText(
-                      content?.customerServiceDetails,
-                      content?.customerServiceDetailsMM,
-                      locale
-                    ),
-                  }}
-                />
+                <Tooltip
+                  title={
+                    <div
+                      className="text-gray-600 text-sm mt-3 font-normal"
+                      dangerouslySetInnerHTML={{
+                        __html: getText(
+                          content?.customerServiceDetails,
+                          content?.customerServiceDetailsMM,
+                          locale
+                        ),
+                      }}
+                    />
+                  }
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                    />
+                  </svg>
+                </Tooltip>
               )}
             </th>
 

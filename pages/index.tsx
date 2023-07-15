@@ -882,6 +882,11 @@ export async function getServerSideProps({ locale }: any) {
           },
         },
       ],
+      seller: {
+        sellAllow: true,
+        isBlocked: false,
+        isDeleted: false,
+      },
     },
     include: {
       Brand: true,

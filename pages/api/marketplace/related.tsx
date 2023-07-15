@@ -37,6 +37,11 @@ export default async function handler(
             },
           },
         ],
+        seller: {
+          isBlocked: false,
+          isDeleted: false,
+          sellAllow: true,
+        },
         id: {
           not: productId.toString(),
         },
@@ -97,6 +102,11 @@ export default async function handler(
           sellerId: sellerId.toString(),
           id: {
             not: productId.toString(),
+          },
+          seller: {
+            isBlocked: false,
+            isDeleted: false,
+            sellAllow: true,
           },
         },
       });

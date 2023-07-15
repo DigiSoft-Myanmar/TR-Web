@@ -26,9 +26,10 @@ type Props = {
   backFn: Function;
   nextFn: Function;
   submitRef: any;
+  content: any;
 };
 
-function SellerInfoSection({ backFn, nextFn, submitRef }: Props) {
+function SellerInfoSection({ backFn, nextFn, submitRef, content }: Props) {
   const { t } = useTranslation("common");
   const {
     user: profile,
@@ -205,7 +206,7 @@ function SellerInfoSection({ backFn, nextFn, submitRef }: Props) {
           }}
         />
 
-        <MembershipTable data={data} />
+        <MembershipTable data={data} content={content} />
 
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button

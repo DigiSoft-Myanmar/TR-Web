@@ -191,7 +191,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
                 </div>
               </div>
             </div>
-            <MembershipTable data={data} />
+            <MembershipTable data={data} content={siteInfo} />
           </div>
         </section>
       </div>
@@ -202,8 +202,10 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
 
 export async function getServerSideProps({ locale }: any) {
   const siteInfo = await prisma.content.findFirst({});
+  const content = await prisma.content.findFirst({});
   return {
     props: {
+      content: JSON.parse(JSON.stringify(content)),
       siteInfo: JSON.parse(JSON.stringify(siteInfo)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },
