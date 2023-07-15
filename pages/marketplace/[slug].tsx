@@ -861,16 +861,16 @@ function MarketplacePage({
                     )}
                 </div>
               ) : pricingInfo &&
-                pricingInfo.isPromotion === true &&
+                pricingInfo?.isPromotion === true &&
                 product.type === ProductType.Fixed ? (
                 <div className="bg-primary px-3 py-2 rounded-md flex flex-row items-center justify-center gap-3">
                   <h3 className="text-white font-semibold">
-                    {pricingInfo.discount}% OFF
+                    {pricingInfo?.discount}% OFF
                   </h3>
-                  {pricingInfo.saleEndDate && (
+                  {pricingInfo?.saleEndDate && (
                     <p className="bg-[#ee6069] p-2 rounded-md text-sm text-white">
                       Until{" "}
-                      {new Date(pricingInfo.saleEndDate).toLocaleDateString(
+                      {new Date(pricingInfo?.saleEndDate).toLocaleDateString(
                         "en-ca",
                         {
                           year: "numeric",
@@ -882,16 +882,16 @@ function MarketplacePage({
                   )}
                 </div>
               ) : pricingInfo &&
-                pricingInfo.isPromotion === true &&
+                pricingInfo?.isPromotion === true &&
                 product.type === ProductType.Variable ? (
                 <div className="bg-primary px-3 py-2 rounded-md flex flex-row items-center justify-center gap-3">
                   <h3 className="text-white font-semibold">
-                    {pricingInfo.discount}% OFF
+                    {pricingInfo?.discount}% OFF
                   </h3>
-                  {pricingInfo.saleEndDate && (
+                  {pricingInfo?.saleEndDate && (
                     <p className="bg-[#ee6069] p-2 rounded-md text-sm text-white">
                       Until{" "}
-                      {new Date(pricingInfo.saleEndDate).toLocaleDateString(
+                      {new Date(pricingInfo?.saleEndDate).toLocaleDateString(
                         "en-ca",
                         {
                           year: "numeric",
@@ -1235,17 +1235,21 @@ function MarketplacePage({
                       <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">
                         <p className="text-gray-500">Unit Price</p>
                         <span className="font-semibold text-primaryText">
-                          {formatAmount(pricingInfo.regularPrice, locale, true)}
+                          {formatAmount(
+                            pricingInfo?.regularPrice,
+                            locale,
+                            true
+                          )}
                         </span>
                       </div>
-                      {pricingInfo.isPromotion === true ? (
+                      {pricingInfo?.isPromotion === true ? (
                         <>
                           <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">
                             <p className="text-gray-500">Discount</p>
                             <span className="font-semibold text-primaryText">
                               {formatAmount(
-                                pricingInfo.regularPrice -
-                                  pricingInfo.saleAmount,
+                                pricingInfo?.regularPrice -
+                                  pricingInfo?.saleAmount,
                                 locale,
                                 true
                               )}
@@ -1255,7 +1259,7 @@ function MarketplacePage({
                             <p className="text-gray-500">Cost</p>
                             <span className="font-semibold text-primaryText">
                               {formatAmount(
-                                pricingInfo.saleAmount,
+                                pricingInfo?.saleAmount,
                                 locale,
                                 true
                               )}
@@ -1277,9 +1281,9 @@ function MarketplacePage({
                         <p className="text-gray-500">Total Price: </p>
                         <span className="font-semibold text-primaryText">
                           {formatAmount(
-                            pricingInfo.isPromotion === true
-                              ? pricingInfo.saleAmount * qty
-                              : pricingInfo.regularPrice * qty,
+                            pricingInfo?.isPromotion === true
+                              ? pricingInfo?.saleAmount * qty
+                              : pricingInfo?.regularPrice * qty,
                             locale,
                             true
                           )}
@@ -1333,8 +1337,8 @@ function MarketplacePage({
                           if (product.type === ProductType.Fixed) {
                             addCart(
                               product.sellerId,
-                              pricingInfo.regularPrice,
-                              pricingInfo.saleAmount,
+                              pricingInfo?.regularPrice,
+                              pricingInfo?.saleAmount,
                               product.id,
                               qty,
                               product.stockType,
@@ -1352,8 +1356,8 @@ function MarketplacePage({
                             ) {
                               addCart(
                                 product.sellerId,
-                                pricingInfo.regularPrice,
-                                pricingInfo.saleAmount,
+                                pricingInfo?.regularPrice,
+                                pricingInfo?.saleAmount,
                                 product.id,
                                 qty,
                                 currentVariation.stockType,

@@ -18,7 +18,7 @@ export default async function handler(
     let variableCount = 0;
     let user = await prisma.user.findFirst({
       where: {
-        phoneNum: "+959899350500",
+        role: Role.Seller,
       },
     });
     if (user) {
@@ -95,22 +95,12 @@ export default async function handler(
             attr.Term = [];
 
             for (let k = 0; k < data[i].attributes[j].terms.length; k++) {
-              let term = await prisma.term.findFirst({
-                where: {
-                  attributeId: attr.id,
-                  name: data[i].attributes[j].terms[k].name,
-                },
+              attr.Term.push({
+                attributeId: attr.id,
+                name: data[i].attributes[j].terms[k].name,
+                nameMM: data[i].attributes[j].terms[k].nameMM,
+                value: data[i].attributes[j].terms[k].value,
               });
-              if (term) {
-                attr.Term.push(term);
-              } else {
-                attr.Term.push({
-                  attributeId: attr.id,
-                  name: data[i].attributes[j].terms[k].name,
-                  nameMM: data[i].attributes[j].terms[j].nameMM,
-                  value: data[i].attributes[j].terms[k].value,
-                });
-              }
             }
             attributes.push(attr);
           }

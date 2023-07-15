@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   try {
     let data = require("./brands.json");
-
+    await prisma.productView.deleteMany({});
     await prisma.product.deleteMany({
       where: {
         type: ProductType.Variable,
