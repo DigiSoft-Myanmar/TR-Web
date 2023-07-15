@@ -52,7 +52,7 @@ export default async function handler(
         });
 
         if (data[i].type === ProductType.Fixed) {
-          await prisma.product.create({
+          /* await prisma.product.create({
             data: {
               isPublished: data[i].isPublished,
               categoryIds: cat.map((z) => z.id),
@@ -81,7 +81,7 @@ export default async function handler(
               additionalInformationMM: data[i].additionalInfoMM,
               priceIndex: data[i].regularPrice,
             },
-          });
+          }); */
           fixedCount = fixedCount + 1;
         } else {
           let attributes = [];
