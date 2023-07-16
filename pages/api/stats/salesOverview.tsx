@@ -65,10 +65,14 @@ async function getStats(startDate: Date, endDate: Date) {
   });
 
   let totalExpiredSellersCount = totalExpiredSellers.filter((z) => {
-    let date = new Date(z.memberStartDate);
-    date.setDate(date.getDate() + z.currentMembership.validity);
-    if (date.getTime() < new Date().getTime()) {
-      return true;
+    if (z.currentMembership) {
+      let date = new Date(z.memberStartDate);
+      date.setDate(date.getDate() + z.currentMembership?.validity);
+      if (date.getTime() < new Date().getTime()) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -108,10 +112,14 @@ async function getStats(startDate: Date, endDate: Date) {
   });
 
   let totalExpiredTradersCount = totalExpiredTraders.filter((z) => {
-    let date = new Date(z.memberStartDate);
-    date.setDate(date.getDate() + z.currentMembership.validity);
-    if (date.getTime() < new Date().getTime()) {
-      return true;
+    if (z.currentMembership) {
+      let date = new Date(z.memberStartDate);
+      date.setDate(date.getDate() + z.currentMembership?.validity);
+      if (date.getTime() < new Date().getTime()) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -177,18 +185,25 @@ async function getStats(startDate: Date, endDate: Date) {
       ads.filter(
         (z) =>
           z.adsLocations.filter((b) =>
-            checkExpire(b, z.seller.currentMembership, true)
+            z.seller?.currentMembership
+              ? checkExpire(b, z.seller.currentMembership, true)
+              : false
           ).length > 0
       ).length,
     totalAdsNearExpired: ads.filter(
       (z) =>
-        z.adsLocations.filter((b) => checkExpire(b, z.seller.currentMembership))
-          .length > 0
+        z.adsLocations.filter((b) =>
+          z.seller?.currentMembership
+            ? checkExpire(b, z.seller.currentMembership)
+            : false
+        ).length > 0
     ).length,
     totalAdsExpired: ads.filter(
       (z) =>
         z.adsLocations.filter((b) =>
-          checkExpire(b, z.seller.currentMembership, true)
+          z.seller?.currentMembership
+            ? checkExpire(b, z.seller.currentMembership, true)
+            : false
         ).length > 0
     ).length,
     totalAdsNotPlaced:
@@ -196,7 +211,9 @@ async function getStats(startDate: Date, endDate: Date) {
       ads.filter(
         (z) =>
           z.adsLocations.filter((b) =>
-            checkExpire(b, z.seller.currentMembership, true)
+            z.seller.currentMembership
+              ? checkExpire(b, z.seller.currentMembership, true)
+              : false
           ).length > 0
       ).length,
 
