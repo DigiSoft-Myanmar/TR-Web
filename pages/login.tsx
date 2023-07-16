@@ -247,10 +247,10 @@ function Login({ siteInfo }: { siteInfo: Content }) {
               scrollbar={{ draggable: true }}
               spaceBetween={10}
               slidesPerView={1}
-              className="w-[300px] max-w-[300px]"
+              className="w-[400px] max-w-[400px]"
             >
               {siteInfo?.credentialFeatures.map((e: any, index1: number) => (
-                <SwiperSlide key={index1} className="max-w-[300px] w-full">
+                <SwiperSlide key={index1} className="max-w-[400px] w-full">
                   <div className=" flex flex-col items-center">
                     <Image
                       src={fileUrl + e.icon}
@@ -259,7 +259,7 @@ function Login({ siteInfo }: { siteInfo: Content }) {
                       alt="banner"
                       className="h-full min-h-[300px] w-full max-h-[300px] object-contain"
                     />
-                    <h3 className="text-primaryText whitespace-nowrap text-lg font-semibold mt-10">
+                    <h3 className="text-primaryText text-lg font-semibold mt-10">
                       {getText(e.title, e.titleMM, locale)}
                     </h3>
                     <p className="text-sm text-gray-500">
