@@ -243,13 +243,14 @@ function Login({ siteInfo }: { siteInfo: Content }) {
                 disableOnInteraction: true,
                 pauseOnMouseEnter: true,
               }}
-              slidesPerView={1}
               rewind={true}
-              pagination={{ clickable: true }}
               scrollbar={{ draggable: true }}
+              spaceBetween={10}
+              slidesPerView={1}
+              className="w-[300px] max-w-[300px]"
             >
-              {siteInfo?.credentialFeatures.map((e: any, index: number) => (
-                <SwiperSlide key={index} className={`w-full`}>
+              {siteInfo?.credentialFeatures.map((e: any, index1: number) => (
+                <SwiperSlide key={index1} className="max-w-[300px] w-full">
                   <div className=" flex flex-col items-center">
                     <Image
                       src={fileUrl + e.icon}

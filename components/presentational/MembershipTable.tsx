@@ -198,7 +198,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.SKUDetails,
@@ -245,7 +245,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.SKUDetails,
@@ -376,7 +376,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.adsDetails,
@@ -423,7 +423,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.adsDetails,
@@ -638,7 +638,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.topSearchDetails,
@@ -685,7 +685,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.topSearchDetails,
@@ -814,7 +814,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.saleReportDetails,
@@ -861,7 +861,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.saleReportDetails,
@@ -963,7 +963,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.buyerReportDetails,
@@ -1011,7 +1011,7 @@ function MembershipTable({
               <h3>{t("buyerProfileReport")}</h3>
               {content?.buyerReportDetails?.length > 0 && (
                 <div
-                  className="text-gray-600 text-sm mt-3 font-normal"
+                  className="text-white text-sm mt-3 font-normal"
                   dangerouslySetInnerHTML={{
                     __html: getText(
                       content?.buyerReportDetails,
@@ -1078,7 +1078,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.onBoardingDetails,
@@ -1125,7 +1125,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.onBoardingDetails,
@@ -1228,7 +1228,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.customerServiceDetails,
@@ -1279,7 +1279,7 @@ function MembershipTable({
                 <Tooltip
                   title={
                     <div
-                      className="text-gray-600 text-sm mt-3 font-normal"
+                      className="text-white text-sm mt-3 font-normal"
                       dangerouslySetInnerHTML={{
                         __html: getText(
                           content?.customerServiceDetails,

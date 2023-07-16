@@ -64,7 +64,6 @@ export function IndexPage({
   const auctionFeaturedCount = 0;
   const buyNowFeaturedCount = 0;
   const totalPromotion = 0;
-  let membershipSettings: any = {};
   const { locale } = router;
 
   const headDescription = getHighlightText(
@@ -655,8 +654,8 @@ export function IndexPage({
 
                   <div className="mt-1 text-sm text-gray-600">
                     <PricingDetail
-                      detail={membershipSettings?.adsDetail}
-                      detailMM={membershipSettings?.adsDetailMM}
+                      detail={content?.adsDetails}
+                      detailMM={content?.adsDetailsMM}
                     />
                   </div>
                 </Link>
@@ -684,8 +683,8 @@ export function IndexPage({
 
                   <div className="mt-1 text-sm text-gray-600">
                     <PricingDetail
-                      detail={membershipSettings?.saleReportDetail}
-                      detailMM={membershipSettings?.saleReportDetailMM}
+                      detail={content?.saleReportDetails}
+                      detailMM={content?.saleReportDetailsMM}
                     />
                   </div>
                 </Link>
@@ -712,8 +711,8 @@ export function IndexPage({
 
                   <div className="mt-1 text-sm text-gray-600">
                     <PricingDetail
-                      detail={membershipSettings?.topSearchDetails}
-                      detailMM={membershipSettings?.topSearchDetailsMM}
+                      detail={content?.topSearchDetails}
+                      detailMM={content?.topSearchDetailsMM}
                     />
                   </div>
                 </Link>
@@ -741,8 +740,8 @@ export function IndexPage({
 
                   <div className="mt-1 text-sm text-gray-600">
                     <PricingDetail
-                      detail={membershipSettings?.onBoardingDetail}
-                      detailMM={membershipSettings?.onBoardingDetailMM}
+                      detail={content?.onBoardingDetails}
+                      detailMM={content?.onBoardingDetailsMM}
                     />
                   </div>
                 </Link>
@@ -772,8 +771,8 @@ export function IndexPage({
 
                   <div className="mt-1 text-sm text-gray-600">
                     <PricingDetail
-                      detail={membershipSettings?.customerServiceDetail}
-                      detailMM={membershipSettings?.customerServiceDetailMM}
+                      detail={content?.customerServiceDetails}
+                      detailMM={content?.customerServiceDetailsMM}
                     />
                   </div>
                 </Link>
