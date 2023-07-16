@@ -153,7 +153,7 @@ function RegionStatsCard() {
           </div>
         </div>
 
-        <MyanmarMap />
+        {/* <MyanmarMap /> */}
       </div>
       <div className="p-3 grid grid-cols-1 col-span-2 gap-3 max-h-[500px]">
         {currentStep === Step.Resellers ? (
