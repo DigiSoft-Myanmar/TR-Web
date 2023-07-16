@@ -149,6 +149,9 @@ const ProductFullTbl = ({
             minWidth: 120,
             field: "productInfo",
             headerName: "Product",
+            valueGetter(params: any) {
+              return params.row.name;
+            },
             renderCell: ({ row }: CellType) => (
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Img src={fileUrl + row.productInfo?.img} alt={`${row.slug}`} />
@@ -172,6 +175,9 @@ const ProductFullTbl = ({
             minWidth: 100,
             headerName: "SKU",
             field: "SKU",
+            valueGetter(params: any) {
+              return params.row.SKU;
+            },
             renderCell: ({ row }: CellType) => (
               <Typography variant="body2">{row.SKU}</Typography>
             ),
@@ -181,6 +187,11 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "categories",
             headerName: "Categories",
+            valueGetter(params: any) {
+              return params.row.categories
+                .map((e: Category) => getText(e.name, e.nameMM, locale))
+                .join(", ");
+            },
             renderCell: ({ row }: CellType) => {
               return (
                 <p
@@ -201,6 +212,9 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "Opening Bid",
             headerName: "Opening Bid",
+            valueGetter(params: any) {
+              return params.row.openingBid;
+            },
             renderCell: ({ row }: CellType) => (
               <Typography variant="body2">
                 {formatAmount(row.openingBid, locale, true)}
@@ -212,6 +226,9 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "Estimated Price",
             headerName: "Estimated Price",
+            valueGetter(params: any) {
+              return params.row.estimatedPrice;
+            },
             renderCell: ({ row }: CellType) => (
               <Typography variant="body2">
                 {formatAmount(row.estimatedPrice, locale, true)}
@@ -223,6 +240,9 @@ const ProductFullTbl = ({
             minWidth: 180,
             field: "Auction Period",
             headerName: "Auction Period",
+            valueGetter(params: any) {
+              return new Date(params.row.startTime).getTime();
+            },
             renderCell: ({ row }: CellType) => (
               <div className="flex flex-col gap-1 text-xs">
                 <span>
@@ -519,6 +539,9 @@ const ProductFullTbl = ({
             minWidth: 120,
             field: "productInfo",
             headerName: "Product",
+            valueGetter(params: any) {
+              return params.row.name;
+            },
             renderCell: ({ row }: CellType) => (
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Img src={fileUrl + row.productInfo?.img} alt={`${row.slug}`} />
@@ -551,6 +574,9 @@ const ProductFullTbl = ({
             minWidth: 100,
             headerName: "Type",
             field: "Type",
+            valueGetter(params: any) {
+              return params.row.type;
+            },
             renderCell: ({ row }: CellType) => (
               <Typography variant="body2">{row.type}</Typography>
             ),
@@ -560,6 +586,11 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "categories",
             headerName: "Categories",
+            valueGetter(params: any) {
+              return params.row.categories
+                .map((e: Category) => getText(e.name, e.nameMM, locale))
+                .join(", ");
+            },
             renderCell: ({ row }: CellType) => {
               return (
                 <p
@@ -580,6 +611,9 @@ const ProductFullTbl = ({
             minWidth: 150,
             field: "pricing",
             headerName: "Pricing",
+            valueGetter(params: any) {
+              return params.row.priceIndex;
+            },
             renderCell: ({ row }: CellType) => {
               return row.type === ProductType.Auction ? (
                 <div className="flex flex-row items-stretch gap-1 divide-x-[1px] divide-gray-800">
@@ -721,6 +755,9 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "Review",
             headerName: "Rating",
+            valueGetter(params: any) {
+              return params.row.ratingIndex;
+            },
             renderCell: ({ row }: CellType) => (
               <Typography variant="body2">
                 {row.Review.length > 0
@@ -739,6 +776,7 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "status",
             headerName: "Status",
+
             renderCell: ({ row }: CellType) => (
               <div className="flex flex-row items-center gap-1 text-primary">
                 <Tooltip
@@ -1035,28 +1073,18 @@ const ProductFullTbl = ({
                 <span className="text-sm">Download CSV</span>
               </button>
               <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md bg-info px-3 py-2 text-white transition-colors hover:bg-info-content hover:text-gray-800"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
+                className="flex flex-row items-center gap-3 rounded-md bg-primary px-3 py-2 transition-colors hover:bg-primary-focus text-white"
+                onClick={() => router.push("/products/newProduct")}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                   className="h-5 w-5"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
-                  />
+                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </svg>
-
-                <span className="text-sm">Filter</span>
+                <span className="text-sm">Add Product</span>
               </button>
             </div>
           </div>

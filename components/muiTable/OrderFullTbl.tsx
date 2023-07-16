@@ -129,6 +129,9 @@ const OrderFullTbl = ({
       field: "orderBy",
       minWidth: 90,
       headerName: "Order By",
+      valueGetter(params: any) {
+        return params.row.orderBy.username;
+      },
       renderCell: ({ row }: any) => (
         <Typography>{`${row.orderBy.username}`}</Typography>
       ),
@@ -153,6 +156,9 @@ const OrderFullTbl = ({
       minWidth: 90,
       field: "total",
       headerName: "Sub Total",
+      valueGetter(params: any) {
+        return params.row.total;
+      },
       renderCell: ({ row }: any) => (
         <Typography variant="body2">
           {formatAmount(row.total, locale, true, false)}
@@ -165,6 +171,7 @@ const OrderFullTbl = ({
       minWidth: 200,
       field: "invoiceStatus",
       renderHeader: () => "Status",
+
       renderCell: ({ row }: any) => {
         let data = row.invoiceStatus;
 

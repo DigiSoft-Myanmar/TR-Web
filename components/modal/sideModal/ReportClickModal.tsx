@@ -8,16 +8,18 @@ import { BrandSortSelectBox } from "@/components/presentational/SortSelectBox";
 import BrandAutoCompleteBox from "@/components/presentational/BrandAutoCompleteBox";
 import SubmitBtn from "@/components/presentational/SubmitBtn";
 import { showErrorDialog } from "@/util/swalFunction";
+import { FilterTypeCategory } from "@/pages/reports/category";
+import CategorySelectBox from "@/components/presentational/CategorySelectBox";
 
 interface Props {
   isModalOpen: boolean;
   setModalOpen: Function;
-  filterType: FilterType;
+  filterType: any;
   filterFn: Function;
   resetFilterFn: Function;
 }
 
-function ReportBuyerModal({
+function ReportClickModal({
   isModalOpen,
   setModalOpen,
   filterType: parentFilterType,
@@ -25,11 +27,9 @@ function ReportBuyerModal({
   resetFilterFn,
 }: Props) {
   const router = useRouter();
-  const [filterType, setFilterType] = React.useState<FilterType>({
+  const [filterType, setFilterType] = React.useState<any>({
     endDate: null,
     startDate: null,
-    brandId: "",
-    sellerId: "",
   });
 
   React.useEffect(() => {
@@ -228,45 +228,6 @@ function ReportBuyerModal({
                           />
                         </div>
                       </div>
-
-                      <div className="flex flex-col gap-1">
-                        <SellerSelectBox
-                          selected={filterType?.seller}
-                          setSelected={(e: User) => {
-                            setFilterType((prevValue: any) => {
-                              return {
-                                ...prevValue,
-                                seller: e,
-                                sellerId: e.id,
-                              };
-                            });
-                          }}
-                        />
-                      </div>
-
-                      <div className="flex flex-col gap-1">
-                        <label className={`text-sm font-medium text-gray-400`}>
-                          Brand
-                        </label>
-                        <BrandAutoCompleteBox
-                          setSelected={(e: any) => {
-                            setFilterType((prevValue: any) => {
-                              if (e.id) {
-                                return {
-                                  ...prevValue,
-                                  brandId: e.brandId,
-                                };
-                              } else {
-                                return {
-                                  ...prevValue,
-                                  brandId: "",
-                                };
-                              }
-                            });
-                          }}
-                          selected={{ id: filterType.brandId }}
-                        />
-                      </div>
                     </div>
                   </div>
 
@@ -278,9 +239,6 @@ function ReportBuyerModal({
                         setFilterType({
                           endDate: null,
                           startDate: null,
-                          sellerId: "",
-                          brandId: "",
-                          seller: undefined,
                         });
                         resetFilterFn();
                       }}
@@ -330,4 +288,4 @@ function ReportBuyerModal({
   );
 }
 
-export default ReportBuyerModal;
+export default ReportClickModal;

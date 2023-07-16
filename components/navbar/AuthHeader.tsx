@@ -22,9 +22,9 @@ function AuthHeader() {
     <>
       <header
         aria-label="Page Header"
-        className={`sticky top-0 right-0 z-20 bg-white ${router.asPath.includes(
-          "reports" ? "" : "shadow-md"
-        )}`}
+        className={`sticky top-0 right-0 z-20 border-b bg-white ${
+          router.asPath.includes("reports") ? "" : "shadow-sm"
+        }`}
       >
         <div className="mx-auto px-4 py-3 sm:px-6 lg:px-8">
           <div className="relative flex items-center sm:justify-between sm:gap-4">

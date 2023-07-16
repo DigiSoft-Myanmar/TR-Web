@@ -26,6 +26,7 @@ import ReportBuyerModal from "@/components/modal/sideModal/ReportBuyerModal";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import autoTable from "jspdf-autotable";
+import { showErrorDialog } from "@/util/swalFunction";
 
 let Orders = "orderCount";
 let UnitSold = "unitSold";
@@ -50,6 +51,7 @@ function Default() {
     brandId: "",
   });
   const graphRef = React.useRef<HTMLDivElement>(null);
+  const mapRef = React.useRef<HTMLDivElement>(null);
   const [currentTab, setCurrentTab] = React.useState(Profits);
   const { data, isLoading, isFetching, refetch } = useQuery(
     "buyerLocationReport",
@@ -83,6 +85,7 @@ function Default() {
   async function div2PDF() {
     if (data && data.stats.totalOrders && data.stats.totalOrders > 0) {
       let graphChart = graphRef!.current;
+      let mapChart = mapRef!.current;
       const pdf = new jsPDF("p", "pt", "a4");
 
       var width = pdf.internal.pageSize.getWidth();
@@ -98,7 +101,7 @@ function Default() {
 
       pdf.setFont("Pyidaungsu");
       pdf.setFontSize(12);
-      pdf.text("Sales Report", 40, 110);
+      pdf.text("Buyer Location Report", 40, 110);
 
       pdf.setFontSize(9);
 
@@ -126,48 +129,24 @@ function Default() {
         );
         exportStart += 10;
       }
-      if (data.categories && data.categories.length > 0) {
+      if (data.seller) {
+        //seller
+        let textDimensions = pdf.getTextDimensions(
+          "Seller: " + data.seller.username,
+          { maxWidth: width - 120 }
+        );
+        pdf.text("Seller: " + data.seller.username, 40, exportStart, {
+          maxWidth: width - 120,
+        });
+        exportStart += textDimensions.h;
+      }
+      if (data.brand) {
         //categories
         let textDimensions = pdf.getTextDimensions(
-          "Categories: " + data.categories,
+          "Brand: " + data.brand.name,
           { maxWidth: width - 120 }
         );
-        pdf.text("Categories: " + data.categories, 40, exportStart, {
-          maxWidth: width - 120,
-        });
-        exportStart += textDimensions.h;
-      }
-      if (data.gemTypes && data.gemTypes.length > 0) {
-        //gem types
-        let textDimensions = pdf.getTextDimensions(
-          "Product Types: " + data.gemTypes,
-          { maxWidth: width - 120 }
-        );
-        pdf.text("Product Types: " + data.gemTypes, 40, exportStart, {
-          maxWidth: width - 120,
-        });
-        exportStart += textDimensions.h;
-      }
-      if (data.manufactureTypes && data.manufactureTypes.length > 0) {
-        //manufacture list
-        let textDimensions = pdf.getTextDimensions(
-          "Manufacture Types: " + data.manufactureTypes,
-          { maxWidth: width - 120 }
-        );
-        pdf.text(
-          "Manufacture Types: " + data.manufactureTypes,
-          40,
-          exportStart,
-          { maxWidth: width - 120 }
-        );
-        exportStart += textDimensions.h;
-      }
-      if (data.userList && data.userList.length > 0) {
-        //user list
-        let textDimensions = pdf.getTextDimensions("Brands: " + data.userList, {
-          maxWidth: width - 120,
-        });
-        pdf.text("Brands: " + data.userList, 40, exportStart, {
+        pdf.text("Brand: " + data.brand.name, 40, exportStart, {
           maxWidth: width - 120,
         });
         exportStart += textDimensions.h;
@@ -178,71 +157,69 @@ function Default() {
       pdf.text("Total Information", 40, exportBottom);
 
       pdf.setFontSize(9);
-      /* pdf.text(
-        "Total Gold: " + formatWeight(Number(data.totalWeight), unit),
+      pdf.text(
+        "Total Amount: " +
+          formatAmount(Number(data.stats.totalAmount), locale, true),
         40,
         exportBottom + 10
       );
       pdf.text(
-        "Total Wastage: " + formatWeight(Number(data.totalWastage), unit),
+        "Total Orders: " +
+          formatAmount(Number(data.stats.totalOrders), locale, false),
         40,
         exportBottom + 20
-      ); */
-      /*  pdf.text(
-        "Total Additional Cost: " +
-          formatAmount(data.totalAdditional, "en", true, false),
+      );
+      pdf.text(
+        "Total Unit Sold: " +
+          formatAmount(Number(data.stats.totalUnitSold), locale, false),
         40,
         exportBottom + 30
       );
       pdf.text(
-        "Total Orders: " + formatAmount(data.totalOrders, "en", false, false),
+        "Total Unique Buyers: " +
+          formatAmount(Number(data.stats.totalUniqueBuyers), locale, false),
         40,
         exportBottom + 40
       );
       pdf.text(
-        "Total SYO Products: " +
-          formatAmount(data.totalProducts, "en", false, false) +
-          " Units",
+        "Total Auctions: " +
+          formatAmount(Number(data.stats.totalAuctions), locale, false),
         40,
         exportBottom + 50
       );
-      pdf.text(
-        "Total Custom Products: " +
-          formatAmount(data.totalCustom, "en", false, false) +
-          " Units",
-        40,
-        exportBottom + 60
-      ); */
-      pdf.line(20, exportBottom + 70, width - 20, exportBottom + 70);
-
-      let graphFinish = await html2canvas(graphChart!).then((canvas) => {
+      pdf.line(20, exportBottom + 60, width - 20, exportBottom + 60);
+      pdf.text("Stats for " + currentTab, 40, exportBottom + 80);
+      let mapFinish = await html2canvas(mapChart!).then((canvas) => {
         const img = canvas.toDataURL("image/png");
 
         pdf.addImage(
           img,
           "png",
-          60,
-          exportBottom + 80,
-          width - 120,
-          graphChart!.clientHeight
+          50,
+          exportBottom + 100,
+          100,
+          mapChart!.clientHeight / 2
         );
         return true;
       });
 
       pdf.addPage();
 
-      /* let orders = data.stats
-        .map((z: any) => z.orders)
-        .reduce((a: any, b: any) => [...a, ...b]);
+      let graphFinish = await html2canvas(graphChart!).then((canvas) => {
+        const img = canvas.toDataURL("image/png");
 
-      let pdfBody = orders.map((e: any) => {
+        pdf.addImage(img, "png", 60, 40, width - 10, graphChart!.clientHeight);
+        return true;
+      });
+
+      pdf.addPage();
+
+      let pdfBody = data.orders.map((e: any) => {
         return [
           e.orderNo,
-          e.status,
+          "Shipped",
           e.orderBy.username,
-          0,
-          0,
-          0,
+          formatAmount(e.total, locale, true, false),
           new Date(e.createdAt).toLocaleDateString("en-ca", {
             year: "numeric",
             month: "short",
@@ -257,27 +234,16 @@ function Default() {
           pdf.setTextColor(40);
           pdf.text("Order Details", data.settings.margin.left, 22);
         },
-        head: [
-          [
-            "Order No",
-            "Status",
-            "Brand Name",
-            "Gold Weight",
-            "Wastage Charges",
-            "Additional Cost",
-            "Ordered Date",
-          ],
-        ],
+        head: [["Order No", "Status", "Order By", "Sub Total", "Ordered Date"]],
         body: pdfBody,
         headStyles: { fillColor: [30, 41, 59] },
-      }); */
+      });
 
-      pdf.addPage();
-      console.log("WTF");
-
-      if (graphFinish === true) {
+      if (graphFinish === true && mapFinish === true) {
         pdf.save("buyerLocationReport.pdf");
       }
+    } else {
+      showErrorDialog("No orders exists.");
     }
   }
 
@@ -579,57 +545,59 @@ function Default() {
                     </span>
                   </div>
                 </div>
-                {data && (
-                  <MyanmarMap
-                    stats={[
-                      data.stateList.find((z) => z.name === "Sagaing Region")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Kachin State")[
-                        currentTab
-                      ],
-                      data.stateList.find(
-                        (z) => z.name === "Taninthayi Region"
-                      )[currentTab],
-                      data.stateList.find((z) => z.name === "Shan State")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Magway Region")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Ayeyawady Region")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Chin State")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Rakhine State")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Mon State")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Yangon Region")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Bago Region")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Mandalay Region")[
-                        currentTab
-                      ] +
-                        data.stateList.find((z) => z.name === "Nay Pyi Taw")[
+                <div ref={mapRef}>
+                  {data && (
+                    <MyanmarMap
+                      stats={[
+                        data.stateList.find((z) => z.name === "Sagaing Region")[
                           currentTab
                         ],
-                      data.stateList.find((z) => z.name === "Kayin State")[
-                        currentTab
-                      ],
-                      data.stateList.find((z) => z.name === "Kayah State")[
-                        currentTab
-                      ],
-                    ]}
-                  />
-                )}
+                        data.stateList.find((z) => z.name === "Kachin State")[
+                          currentTab
+                        ],
+                        data.stateList.find(
+                          (z) => z.name === "Taninthayi Region"
+                        )[currentTab],
+                        data.stateList.find((z) => z.name === "Shan State")[
+                          currentTab
+                        ],
+                        data.stateList.find((z) => z.name === "Magway Region")[
+                          currentTab
+                        ],
+                        data.stateList.find(
+                          (z) => z.name === "Ayeyawady Region"
+                        )[currentTab],
+                        data.stateList.find((z) => z.name === "Chin State")[
+                          currentTab
+                        ],
+                        data.stateList.find((z) => z.name === "Rakhine State")[
+                          currentTab
+                        ],
+                        data.stateList.find((z) => z.name === "Mon State")[
+                          currentTab
+                        ],
+                        data.stateList.find((z) => z.name === "Yangon Region")[
+                          currentTab
+                        ],
+                        data.stateList.find((z) => z.name === "Bago Region")[
+                          currentTab
+                        ],
+                        data.stateList.find(
+                          (z) => z.name === "Mandalay Region"
+                        )[currentTab] +
+                          data.stateList.find((z) => z.name === "Nay Pyi Taw")[
+                            currentTab
+                          ],
+                        data.stateList.find((z) => z.name === "Kayin State")[
+                          currentTab
+                        ],
+                        data.stateList.find((z) => z.name === "Kayah State")[
+                          currentTab
+                        ],
+                      ]}
+                    />
+                  )}
+                </div>
               </div>
               {data?.monthStats && data?.monthStats.length > 0 && (
                 <div className="flex flex-col gap-3 w-full">

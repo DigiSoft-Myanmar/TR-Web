@@ -23,16 +23,21 @@ import OrderSmallTbl from "@/components/muiTable/OrderTbl";
 import prisma from "@/prisma/prisma";
 import { Brand, User } from "@prisma/client";
 import ReportBuyerModal from "@/components/modal/sideModal/ReportBuyerModal";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import autoTable from "jspdf-autotable";
+import ReportCategoryModal from "@/components/modal/sideModal/ReportCategoryModal";
+import { showErrorDialog } from "@/util/swalFunction";
 
 let Orders = "orderCount";
 let UnitSold = "unitSold";
 let Profits = "profits";
 
-export type FilterType = {
+export type FilterTypeCategory = {
   startDate: Date | null;
   endDate: Date | null;
-  brandId?: String;
   sellerId: String;
+  categoryId: String;
   seller?: User;
 };
 
@@ -40,16 +45,17 @@ function Default() {
   const { t } = useTranslation("common");
   const [filterModalOpen, setFilterModalOpen] = React.useState(false);
   const { data: session }: any = useSession();
-  const [filterType, setFilterType] = React.useState<FilterType>({
-    sellerId: "",
+  const [filterType, setFilterType] = React.useState<FilterTypeCategory>({
+    categoryId: "",
     endDate: null,
     startDate: null,
-    brandId: "",
+    sellerId: "",
+    seller: undefined,
   });
   const graphRef = React.useRef<HTMLDivElement>(null);
   const [currentTab, setCurrentTab] = React.useState(Profits);
   const { data, isLoading, isFetching, refetch } = useQuery(
-    "buyerLocationReport",
+    "categoryReport",
     () => {
       const params: any = {
         startDate: filterType.startDate
@@ -59,10 +65,10 @@ function Default() {
           ? filterType.endDate.toLocaleDateString("en-ca")
           : "",
         sellerId: filterType.sellerId,
-        brandId: filterType.brandId,
+        categoryId: filterType.categoryId,
       };
       let d: any = new URLSearchParams(params).toString();
-      return fetch(`/api/reports/buyer?${d}`).then((res) => {
+      return fetch(`/api/reports/category?${d}`).then((res) => {
         let json = res.json();
         return json;
       });
@@ -78,14 +84,14 @@ function Default() {
   }, [filterType]);
 
   async function div2PDF() {
-    /* if (data && data.stats && data.stats.length > 0) {
+    if (data && data.stats.totalOrders && data.stats.totalOrders > 0) {
       let graphChart = graphRef!.current;
       const pdf = new jsPDF("p", "pt", "a4");
 
       var width = pdf.internal.pageSize.getWidth();
       var height = pdf.internal.pageSize.getHeight();
 
-      let blob = await fetch("/assets/logo_cropped.png").then((r) => r.blob());
+      let blob = await fetch("/assets/logo_full.png").then((r) => r.blob());
       let dataUrl: any = await new Promise((resolve) => {
         let reader = new FileReader();
         reader.onload = () => resolve(reader.result);
@@ -95,12 +101,13 @@ function Default() {
 
       pdf.setFont("Pyidaungsu");
       pdf.setFontSize(12);
-      pdf.text("Sales Report", 40, 110);
+      pdf.text("Category Report", 40, 110);
 
       pdf.setFontSize(9);
 
       pdf.text("Export Information", 40, 130);
       let exportStart = 140;
+
       if (data.startDate && data.endDate) {
         let sDate = new Date(data.startDate);
         let eDate = new Date(data.endDate);
@@ -122,48 +129,24 @@ function Default() {
         );
         exportStart += 10;
       }
-      if (data.categories && data.categories.length > 0) {
+      if (data.seller) {
+        //seller
+        let textDimensions = pdf.getTextDimensions(
+          "Seller: " + data.seller.username,
+          { maxWidth: width - 120 }
+        );
+        pdf.text("Seller: " + data.seller.username, 40, exportStart, {
+          maxWidth: width - 120,
+        });
+        exportStart += textDimensions.h;
+      }
+      if (data.category) {
         //categories
         let textDimensions = pdf.getTextDimensions(
-          "Categories: " + data.categories,
+          "Category: " + data.category.name,
           { maxWidth: width - 120 }
         );
-        pdf.text("Categories: " + data.categories, 40, exportStart, {
-          maxWidth: width - 120,
-        });
-        exportStart += textDimensions.h;
-      }
-      if (data.gemTypes && data.gemTypes.length > 0) {
-        //gem types
-        let textDimensions = pdf.getTextDimensions(
-          "Product Types: " + data.gemTypes,
-          { maxWidth: width - 120 }
-        );
-        pdf.text("Product Types: " + data.gemTypes, 40, exportStart, {
-          maxWidth: width - 120,
-        });
-        exportStart += textDimensions.h;
-      }
-      if (data.manufactureTypes && data.manufactureTypes.length > 0) {
-        //manufacture list
-        let textDimensions = pdf.getTextDimensions(
-          "Manufacture Types: " + data.manufactureTypes,
-          { maxWidth: width - 120 }
-        );
-        pdf.text(
-          "Manufacture Types: " + data.manufactureTypes,
-          40,
-          exportStart,
-          { maxWidth: width - 120 }
-        );
-        exportStart += textDimensions.h;
-      }
-      if (data.userList && data.userList.length > 0) {
-        //user list
-        let textDimensions = pdf.getTextDimensions("Brands: " + data.userList, {
-          maxWidth: width - 120,
-        });
-        pdf.text("Brands: " + data.userList, 40, exportStart, {
+        pdf.text("Category: " + data.category.name, 40, exportStart, {
           maxWidth: width - 120,
         });
         exportStart += textDimensions.h;
@@ -175,74 +158,54 @@ function Default() {
 
       pdf.setFontSize(9);
       pdf.text(
-        "Total Gold: " + formatWeight(Number(data.totalWeight), unit),
+        "Total Amount: " +
+          formatAmount(Number(data.stats.totalAmount), locale, true),
         40,
         exportBottom + 10
       );
       pdf.text(
-        "Total Wastage: " + formatWeight(Number(data.totalWastage), unit),
+        "Total Orders: " +
+          formatAmount(Number(data.stats.totalOrders), locale, false),
         40,
         exportBottom + 20
       );
       pdf.text(
-        "Total Additional Cost: " +
-          formatAmount(data.totalAdditional, "en", true, false),
+        "Total Unit Sold: " +
+          formatAmount(Number(data.stats.totalUnitSold), locale, false),
         40,
         exportBottom + 30
       );
       pdf.text(
-        "Total Orders: " + formatAmount(data.totalOrders, "en", false, false),
+        "Total Unique Buyers: " +
+          formatAmount(Number(data.stats.totalUniqueBuyers), locale, false),
         40,
         exportBottom + 40
       );
       pdf.text(
-        "Total SYO Products: " +
-          formatAmount(data.totalProducts, "en", false, false) +
-          " Units",
+        "Total Auctions: " +
+          formatAmount(Number(data.stats.totalAuctions), locale, false),
         40,
         exportBottom + 50
       );
-      pdf.text(
-        "Total Custom Products: " +
-          formatAmount(data.totalCustom, "en", false, false) +
-          " Units",
-        40,
-        exportBottom + 60
-      );
-      pdf.line(20, exportBottom + 70, width - 20, exportBottom + 70);
+      pdf.line(20, exportBottom + 60, width - 20, exportBottom + 60);
+
+      pdf.addPage();
 
       let graphFinish = await html2canvas(graphChart!).then((canvas) => {
         const img = canvas.toDataURL("image/png");
 
-        pdf.addImage(
-          img,
-          "png",
-          60,
-          exportBottom + 80,
-          width - 120,
-          graphChart!.clientHeight
-        );
+        pdf.addImage(img, "png", 60, 40, width - 80, graphChart!.clientHeight);
         return true;
       });
 
       pdf.addPage();
 
-      let orders = data.stats
-        .map((z: any) => z.orders)
-        .reduce((a: any, b: any) => [...a, ...b]);
-
-      let pdfBody = orders.map((e: any) => {
-        let w1 = calculateTotalWeight(e.cartItems, unitConversions, false);
-        let w2 = calculateTotalWeight(e.cartItems, unitConversions, true);
-        let total = calculateTotalCharges(e.cartItems);
-
+      let pdfBody = data.orders.map((e: any) => {
         return [
           e.orderNo,
-          e.status,
-          e.orderBy.brandName,
-          formatWeight(Number(w1), unit),
-          formatWeight(Number(w2), unit),
-          formatAmount(total, "en", true),
+          "Shipped",
+          e.orderBy.username,
+          formatAmount(e.total, locale, true, false),
           new Date(e.createdAt).toLocaleDateString("en-ca", {
             year: "numeric",
             month: "short",
@@ -257,98 +220,17 @@ function Default() {
           pdf.setTextColor(40);
           pdf.text("Order Details", data.settings.margin.left, 22);
         },
-        head: [
-          [
-            "Order No",
-            "Status",
-            "Brand Name",
-            "Gold Weight",
-            "Wastage Charges",
-            "Additional Cost",
-            "Ordered Date",
-          ],
-        ],
+        head: [["Order No", "Status", "Order By", "Sub Total", "Ordered Date"]],
         body: pdfBody,
         headStyles: { fillColor: [30, 41, 59] },
       });
 
-      pdf.addPage();
-
-      let products = data.stats
-        .map((z: any) => z.products)
-        .reduce((a: any, b: any) => consolidateProducts([...a, ...b]));
-
-      let pdfProducts = products.map((e: any) => {
-        return [
-          e.prodInfo.name,
-          e.prodInfo.type === ProductType.Fixed ? e.prodInfo.SKU : "Variable",
-          formatAmount(e.quantity, "en"),
-          formatWeight(Number(e.totalWeight), unit),
-          formatWeight(Number(e.totalWastage), unit),
-          formatAmount(e.totalAdditional, "en", true),
-        ];
-      });
-
-      autoTable(pdf, {
-        didDrawPage: function (data: any) {
-          pdf.setFontSize(12);
-          pdf.setTextColor(40);
-          pdf.text("SYO Products", data.settings.margin.left, 22);
-        },
-        head: [
-          [
-            "Name",
-            "SKU",
-            "Quantity",
-            "Total Gold",
-            "Total Wastage",
-            "Total Additional Cost",
-          ],
-        ],
-        body: pdfProducts,
-        headStyles: { fillColor: [30, 41, 59] },
-      });
-      pdf.addPage();
-
-      let customProducts = data.stats
-        .map((z: any) => z.customProducts)
-        .reduce((a: any, b: any) => consolidateProducts([...a, ...b]));
-
-      let pdfCustom = customProducts.map((e: any) => {
-        return [
-          e.prodInfo.user.brandName,
-          e.SKU,
-          formatAmount(e.quantity, "en"),
-          formatWeight(Number(e.totalWeight), unit),
-          formatWeight(Number(e.totalWastage), unit),
-          formatAmount(e.totalAdditional, "en", true),
-        ];
-      });
-
-      autoTable(pdf, {
-        didDrawPage: function (data: any) {
-          pdf.setFontSize(12);
-          pdf.setTextColor(40);
-          pdf.text("Custom Products", data.settings.margin.left, 22);
-        },
-        head: [
-          [
-            "Brand Name",
-            "SKU",
-            "Quantity",
-            "Total Gold",
-            "Total Wastage",
-            "Total Additional Cost",
-          ],
-        ],
-        body: pdfCustom,
-        headStyles: { fillColor: [30, 41, 59] },
-      });
-
       if (graphFinish === true) {
-        pdf.save("sales-report.pdf");
+        pdf.save("categoryReport.pdf");
       }
-    } */
+    } else {
+      showErrorDialog("No orders exists.");
+    }
   }
 
   return (
@@ -434,7 +316,7 @@ function Default() {
                         <></>
                       )}
 
-                      {data.brand ? (
+                      {data.category ? (
                         <div className="flex flex-row items-center gap-1">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -447,19 +329,14 @@ function Default() {
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M6 6h.008v.008H6V6z"
+                              d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
                             />
                           </svg>
 
                           <span>
                             {getText(
-                              data.brand.name,
-                              data.brand.nameMM,
+                              data.category.name,
+                              data.category.nameMM,
                               locale
                             )}
                           </span>
@@ -556,7 +433,7 @@ function Default() {
           </header>
           <section className="mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
             <div className="flex flex-col lg:flex-row px-5 gap-5 bg-white shadow-md">
-              <div className="flex flex-col gap-3 items-center justify-center">
+              {/* <div className="flex flex-col gap-3 items-center justify-center">
                 <div className="flex flex-row items-center border rounded-md divide-x p-2 bg-white">
                   <div
                     className={`flex flex-row items-center gap-3 cursor-pointer px-3 py-2 ${
@@ -700,7 +577,7 @@ function Default() {
                     ]}
                   />
                 )}
-              </div>
+              </div> */}
               {data?.monthStats && data?.monthStats.length > 0 && (
                 <div className="flex flex-col gap-3 w-full">
                   <div
@@ -881,18 +758,18 @@ function Default() {
           </section>
         </div>
       </div>
-      <ReportBuyerModal
+      <ReportCategoryModal
         isModalOpen={filterModalOpen}
         setModalOpen={setFilterModalOpen}
         filterType={filterType}
-        filterFn={(filterData: FilterType) => {
+        filterFn={(filterData: FilterTypeCategory) => {
           setFilterType(filterData);
         }}
         resetFilterFn={() => {
           setFilterType({
             endDate: null,
             startDate: null,
-            brandId: "",
+            categoryId: "",
             sellerId: "",
             seller: undefined,
           });

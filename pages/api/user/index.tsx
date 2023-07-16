@@ -148,9 +148,10 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
 
 async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
+    let session = await useAuth(req);
     let data = JSON.parse(req.body);
     if (data.role) {
-      if (data.email) {
+      if (isInternal(session)) {
         let body = {
           email: data.email,
           emailVerified: false,

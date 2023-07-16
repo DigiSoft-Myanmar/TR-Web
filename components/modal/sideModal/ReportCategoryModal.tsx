@@ -8,16 +8,18 @@ import { BrandSortSelectBox } from "@/components/presentational/SortSelectBox";
 import BrandAutoCompleteBox from "@/components/presentational/BrandAutoCompleteBox";
 import SubmitBtn from "@/components/presentational/SubmitBtn";
 import { showErrorDialog } from "@/util/swalFunction";
+import { FilterTypeCategory } from "@/pages/reports/category";
+import CategorySelectBox from "@/components/presentational/CategorySelectBox";
 
 interface Props {
   isModalOpen: boolean;
   setModalOpen: Function;
-  filterType: FilterType;
+  filterType: FilterTypeCategory;
   filterFn: Function;
   resetFilterFn: Function;
 }
 
-function ReportBuyerModal({
+function ReportCategoryModal({
   isModalOpen,
   setModalOpen,
   filterType: parentFilterType,
@@ -25,10 +27,10 @@ function ReportBuyerModal({
   resetFilterFn,
 }: Props) {
   const router = useRouter();
-  const [filterType, setFilterType] = React.useState<FilterType>({
+  const [filterType, setFilterType] = React.useState<FilterTypeCategory>({
     endDate: null,
     startDate: null,
-    brandId: "",
+    categoryId: "",
     sellerId: "",
   });
 
@@ -246,25 +248,18 @@ function ReportBuyerModal({
 
                       <div className="flex flex-col gap-1">
                         <label className={`text-sm font-medium text-gray-400`}>
-                          Brand
+                          Category
                         </label>
-                        <BrandAutoCompleteBox
+                        <CategorySelectBox
                           setSelected={(e: any) => {
                             setFilterType((prevValue: any) => {
-                              if (e.id) {
-                                return {
-                                  ...prevValue,
-                                  brandId: e.brandId,
-                                };
-                              } else {
-                                return {
-                                  ...prevValue,
-                                  brandId: "",
-                                };
-                              }
+                              return {
+                                ...prevValue,
+                                categoryId: e,
+                              };
                             });
                           }}
-                          selected={{ id: filterType.brandId }}
+                          selected={filterType.categoryId}
                         />
                       </div>
                     </div>
@@ -279,7 +274,7 @@ function ReportBuyerModal({
                           endDate: null,
                           startDate: null,
                           sellerId: "",
-                          brandId: "",
+                          categoryId: "",
                           seller: undefined,
                         });
                         resetFilterFn();
@@ -330,4 +325,4 @@ function ReportBuyerModal({
   );
 }
 
-export default ReportBuyerModal;
+export default ReportCategoryModal;
