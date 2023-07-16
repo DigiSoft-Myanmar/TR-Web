@@ -1011,7 +1011,7 @@ function MembershipTable({
               <h3>{t("buyerProfileReport")}</h3>
               {content?.buyerReportDetails?.length > 0 && (
                 <div
-                  className="text-white text-sm mt-3 font-normal"
+                  className="text-gray-500 text-sm mt-3 font-normal"
                   dangerouslySetInnerHTML={{
                     __html: getText(
                       content?.buyerReportDetails,
