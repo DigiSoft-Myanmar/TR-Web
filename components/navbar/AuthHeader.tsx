@@ -17,11 +17,14 @@ function AuthHeader() {
   const { isNotiPing, turnOffNotiPing } = useNoti();
 
   const path = router.asPath.split("/");
+
   return (
     <>
       <header
         aria-label="Page Header"
-        className="sticky top-0 right-0 z-20 bg-white shadow-md"
+        className={`sticky top-0 right-0 z-20 bg-white ${router.asPath.includes(
+          "reports" ? "" : "shadow-md"
+        )}`}
       >
         <div className="mx-auto px-4 py-3 sm:px-6 lg:px-8">
           <div className="relative flex items-center sm:justify-between sm:gap-4">

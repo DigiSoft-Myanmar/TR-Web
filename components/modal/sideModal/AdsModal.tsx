@@ -361,7 +361,7 @@ function AdsModal({ isModalOpen, setModalOpen, refetch, title }: Props) {
                               PNG, JPG or GIF (MAX. 2MB)
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Preferred Image Size - [1200 x 300, 700 x 300, 300
+                              Preferred Image Size - [1280 x 300, 700 x 300, 300
                               x 300]
                             </p>
                           </div>

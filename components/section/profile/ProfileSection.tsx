@@ -45,6 +45,7 @@ function ProfileSection({ nextFn, submitRef }: Props) {
 
   const schema = z.object({
     username: z.string().min(1, { message: t("inputError") }),
+    displayName: z.string().min(1, { message: t("inputError") }),
     email: z.string().email({ message: t("inputValidEmailError") }),
     phoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
       message: t("inputValidPhoneError"),

@@ -41,21 +41,40 @@ function SellerInfoSection({ backFn, nextFn, submitRef, content }: Props) {
   const { data } = useSWR("/api/memberships", fetcher);
 
   const schema = z.object({
-    password: z
-      .string()
-      .min(6, { message: t("inputPasswordErrorLength") })
-      .optional()
-      .or(z.literal("")),
-    confirmPassword: z
-      .string()
-      .min(6, { message: t("inputPasswordErrorLength") })
-      .optional()
-      .or(z.literal("")),
+    shippingIncluded: z.boolean(),
+    defaultShippingCost: z
+      .number({
+        invalid_type_error: t("inputValidNumber"),
+        required_error: "",
+      })
+      .min(0, {
+        message: t("inputValidAmount"),
+      })
+      .nonnegative({ message: t("inputValidAmount") }),
+    isOfferFreeShipping: z.boolean(),
+    freeShippingCost: z
+      .number({
+        invalid_type_error: t("inputValidNumber"),
+        required_error: "",
+      })
+      .min(0, {
+        message: t("inputValidAmount"),
+      })
+      .nonnegative({ message: t("inputValidAmount") }),
+    isDefaultShippingInfo: z.boolean(),
   });
 
   const { register, handleSubmit, watch, formState } = useForm<any>({
     mode: "onChange",
-    defaultValues: profile,
+    defaultValues: {
+      shippingIncluded: profile.shippingIncluded,
+      defaultShippingCost: profile.defaultShippingCost
+        ? profile.defaultShippingCost
+        : 0,
+      isOfferFreeShipping: profile.isOfferFreeShipping,
+      freeShippingCost: profile.freeShippingCost ? profile.freeShippingCost : 0,
+      isDefaultShippingInfo: profile.isDefaultShippingInfo,
+    },
     resolver: zodResolver(schema),
   });
   const { errors } = formState;

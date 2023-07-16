@@ -54,7 +54,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
       adminNote: profile.adminNote,
       isBlocked: profile.isBlocked,
       isDeleted: profile.isDeleted,
-      memberStartDate: profile.memberStartDate,
+      memberStartDate: new Date(profile.memberStartDate),
       sellAllow: profile.sellAllow,
     },
     resolver: zodResolver(schema),
@@ -62,15 +62,25 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
   const { errors } = formState;
   const watchFields = watch();
 
-  React.useEffect(() => {
-    reset({
-      adminNote: profile.adminNote,
-      isBlocked: profile.isBlocked,
-      isDeleted: profile.isDeleted,
-      memberStartDate: new Date(),
-      sellAllow: profile.sellAllow,
-    });
-  }, [profile]);
+  /* React.useEffect(() => {
+    if (profile.memberStartDate) {
+      reset({
+        adminNote: profile.adminNote,
+        isBlocked: profile.isBlocked,
+        isDeleted: profile.isDeleted,
+        memberStartDate: new Date(profile.memberStartDate).toISOString(),
+        sellAllow: profile.sellAllow,
+      });
+    } else {
+      reset({
+        adminNote: "",
+        isBlocked: false,
+        isDeleted: false,
+        memberStartDate: new Date().toISOString(),
+        sellAllow: false,
+      });
+    }
+  }, [profile]); */
 
   function submit(data: Status) {
     setProfile((prevValue: any) => {
@@ -78,11 +88,6 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
     });
     nextFn();
   }
-  console.log(
-    watchFields.memberStartDate
-      ? new Date(watchFields.memberStartDate).toISOString().substring(0, 10)
-      : ""
-  );
 
   return (
     <div className="flex flex-col">
@@ -98,15 +103,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
             <>
               {/* //TODO check date */}
               <FormInput
-                label={
-                  t("memberStartDate") +
-                  " " +
-                  (watchFields.memberStartDate
-                    ? new Date(watchFields.memberStartDate)
-                        .toISOString()
-                        .substring(0, 10)
-                    : "")
-                }
+                label={t("memberStartDate")}
                 placeHolder={t("enter") + " " + t("memberStartDate")}
                 error={errors.memberStartDate?.message}
                 type="date"
@@ -125,7 +122,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                 currentValue={
                   watchFields.memberStartDate
                     ? new Date(watchFields.memberStartDate)
-                        .toISOString()
+                        ?.toISOString()
                         .substring(0, 10)
                     : ""
                 }

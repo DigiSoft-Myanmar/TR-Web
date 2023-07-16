@@ -2,9 +2,7 @@ import { Colors } from "@/types/color";
 import { Tooltip } from "@mui/material";
 import React, { useRef } from "react";
 
-const data = [2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 24];
-
-function MyanmarMap() {
+function MyanmarMap({ stats: data }: { stats: number[] }) {
   const mapRef = useRef<any>();
   const [currentState, setCurrentState] = React.useState("");
   const hoverColor = "#993404";

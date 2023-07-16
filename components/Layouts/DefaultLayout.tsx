@@ -215,7 +215,9 @@ function DefaultLayout({ children }: LayoutProps) {
             }  flex-grow flex-col`}
           >
             <AuthHeader />
-            <main className="m-5">{children}</main>
+            <main className={router.asPath.includes("reports") ? "" : "m-5"}>
+              {children}
+            </main>
           </div>
         </div>
       </div>

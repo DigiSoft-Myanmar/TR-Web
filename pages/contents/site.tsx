@@ -1368,7 +1368,7 @@ function ContactPage({ data }: { data?: Content }) {
                 <details className="group">
                   <summary className="flex flex-row cursor-pointer">
                     <h3 className="ml-3 text-sm font-semibold text-gray-700">
-                      Default One Col Ads (1200 x 300)
+                      Default One Col Ads (1280 x 300)
                     </h3>
                     <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
                       <svg

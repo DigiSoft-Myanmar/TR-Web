@@ -278,12 +278,7 @@ const OrderSmallTbl = ({ data }: { data: any }) => {
 
   return (
     <Card>
-      <h3 className="p-5 text-lg font-semibold">
-        {`Orders List (${new Date().toLocaleDateString("en-ca", {
-          year: "numeric",
-          month: "long",
-        })})`}
-      </h3>
+      <h3 className="p-5 text-lg font-semibold">{`Orders List`}</h3>
       {data && (
         <DataGrid
           autoHeight
