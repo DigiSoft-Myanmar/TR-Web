@@ -464,6 +464,14 @@ function Header({
                           </li>
                           <li>
                             <Link
+                              href={"/promoCode/"}
+                              className="ml-1 font-normal hover:font-semibold"
+                            >
+                              Promo Codes
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
                               href={
                                 "/account/" +
                                 encodeURIComponent(

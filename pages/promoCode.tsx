@@ -18,17 +18,18 @@ import { useRouter } from "next/router";
 import LoadingScreen from "@/components/screen/LoadingScreen";
 import PromoTbl from "@/components/muiTable/PromoTbl";
 import PromotionModal from "@/components/modal/sideModal/PromotionModal";
+import { isInternal, isSeller } from "@/util/authHelper";
 
 function PromoCodePage() {
+  const [isModalOpen, setModalOpen] = React.useState(false);
+  const { t } = useTranslation("common");
+  const { data: session }: any = useSession();
   const { isLoading, error, data, refetch } = useQuery("promoData", () =>
-    fetch("/api/promoCode").then((res) => {
+    fetch("/api/promoCode?isSeller=" + isSeller(session)).then((res) => {
       let json = res.json();
       return json;
     })
   );
-  const [isModalOpen, setModalOpen] = React.useState(false);
-  const { t } = useTranslation("common");
-  const { data: session }: any = useSession();
   const [title, setTitle] = React.useState("Create Promo Code");
   const [promotion, setPromotion] = React.useState<any>({
     sellerId: undefined,
@@ -41,7 +42,8 @@ function PromoCodePage() {
   return session &&
     (session.role === Role.Admin ||
       session.role === Role.Staff ||
-      session.role === Role.SuperAdmin) ? (
+      session.role === Role.SuperAdmin ||
+      isSeller(session)) ? (
     <div>
       <Head>
         <title>Promo Codes | Treasure Rush</title>
@@ -49,7 +51,11 @@ function PromoCodePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="relative mx-auto">
+      <div
+        className={`flex flex-col space-y-5 ${
+          isInternal(session) ? "" : "max-w-screen-2xl mx-auto p-5"
+        }`}
+      >
         {data && data.length > 0 ? (
           <section className="flex flex-col space-y-5">
             <PromoTbl
@@ -85,9 +91,6 @@ function PromoCodePage() {
             setModalOpen(true);
             setTitle("Create Promo Code");
             setPromotion({
-              isAllowAllBrand: true,
-              isAllowAllBuyers: true,
-              brandIds: [],
               isPercent: false,
               isCouponUsagePerUserInfinity: true,
               isCouponUsageInfinity: true,

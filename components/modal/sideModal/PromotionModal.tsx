@@ -8,13 +8,13 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@/components/presentational/FormInput";
-import { showSuccessDialog } from "@/util/swalFunction";
+import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
 import { PromoCode, User } from "@prisma/client";
 import FormInputCheckbox from "@/components/presentational/FormInputCheckbox";
 
 import FormSaleDatePicker from "@/components/presentational/FormSaleDatePicker";
 import SellerSelectBox from "@/components/presentational/SellerSelectBox";
-import { getHeaders } from "@/util/authHelper";
+import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 
 type PromoCodeWithBrandsUsers = PromoCode & { seller: User };
@@ -35,6 +35,7 @@ function PromotionModal({
   setUpdate,
 }: Props) {
   const router = useRouter();
+  const { locale } = router;
   const { t } = useTranslation("common");
   const [isSubmit, setSubmit] = React.useState(false);
 
@@ -138,33 +139,53 @@ function PromotionModal({
     if (b.Order) {
       delete b.Order;
     }
-    if (parentPromotion && parentPromotion.id) {
-      let id = parentPromotion.id;
-      fetch("/api/promoCode?id=" + id, {
-        method: "PUT",
-        body: JSON.stringify(b),
-        headers: getHeaders(session),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
-        });
+    if (isInternal(session) && !b.sellerId) {
+      setSubmit(false);
+      showErrorDialog(
+        "Please input seller",
+        "ရောင်းချသူအားဖြည့်သွင်းပေးပါ။",
+        locale
+      );
+    }
+    if (isSeller(session)) {
+      b.sellerId = session.id;
+    }
+    if (b.sellerId) {
+      if (parentPromotion && parentPromotion.id) {
+        let id = parentPromotion.id;
+        fetch("/api/promoCode?id=" + id, {
+          method: "PUT",
+          body: JSON.stringify(b),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      } else {
+        fetch("/api/promoCode", {
+          method: "POST",
+          body: JSON.stringify(b),
+          headers: getHeaders(session),
+        })
+          .then((data) => data.json())
+          .then((json) => {
+            setSubmit(false);
+            setUpdate(true);
+            setModalOpen(false);
+            showSuccessDialog(t("submitSuccess"));
+          });
+      }
     } else {
-      fetch("/api/promoCode", {
-        method: "POST",
-        body: JSON.stringify(b),
-        headers: getHeaders(session),
-      })
-        .then((data) => data.json())
-        .then((json) => {
-          setSubmit(false);
-          setUpdate(true);
-          setModalOpen(false);
-          showSuccessDialog(t("submitSuccess"));
-        });
+      setSubmit(false);
+      showErrorDialog(
+        "Invalid input.",
+        "တန်ဖိုးမှားယွင်းစွာဖြည့်သွင်းထားပါသည်။",
+        locale
+      );
     }
   }
 
@@ -271,16 +292,20 @@ function PromotionModal({
                         formControl={{ ...register("promoCode") }}
                         currentValue={watchFields.promoCode}
                       />
-
-                      <SellerSelectBox
-                        selected={promotion?.seller}
-                        setSelected={(e: User) => {
-                          setPromotion((prevValue: any) => {
-                            return { ...prevValue, seller: e, sellerId: e.id };
-                          });
-                        }}
-                      />
-
+                      {isInternal(session) && (
+                        <SellerSelectBox
+                          selected={promotion?.seller}
+                          setSelected={(e: User) => {
+                            setPromotion((prevValue: any) => {
+                              return {
+                                ...prevValue,
+                                seller: e,
+                                sellerId: e.id,
+                              };
+                            });
+                          }}
+                        />
+                      )}
                       <FormInput
                         label={"Minimum Purchase Price"}
                         placeHolder={"Enter Minimum Purchase Price"}

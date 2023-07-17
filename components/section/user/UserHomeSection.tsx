@@ -105,7 +105,7 @@ function UserHomeSection({ user }: { user: User }) {
           <h3 className="text-lg ml-3 mt-3">Promo Codes</h3>
           <div className="p-3 mt-3 flex flex-row items-center gap-3 overflow-x-auto scrollbar-hide">
             {data
-              .filter((z) => getPromoAvailCount(z) >= 0)
+              .filter((z) => getPromoAvailCount(z) > 0)
               .map(
                 (
                   z: PromoCode & {

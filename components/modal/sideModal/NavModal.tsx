@@ -14,6 +14,8 @@ import { useMarketplace } from "@/context/MarketplaceContext";
 import { getHeaders, isBuyer, isSeller } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
 import { ProductNavType } from "@/types/productTypes";
+import { useNoti } from "@/context/NotificationContext";
+import NotiModal from "./NotiModal";
 
 interface Props {
   isModalOpen: boolean;
@@ -29,6 +31,8 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
   const { t } = useTranslation("common");
   const { data } = useSWR("/api/products/categories", fetcher);
   const { cartItems } = useMarketplace();
+  const { isNotiPing, turnOffNotiPing } = useNoti();
+  const [isNotiModalOpen, setNotiModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     router.beforePopState(({ as }) => {
@@ -328,7 +332,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                         {session ? (
                           <div>
                             <strong className="block text-xs font-medium uppercase text-gray-400">
-                              Profile
+                              GENERAL
                             </strong>
 
                             <ul className="mt-2 space-y-1">
@@ -362,43 +366,44 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                 </Link>
                               </li>
 
-                              <li>
-                                <Link
-                                  href={
-                                    accessKey
-                                      ? "/orders?accessKey=" + accessKey
-                                      : "/orders"
-                                  }
-                                  className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath.includes("/orders")
-                                      ? "bg-gray-100"
-                                      : "hover:bg-gray-100 hover:text-gray-700"
-                                  } `}
-                                >
-                                  Wishlist
-                                </Link>
-                              </li>
+                              {(session.role === Role.Buyer ||
+                                session.role === Role.Trader) && (
+                                <li>
+                                  <Link
+                                    href={"/wishlist"}
+                                    className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
+                                      router.asPath.includes("/wishlist")
+                                        ? "bg-gray-100"
+                                        : "hover:bg-gray-100 hover:text-gray-700"
+                                    } `}
+                                  >
+                                    Wishlist
+                                  </Link>
+                                </li>
+                              )}
 
                               <li>
-                                <Link
-                                  href={
-                                    accessKey
-                                      ? "/address?accessKey=" + accessKey
-                                      : "/address"
-                                  }
+                                <button
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
                                     router.asPath.includes("/address")
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
-                                  } `}
+                                  }`}
+                                  type="button"
+                                  onClick={() => {
+                                    turnOffNotiPing();
+                                    fetch("/api/notifications/update", {
+                                      method: "POST",
+                                      headers: getHeaders(session),
+                                    });
+                                    setNotiModalOpen(true);
+                                  }}
                                 >
                                   Notifications{" "}
                                   <span className="indicator-item badge badge-primary badge-sm text-white">
-                                    {cartItems
-                                      .map((e) => e.quantity)
-                                      .reduce((a, b) => a + b, 0)}
+                                    {isNotiPing > 99 ? "99+" : isNotiPing}
                                   </span>
-                                </Link>
+                                </button>
                               </li>
                             </ul>
                           </div>
@@ -409,23 +414,26 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                         {isBuyer(session) ? (
                           <div>
                             <strong className="block text-xs font-medium uppercase text-gray-400">
-                              {getText(
-                                "Buyer",
-                                "အသုံးဝင်သောလင့်ခ်များ",
-                                locale
-                              )}
+                              BUYER
                             </strong>
 
                             <ul className="mt-2 space-y-1">
                               <li>
                                 <Link
                                   href={
-                                    accessKey
-                                      ? "/about?accessKey=" + accessKey
-                                      : "/about"
+                                    "/account/" +
+                                    encodeURIComponent(
+                                      encryptPhone(session.phoneNum)
+                                    ) +
+                                    "#address"
                                   }
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/about"
+                                    router.asPath ===
+                                    "/account/" +
+                                      encodeURIComponent(
+                                        encryptPhone(session.phoneNum)
+                                      ) +
+                                      "#address"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -436,13 +444,9 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
 
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/about#contact?accessKey=" + accessKey
-                                      : "/about#contact"
-                                  }
+                                  href={"/orders/purchasedHistory"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/about#contact"
+                                    router.asPath === "/orders/purchasedHistory"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -452,13 +456,9 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                               </li>
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/faqs?accessKey=" + accessKey
-                                      : "/faqs"
-                                  }
+                                  href={"/bidHistory"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/faqs"
+                                    router.asPath === "/bidHistory"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -475,23 +475,15 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                         {isSeller(session) ? (
                           <div>
                             <strong className="block text-xs font-medium uppercase text-gray-400">
-                              {getText(
-                                "Seller",
-                                "အသုံးဝင်သောလင့်ခ်များ",
-                                locale
-                              )}
+                              SELLER
                             </strong>
 
                             <ul className="mt-2 space-y-1">
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/about?accessKey=" + accessKey
-                                      : "/about"
-                                  }
+                                  href={"/products"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/about"
+                                    router.asPath === "/products"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -502,13 +494,9 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
 
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/about#contact?accessKey=" + accessKey
-                                      : "/about#contact"
-                                  }
+                                  href={"/orders/"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/about#contact"
+                                    router.asPath === "/orders"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -518,13 +506,9 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                               </li>
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/faqs?accessKey=" + accessKey
-                                      : "/faqs"
-                                  }
+                                  href={"/auctions/"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/faqs"
+                                    router.asPath === "/auctions"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -534,13 +518,9 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                               </li>
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/faqs?accessKey=" + accessKey
-                                      : "/faqs"
-                                  }
+                                  href={"/shipping%20Cost/"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/faqs"
+                                    router.asPath === "/shipping%20Cost"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -550,18 +530,37 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                               </li>
                               <li>
                                 <Link
-                                  href={
-                                    accessKey
-                                      ? "/faqs?accessKey=" + accessKey
-                                      : "/faqs"
-                                  }
+                                  href={"/promoCode"}
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath === "/faqs"
+                                    router.asPath === "/promoCode"
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
                                   Promo Code
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={
+                                    "/account/" +
+                                    encodeURIComponent(
+                                      encryptPhone(session.phoneNum)
+                                    ) +
+                                    "#ads"
+                                  }
+                                  className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
+                                    router.asPath ===
+                                    "/account/" +
+                                      encodeURIComponent(
+                                        encryptPhone(session.phoneNum)
+                                      ) +
+                                      "#ads"
+                                      ? "bg-gray-100"
+                                      : "hover:bg-gray-100 hover:text-gray-700"
+                                  } `}
+                                >
+                                  Ads
                                 </Link>
                               </li>
                             </ul>
@@ -758,6 +757,10 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
           </div>
         </Dialog>
       </Transition>
+      <NotiModal
+        isModalOpen={isNotiModalOpen}
+        setModalOpen={setNotiModalOpen}
+      />
     </>
   );
 }

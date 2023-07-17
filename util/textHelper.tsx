@@ -24,16 +24,19 @@ export function getPromoAvailCount(
     promoCode.isCouponUsagePerUserInfinity &&
     promoCode.isCouponUsageInfinity
   ) {
+    console.log("1");
     return Number.POSITIVE_INFINITY;
   } else if (
     !promoCode.isCouponUsagePerUserInfinity &&
     promoCode.isCouponUsageInfinity
   ) {
+    console.log("2", promoCode.couponUsagePerUser - promoCode.ownUsage);
     return promoCode.couponUsagePerUser - promoCode.ownUsage;
   } else if (
     promoCode.isCouponUsagePerUserInfinity &&
     !promoCode.isCouponUsageInfinity
   ) {
+    console.log("3", promoCode.couponUsage - promoCode.usage);
     return promoCode.couponUsage - promoCode.usage;
   } else {
     var availableUsage = promoCode.couponUsage - promoCode.usage;
@@ -41,18 +44,21 @@ export function getPromoAvailCount(
       promoCode.isCouponUsageInfinity === false &&
       availableUsage >= promoCode.couponUsagePerUser
     ) {
+      console.log("4", promoCode.couponUsagePerUser - promoCode.ownUsage);
       return promoCode.couponUsagePerUser - promoCode.ownUsage;
     }
     if (promoCode.isCouponUsageInfinity === true) {
+      console.log("5", availableUsage);
       return availableUsage;
     }
     if (
       promoCode.isCouponUsageInfinity === false &&
       availableUsage < promoCode.couponUsagePerUser
     ) {
+      console.log("6", availableUsage - promoCode.ownUsage);
       return availableUsage - promoCode.ownUsage;
     }
-
+    console.log(availableUsage);
     return availableUsage >= 0 ? availableUsage : 0;
   }
 }

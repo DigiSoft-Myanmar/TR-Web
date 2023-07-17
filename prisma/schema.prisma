@@ -608,7 +608,7 @@ model Notification {
 model PromoCode {
   id                   String  @id @default(auto()) @map("_id") @db.ObjectId
   img                  String?
-  promoCode            String  @unique
+  promoCode            String
   minimumPurchasePrice Int
   discount             Int
   isPercent            Boolean @default(false)
