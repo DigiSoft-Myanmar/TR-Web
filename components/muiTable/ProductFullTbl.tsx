@@ -749,7 +749,15 @@ const ProductFullTbl = ({
               );
             },
           },
-
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "stock",
+            headerName: "Stock",
+            renderCell: ({ row }: any) => {
+              return <p className="truncate">{t(row.stock)}</p>;
+            },
+          },
           {
             flex: 0.15,
             minWidth: 100,
