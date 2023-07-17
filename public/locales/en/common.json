@@ -236,5 +236,22 @@
   "saleReport": "Category Sale Report",
   "customerService": "Customer Service",
   "joinNow": "Join Now",
-  "rating": "Ratings"
+  "rating": "Ratings",
+  "pricePerMonth": "Price",
+  "membershipValidity": "Membership Validity",
+  "topSearchDetails": "Top Search Details",
+  "saleReportDetails": "Sale Report Details",
+  "adsDetails": "Ads Details",
+  "updateMembership": "Update Membership",
+  "updateMembershipDescription": "Update membership to make suitable for users.",
+  "memberInfo": "Membership Information",
+  "fillMemberInfo": "Please input necessary information.",
+  "topSearchMember": "Top Search",
+  "fillTopSearchMember": "Make the products more stand out.",
+  "skuListingMember": "SKU Listing",
+  "fillSKUListingMember": "Make sure how much products seller can list.",
+  "reportsMember": "Reports",
+  "fillReportsMember": "Generate reports to make sellers more happy.",
+  "adsMember": "Ads",
+  "fillAdsMember": "Seller can make their business more engaged by advertising."
 }

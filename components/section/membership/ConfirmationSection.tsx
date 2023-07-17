@@ -5,6 +5,7 @@ import {
   showSuccessDialog,
   showUnauthorizedDialog,
 } from "@/util/swalFunction";
+import { formatAmount } from "@/util/textHelper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
@@ -112,8 +113,91 @@ function ConfirmationSection({
           }
         }}
       >
-        <div className="relative max-w-screen-xl py-8 px-10">
-          <section></section>
+        <div className="relative max-w-screen-xl">
+          <section className="flex flex-col gap-3">
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">
+                {t("name") + " " + t("eng")}
+              </h3>
+              <p>{membership.name}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">
+                {t("name") + " " + t("mm")}
+              </h3>
+              <p>{membership.nameMM}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("pricePerMonth")}</h3>
+              <p>{membership.price}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">
+                {t("membershipValidity")}
+              </h3>
+              <p>{membership.validity}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("onBoarding")}</h3>
+              <p>{membership.onBoardingLimit}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">
+                {t("dedicatedAccountManager")}
+              </h3>
+              <p>
+                {membership.allowDelicatedAccountManager ? "Enable" : "Disable"}
+              </p>
+            </div>
+          </section>
+          <section className="flex flex-col gap-3 mt-3 border-t pt-3">
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("startFrom")}</h3>
+              <p>{membership.topSearchStart}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("endAt")}</h3>
+              <p>{membership.topSearchEnd}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("SKUListing")}</h3>
+              <p>{membership.SKUListing}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("extraSKUPricing")}</h3>
+              <p>{formatAmount(membership.extraSKUPricing, locale, true)}</p>
+            </div>
+
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">
+                {t("categorySaleReport")}
+              </h3>
+              <p>{membership.subCategoryReport}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">
+                {t("buyerProfileReport")}
+              </h3>
+              <p>{membership.allowBuyerProfileReport ? "Enable" : "Disable"}</p>
+            </div>
+
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("freeAdsListing")}</h3>
+              <p>{membership.freeAdsLimit}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("adsValidity")}</h3>
+              <p>{membership.adsValidity}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("adsLifeTime")}</h3>
+              <p>{membership.adsLifeTime}</p>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-3">
+              <h3 className="font-semibold text-sm">{t("extraAdsPricing")}</h3>
+              <p>{formatAmount(membership.extraAdsPricing, locale, true)}</p>
+            </div>
+          </section>
         </div>
         {isDisable === true ? (
           <></>

@@ -79,8 +79,8 @@ function SearchSection({
       <span className="mb-10 text-sm">{t("fillTopSearchMember")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
         <FormInput
-          label={t("topSearchStart")}
-          placeHolder={t("enter") + " " + t("topSearchStart")}
+          label={t("startFrom")}
+          placeHolder={t("enter") + " " + t("startFrom")}
           error={errors.topSearchStart?.message}
           type="number"
           defaultValue={membership?.topSearchStart}
@@ -93,8 +93,8 @@ function SearchSection({
         />
 
         <FormInput
-          label={t("topSearchEnd")}
-          placeHolder={t("enter") + " " + t("topSearchEnd")}
+          label={t("endAt")}
+          placeHolder={t("enter") + " " + t("endAt")}
           error={errors.topSearchEnd?.message}
           type="number"
           defaultValue={membership?.topSearchEnd}

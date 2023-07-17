@@ -96,8 +96,8 @@ function AdsSection({
       <span className="mb-10 text-sm">{t("fillAdsMember")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
         <FormInput
-          label={t("freeAdsLimit")}
-          placeHolder={t("enter") + " " + t("freeAdsLimit")}
+          label={t("freeAdsListing")}
+          placeHolder={t("enter") + " " + t("freeAdsListing")}
           error={errors.freeAdsLimit?.message}
           type="number"
           defaultValue={membership?.freeAdsLimit}

@@ -161,7 +161,7 @@ export default async function handler(
             } else {
               stock = products[i].stockType;
             }
-          } else {
+          } else if (products[i].type === ProductType.Variable) {
             let atLeastOneInStock =
               products[i].variations.filter(
                 (e: any) => e.stockType === StockType.InStock

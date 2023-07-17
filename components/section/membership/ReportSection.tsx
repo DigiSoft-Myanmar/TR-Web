@@ -72,8 +72,8 @@ function ReportSection({
       <span className="mb-10 text-sm">{t("fillReportsMember")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
         <FormInput
-          label={t("subCategoryReport")}
-          placeHolder={t("enter") + " " + t("subCategoryReport")}
+          label={t("categorySaleReport")}
+          placeHolder={t("enter") + " " + t("categorySaleReport")}
           error={errors.subCategoryReport?.message}
           type="number"
           defaultValue={membership?.subCategoryReport}
@@ -87,7 +87,7 @@ function ReportSection({
 
         <FormInputCheckbox
           formControl={{ ...register("allowBuyerProfileReport") }}
-          label={t("allowBuyerProfileReport")}
+          label={t("buyerProfileReport")}
           value={watchFields.allowBuyerProfileReport}
         />
 
