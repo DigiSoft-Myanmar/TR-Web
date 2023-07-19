@@ -1638,7 +1638,6 @@ function MarketplacePage({
             adsLocations={[
               AdsLocation.ProductAds21,
               AdsLocation.ProductAds22,
-              ,
               AdsLocation.ProductAds23,
               AdsLocation.ProductAds24,
             ]}

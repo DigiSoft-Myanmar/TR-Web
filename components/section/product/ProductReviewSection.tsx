@@ -126,7 +126,7 @@ function ProductReviewSection({ productId }: { productId: string }) {
       <div className="bg-white p-5 rounded-md flex flex-col gap-5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:gap-5 justify-between">
           <h3 className="text-lg pl-3">{t("rating")}</h3>
-          <Tooltip title="Ratings are provided by seller based on experience with this user.">
+          <Tooltip title="Ratings are provided by buyers based on experience with this user.">
             <div className="text-sm text-gray-500 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-100 rounded-md p-3">
               <span>Ratings and reviews are verified</span>
               <svg

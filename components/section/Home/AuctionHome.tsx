@@ -218,7 +218,7 @@ function AuctionHome({
                       );
                     }}
                   >
-                    {t("placeBid")}
+                    {t("bidNow")}
                   </button>
                   <span className="text-sm text-center">
                     {formatAmount(bidAmount, locale, true)}

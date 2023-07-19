@@ -112,8 +112,8 @@ export default async function handler(
       });
 
       return res.status(200).json({
-        relatedProducts: relatedProducts,
-        sellerProducts: products,
+        sellerProducts: relatedProducts,
+        relatedProducts: products,
       });
     }
     default:
