@@ -27,7 +27,7 @@ async function addCategory(req: NextApiRequest, res: NextApiResponse<any>) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     let { id } = req.query;
@@ -38,7 +38,7 @@ export default async function handler(
       case "GET":
         let allowPermission = await canAccess(
           req,
-          otherPermission.categoriesView,
+          otherPermission.categoriesView
         );
         if (allowPermission === false) {
           return res.status(401).json(Unauthorized);
@@ -60,7 +60,7 @@ export default async function handler(
         ) {
           let allowPermission = await canAccess(
             req,
-            otherPermission.categoriesCreate,
+            otherPermission.categoriesCreate
           );
           if (allowPermission === false) {
             return res.status(401).json(Unauthorized);
@@ -78,7 +78,7 @@ export default async function handler(
         ) {
           let allowPermission = await canAccess(
             req,
-            otherPermission.categoriesUpdate,
+            otherPermission.categoriesUpdate
           );
           if (allowPermission === false) {
             return res.status(401).json(Unauthorized);
@@ -106,7 +106,7 @@ export default async function handler(
         ) {
           let allowPermission = await canAccess(
             req,
-            otherPermission.categoriesDelete,
+            otherPermission.categoriesDelete
           );
           if (allowPermission === false) {
             return res.status(401).json(Unauthorized);

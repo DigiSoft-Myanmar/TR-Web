@@ -101,16 +101,11 @@ const UGCReportTbl = ({
         setData(
           parentData.filter(
             (e: any) =>
-              e.product.name.toLowerCase().includes(value.toLowerCase()) ||
-              e.product.nameMM.toLowerCase().includes(value.toLowerCase()) ||
-              e.product.brand.brandName
-                .toLowerCase()
-                .includes(value.toLowerCase()) ||
+              e.product?.name.toLowerCase().includes(value.toLowerCase()) ||
+              e.product?.nameMM.toLowerCase().includes(value.toLowerCase()) ||
               e.reasons.find(
                 (z: any) => z.toLowerCase() === value.toLowerCase()
-              ) ||
-              e.brand.brandName.toLowerCase().includes(value.toLowerCase()) ||
-              e.brand.user.username.toLowerCase().includes(value.toLowerCase())
+              )
           )
         );
       } else {

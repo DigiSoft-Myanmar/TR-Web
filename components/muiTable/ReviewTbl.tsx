@@ -91,11 +91,8 @@ const ReviewTbl = ({
         setData(
           parentData.filter(
             (e: any) =>
-              e.product.name.toLowerCase().includes(value.toLowerCase()) ||
-              e.product.nameMM.toLowerCase().includes(value.toLowerCase()) ||
-              e.product.brand.brandName
-                .toLowerCase()
-                .includes(value.toLowerCase()) ||
+              e.product?.name.toLowerCase().includes(value.toLowerCase()) ||
+              e.product?.nameMM.toLowerCase().includes(value.toLowerCase()) ||
               e.rating === value
           )
         );

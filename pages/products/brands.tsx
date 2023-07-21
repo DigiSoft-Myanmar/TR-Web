@@ -74,7 +74,9 @@ function Default() {
       minWidth: 80,
       field: "nameMM",
       headerName: "Name (MM)",
-      renderCell: ({ row }: any) => <Typography>{`${row.nameMM}`}</Typography>,
+      renderCell: ({ row }: any) => (
+        <Typography>{`${row.nameMM ? row.nameMM : "-"}`}</Typography>
+      ),
     },
     {
       flex: 0.15,

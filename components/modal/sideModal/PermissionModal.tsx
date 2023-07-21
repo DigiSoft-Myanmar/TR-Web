@@ -253,11 +253,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(BuyerPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(BuyerPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -359,11 +359,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(SellerPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(SellerPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -465,11 +465,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(TraderPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(TraderPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -571,11 +571,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(StaffPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(StaffPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -677,13 +677,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [
-                                        ...Object.keys(SubscribePermission),
-                                      ].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(SubscribePermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -789,13 +787,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [
-                                        ...Object.keys(ProductPermission),
-                                      ].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(ProductPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -901,11 +897,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(BrandPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(BrandPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -1007,13 +1003,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [
-                                        ...Object.keys(ConditionPermission),
-                                      ].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(ConditionPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -1119,11 +1113,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(OrderPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(OrderPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -1225,13 +1219,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [
-                                        ...Object.keys(AuctionPermission),
-                                      ].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(AuctionPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -1337,11 +1329,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(ReportPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(ReportPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}
@@ -1443,11 +1435,11 @@ function PermissionModal({
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
                                 onClick={() => {
                                   setPermissions((prevValue) => {
-                                    return Array.from(
-                                      [...Object.keys(otherPermission)].filter(
-                                        (element) =>
-                                          !prevValue.includes(element)
-                                      )
+                                    return prevValue.filter(
+                                      (z) =>
+                                        !Array.from(
+                                          Object.keys(otherPermission)
+                                        ).includes(z)
                                     );
                                   });
                                 }}

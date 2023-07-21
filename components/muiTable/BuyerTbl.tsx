@@ -92,8 +92,12 @@ const BuyerTbl = ({
     if (parentData) {
       if (value) {
         setData(
-          parentData.filter((e: any) =>
-            e.username.toLowerCase().includes(value.toLowerCase())
+          parentData.filter(
+            (e: any) =>
+              e.username.toLowerCase().includes(value.toLowerCase()) ||
+              e.displayName?.toLowerCase().includes(value.toLowerCase()) ||
+              e.email?.toLowerCase().includes(value.toLowerCase()) ||
+              e.phoneNum?.toLowerCase().includes(value.toLowerCase())
           )
         );
       } else {

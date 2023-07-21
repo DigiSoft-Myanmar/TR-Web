@@ -88,21 +88,43 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
     if (parentData) {
       if (value) {
         setData(
-          parentData?.wonList.filter(
+          [...parentData.newList, ...parentData.wonList].filter(
             (e: any) =>
-              e.orderNo.toLowerCase().includes(value.toLowerCase()) ||
-              e.orderBy.username.toLowerCase().includes(value.toLowerCase()) ||
-              new Date(e.createdAt.username)
-                .toLocaleDateString("en-ca", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
+              e.product.name?.toLowerCase().includes(value.toLowerCase()) ||
+              e.product.nameMM?.toLowerCase().includes(value.toLowerCase()) ||
+              e.name?.toLowerCase().includes(value.toLowerCase()) ||
+              e.nameMM?.toLowerCase().includes(value.toLowerCase()) ||
+              e.SKU?.toLowerCase().includes(value.toLowerCase()) ||
+              e.auction.SKU?.toLowerCase().includes(value.toLowerCase()) ||
+              e.status?.toLowerCase().includes(value.toLowerCase()) ||
+              e.auction.createdBy?.username
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.auction.createdBy?.displayName
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.auction.createdBy?.phoneNum
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.auction.createdBy?.email
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller?.username
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller?.displayName
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller?.phoneNum
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller?.email
+                ?.toLowerCase()
                 .includes(value.toLowerCase())
           )
         );
       } else {
-        setData(parentData);
+        setData([...parentData.newList, ...parentData.wonList]);
       }
     }
   }, [parentData, value]);
@@ -457,43 +479,34 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
           </button>
         </div>
       </div>
-      {data && data.wonList && data.newList && (
+      {data && (
         <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
           <StatsCard
             label="Total Auctions"
             currentCount={
-              data?.wonList.filter(
-                (e: any) => e.createdAt > prevYear.toISOString()
-              ).length +
-              data?.newList.filter(
-                (e: any) => e.auction.createdAt > prevYear.toISOString()
-              ).length
+              data?.filter((e: any) => e.createdAt > prevYear.toISOString())
+                .length
             }
             prevCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt < prevYear.toISOString() &&
                   e.createdAt > doublePrevYear.toISOString()
-              ).length +
-              data?.newList.filter(
-                (e: any) =>
-                  e.auction.createdAt < prevYear.toISOString() &&
-                  e.auction.createdAt > doublePrevYear.toISOString()
               ).length
             }
-            totalCount={data?.wonList.length + data.newList.length}
+            totalCount={data?.length}
           />
           <StatsCard
             label="Total Purchased"
             currentCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt > prevYear.toISOString() &&
                   e.status === AuctionStatus.Purchased
               ).length
             }
             prevCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt < prevYear.toISOString() &&
                   e.createdAt > doublePrevYear.toISOString() &&
@@ -501,15 +514,14 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
               ).length
             }
             totalCount={
-              data?.wonList.filter(
-                (e: any) => e.status === AuctionStatus.Purchased
-              ).length
+              data?.filter((e: any) => e.status === AuctionStatus.Purchased)
+                .length
             }
           />
           <StatsCard
             label="Total Rejected"
             currentCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt > prevYear.toISOString() &&
                   (e.status === AuctionStatus.RejectByBuyer ||
@@ -518,7 +530,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
               ).length
             }
             prevCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt < prevYear.toISOString() &&
                   e.createdAt > doublePrevYear.toISOString() &&
@@ -528,7 +540,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
               ).length
             }
             totalCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.status === AuctionStatus.RejectByBuyer ||
                   e.status === AuctionStatus.RejectBySeller ||
@@ -539,14 +551,14 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
           <StatsCard
             label="Total Cart"
             currentCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt > prevYear.toISOString() &&
                   e.status === AuctionStatus.InCart
               ).length
             }
             prevCount={
-              data?.wonList.filter(
+              data?.filter(
                 (e: any) =>
                   e.createdAt < prevYear.toISOString() &&
                   e.createdAt > doublePrevYear.toISOString() &&
@@ -554,26 +566,24 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
               ).length
             }
             totalCount={
-              data?.wonList.filter(
-                (e: any) => e.status === AuctionStatus.InCart
-              ).length
+              data?.filter((e: any) => e.status === AuctionStatus.InCart).length
             }
           />
           <StatsCard
             label="Total Ended"
             currentCount={
-              data?.newList.filter(
-                (e: any) => e.auction.createdAt > prevYear.toISOString()
+              data?.filter(
+                (e: any) => e.auction?.createdAt > prevYear.toISOString()
               ).length
             }
             prevCount={
-              data?.newList.filter(
+              data?.filter(
                 (e: any) =>
-                  e.auction.createdAt < prevYear.toISOString() &&
-                  e.auction.createdAt > doublePrevYear.toISOString()
+                  e.auction?.createdAt < prevYear.toISOString() &&
+                  e.auction?.createdAt > doublePrevYear.toISOString()
               ).length
             }
-            totalCount={data?.newList.length}
+            totalCount={data?.filter((e: any) => e.auction).length}
           />
         </div>
       )}
@@ -607,11 +617,11 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
           </Box>
         </div>
       </CardContent>
-      {data && data.wonList && (
+      {data && (
         <DataGrid
           autoHeight
           columns={columns}
-          rows={[...data.newList, ...data.wonList]}
+          rows={data}
           disableRowSelectionOnClick
           sx={{ "& .MuiDataGrid-columnHeaders": { borderRadius: 0 } }}
         />

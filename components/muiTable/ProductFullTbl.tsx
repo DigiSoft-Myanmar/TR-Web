@@ -122,12 +122,10 @@ const ProductFullTbl = ({
         setData(
           parentData.filter(
             (e: any) =>
-              e.name.toLowerCase().includes(value.toLowerCase()) ||
-              e.nameMM.toLowerCase().includes(value.toLowerCase()) ||
-              e.productInfo.brandName
-                .toLowerCase()
-                .includes(value.toLowerCase()) ||
-              e.SKU.toLowerCase().includes(value.toLowerCase()) ||
+              e.name?.toLowerCase().includes(value.toLowerCase()) ||
+              e.nameMM?.toLowerCase().includes(value.toLowerCase()) ||
+              e.seller.username?.toLowerCase().includes(value.toLowerCase()) ||
+              e.SKU?.toLowerCase().includes(value.toLowerCase()) ||
               e.categories.find(
                 (z: any) =>
                   z.name.toLowerCase().includes(value.toLowerCase()) ||

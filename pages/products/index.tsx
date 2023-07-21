@@ -28,13 +28,24 @@ function Index() {
     () =>
       fetch(type ? "/api/products?type=" + type : "/api/products").then(
         (res) => {
-          let json = res.json();
-          return json;
+          if (res.status === 200) {
+            let json = res.json();
+            return json;
+          } else {
+            return {
+              errorCode: res.status,
+            };
+          }
         }
       )
   );
 
-  return session &&
+  return !data ? (
+    <LoadingScreen />
+  ) : data && data.errorCode ? (
+    <ErrorScreen statusCode={data.errorCode} />
+  ) : data &&
+    session &&
     (session.role === Role.Admin ||
       isSeller(session) ||
       session.role === Role.Staff ||
@@ -47,29 +58,25 @@ function Index() {
       </Head>
 
       <div>
-        {!data ? (
-          <LoadingScreen />
-        ) : (
-          <section
-            className={`flex flex-col space-y-5 ${
-              isSeller(session) ? "max-w-screen-xl mx-auto p-5" : ""
-            }`}
-          >
-            {data && data.length > 0 ? (
-              <ProductFullTbl
-                data={data}
-                refetch={() => {
-                  refetch();
-                }}
-                isAuction={type === ProductType.Auction}
-              />
-            ) : (
-              <EmptyScreen
-                onClickFn={() => router.push("/products/newProduct")}
-              />
-            )}
-          </section>
-        )}
+        <section
+          className={`flex flex-col space-y-5 ${
+            isSeller(session) ? "max-w-screen-xl mx-auto p-5" : ""
+          }`}
+        >
+          {data && data.length > 0 ? (
+            <ProductFullTbl
+              data={data}
+              refetch={() => {
+                refetch();
+              }}
+              isAuction={type === ProductType.Auction}
+            />
+          ) : (
+            <EmptyScreen
+              onClickFn={() => router.push("/products/newProduct")}
+            />
+          )}
+        </section>
       </div>
     </div>
   ) : (

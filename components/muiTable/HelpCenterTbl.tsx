@@ -95,8 +95,8 @@ const HelpCenterTbl = ({
           parentData.filter(
             (e: any) =>
               e.name.toLowerCase().includes(value.toLowerCase()) ||
-              e.email.toLowerCase().includes(value.toLowerCase()) ||
-              e.phone.toLowerCase().includes(value.toLowerCase()) ||
+              e.email?.toLowerCase().includes(value.toLowerCase()) ||
+              e.phone?.toLowerCase().includes(value.toLowerCase()) ||
               e.message.toLowerCase().includes(value.toLowerCase())
           )
         );

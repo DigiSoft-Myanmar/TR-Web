@@ -22,10 +22,11 @@ import {
 import {
   BuyerPermission,
   SellerPermission,
+  StaffPermission,
   TraderPermission,
 } from "@/types/permissionTypes";
 import { RoleNav } from "@/types/role";
-import { isInternal, isSeller } from "@/util/authHelper";
+import { hasPermission, isInternal, isSeller } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
 import {
   addNotification,
@@ -137,6 +138,43 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
       }
       return res.status(200).json(user);
     } else {
+      if (session.role === Role.Staff) {
+        if (
+          type?.toString() === RoleNav.Buyers ||
+          type?.toString() === Role.Buyer
+        ) {
+          if (!hasPermission(session, BuyerPermission.buyerViewAllow)) {
+            return res.status(401).json(Unauthorized);
+          }
+        }
+        if (
+          type?.toString() === RoleNav.Sellers ||
+          type?.toString() === Role.Seller
+        ) {
+          if (!hasPermission(session, SellerPermission.sellerViewAllow)) {
+            return res.status(401).json(Unauthorized);
+          }
+        }
+
+        if (
+          type?.toString() === RoleNav.Traders ||
+          type?.toString() === Role.Trader
+        ) {
+          if (!hasPermission(session, TraderPermission.traderViewAllow)) {
+            return res.status(401).json(Unauthorized);
+          }
+        }
+
+        if (
+          type?.toString() === RoleNav.Staff ||
+          type?.toString() === Role.Staff
+        ) {
+          if (!hasPermission(session, StaffPermission.staffViewAllow)) {
+            return res.status(401).json(Unauthorized);
+          }
+        }
+        return res.status(401).json(Unauthorized);
+      }
       let user: any = await getAllUser(type?.toString());
 
       return res.status(200).json(user);
@@ -150,6 +188,7 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     let session = await useAuth(req);
     let data = JSON.parse(req.body);
+
     if (data.role) {
       if (isInternal(session)) {
         let body = {

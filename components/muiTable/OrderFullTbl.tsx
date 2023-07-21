@@ -93,9 +93,19 @@ const OrderFullTbl = ({
     if (parentData) {
       if (value) {
         setData(
-          parentData.filter(
-            (e: any) =>
-              e.orderNo.toLowerCase().includes(value.toLowerCase()) ||
+          parentData.filter((e: any) => {
+            let data = e.invoiceStatus;
+            let sellerId = e.sellerIds.find((z) => z === session.id);
+            data = e.invoiceStatus.filter((z) =>
+              sellerId ? z.seller.id === sellerId : true
+            );
+            let status = getOrderStatus(e, sellerId).status;
+
+            return (
+              e.orderNo
+                .toString()
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
               e.orderBy.username.toLowerCase().includes(value.toLowerCase()) ||
               new Date(e.createdAt.username)
                 .toLocaleDateString("en-ca", {
@@ -103,8 +113,10 @@ const OrderFullTbl = ({
                   month: "short",
                   year: "numeric",
                 })
-                .includes(value.toLowerCase())
-          )
+                .includes(value.toLowerCase()) ||
+              status.toLowerCase().includes(value.toLowerCase())
+            );
+          })
         );
       } else {
         setData(parentData);

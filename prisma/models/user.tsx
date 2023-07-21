@@ -94,7 +94,11 @@ export const getUserByEmail = async (email: string) => {
     where: {
       email: email,
     },
+    include: {
+      userDefinedRole: true,
+    },
   });
+
   return user;
 };
 
@@ -102,6 +106,9 @@ export const getUserByPhone = async (phone: string) => {
   const user = await prisma.user.findUnique({
     where: {
       phoneNum: phone,
+    },
+    include: {
+      userDefinedRole: true,
     },
   });
   return user;

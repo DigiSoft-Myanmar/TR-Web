@@ -88,7 +88,11 @@ const AdsTable = ({
           parentData?.filter(
             (e: any) =>
               e.seller.username.toLowerCase().includes(value.toLowerCase()) ||
-              e.seller.displayName?.toLowerCase().includes(value.toLowerCase())
+              e.seller.displayName
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.seller.phoneNum?.toLowerCase().includes(value.toLowerCase()) ||
+              e.seller.email?.toLowerCase().includes(value.toLowerCase())
           )
         );
       } else {

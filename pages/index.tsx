@@ -22,7 +22,7 @@ import Head from "next/head";
 import { defaultDescription, fileUrl } from "@/types/const";
 import { useSession } from "next-auth/react";
 import { formatAmount, getHighlightText, getText } from "@/util/textHelper";
-import { isInternal } from "@/util/authHelper";
+import { hasPermission, isInternal } from "@/util/authHelper";
 import { AdsLocation, AdsPage } from "@/util/adsHelper";
 import AdsHere from "@/components/Ads/AdsHere";
 import PricingDetail from "@/components/presentational/PricingDetail";
@@ -33,6 +33,7 @@ import BuyNowHome from "@/components/section/Home/BuyNowHome";
 import { getPricing } from "@/util/pricing";
 import { decryptPhone, encrypt, encryptPhone } from "@/util/encrypt";
 import AdminDashboard from "@/components/screen/AdminDashboard";
+import { otherPermission } from "@/types/permissionTypes";
 
 export function IndexPage({
   sellerList,
@@ -154,7 +155,11 @@ export function IndexPage({
           <link rel="icon" href="/favicon.ico" />
           <meta name="description" content={defaultDescription} />
         </Head>
-        <AdminDashboard />
+        {hasPermission(session, otherPermission.dashboardView) ? (
+          <AdminDashboard />
+        ) : (
+          <></>
+        )}
       </div>
     );
   }

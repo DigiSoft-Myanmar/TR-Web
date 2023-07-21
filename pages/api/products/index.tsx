@@ -21,8 +21,8 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { PageType } from "@/types/pageType";
-import { ProductPermission } from "@/types/permissionTypes";
-import { isSeller } from "@/util/authHelper";
+import { AuctionPermission, ProductPermission } from "@/types/permissionTypes";
+import { hasPermission, isSeller } from "@/util/authHelper";
 import {
   addNotification,
   getAdminIdList,
@@ -115,6 +115,12 @@ export default async function handler(
                   : true
               )
             );
+        }
+        if (
+          session.role === Role.Staff &&
+          !hasPermission(session, ProductPermission.productViewAllow)
+        ) {
+          return res.status(401).json(Unauthorized);
         }
 
         let products: any = await getAllProducts(

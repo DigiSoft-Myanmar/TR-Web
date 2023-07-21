@@ -61,3 +61,19 @@ export function getHeaders(session: User) {
     return null;
   }
 }
+
+export function hasPermission(session: any, permission: string) {
+  if (isInternal(session)) {
+    if (session.role === Role.Staff) {
+      if (session.userDefinedRole.permission.find((z) => z === permission)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}

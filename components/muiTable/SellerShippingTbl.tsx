@@ -103,8 +103,7 @@ const SellerShippingTbl = ({
             (e: any) =>
               e.username.toLowerCase().includes(value.toLowerCase()) ||
               e.phoneNum.toLowerCase().includes(value.toLowerCase()) ||
-              e.email.toLowerCase().includes(value.toLowerCase()) ||
-              e.brand.brandName.toLowerCase().includes(value.toLowerCase())
+              e.email?.toLowerCase().includes(value.toLowerCase())
           )
         );
       } else {

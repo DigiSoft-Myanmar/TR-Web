@@ -89,14 +89,31 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
         setData(
           parentData.filter(
             (e: any) =>
-              e.orderNo.toLowerCase().includes(value.toLowerCase()) ||
-              e.orderBy.username.toLowerCase().includes(value.toLowerCase()) ||
-              new Date(e.createdAt.username)
-                .toLocaleDateString("en-ca", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
+              e.product.name?.toLowerCase().includes(value.toLowerCase()) ||
+              e.product.nameMM?.toLowerCase().includes(value.toLowerCase()) ||
+              e.SKU?.toLowerCase().includes(value.toLowerCase()) ||
+              e.status?.toLowerCase().includes(value.toLowerCase()) ||
+              e.createdBy.username
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.createdBy.displayName
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.createdBy.phoneNum
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.createdBy.email?.toLowerCase().includes(value.toLowerCase()) ||
+              e.product.seller.username
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller.displayName
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller.phoneNum
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
+              e.product.seller.email
+                ?.toLowerCase()
                 .includes(value.toLowerCase())
           )
         );

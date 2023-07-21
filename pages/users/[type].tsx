@@ -48,8 +48,14 @@ function Index() {
 
   const { isLoading, error, data, refetch } = useQuery("usersData", () =>
     fetch("/api/user?type=" + userType).then((res) => {
-      let json = res.json();
-      return json;
+      if (res.status === 200) {
+        let json = res.json();
+        return json;
+      } else {
+        return {
+          errorCode: res.status,
+        };
+      }
     })
   );
 
@@ -73,7 +79,9 @@ function Index() {
     }
   }, [session, router.asPath]);
 
-  return session &&
+  return data && data.errorCode ? (
+    <ErrorScreen statusCode={data.errorCode} />
+  ) : session &&
     (session.role === Role.Admin ||
       session.role === Role.Staff ||
       session.role === Role.SuperAdmin) ? (
