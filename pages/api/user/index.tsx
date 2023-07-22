@@ -73,6 +73,7 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
   const {
     isLogin,
     phone,
+    uid,
     type,
     email,
     isSeller,
@@ -99,6 +100,19 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
     if (user) {
       return res.status(200).json(UsersExists);
     } else {
+      return res.status(404).json(NotAvailable);
+    }
+  } else if (isLogin === "true" && phone && uid) {
+    let user = await getUserByPhone(phone.toString());
+    if (user && user.isBlocked === false && user.isDeleted === false) {
+      return res.status(200).json(user);
+    } else if (user.isBlocked === true || user.isDeleted === true) {
+      return res.status(405).json({
+        isBlocked: user.isBlocked,
+        isDeleted: user.isDeleted,
+      });
+    }
+    {
       return res.status(404).json(NotAvailable);
     }
   } else if (isLogin && phone) {
