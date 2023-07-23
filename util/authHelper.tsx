@@ -71,7 +71,7 @@ export function hasPermission(session: any, permission: string) {
         return false;
       }
     } else {
-      return false;
+      return true;
     }
   } else {
     return false;
