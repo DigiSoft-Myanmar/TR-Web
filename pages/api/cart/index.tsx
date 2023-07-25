@@ -801,7 +801,9 @@ export default async function handler(
                 await addNotification(msg, "");
                 await sendOrderEmail(newOrder, "New Order " + newOrder.orderNo);
 
-                return res.status(200).json(Success);
+                return res.status(200).json({
+                  orderNo: newOrder.orderNo,
+                });
               } else {
                 return res.status(400).json(BadRequest);
               }

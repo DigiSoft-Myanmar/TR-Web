@@ -339,7 +339,9 @@ function Default({
                 <h1 className="text-primary font-semibold">Order Details</h1>
                 <OrderCartTbl
                   data={order.cartItems.filter((e: any) =>
-                    isSeller(session) ? e.sellerId === session.id : true
+                    sellerList.find((z) => z.id === e.sellerId)
+                      ? e.sellerId === session.id
+                      : true
                   )}
                   sellerResponse={order?.sellerResponse}
                   attributeList={attributeList}

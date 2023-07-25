@@ -7,6 +7,7 @@ import {
   showUnauthorizedDialog,
 } from "@/util/swalFunction";
 import { getText } from "@/util/textHelper";
+import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -200,7 +201,11 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
                       () => {
                         clearCart();
                         removePromotion();
-                        router.push("/orders");
+                        if (session.role === Role.Trader) {
+                          router.push("/orders/purchasedHistory");
+                        } else {
+                          router.push("/orders");
+                        }
                       }
                     );
                   } else {
