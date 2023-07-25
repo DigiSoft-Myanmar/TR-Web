@@ -339,7 +339,7 @@ function Default({
                 <h1 className="text-primary font-semibold">Order Details</h1>
                 <OrderCartTbl
                   data={order.cartItems.filter((e: any) =>
-                    sellerList.find((z) => z.id === e.sellerId)
+                    sellerList.find((z) => z.id === session.id)
                       ? e.sellerId === session.id
                       : true
                   )}

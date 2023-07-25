@@ -193,6 +193,7 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
                   }),
                   headers: getHeaders(session),
                 }).then(async (data) => {
+                  let json = await data.json();
                   if (data.status === 200) {
                     showSuccessDialog(
                       "Order placed successfully.",
@@ -201,11 +202,7 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
                       () => {
                         clearCart();
                         removePromotion();
-                        if (session.role === Role.Trader) {
-                          router.push("/orders/purchasedHistory");
-                        } else {
-                          router.push("/orders");
-                        }
+                        router.push("/orders/" + json.orderNo);
                       }
                     );
                   } else {
