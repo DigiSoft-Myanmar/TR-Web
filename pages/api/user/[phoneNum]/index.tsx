@@ -81,9 +81,9 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
           }
           if (imgList[1]) {
             if (imgList[1].type === "nrcFront" && filesData[1]) {
-              profile.nrcFront = filesData[0].filename;
+              profile.nrcFront = filesData[1].filename;
             } else if (imgList[1].type === "nrcBack" && filesData[1]) {
-              profile.nrcBack = filesData[0].filename;
+              profile.nrcBack = filesData[1].filename;
             }
           }
           if (imgList[2]) {
