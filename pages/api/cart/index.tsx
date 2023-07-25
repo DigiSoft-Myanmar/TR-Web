@@ -489,7 +489,12 @@ export default async function handler(
           case "POST":
             let { type } = req.query;
             if (type === "Order") {
-              let body = JSON.parse(req.body);
+              let body: any = {};
+              if (typeof req.body === "object") {
+                body = req.body;
+              } else {
+                body = JSON.parse(req.body);
+              }
               let data = await prisma.cartItems.findFirst({
                 where: {
                   userId: session.id,
@@ -801,7 +806,12 @@ export default async function handler(
                 return res.status(400).json(BadRequest);
               }
             } else {
-              let body = JSON.parse(req.body);
+              let body: any = {};
+              if (typeof req.body === "object") {
+                body = req.body;
+              } else {
+                body = JSON.parse(req.body);
+              }
               let b = { ...body };
 
               if (b.user) {

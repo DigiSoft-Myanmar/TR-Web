@@ -157,7 +157,7 @@ function ShippingCostCard({
                       onClick={(e) => {
                         e.stopPropagation();
                         showConfirmationDialog(
-                          "Are you sure to change paid by recipient on delivery to " +
+                          "Are you sure to disable delivery to " +
                             state.name +
                             "?",
                           (state.nameMM && state.nameMM.length > 0

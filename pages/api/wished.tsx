@@ -48,7 +48,12 @@ async function modifyWishedList(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
   if (session) {
-    let body = JSON.parse(req.body);
+    let body: any = {};
+    if (typeof req.body === "object") {
+      body = req.body;
+    } else {
+      body = JSON.parse(req.body);
+    }
 
     await prisma.wishedItems.upsert({
       where: {

@@ -171,7 +171,7 @@ function ShippingCostDistrinct({ district, isUpdate, state, sellerId }: Props) {
                       onClick={(e) => {
                         e.stopPropagation();
                         showConfirmationDialog(
-                          "Are you sure to change paid by recipient on delivery to " +
+                          "Are you sure to disable shipping to " +
                             district.name +
                             "?",
                           (district.nameMM && district.nameMM.length > 0
