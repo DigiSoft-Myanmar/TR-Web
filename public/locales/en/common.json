@@ -253,5 +253,9 @@
   "reportsMember": "Reports",
   "fillReportsMember": "Generate reports to make sellers more happy.",
   "adsMember": "Ads",
-  "fillAdsMember": "Seller can make their business more engaged by advertising."
+  "fillAdsMember": "Seller can make their business more engaged by advertising.",
+  "phoneNum": "Phone Number",
+  "billingAddress": "Billing Address",
+  "shippingAddress": "Shipping Address",
+  "orderNote": "Order Note"
 }
