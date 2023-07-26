@@ -20,6 +20,7 @@ import {
 import { NotiType, Order, ProductType, Role, StockType } from "@prisma/client";
 import { sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { addCartItems } from ".";
 
 async function addUnitSold(order: any, sellerId: string) {
   let cartItems = order.cartItems.filter((z: any) => z.sellerId === sellerId);
@@ -201,7 +202,83 @@ export default async function handler(
         if (order) {
           switch (req.method) {
             case "GET":
-              return res.status(200).json(Success);
+              let order: any = await prisma.order.findFirst({
+                where: {
+                  orderNo: parseInt(orderNo.toString()),
+                },
+                include: {
+                  orderBy: true,
+                  promoCodes: true,
+                },
+              });
+              order = await addCartItems(order);
+              const sellerList = [];
+
+              if (order) {
+                for (let i = 0; i < order.cartItems.length; i++) {
+                  let item: any = order.cartItems[i];
+                  let prod = await prisma.product.findFirst({
+                    where: {
+                      id: item.productId,
+                    },
+                    include: {
+                      seller: true,
+                      Brand: true,
+                      Condition: true,
+                    },
+                  });
+                  order.cartItems[i].id = i + 1;
+                  if (prod) {
+                    order.cartItems[i].productInfo = prod;
+                  }
+                }
+                for (let i = 0; i < order.sellerResponse.length; i++) {
+                  let item: any = order.sellerResponse[i];
+                  let s = sortBy(
+                    item.statusHistory,
+                    (obj: any) => obj.updatedDate
+                  ).reverse()[0];
+                  let b = await prisma.brand.findFirst({
+                    where: {
+                      id: item.brandId,
+                    },
+                  });
+
+                  for (let j = 0; j < item.statusHistory.length; j++) {
+                    let statusItem = item.statusHistory[j];
+
+                    if (statusItem.updatedBy) {
+                      let user = await prisma.user.findFirst({
+                        where: {
+                          id: statusItem.updatedBy,
+                        },
+                      });
+                      if (user) {
+                        item.statusHistory[j].updatedUser = user;
+                      }
+                    } else {
+                      item.statusHistory[j].updatedUser = {
+                        username: "System",
+                        role: Role.System,
+                      };
+                    }
+                  }
+
+                  let seller = await prisma.user.findFirst({
+                    where: {
+                      id: item.sellerId,
+                    },
+                  });
+                  if (seller) {
+                    sellerList.push(seller);
+                  }
+                }
+              }
+
+              return res.status(200).json({
+                sellerList: JSON.parse(JSON.stringify(sellerList)),
+                order: JSON.parse(JSON.stringify(order)),
+              });
             case "PUT":
               if (isSeller(session) || isInternal(session)) {
                 const seller = await prisma.user.findFirst({
