@@ -222,7 +222,9 @@ function BuyNowHome({
                   >
                     {highlightProd.stockType === StockType.InStock
                       ? t("inStock")
-                      : highlightProd.stockType === StockType.OutOfStock
+                      : highlightProd.stockType === StockType.OutOfStock ||
+                        (highlightProd.stockType === StockType.StockLevel &&
+                          highlightProd.stockLevel <= 0)
                       ? t("outOfStock")
                       : highlightProd.stockType === StockType.StockLevel
                       ? t("quantity").replace(

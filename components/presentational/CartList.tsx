@@ -299,15 +299,15 @@ function CartList() {
                             <span className="text-xs ml-1">Remove</span>
                           </button>
                         </div>
-                        <div className="flex w-full flex-grow flex-col space-y-1 pr-3">
-                          <span className="text-xs font-semibold text-primary">
+                        <div className="flex flex-grow flex-col space-y-1 pr-3">
+                          <span className="text-xs font-semibold text-primary line-clamp-1">
                             {
                               productDetails.find(
                                 (p: Product) => e.productId === p.id
                               )?.Brand.name
                             }
                           </span>
-                          <h3 className="text-linear truncate py-1 text-sm font-semibold">
+                          <h3 className="text-linear py-1 text-sm font-semibold line-clamp-2">
                             {getText(
                               productDetails.find(
                                 (p: Product) => e.productId === p.id

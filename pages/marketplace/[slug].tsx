@@ -952,12 +952,19 @@ function MarketplacePage({
                         >
                           <span className="text-xs px-2 py-1">
                             {product.type === ProductType.Fixed
-                              ? product.stockType === StockType.StockLevel
+                              ? product.stockType === StockType.StockLevel &&
+                                product.stockLevel <= 0
+                                ? t("outOfStock")
+                                : product.stockType === StockType.StockLevel
                                 ? t("quantity").replace(
                                     "{data}",
                                     formatAmount(product.stockLevel, locale)
                                   )
                                 : t(product.stockType)
+                              : currentVariation?.stockType ===
+                                  StockType.StockLevel &&
+                                currentVariation?.stockLevel <= 0
+                              ? t("outOfStock")
                               : currentVariation?.stockType ===
                                 StockType.StockLevel
                               ? t("quantity").replace(

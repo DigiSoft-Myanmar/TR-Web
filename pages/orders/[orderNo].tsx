@@ -356,8 +356,7 @@ function Default({
                       {formatAmount(
                         getTotal(
                           getCartItems(order?.cartItems, order?.sellerResponse),
-                          session.role === Role.Seller ||
-                            session.role === Role.Trader
+                          sellerList.find((z) => z.id === session.id)
                             ? session.id
                             : ""
                         ),
@@ -373,8 +372,7 @@ function Default({
                       {formatAmount(
                         getShippingTotal(
                           order?.sellerResponse,
-                          session.role === Role.Seller ||
-                            session.role === Role.Trader
+                          sellerList.find((z) => z.id === session.id)
                             ? session.id
                             : ""
                         ),
@@ -392,7 +390,9 @@ function Default({
                       {formatAmount(
                         getDiscountTotal(
                           order?.discountTotal,
-                          isSeller(session) ? session.id : ""
+                          sellerList.find((z) => z.id === session.id)
+                            ? session.id
+                            : ""
                         ),
                         locale,
                         true
@@ -406,22 +406,19 @@ function Default({
                       {formatAmount(
                         getTotal(
                           getCartItems(order?.cartItems, order?.sellerResponse),
-                          session.role === Role.Seller ||
-                            session.role === Role.Trader
+                          sellerList.find((z) => z.id === session.id)
                             ? session.id
                             : ""
                         ) -
                           getDiscountTotal(
                             order?.discountTotal,
-                            session.role === Role.Seller ||
-                              session.role === Role.Trader
+                            sellerList.find((z) => z.id === session.id)
                               ? session.id
                               : ""
                           ) +
                           getShippingTotal(
                             order?.sellerResponse,
-                            session.role === Role.Seller ||
-                              session.role === Role.Trader
+                            sellerList.find((z) => z.id === session.id)
                               ? session.id
                               : ""
                           ),
