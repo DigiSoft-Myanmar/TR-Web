@@ -611,6 +611,7 @@ export default async function handler(
                     }
                   }
                 }
+                console.log(discountTotal);
                 let user = await prisma.user.findFirst({
                   where: {
                     id: data?.userId,
