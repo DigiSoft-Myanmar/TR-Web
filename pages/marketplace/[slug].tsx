@@ -683,7 +683,7 @@ function MarketplacePage({
                               : product.seller.username}
                           </h3>
                           {ratingData && (
-                            <span className="text-xs text-gray-600 mt-2 flex flex-row items-center gap-1">
+                            <span className="text-xs text-gray-600 flex flex-row items-center gap-1">
                               {product.seller.role === Role.Seller
                                 ? calculateRating(
                                     ratingData.sellerReview,
@@ -1277,14 +1277,14 @@ function MarketplacePage({
                         <></>
                       )}
                     </div>
-                    <div className="flex flex-col gap-3 py-3 border-t border-t-gray-500">
+                    <div className="flex flex-col gap-3 pb-3">
                       <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">
                         <p className="text-gray-500">Qty: </p>
                         <span className="font-semibold text-primaryText">
                           {qty}
                         </span>
                       </div>
-                      <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm">
+                      <div className="flex flex-row items-center justify-between gap-3 px-3 text-sm border-t border-t-gray-500 pt-3">
                         <p className="text-gray-500">Total Price: </p>
                         <span className="font-semibold text-primaryText">
                           {formatAmount(

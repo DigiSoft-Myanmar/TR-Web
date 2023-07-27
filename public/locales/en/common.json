@@ -260,5 +260,7 @@
   "orderNote": "Order Note",
   "updateUser": "Update User",
   "updateUserDescription": "Update user",
-  "fillMillInfo": "Easy login with email and password"
+  "fillMillInfo": "Easy login with email and password",
+  "updateProduct": "Update Product",
+  "updateProductDescription": "Update Product Description"
 }
