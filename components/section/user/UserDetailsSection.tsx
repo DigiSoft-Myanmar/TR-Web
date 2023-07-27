@@ -27,7 +27,7 @@ function UserDetailsSection({
 }) {
   const { data: session }: any = useSession();
   const { locale } = useRouter();
-  const date = new Date(user.memberStartDate);
+  const date = new Date(user?.memberStartDate);
   if (user.currentMembership) {
     date.setDate(date.getDate() + user.currentMembership.validity);
   }

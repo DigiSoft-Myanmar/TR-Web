@@ -96,6 +96,7 @@ export const getUserByEmail = async (email: string) => {
     },
     include: {
       userDefinedRole: true,
+      currentMembership: true,
     },
   });
 
@@ -109,6 +110,7 @@ export const getUserByPhone = async (phone: string) => {
     },
     include: {
       userDefinedRole: true,
+      currentMembership: true,
     },
   });
   return user;

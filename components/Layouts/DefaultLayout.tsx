@@ -10,7 +10,7 @@ import AuthHeader from "../navbar/AuthHeader";
 import Footer from "../navbar/Footer";
 import Header from "../navbar/Header";
 import LoadingScreen from "../screen/LoadingScreen";
-import { getHeaders, isInternal } from "@/util/authHelper";
+import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
 import { useQuery } from "react-query";
@@ -88,15 +88,21 @@ function DefaultLayout({ children }: LayoutProps) {
 
   React.useEffect(() => {
     if (session) {
-      /* if (!isInternal(session)) {
+      if (!isInternal(session)) {
         if (!session.nrcFront) {
           router.push(
             "/account/" +
               encodeURIComponent(encryptPhone(session.phoneNum)) +
               "?action=edit"
           );
+        } else if (isSeller(session) && !session.currentMembership) {
+          router.push(
+            "/account/" +
+              encodeURIComponent(encryptPhone(session.phoneNum)) +
+              "?action=edit"
+          );
         }
-      } */
+      }
     }
   }, [session, router.asPath]);
 
