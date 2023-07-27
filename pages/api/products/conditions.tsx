@@ -22,9 +22,7 @@ export default async function handler(
     let { id } = req.query;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session: any = await useAuth(req);
-    if (!session) {
-      return res.status(401).json(Unauthorized);
-    }
+
     if (req.method === "GET") {
       let includeData: any = {
         Product: true,
