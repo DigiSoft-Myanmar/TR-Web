@@ -36,6 +36,7 @@ export default async function handler(
           endPrice,
           brands,
           sort,
+          sellerId,
         } = req.query;
 
         let page = pageQry ? parseInt(pageQry.toString()) : 1;
@@ -204,6 +205,12 @@ export default async function handler(
             brandId: {
               in: cd,
             },
+          };
+        }
+        if (sellerId) {
+          filter = {
+            ...filter,
+            sellerId: sellerId.toString(),
           };
         }
         if (qry) {

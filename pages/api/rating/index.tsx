@@ -39,7 +39,12 @@ export default async function handler(
       switch (req.method) {
         case "POST":
           if (userId || productId) {
-            let body = JSON.parse(req.body);
+            let body: any = {};
+            if (typeof req.body === "object") {
+              body = req.body;
+            } else {
+              body = JSON.parse(req.body);
+            }
             if (userId) {
               const user = await prisma.user.findFirst({
                 where: {
@@ -143,7 +148,12 @@ export default async function handler(
           }
         case "PUT":
           if (reviewId) {
-            let body = JSON.parse(req.body);
+            let body: any = {};
+            if (typeof req.body === "object") {
+              body = req.body;
+            } else {
+              body = JSON.parse(req.body);
+            }
             if (userId) {
               const user = await prisma.user.findFirst({
                 where: {

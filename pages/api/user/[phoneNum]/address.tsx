@@ -93,7 +93,12 @@ export default async function handler(
           }
         case "PUT":
           let { id } = req.query;
-          let body = JSON.parse(req.body);
+          let body: any = {};
+          if (typeof req.body === "object") {
+            body = req.body;
+          } else {
+            body = JSON.parse(req.body);
+          }
           console.log(id);
           if (id) {
             await prisma.userAddress.update({

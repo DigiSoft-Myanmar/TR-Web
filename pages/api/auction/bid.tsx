@@ -87,7 +87,21 @@ export default async function handler(
         where: filter,
         include: {
           createdBy: true,
-          product: true,
+          product: {
+            include: {
+              categories: {
+                include: {
+                  subCategory: true,
+                },
+              },
+              Condition: true,
+              Brand: true,
+              seller: true,
+              UnitSold: true,
+              Review: true,
+              WonList: true,
+            },
+          },
           WonList: true,
         },
         orderBy: {
