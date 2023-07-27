@@ -124,7 +124,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
           </div>
         </section>
 
-        <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-screen-lg mx-5 lg:mx-auto">
           {siteInfo?.membershipFeatures.map((e: any, index: number) => (
             <div
               key={index}
