@@ -70,10 +70,10 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-t-0 border-gray-300 flex flex-col"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-t-0 border-gray-300 lg:flex flex-col"
                     : index === 0
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-l-0 border-gray-300 flex flex-col"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-gray-300 flex flex-col"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-l-0 border-gray-300 lg:flex flex-col"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border border-r-0 border-t-0 border-gray-300 lg:flex flex-col"
                 }
               ></td>
             ))}
