@@ -231,8 +231,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -292,8 +292,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -332,8 +332,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -409,8 +409,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -470,8 +470,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -510,8 +510,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -552,8 +552,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -594,8 +594,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -671,8 +671,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -732,8 +732,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -772,8 +772,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -847,8 +847,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -908,8 +908,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -996,8 +996,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -1130,8 +1130,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -1191,8 +1191,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
@@ -1280,8 +1280,8 @@ function MembershipTable({
                 key={index}
                 className={
                   data.length - 1 === index
-                    ? "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 flex flex-col bg-gray-100"
-                    : "min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 flex flex-col bg-gray-100"
+                    ? "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-r border-gray-300 lg:flex flex-col bg-gray-100"
+                    : "hidden min-w-[200px] max-w-[200px] lg:w-1/3 p-4 border-gray-300 lg:flex flex-col bg-gray-100"
                 }
               ></td>
             ))}
