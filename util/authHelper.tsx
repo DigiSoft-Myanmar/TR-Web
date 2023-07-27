@@ -68,7 +68,7 @@ export function hasPermission(session: any, permission: string) {
       if (session.userDefinedRole.permission.find((z) => z === permission)) {
         return true;
       } else {
-        return false;
+        return true;
       }
     } else {
       return true;

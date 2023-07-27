@@ -257,5 +257,8 @@
   "phoneNum": "Phone Number",
   "billingAddress": "Billing Address",
   "shippingAddress": "Shipping Address",
-  "orderNote": "Order Note"
+  "orderNote": "Order Note",
+  "updateUser": "Update User",
+  "updateUserDescription": "Update user",
+  "fillMillInfo": "Easy login with email and password"
 }
