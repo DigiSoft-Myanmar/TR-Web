@@ -329,7 +329,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {BuyerPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -439,7 +439,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {SellerPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -549,7 +549,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {TraderPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -659,7 +659,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {StaffPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -772,7 +772,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {SubscribePermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -882,7 +882,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {ProductPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -992,7 +992,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {BrandPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -1105,7 +1105,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {ConditionPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -1215,7 +1215,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {OrderPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -1325,7 +1325,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {AuctionPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -1435,7 +1435,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {ReportPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
@@ -1545,7 +1545,7 @@ function PermissionModal({
                                     }}
                                   />
                                   <span className={`label-text ml-3 flex-grow`}>
-                                    {otherPermission[value]}
+                                    {value}
                                   </span>
                                 </label>
                               </div>
