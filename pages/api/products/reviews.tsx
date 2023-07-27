@@ -173,6 +173,7 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
     }
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
+
     if (session) {
       let data = await prisma.review.findFirst({
         where: {
@@ -183,6 +184,14 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
           product: true,
         },
       });
+      let prod = await prisma.product.findFirst({
+        where: {
+          id: id.toString(),
+        },
+      });
+      if (!prod) {
+        return res.status(400).json(NotAvailable);
+      }
 
       let adminList = await getAdminIdList();
       let staffList = await getStaffIdList(ProductPermission.productNotiAllow);
@@ -193,13 +202,12 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
         title: "New Product Review",
         type: data ? NotiType.UpdateProductReview : NotiType.NewProductReview,
         requireInteraction: false,
-        sendList: [...adminList, ...staffList, data.product.sellerId],
+        sendList: [...adminList, ...staffList, prod.sellerId],
         details: {
-          web:
-            "/products/" + encodeURIComponent(data.product.slug) + "#reviews",
+          web: "/products/" + encodeURIComponent(prod.slug) + "#reviews",
           mobile: {
             screen: "Products",
-            slug: data.product.slug,
+            slug: prod.slug,
           },
         },
       };
@@ -228,33 +236,28 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
         });
       }
 
-      let prod = await prisma.product.findFirst({
+      let reviews = await prisma.review.findMany({
+        where: {
+          productId: prod.id,
+        },
+      });
+      let totalReviews = reviews
+        .map((z) => z.rating)
+        .reduce((a, b) => a + b, 0);
+      let reviewCount = reviews.length;
+
+      await prisma.product.update({
         where: {
           id: id.toString(),
         },
+        data: {
+          ratingIndex: reviewCount > 0 ? totalReviews / reviewCount : 0,
+        },
       });
-      if (prod) {
-        let reviews = await prisma.review.findMany({
-          where: {
-            productId: prod.id,
-          },
-        });
-        let totalReviews = reviews
-          .map((z) => z.rating)
-          .reduce((a, b) => a + b, 0);
-        let reviewCount = reviews.length;
-
-        await prisma.product.update({
-          where: {
-            id: id.toString(),
-          },
-          data: {
-            ratingIndex: totalReviews / reviewCount,
-          },
-        });
-      }
 
       return res.status(200).json(Success);
+    } else {
+      return res.status(401).json(Unauthorized);
     }
   } catch (err) {
     console.log(err);

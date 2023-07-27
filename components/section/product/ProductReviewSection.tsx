@@ -93,7 +93,7 @@ function ProductReviewSection({ productId }: { productId: string }) {
           onSubmit={handleSubmit(submitReview)}
         >
           <div className="flex flex-row items-center gap-3">
-            <h3 className="text-lg">{t("rateProduct")}</h3>
+            <h3 className="text-lg">Rate Product</h3>
           </div>
           <Rating
             size="large"
@@ -118,7 +118,7 @@ function ProductReviewSection({ productId }: { productId: string }) {
               className="bg-primary text-white rounded-md px-3 py-2 text-sm hover:bg-primary-focus"
               type="submit"
             >
-              {t("writeReview")}
+              Submit
             </button>
           </div>
         </form>

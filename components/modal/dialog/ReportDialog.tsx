@@ -219,7 +219,7 @@ function ReportDialog({ isModalOpen, setModalOpen, type, id }: Props) {
                           className="bg-primary text-white rounded-md px-3 py-2 text-sm hover:bg-primary-focus"
                           type="submit"
                         >
-                          {t("submitFeedback")}
+                          Submit
                         </button>
                       </div>
                     </form>

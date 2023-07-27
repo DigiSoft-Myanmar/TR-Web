@@ -93,7 +93,7 @@ function UserBuyerRatingSection({ user }: { user: User }) {
           onSubmit={handleSubmit(submitReview)}
         >
           <div className="flex flex-row items-center gap-3 mt-3">
-            <h3 className="text-lg">{t("rateBuyer")}</h3>
+            <h3 className="text-lg">Rate Buyer</h3>
           </div>
           <Rating
             size="large"
@@ -118,7 +118,7 @@ function UserBuyerRatingSection({ user }: { user: User }) {
               className="bg-primary text-white rounded-md px-3 py-2 text-sm hover:bg-primary-focus"
               type="submit"
             >
-              {t("writeReview")}
+              Submit
             </button>
           </div>
         </form>
