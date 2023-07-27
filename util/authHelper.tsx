@@ -1,3 +1,4 @@
+import { otherPermission } from "@/types/permissionTypes";
 import { Role, User } from "@prisma/client";
 
 export function isInternal(session: any, isDisableStaff?: boolean) {
@@ -68,7 +69,7 @@ export function hasPermission(session: any, permission: string) {
       if (session.userDefinedRole.permission.find((z) => z === permission)) {
         return true;
       } else {
-        return true;
+        return false;
       }
     } else {
       return true;

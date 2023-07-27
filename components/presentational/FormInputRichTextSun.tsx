@@ -12,8 +12,15 @@ type Props = {
   content: string;
   setContent: Function;
   maxCount?: number;
+  disableColor?: boolean;
 };
-function FormInputRichTextSun({ label, content, setContent, maxCount }: Props) {
+function FormInputRichTextSun({
+  label,
+  content,
+  setContent,
+  maxCount,
+  disableColor,
+}: Props) {
   return (
     <div className="w-full">
       <label className={`text-sm font-medium text-gray-400`}>{label}</label>
@@ -29,17 +36,27 @@ function FormInputRichTextSun({ label, content, setContent, maxCount }: Props) {
             maxCharCount: maxCount,
             buttonList: [
               ["undo", "redo"],
-              [
-                ":p-More Paragraph-default.more_paragraph",
-                "font",
-                "fontColor",
-                "hiliteColor",
-                "align",
-                "horizontalRule",
-                "formatBlock",
-                "paragraphStyle",
-                "blockquote",
-              ],
+              disableColor
+                ? [
+                    ":p-More Paragraph-default.more_paragraph",
+                    "font",
+                    "align",
+                    "horizontalRule",
+                    "formatBlock",
+                    "paragraphStyle",
+                    "blockquote",
+                  ]
+                : [
+                    ":p-More Paragraph-default.more_paragraph",
+                    "font",
+                    "fontColor",
+                    "hiliteColor",
+                    "align",
+                    "horizontalRule",
+                    "formatBlock",
+                    "paragraphStyle",
+                    "blockquote",
+                  ],
               ["bold", "underline", "italic", "list"],
               ["table", "image"],
               ["fullScreen"],

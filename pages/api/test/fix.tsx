@@ -24,14 +24,20 @@ export default async function handler(
     let result = await firebaseAdmin.auth().createUser(body);
     return res.status(200).json(result); */
 
-    let data = require("./brands.json");
+    /* let data = require("./brands.json");
     await prisma.productView.deleteMany({});
     await prisma.product.deleteMany({
       where: {
         type: ProductType.Variable,
       },
+    }); */
+
+    await prisma.userDefinedRole.updateMany({
+      data: {
+        permission: [],
+      },
     });
-    return res.status(200).json({ prodCount: data.length });
+    return res.status(200).json({ prodCount: 0 });
   } catch (err) {
     console.log(err);
     return res.status(400).json(err);

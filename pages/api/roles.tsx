@@ -23,10 +23,7 @@ export default async function handler(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session: any = await useAuth(req);
 
-    if (
-      session &&
-      (session.role === Role.Admin || session.role === Role.SuperAdmin)
-    ) {
+    if (session) {
       switch (req.method) {
         case "GET":
           let users = await prisma.userDefinedRole.findMany({

@@ -732,6 +732,7 @@ function InformationSection({ nextFn, infoRef }: Props) {
           <FormInputRichText
             content={product.shortDescription}
             label={t("shortDescription")}
+            disableColor={true}
             setContent={(e: string) => {
               setProduct((prevValue: any) => {
                 return { ...prevValue, shortDescription: e };
@@ -743,6 +744,7 @@ function InformationSection({ nextFn, infoRef }: Props) {
             <FormInputRichText
               content={product.shortDescriptionMM}
               label={t("shortDescription") + " " + t("mm")}
+              disableColor={true}
               setContent={(e: string) => {
                 setProduct((prevValue: any) => {
                   return { ...prevValue, shortDescriptionMM: e };

@@ -239,14 +239,14 @@ function PermissionModal({
                               Buyers Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(BuyerPermission)].filter(
+                                  [...Object.values(BuyerPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(BuyerPermission)].length}
+                                / {[...Object.values(BuyerPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(BuyerPermission)].every((e) =>
+                            {[...Object.values(BuyerPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -256,7 +256,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(BuyerPermission)
+                                          Object.values(BuyerPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -272,7 +272,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(BuyerPermission),
+                                        ...Object.values(BuyerPermission),
                                       ])
                                     );
                                   });
@@ -301,36 +301,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(BuyerPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {BuyerPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(BuyerPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {BuyerPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -345,14 +349,14 @@ function PermissionModal({
                               Sellers Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(SellerPermission)].filter(
+                                  [...Object.values(SellerPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(SellerPermission)].length}
+                                / {[...Object.values(SellerPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(SellerPermission)].every((e) =>
+                            {[...Object.values(SellerPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -362,7 +366,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(SellerPermission)
+                                          Object.values(SellerPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -378,7 +382,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(SellerPermission),
+                                        ...Object.values(SellerPermission),
                                       ])
                                     );
                                   });
@@ -407,36 +411,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(SellerPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {SellerPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(SellerPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {SellerPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -451,14 +459,14 @@ function PermissionModal({
                               Traders Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(TraderPermission)].filter(
+                                  [...Object.values(TraderPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(TraderPermission)].length}
+                                / {[...Object.values(TraderPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(TraderPermission)].every((e) =>
+                            {[...Object.values(TraderPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -468,7 +476,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(TraderPermission)
+                                          Object.values(TraderPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -484,7 +492,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(TraderPermission),
+                                        ...Object.values(TraderPermission),
                                       ])
                                     );
                                   });
@@ -513,36 +521,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(TraderPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {TraderPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(TraderPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {TraderPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -557,14 +569,14 @@ function PermissionModal({
                               Staffs Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(StaffPermission)].filter(
+                                  [...Object.values(StaffPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(StaffPermission)].length}
+                                / {[...Object.values(StaffPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(StaffPermission)].every((e) =>
+                            {[...Object.values(StaffPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -574,7 +586,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(StaffPermission)
+                                          Object.values(StaffPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -590,7 +602,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(StaffPermission),
+                                        ...Object.values(StaffPermission),
                                       ])
                                     );
                                   });
@@ -619,36 +631,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(StaffPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {StaffPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(StaffPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {StaffPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -663,15 +679,18 @@ function PermissionModal({
                               Subscribe Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(SubscribePermission)].filter(
-                                    (element) => permissions.includes(element)
+                                  [
+                                    ...Object.values(SubscribePermission),
+                                  ].filter((element) =>
+                                    permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(SubscribePermission)].length}
+                                /{" "}
+                                {[...Object.values(SubscribePermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(SubscribePermission)].every((e) =>
-                              permissions.includes(e)
+                            {[...Object.values(SubscribePermission)].every(
+                              (e) => permissions.includes(e)
                             ) ? (
                               <button
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
@@ -680,7 +699,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(SubscribePermission)
+                                          Object.values(SubscribePermission)
                                         ).includes(z)
                                     );
                                   });
@@ -696,7 +715,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(SubscribePermission),
+                                        ...Object.values(SubscribePermission),
                                       ])
                                     );
                                   });
@@ -725,7 +744,7 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(SubscribePermission).map(
+                          {Object.values(SubscribePermission).map(
                             (value, index) => (
                               <div className="form-control flex" key={index}>
                                 <label className="label cursor-pointer">
@@ -773,14 +792,14 @@ function PermissionModal({
                               Products Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(ProductPermission)].filter(
+                                  [...Object.values(ProductPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(ProductPermission)].length}
+                                / {[...Object.values(ProductPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(ProductPermission)].every((e) =>
+                            {[...Object.values(ProductPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -790,7 +809,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(ProductPermission)
+                                          Object.values(ProductPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -806,7 +825,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(ProductPermission),
+                                        ...Object.values(ProductPermission),
                                       ])
                                     );
                                   });
@@ -835,7 +854,7 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(ProductPermission).map(
+                          {Object.values(ProductPermission).map(
                             (value, index) => (
                               <div className="form-control flex" key={index}>
                                 <label className="label cursor-pointer">
@@ -883,14 +902,14 @@ function PermissionModal({
                               Brands Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(BrandPermission)].filter(
+                                  [...Object.values(BrandPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(BrandPermission)].length}
+                                / {[...Object.values(BrandPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(BrandPermission)].every((e) =>
+                            {[...Object.values(BrandPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -900,7 +919,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(BrandPermission)
+                                          Object.values(BrandPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -916,7 +935,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(BrandPermission),
+                                        ...Object.values(BrandPermission),
                                       ])
                                     );
                                   });
@@ -945,36 +964,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(BrandPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {BrandPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(BrandPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {BrandPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -989,15 +1012,18 @@ function PermissionModal({
                               Conditions Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(ConditionPermission)].filter(
-                                    (element) => permissions.includes(element)
+                                  [
+                                    ...Object.values(ConditionPermission),
+                                  ].filter((element) =>
+                                    permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(ConditionPermission)].length}
+                                /{" "}
+                                {[...Object.values(ConditionPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(ConditionPermission)].every((e) =>
-                              permissions.includes(e)
+                            {[...Object.values(ConditionPermission)].every(
+                              (e) => permissions.includes(e)
                             ) ? (
                               <button
                                 className="bg-primary text-white rounded-md text-xs px-2 py-1"
@@ -1006,7 +1032,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(ConditionPermission)
+                                          Object.values(ConditionPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -1022,7 +1048,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(ConditionPermission),
+                                        ...Object.values(ConditionPermission),
                                       ])
                                     );
                                   });
@@ -1051,7 +1077,7 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(ConditionPermission).map(
+                          {Object.values(ConditionPermission).map(
                             (value, index) => (
                               <div className="form-control flex" key={index}>
                                 <label className="label cursor-pointer">
@@ -1099,14 +1125,14 @@ function PermissionModal({
                               Orders Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(OrderPermission)].filter(
+                                  [...Object.values(OrderPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(OrderPermission)].length}
+                                / {[...Object.values(OrderPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(OrderPermission)].every((e) =>
+                            {[...Object.values(OrderPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -1116,7 +1142,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(OrderPermission)
+                                          Object.values(OrderPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -1132,7 +1158,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(OrderPermission),
+                                        ...Object.values(OrderPermission),
                                       ])
                                     );
                                   });
@@ -1161,36 +1187,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(OrderPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {OrderPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(OrderPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {OrderPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -1205,14 +1235,14 @@ function PermissionModal({
                               Auction Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(AuctionPermission)].filter(
+                                  [...Object.values(AuctionPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(AuctionPermission)].length}
+                                / {[...Object.values(AuctionPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(AuctionPermission)].every((e) =>
+                            {[...Object.values(AuctionPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -1222,7 +1252,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(AuctionPermission)
+                                          Object.values(AuctionPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -1238,7 +1268,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(AuctionPermission),
+                                        ...Object.values(AuctionPermission),
                                       ])
                                     );
                                   });
@@ -1267,7 +1297,7 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(AuctionPermission).map(
+                          {Object.values(AuctionPermission).map(
                             (value, index) => (
                               <div className="form-control flex" key={index}>
                                 <label className="label cursor-pointer">
@@ -1315,14 +1345,14 @@ function PermissionModal({
                               Report Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(ReportPermission)].filter(
+                                  [...Object.values(ReportPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(ReportPermission)].length}
+                                / {[...Object.values(ReportPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(ReportPermission)].every((e) =>
+                            {[...Object.values(ReportPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -1332,7 +1362,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(ReportPermission)
+                                          Object.values(ReportPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -1348,7 +1378,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(ReportPermission),
+                                        ...Object.values(ReportPermission),
                                       ])
                                     );
                                   });
@@ -1377,36 +1407,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(ReportPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {ReportPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(ReportPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {ReportPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>
@@ -1421,14 +1455,14 @@ function PermissionModal({
                               Others Permissions
                               <div className="ml-2 badge badge-primary badge-outline badge-sm">
                                 {
-                                  [...Object.keys(otherPermission)].filter(
+                                  [...Object.values(otherPermission)].filter(
                                     (element) => permissions.includes(element)
                                   ).length
                                 }{" "}
-                                / {[...Object.keys(otherPermission)].length}
+                                / {[...Object.values(otherPermission)].length}
                               </div>
                             </div>
-                            {[...Object.keys(otherPermission)].every((e) =>
+                            {[...Object.values(otherPermission)].every((e) =>
                               permissions.includes(e)
                             ) ? (
                               <button
@@ -1438,7 +1472,7 @@ function PermissionModal({
                                     return prevValue.filter(
                                       (z) =>
                                         !Array.from(
-                                          Object.keys(otherPermission)
+                                          Object.values(otherPermission)
                                         ).includes(z)
                                     );
                                   });
@@ -1454,7 +1488,7 @@ function PermissionModal({
                                     return Array.from(
                                       new Set([
                                         ...prevValue,
-                                        ...Object.keys(otherPermission),
+                                        ...Object.values(otherPermission),
                                       ])
                                     );
                                   });
@@ -1483,36 +1517,40 @@ function PermissionModal({
                           </span>
                         </summary>
                         <div className="mt-1">
-                          {Object.keys(otherPermission).map((value, index) => (
-                            <div className="form-control flex" key={index}>
-                              <label className="label cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  className="checkbox-primary checkbox"
-                                  checked={permissions.find(
-                                    (z: any) => z === value
-                                  )}
-                                  onChange={(e) => {
-                                    setPermissions((prevValue: any) => {
-                                      if (
-                                        prevValue &&
-                                        prevValue.find((z: any) => z === value)
-                                      ) {
-                                        return prevValue.filter(
-                                          (z: any) => z !== value
-                                        );
-                                      } else {
-                                        return [...prevValue, value];
-                                      }
-                                    });
-                                  }}
-                                />
-                                <span className={`label-text ml-3 flex-grow`}>
-                                  {otherPermission[value]}
-                                </span>
-                              </label>
-                            </div>
-                          ))}
+                          {Object.values(otherPermission).map(
+                            (value, index) => (
+                              <div className="form-control flex" key={index}>
+                                <label className="label cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    className="checkbox-primary checkbox"
+                                    checked={permissions.find(
+                                      (z: any) => z === value
+                                    )}
+                                    onChange={(e) => {
+                                      setPermissions((prevValue: any) => {
+                                        if (
+                                          prevValue &&
+                                          prevValue.find(
+                                            (z: any) => z === value
+                                          )
+                                        ) {
+                                          return prevValue.filter(
+                                            (z: any) => z !== value
+                                          );
+                                        } else {
+                                          return [...prevValue, value];
+                                        }
+                                      });
+                                    }}
+                                  />
+                                  <span className={`label-text ml-3 flex-grow`}>
+                                    {otherPermission[value]}
+                                  </span>
+                                </label>
+                              </div>
+                            )
+                          )}
                         </div>
                       </details>
                     </div>

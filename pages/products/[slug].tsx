@@ -19,7 +19,7 @@ function ProductDetails(param: any) {
   return session ? (
     <div>
       <Head>
-        <title>New Product | Treasure Rush</title>
+        <title>{param.product.name} | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
         <link rel="icon" href="/favicon.ico" />
       </Head>

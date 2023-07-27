@@ -58,7 +58,10 @@ function AdminSidebar({ isOpen }: Props) {
         </div>
 
         <nav aria-label="Main Nav" className="mt-6 flex flex-col pl-1">
-          {hasPermission(session, otherPermission.dashboardView) && (
+          {hasPermission(
+            session,
+            otherPermission[otherPermission.dashboardView]
+          ) && (
             <Tooltip title="Dashboard" placement="right">
               <Link
                 href="/"
