@@ -1,5 +1,5 @@
 import { useMarketplace } from "@/context/MarketplaceContext";
-import { Product, User } from "@prisma/client";
+import { Product, ProductType, StockType, User } from "@prisma/client";
 import React from "react";
 import Avatar from "./Avatar";
 import { formatAmount, getText } from "@/util/textHelper";
@@ -368,6 +368,7 @@ function CartList() {
                               onClick={(evt) => {
                                 evt.stopPropagation();
                                 evt.preventDefault();
+
                                 modifyCount(e.productId, e.quantity - 1);
                               }}
                               className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
@@ -388,7 +389,76 @@ function CartList() {
                               onClick={(evt) => {
                                 evt.stopPropagation();
                                 evt.preventDefault();
-                                modifyCount(e.productId, e.quantity + 1);
+                                let prodDetail = productDetails.find(
+                                  (z) => z.id === e.productId
+                                );
+                                if (prodDetail.type === ProductType.Fixed) {
+                                  let stockLevel = prodDetail.stockLevel;
+                                  if (
+                                    prodDetail.stockType === StockType.InStock
+                                  ) {
+                                    modifyCount(e.productId, e.quantity + 1);
+                                  } else if (
+                                    prodDetail.stockType ===
+                                      StockType.StockLevel &&
+                                    prodDetail.stockLevel >= e.quantity + 1
+                                  ) {
+                                    modifyCount(e.productId, e.quantity + 1);
+                                  } else if (
+                                    prodDetail.stockType ===
+                                    StockType.StockLevel
+                                  ) {
+                                    showErrorDialog(
+                                      "Only " + stockLevel + " is available.",
+                                      "လက်ကျန်ပစ္စည်းအရေအတွက်သည် " +
+                                        formatAmount(stockLevel, locale) +
+                                        " သာကျန်ရှိသည့်အတွက်ပစ္စည်းမလုံလောက်ပါ။",
+                                      locale
+                                    );
+                                  } else {
+                                    showErrorDialog(
+                                      "Out of stock",
+                                      "လက်ကျန်ပစ္စည်းမလုံလောက်ပါ။",
+                                      locale
+                                    );
+                                  }
+                                } else {
+                                  let variation: any =
+                                    prodDetail.variations.find(
+                                      (z: any) => z.SKU === e.SKU
+                                    );
+                                  if (variation) {
+                                    let stockLevel = variation.stockLevel;
+                                    if (
+                                      variation.stockType === StockType.InStock
+                                    ) {
+                                      modifyCount(e.productId, e.quantity + 1);
+                                    } else if (
+                                      variation.stockType ===
+                                        StockType.StockLevel &&
+                                      variation.stockLevel >= e.quantity + 1
+                                    ) {
+                                      modifyCount(e.productId, e.quantity + 1);
+                                    } else if (
+                                      variation.stockType ===
+                                      StockType.StockLevel
+                                    ) {
+                                      showErrorDialog(
+                                        "Only " + stockLevel + " is available.",
+                                        "လက်ကျန်ပစ္စည်းအရေအတွက်သည် " +
+                                          formatAmount(stockLevel, locale) +
+                                          " သာကျန်ရှိသည့်အတွက်ပစ္စည်းမလုံလောက်ပါ။",
+                                        locale
+                                      );
+                                    } else {
+                                      showErrorDialog(
+                                        "Out of stock",
+                                        "လက်ကျန်ပစ္စည်းမလုံလောက်ပါ။",
+                                        locale
+                                      );
+                                    }
+                                  }
+                                }
                               }}
                               className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
                             >

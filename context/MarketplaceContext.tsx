@@ -246,15 +246,22 @@ export const MarketplaceProvider = ({
     return seller;
   }, [productDetails]);
 
-  const subTotal = useMemo(() => {
-    return cartItems
-      .map((e) =>
-        e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
-      )
-      .reduce((a, b) => a + b, 0);
-  }, [cartItems]);
+  const subTotal = cartItems
+    .map((e) =>
+      e.salePrice ? e.salePrice * e.quantity : e.normalPrice * e.quantity
+    )
+    .reduce((a, b) => a + b, 0);
 
-  const promoTotal = useMemo(() => {
+  const promoTotal = calculatePromo();
+
+  const totalPrice =
+    subTotal -
+    promoTotal +
+    shippingFee
+      .map((e) => (e.shippingFee ? e.shippingFee : 0))
+      .reduce((a, b) => a + b, 0);
+
+  function calculatePromo() {
     let totalDiscount = 0;
     if (promoCode) {
       for (let i = 0; i < promoCode.length; i++) {
@@ -284,17 +291,7 @@ export const MarketplaceProvider = ({
       }
     }
     return totalDiscount;
-  }, [promoCode, cartItems, shippingFee]);
-
-  const totalPrice = useMemo(() => {
-    return (
-      subTotal -
-      promoTotal +
-      shippingFee
-        .map((e) => (e.shippingFee ? e.shippingFee : 0))
-        .reduce((a, b) => a + b, 0)
-    );
-  }, [subTotal, shippingFee, promoTotal]);
+  }
 
   function setWishedItems(data: WishedItems) {
     if (session) {

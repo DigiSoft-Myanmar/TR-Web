@@ -13,6 +13,7 @@ import { z } from "zod";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
 import { toDateTimeLocal } from "@/util/textHelper";
+import { isInternal } from "@/util/authHelper";
 
 type Props = {
   backFn: Function;
@@ -126,6 +127,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                         .substring(0, 10)
                     : ""
                 }
+                disabled={!isInternal(session)}
               />
               <FormInputCheckbox
                 formControl={{ ...register("sellAllow") }}
@@ -136,7 +138,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                     ? false
                     : watchFields.sellAllow
                 }
-                disabled={session && session.role === Role.Seller}
+                disabled={!isInternal(session)}
               />
             </>
           )}
@@ -144,20 +146,16 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
           formControl={{ ...register("isBlocked") }}
           label={t("isBlocked")}
           value={watchFields.isBlocked}
-          disabled={
-            session &&
-            (session.role === Role.Seller || session.role === Role.Buyer)
-          }
+          disabled={!isInternal(session)}
         />
-        <FormInputCheckbox
-          formControl={{ ...register("isDeleted") }}
-          label={t("isDeleted")}
-          value={watchFields.isDeleted}
-          disabled={
-            session &&
-            (session.role === Role.Seller || session.role === Role.Buyer)
-          }
-        />
+        {isInternal(session) && (
+          <FormInputCheckbox
+            formControl={{ ...register("isDeleted") }}
+            label={t("isDeleted")}
+            value={watchFields.isDeleted}
+            disabled={!isInternal(session)}
+          />
+        )}
         <FormInputTextArea
           label={t("adminNote")}
           placeHolder={""}

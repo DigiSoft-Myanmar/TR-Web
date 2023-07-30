@@ -430,10 +430,9 @@ function AuthHeader() {
                 </button>
               </div>
               <div className="dropdown">
-                <button
+                <label
                   tabIndex={0}
-                  type="button"
-                  className="group flex shrink-0 items-center rounded-lg transition"
+                  className="group flex shrink-0 items-center rounded-lg transition cursor-pointer"
                 >
                   <span className="sr-only">Menu</span>
                   <div>
@@ -469,7 +468,7 @@ function AuthHeader() {
                       clipRule="evenodd"
                     />
                   </svg>
-                </button>
+                </label>
                 <ul
                   tabIndex={0}
                   className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
