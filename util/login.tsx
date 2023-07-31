@@ -163,7 +163,7 @@ export async function loginWithOTP(data: any) {
 export async function verifyEmailLogin(email: string) {
   try {
     return fetch(
-      "/api/user?isLogin=true&email=" + encodeURIComponent(email)
+      "/api/user?isLogin=true&email=" + encodeURIComponent(email.toLowerCase())
     ).then(async (res) => {
       if (res.status !== 200) {
         if (res.status === 403) {
