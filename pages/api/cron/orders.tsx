@@ -25,6 +25,7 @@ import prisma from "@/prisma/prisma";
 import { NotiType, Role } from "@prisma/client";
 import { encryptPhone } from "@/util/encrypt";
 import { OrderStatus } from "@/types/orderTypes";
+import { sendOrderEmail } from "@/util/emailNodeHelper";
 
 async function test(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
@@ -36,7 +37,9 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
 
       let seller = await prisma.user.findMany({
         where: {
-          lastLogin: date,
+          lastLogin: {
+            lte: date,
+          },
           role: {
             in: [Role.Seller, Role.Trader],
           },
@@ -97,7 +100,7 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
             }
           }
         }
-        await prisma.order.update({
+        let order = await prisma.order.update({
           where: {
             id: orders[i].id,
           },
@@ -105,6 +108,18 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
             sellerResponse: sellerResponse,
           },
         });
+        for (let i = 0; i < seller.length; i++) {
+          if (order.sellerIds.includes(seller[i].id)) {
+            await sendOrderEmail(
+              order,
+              seller[i].username +
+                " " +
+                OrderStatus.AutoCancelled +
+                " for #" +
+                order.orderNo
+            );
+          }
+        }
       }
 
       return res.status(200).json(Success);
