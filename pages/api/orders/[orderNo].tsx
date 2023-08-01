@@ -194,23 +194,18 @@ export default async function handler(
     const { orderNo, sellerId, status } = req.query;
     if (orderNo) {
       if (session) {
-        let order = await prisma.order.findFirst({
+        let order: any = await prisma.order.findFirst({
           where: {
             orderNo: parseInt(orderNo.toString()),
+          },
+          include: {
+            orderBy: true,
+            promoCodes: true,
           },
         });
         if (order) {
           switch (req.method) {
             case "GET":
-              let order: any = await prisma.order.findFirst({
-                where: {
-                  orderNo: parseInt(orderNo.toString()),
-                },
-                include: {
-                  orderBy: true,
-                  promoCodes: true,
-                },
-              });
               order = await addCartItems(order);
               const sellerList = [];
 
