@@ -345,7 +345,10 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
                     showSuccessDialog(
                       "The product is in bidder cart.",
                       "",
-                      locale
+                      locale,
+                      () => {
+                        router.reload();
+                      }
                     );
                   } else {
                     let json = await data.json();
@@ -392,7 +395,10 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
                     showSuccessDialog(
                       "The product is in removed from bidder cart.",
                       "",
-                      locale
+                      locale,
+                      () => {
+                        router.reload();
+                      }
                     );
                   } else {
                     let json = await data.json();

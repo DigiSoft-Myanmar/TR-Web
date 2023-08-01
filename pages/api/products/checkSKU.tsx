@@ -13,7 +13,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -22,11 +22,11 @@ export default async function handler(
     if (session && session.role !== Role.Buyer) {
       let { brandId, SKU, id } = req.query;
       if (brandId && SKU) {
-        if (session.role === Role.Seller && session.brand.id !== brandId) {
+        if (session.role === Role.Seller && session.id !== brandId) {
           return res.status(400).json(BadRequest);
         } else {
           let filter: any = {
-            brandId: brandId?.toString(),
+            sellerId: brandId?.toString(),
             SKU: SKU?.toString(),
           };
           if (id) {
@@ -40,7 +40,6 @@ export default async function handler(
           let prod = await prisma.product.count({
             where: filter,
           });
-          console.log(prod);
           if (prod > 0) {
             return res.status(200).json(Exists);
           } else {

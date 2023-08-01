@@ -3,8 +3,10 @@ import AdsCard from "@/components/card/AdsCard";
 import AdsDetailDialog from "@/components/modal/dialog/AdsDetailDialog";
 import AddressModal from "@/components/modal/sideModal/AddressModal";
 import AdsModal from "@/components/modal/sideModal/AdsModal";
+import EmptyScreen from "@/components/screen/EmptyScreen";
 import { isInternal } from "@/util/authHelper";
 import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import { getText } from "@/util/textHelper";
 import { Ads, User, UserAddress } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -41,7 +43,9 @@ function UserAdsSection({ user }: { user: User }) {
         {adsData?.filter((z: Ads) => z.adsLocations.length > 0).length > 0 ? (
           <>
             <div className="flex flex-row items-center gap-3 mt-3">
-              <h3 className="text-lg ml-3">{t("placeAds")}</h3>
+              <h3 className="text-lg ml-3">
+                {getText("Place ads", "", locale)}
+              </h3>
               <button
                 className="bg-primary text-white p-1 rounded-md hover:bg-primary-focus"
                 type="button"
@@ -115,6 +119,16 @@ function UserAdsSection({ user }: { user: User }) {
                 ))}
             </div>
           </>
+        ) : (
+          <></>
+        )}
+
+        {adsData?.length === 0 ? (
+          <EmptyScreen
+            onClickFn={() => {
+              setModalOpen(true);
+            }}
+          />
         ) : (
           <></>
         )}
