@@ -24,10 +24,10 @@ var storage = new GridFsStorage({
       "image/x-icon",
       "image/tiff",
     ];
-
+    let extension = file.originalname.split(".").pop();
     return {
       bucketName: process.env.NEXT_PUBLIC_IMG_BUCKET,
-      filename: `${Date.now()}-${encodeURIComponent(file.originalname)}`,
+      filename: `${Date.now()}-.${extension}`,
     };
   },
 });
