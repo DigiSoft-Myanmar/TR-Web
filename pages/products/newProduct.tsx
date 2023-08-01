@@ -16,7 +16,7 @@ function NewProduct({ attributes }: { attributes: any }) {
 
   return session &&
     (session.role === Role.Admin ||
-      session.role === Role.Seller ||
+      (isSeller(session) && session.sellAllow === true) ||
       session.role === Role.Staff ||
       session.role === Role.SuperAdmin) ? (
     <div>
