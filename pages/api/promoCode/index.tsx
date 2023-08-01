@@ -97,7 +97,12 @@ async function addPromotion(req: NextApiRequest, res: NextApiResponse<any>) {
     if (allowPermission === false) {
       return res.status(401).json(Unauthorized);
     }
-    let data = JSON.parse(req.body);
+    let data: any = {};
+    if (typeof req.body === "object") {
+      data = req.body;
+    } else {
+      data = JSON.parse(req.body);
+    }
     data.promoCode = data.promoCode.toLowerCase();
     let promo = await prisma.promoCode.findFirst({
       where: { promoCode: data.promoCode, sellerId: data.sellerId },
@@ -122,7 +127,12 @@ async function updatePromotion(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
-    let data = JSON.parse(req.body);
+    let data: any = {};
+    if (typeof req.body === "object") {
+      data = req.body;
+    } else {
+      data = JSON.parse(req.body);
+    }
     let { id } = req.query;
     let allowPermission = await canAccess(req, otherPermission.promotionUpdate);
     if (allowPermission === false) {
