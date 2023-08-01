@@ -37,9 +37,18 @@ export default async function handler(
         };
       } else if (session.role === Role.Trader) {
         filter = {
-          product: {
-            sellerId: session.id,
-          },
+          OR: [
+            {
+              auction: {
+                createdByUserId: session.id,
+              },
+            },
+            {
+              product: {
+                sellerId: session.id,
+              },
+            },
+          ],
         };
       }
 
