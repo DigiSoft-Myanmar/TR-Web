@@ -110,6 +110,28 @@ export const ProductProvider = ({
     }
   }, [settingsData]);
 
+  React.useEffect(() => {
+    if (product?.seller?.isDefaultShippingInfo === true) {
+      setProduct((prevValue: any) => {
+        let d = { ...prevValue };
+
+        if (
+          prevValue.shippingInformation.length === 0 &&
+          product?.seller?.defaultShippingInfo
+        ) {
+          d.shippingInformation = product?.seller?.defaultShippingInfo;
+        }
+        if (
+          prevValue.shippingInformationMM.length === 0 &&
+          product?.seller?.defaultShippingInfoMM
+        ) {
+          d.shippingInformationMM = product?.seller?.defaultShippingInfoMM;
+        }
+        return d;
+      });
+    }
+  }, [product?.seller]);
+
   return (
     <ProductContext.Provider
       value={{

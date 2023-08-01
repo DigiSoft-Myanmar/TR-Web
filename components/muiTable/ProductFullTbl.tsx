@@ -57,7 +57,7 @@ import {
   showWarningDialog,
 } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
-import { getHeaders } from "@/util/authHelper";
+import { getHeaders, isSeller } from "@/util/authHelper";
 
 interface CellType {
   row: any;
@@ -465,7 +465,7 @@ const ProductFullTbl = ({
                   (session.role === Role.Admin ||
                     session.role === Role.Staff ||
                     session.role === Role.SuperAdmin ||
-                    session.role === Role.Seller) && (
+                    isSeller(session)) && (
                     <Tooltip title="Edit">
                       <IconButton
                         size="small"
@@ -481,8 +481,7 @@ const ProductFullTbl = ({
                 {session &&
                   (session.role === Role.Admin ||
                     session.role === Role.Staff ||
-                    session.role === Role.SuperAdmin ||
-                    session.role === Role.Seller) && (
+                    session.role === Role.SuperAdmin) && (
                     <Tooltip title="Delete">
                       <IconButton
                         size="small"
