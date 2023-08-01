@@ -27,7 +27,7 @@ var storage = new GridFsStorage({
 
     return {
       bucketName: process.env.NEXT_PUBLIC_IMG_BUCKET,
-      filename: `${Date.now()}`,
+      filename: `${Date.now()}-${encodeURIComponent(file.originalname)}`,
     };
   },
 });
@@ -36,5 +36,5 @@ var storage = new GridFsStorage({
 export var uploadFiles = multer({ storage: storage });
 // var uploadFiles = multer({ storage: storage }).single("file");
 export var uploadFilesMiddleware = util.promisify(
-  uploadFiles.array("theFiles", 10),
+  uploadFiles.array("theFiles", 10)
 );
