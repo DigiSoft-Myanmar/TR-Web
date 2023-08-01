@@ -8,6 +8,7 @@ type Props = {
   formControl: any;
   currentValue?: any;
   optional?: boolean;
+  disabled?: boolean;
 };
 
 function FormInputTextArea({
@@ -18,6 +19,7 @@ function FormInputTextArea({
   formControl,
   currentValue,
   optional,
+  disabled,
 }: Props) {
   return (
     <div>
@@ -47,6 +49,7 @@ function FormInputTextArea({
           defaultValue={defaultValue}
           {...formControl}
           rows={8}
+          disabled={disabled}
         />
       </div>
       {error && <span className="p-2 text-xs text-error">{error}</span>}

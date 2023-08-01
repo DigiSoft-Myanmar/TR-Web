@@ -164,6 +164,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
           currentValue={watchFields.adminNote}
           optional={true}
           error={""}
+          disabled={isInternal(session) ? false : true}
         />
 
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
