@@ -403,7 +403,6 @@ export const MarketplaceProvider = ({
 
   async function checkShip(sellerId: string) {
     if (session) {
-      return true;
       if (isAddressDiff === true) {
         if (shippingLocation.townshipId) {
           let data = await fetch(
