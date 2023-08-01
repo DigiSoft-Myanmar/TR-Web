@@ -35,18 +35,14 @@ export type RegisterType = {
   isCheck: boolean;
 };
 
-function Register({
-  siteInfo,
-  promoCode,
-}: {
-  siteInfo: Content;
-  promoCode: PromoCode | null;
-}) {
+function Register({ siteInfo }: { siteInfo: Content }) {
   const { locale } = useRouter();
   const { t } = useTranslation("common");
   const { accessKey } = useRouter().query;
   const [isOTP, setOTP] = React.useState(false);
   const roleList = [Role.Trader, Role.Buyer, Role.Seller];
+
+  console.log(siteInfo);
 
   const registerShema = z.object({
     username: z.string().min(1, { message: t("inputError") }),
@@ -136,13 +132,14 @@ function Register({
               disableOnInteraction: true,
               pauseOnMouseEnter: true,
             }}
-            slidesPerView={1}
             rewind={true}
-            pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
+            spaceBetween={10}
+            slidesPerView={1}
+            className="w-[400px] max-w-[400px]"
           >
-            {siteInfo.credentialFeatures.map((e: any, index: number) => (
-              <SwiperSlide key={index} className={`w-full`}>
+            {siteInfo?.credentialFeatures.map((e: any, index1: number) => (
+              <SwiperSlide key={index1} className="max-w-[400px] w-full">
                 <div className=" flex flex-col items-center">
                   <Image
                     src={fileUrl + e.icon}
@@ -151,7 +148,7 @@ function Register({
                     alt="banner"
                     className="h-full min-h-[300px] w-full max-h-[300px] object-contain"
                   />
-                  <h3 className="text-primaryText whitespace-nowrap text-lg font-semibold mt-10">
+                  <h3 className="text-primaryText text-lg font-semibold mt-10">
                     {getText(e.title, e.titleMM, locale)}
                   </h3>
                   <p className="text-sm text-gray-500">
@@ -369,17 +366,9 @@ function Register({
 
 export async function getServerSideProps({ locale }: any) {
   const siteInfo = await prisma.content.findFirst({});
-  const promoCode = await prisma.promoCode.findFirst({
-    where: {
-      isCouponUsageInfinity: true,
-      isCouponUsagePerUserInfinity: false,
-      couponUsagePerUser: 1,
-    },
-  });
 
   return {
     props: {
-      promoCode: JSON.parse(JSON.stringify(promoCode)),
       siteInfo: JSON.parse(JSON.stringify(siteInfo)),
       ...(await serverSideTranslations(locale, ["common"], nextI18nextConfig)),
     },

@@ -202,11 +202,13 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     let session = await useAuth(req);
     let data = JSON.parse(req.body);
-
+    if (data.email) {
+      data.email = data.email.toLowerCase();
+    }
     if (data.role) {
       if (isInternal(session)) {
         let body = {
-          email: data.email,
+          email: data.email.toLowerCase(),
           emailVerified: false,
           phoneNumber: data.phoneNum,
           password: data.password,

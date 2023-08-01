@@ -119,7 +119,7 @@ export const getUserByPhone = async (phone: string) => {
 export const createUser = async (email: string, username: string) => {
   const user = await prisma.user.create({
     data: {
-      email: email,
+      email: email.toLowerCase(),
       username: username,
       role: Role.Admin,
       gender: Gender.Male,
@@ -132,7 +132,7 @@ export const createSeller = async (data: any) => {
   const user = await prisma.user.create({
     data: {
       username: data.username,
-      email: data.email!.toString(),
+      email: data.email!.toString().toLowerCase(),
       phoneNum: data.phoneNum!.toString(),
       ...data,
     },
