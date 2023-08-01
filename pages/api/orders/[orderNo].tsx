@@ -287,7 +287,12 @@ export default async function handler(
                   },
                 });
 
-                let body = JSON.parse(req.body);
+                let body: any = {};
+                if (typeof req.body === "object") {
+                  body = req.body;
+                } else {
+                  body = JSON.parse(req.body);
+                }
                 let newOrder: any = await prisma.order.update({
                   where: {
                     id: order.id,

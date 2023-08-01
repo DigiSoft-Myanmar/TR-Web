@@ -220,7 +220,12 @@ export default async function handler(
           );
       case "POST":
         if (session && session.role !== Role.Buyer) {
-          let newData = JSON.parse(req.body);
+          let newData: any = {};
+          if (typeof req.body === "object") {
+            newData = req.body;
+          } else {
+            newData = JSON.parse(req.body);
+          }
           let product = await createProduct(newData);
           if (isSeller(session)) {
             let adminList = await getAdminIdList();
@@ -251,7 +256,12 @@ export default async function handler(
         }
       case "PUT":
         if (session && session.role !== Role.Buyer) {
-          let data: any = JSON.parse(req.body);
+          let data: any = {};
+          if (typeof req.body === "object") {
+            data = req.body;
+          } else {
+            data = JSON.parse(req.body);
+          }
           let { id } = req.query;
           if (data.id) {
             delete data.id;

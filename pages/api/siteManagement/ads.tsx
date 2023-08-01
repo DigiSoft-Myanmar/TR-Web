@@ -107,7 +107,12 @@ export default async function handler(
       let { id } = req.query;
       switch (req.method) {
         case "POST":
-          let body = JSON.parse(req.body);
+          let body: any = {};
+          if (typeof req.body === "object") {
+            body = req.body;
+          } else {
+            body = JSON.parse(req.body);
+          }
           await prisma.ads.create({
             data: body,
           });

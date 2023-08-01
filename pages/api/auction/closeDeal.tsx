@@ -112,7 +112,12 @@ export default async function handler(
     const session = await useAuth(req);
     const { id, key } = req.query;
     if (id && req.method === "PUT") {
-      let body = JSON.parse(req.body);
+      let body: any = {};
+      if (typeof req.body === "object") {
+        body = req.body;
+      } else {
+        body = JSON.parse(req.body);
+      }
 
       let auction = await prisma.auctions.findFirst({
         where: { id: id.toString() },
