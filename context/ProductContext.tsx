@@ -116,13 +116,13 @@ export const ProductProvider = ({
         let d = { ...prevValue };
 
         if (
-          prevValue.shippingInformation.length === 0 &&
+          prevValue?.shippingInformation?.length === 0 &&
           product?.seller?.defaultShippingInfo
         ) {
           d.shippingInformation = product?.seller?.defaultShippingInfo;
         }
         if (
-          prevValue.shippingInformationMM.length === 0 &&
+          prevValue?.shippingInformationMM?.length === 0 &&
           product?.seller?.defaultShippingInfoMM
         ) {
           d.shippingInformationMM = product?.seller?.defaultShippingInfoMM;
