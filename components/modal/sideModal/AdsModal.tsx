@@ -6,7 +6,7 @@ import { showErrorDialog, showUnauthorizedDialog } from "@/util/swalFunction";
 import ProductImg from "@/components/card/ProductImg";
 import { ImgType } from "@/types/orderTypes";
 import { useSession } from "next-auth/react";
-import { getHeaders, isInternal } from "@/util/authHelper";
+import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
 import {
   getImageResolutionFromFile,
   getImageSizeFromFileInput,
@@ -51,13 +51,17 @@ function AdsModal({ isModalOpen, setModalOpen, refetch, title }: Props) {
 
   React.useEffect(() => {
     if (uploadingImg === false) {
+      if (isSeller(session)) {
+        setSeller(session);
+      } else {
+        setSeller(undefined);
+      }
       setWidth(0);
       setHeight(0);
       setUploadFiles(undefined);
-      setSeller(undefined);
       setRatio("Unknown");
     }
-  }, [isModalOpen, uploadingImg]);
+  }, [isModalOpen, uploadingImg, session]);
 
   React.useEffect(() => {
     if (uploadingImg === false) {
@@ -83,7 +87,6 @@ function AdsModal({ isModalOpen, setModalOpen, refetch, title }: Props) {
     for (let i = 0; i < uploadFiles!.length; i++) {
       form.append("theFiles", uploadFiles![i]);
     }
-    console.log("WTF");
     getImageResolutionFromFile(uploadFiles[0])
       .then((resolution) => {
         console.log("Image resolution:", resolution);

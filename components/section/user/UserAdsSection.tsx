@@ -64,18 +64,20 @@ function UserAdsSection({ user }: { user: User }) {
               </button>
             </div>
             <div className="bg-white p-3 rounded-md border flex flex-row w-fit flex-wrap items-center justify-between gap-3">
-              {adsData?.map((z: Ads, index) => (
-                <div
-                  key={index}
-                  className="border p-2 hover:border-primary cursor-pointer rounded-md"
-                  onClick={() => {
-                    setAds(z);
-                    setAdsDetailOpen(true);
-                  }}
-                >
-                  <AdsCard key={index} ads={z} />
-                </div>
-              ))}
+              {adsData
+                .filter((z: any) => z.adsLocations.length > 0)
+                ?.map((z: Ads, index) => (
+                  <div
+                    key={index}
+                    className="border p-2 hover:border-primary cursor-pointer rounded-md"
+                    onClick={() => {
+                      setAds(z);
+                      setAdsDetailOpen(true);
+                    }}
+                  >
+                    <AdsCard key={index} ads={z} />
+                  </div>
+                ))}
             </div>
           </>
         ) : (
@@ -84,7 +86,7 @@ function UserAdsSection({ user }: { user: User }) {
         {adsData?.filter((z: Ads) => z.adsLocations.length === 0).length > 0 ? (
           <>
             <div className="flex flex-row items-center gap-3 mt-3">
-              <h3 className="text-lg ml-3">{t("notPlacedAds")}</h3>
+              <h3 className="text-lg ml-3">Not Placed Ads</h3>
               <button
                 className="bg-primary text-white p-1 rounded-md hover:bg-primary-focus"
                 type="button"

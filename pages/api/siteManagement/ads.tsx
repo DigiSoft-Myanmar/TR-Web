@@ -10,6 +10,7 @@ import {
   Unauthorized,
 } from "@/types/ApiResponseTypes";
 import { AdsLocation, AdsPage } from "@/util/adsHelper";
+import { isSeller } from "@/util/authHelper";
 import { Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -100,7 +101,8 @@ export default async function handler(
       session &&
       (session.role === Role.Admin ||
         session.role === Role.SuperAdmin ||
-        session.role === Role.Staff)
+        session.role === Role.Staff ||
+        isSeller(session))
     ) {
       let { id } = req.query;
       switch (req.method) {

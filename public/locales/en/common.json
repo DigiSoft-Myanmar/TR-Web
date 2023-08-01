@@ -259,8 +259,10 @@
   "shippingAddress": "Shipping Address",
   "orderNote": "Order Note",
   "updateUser": "Update User",
-  "updateUserDescription": "Update user",
+  "updateUserDescription": "Renew your profile with updated information in simple steps.",
   "fillMillInfo": "Easy login with email and password",
   "updateProduct": "Update Product",
-  "updateProductDescription": "Update Product Description"
+  "updateProductDescription": "Enhance product features with the latest update.",
+  "addProduct": "Create Product",
+  "addProductDescription": "Innovate, craft, and launch your dream product effortlessly."
 }
