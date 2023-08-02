@@ -269,5 +269,7 @@
   "chooseCategoryFAQ": "Choose a category to quickly find the help you need.",
   "question": "Question",
   "answer": "Answer",
-  "notFind": "Don't find what you are looking for?"
+  "notFind": "Don't find what you are looking for?",
+  "invalidSalePrice": "Sale price must be less than regular price.",
+  "inputStockTypeError": "Please define stock type."
 }

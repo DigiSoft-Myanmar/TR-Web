@@ -31,7 +31,7 @@ function UserHomeSection({ user }: { user: User }) {
       })
   );
   const { data: productData } = useQuery(["productData", user.id], () =>
-    fetch("/api/products?sellerId=" + user.id).then((res) => {
+    fetch("/api/marketplace?sellerId=" + user.id).then((res) => {
       let json = res.json();
       return json;
     })
@@ -181,17 +181,25 @@ function UserHomeSection({ user }: { user: User }) {
       {productData && isSeller(user) && (
         <>
           <h3 className="text-lg ml-3 mt-3">Products</h3>
-          <div className="bg-white p-3 rounded-md border grid grid-cols-auto200 gap-3">
-            {productData.map((b, index) => (
-              <React.Fragment key={index}>
-                {b.type === ProductType.Auction ? (
-                  <AuctionCard product={b} />
-                ) : (
-                  <ProductCard product={b} />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+          {productData.length > 0 ? (
+            <div className="bg-white p-3 rounded-md border grid grid-cols-auto200 gap-3">
+              {productData.map((b, index) => (
+                <React.Fragment key={index}>
+                  {b.type === ProductType.Auction ? (
+                    <AuctionCard product={b} />
+                  ) : (
+                    <ProductCard product={b} />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          ) : (
+            <div className="grid p-10 bg-white place-content-center rounded-md border">
+              <h1 className="tracking-widest text-gray-500 uppercase">
+                This seller doesn't have any products yet.
+              </h1>
+            </div>
+          )}
         </>
       )}
     </div>

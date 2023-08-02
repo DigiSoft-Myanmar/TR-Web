@@ -9,7 +9,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
     const { id, action } = req.query;
@@ -35,7 +35,7 @@ export default async function handler(
         for (let i = 0; i < prods.length; i++) {
           if (
             session.role === Role.Seller &&
-            prods[i].brandId !== session.brand.id
+            prods[i].sellerId !== session.id
           ) {
           } else {
             if (

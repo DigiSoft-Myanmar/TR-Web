@@ -105,6 +105,8 @@ export default async function handler(
           }
         }
         if (type) {
+          let currentDate = new Date();
+          currentDate.setHours(0, 0, 0, 0);
           if (type === ProductNavType.Promotion) {
             filter = {
               ...filter,
@@ -126,10 +128,10 @@ export default async function handler(
                     gt: 0,
                   },
                   saleStartDate: {
-                    lte: new Date(),
+                    lte: currentDate,
                   },
                   saleEndDate: {
-                    gte: new Date(),
+                    gte: currentDate,
                   },
                   isSalePeriod: true,
                 },

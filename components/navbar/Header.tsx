@@ -440,6 +440,14 @@ function Header({
                           </li>
                           <li>
                             <Link
+                              href={"/products?type=Auction"}
+                              className="ml-1 font-normal hover:font-semibold"
+                            >
+                              Auction Listing
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
                               href={"/orders/"}
                               className="ml-1 font-normal hover:font-semibold"
                             >

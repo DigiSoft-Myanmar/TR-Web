@@ -310,6 +310,8 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                   let json = await data.json();
                   if (data.status === 413) {
                     showErrorDialog(t("fileTooLarge"));
+                  } else if (json.error) {
+                    showErrorDialog(json.error, json.errorMM, router.locale);
                   } else {
                     showErrorDialog(t("somethingWentWrong"), "", router.locale);
                   }
@@ -416,7 +418,7 @@ function ConfirmationSection({ backFn, currentStep, isDisable }: Props) {
                 <div className="sticky top-0 flex flex-row flex-wrap gap-3">
                   {product.categories?.map((e: Category, index: number) => (
                     <strong
-                      className="rounded-full border border-primary bg-gray-100 px-3 py-0.5 text-xs font-medium tracking-wide text-primary"
+                      className="rounded-full border border-primary bg-gray-100 px-3 py-0.5 text-xs font-medium tracking-wide text-primary items-center justify-center flex"
                       key={index}
                     >
                       <Link href={"/marketplace?categories=" + e.slug}>

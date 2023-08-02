@@ -11,6 +11,7 @@ import prisma from "@/prisma/prisma";
 import ErrorScreen from "@/components/screen/ErrorScreen";
 import { useRouter } from "next/router";
 import ConfirmationSection from "@/components/section/product/ConfirmationSection";
+import { isSeller } from "@/util/authHelper";
 
 function ProductDetails(param: any) {
   const { data: session }: any = useSession();
@@ -29,10 +30,10 @@ function ProductDetails(param: any) {
         (session.role === Role.Admin ||
           session.role === Role.Staff ||
           session.role === Role.SuperAdmin)) ||
-      (session.role === Role.Seller &&
+      (isSeller(session) &&
         param &&
         param.product &&
-        param.product.brandId === session.brand.id) ? (
+        param.product.sellerId === session.id) ? (
         <>
           {action === "view" ? (
             <div className="bg-white">

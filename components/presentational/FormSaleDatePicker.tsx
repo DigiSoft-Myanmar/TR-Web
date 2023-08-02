@@ -24,18 +24,25 @@ function FormSaleDatePicker({
   const [startDate, setStartDate] = React.useState(saleStartDate);
   const [endDate, setEndDate] = React.useState(saleEndDate);
 
-  console.log(saleStartDate, saleEndDate);
+  React.useEffect(() => {
+    if (saleEndDate) {
+      setEndDate(new Date(saleEndDate));
+    }
+    if (saleStartDate) {
+      setStartDate(new Date(saleStartDate));
+    }
+  }, [saleStartDate, saleEndDate]);
 
   React.useEffect(() => {
     if (isSalePeriod === true) {
       if (startDate && endDate) {
         if (startDate > endDate) {
-          setError(t("startDate > endDate"));
+          setError(t("Start date must be less than end date."));
         } else {
           setError("");
         }
       } else {
-        setError(t("inputValidSalePeriod"));
+        setError(t("Please input both start date and end date."));
       }
     } else {
       setError("");

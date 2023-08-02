@@ -91,7 +91,7 @@ const OrderSmallTbl = ({ data }: { data: any }) => {
           let status = getOrderStatus(
             data.filter((e: any) =>
               session && session.role === Role.Seller
-                ? e.brandId === session.brand.id
+                ? e.sellerId === session.id
                 : true
             )
           );

@@ -153,6 +153,7 @@ function UserUsageSection({
             <h3 className="text-lg text-primaryText border-b pb-3">
               Ads Usage
             </h3>
+
             <div className="flex flex-row items-center gap-3 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -170,7 +171,8 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Free Ads Used : {formatAmount(data?.freeAdsUsed, locale, false)}
+                Free Ads Used : {formatAmount(data?.freeAdsUsed, locale, false)}{" "}
+                / {formatAmount(data?.freeAds, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">

@@ -42,6 +42,7 @@ export default async function handler(
             endDay.setDate(endDay.getDate() + user.currentMembership.validity);
 
             let usage = {
+              freeAdsLimit: 0,
               freeAdsUsed: 0,
               adsUsed: 0,
               skuUsed: 0,
@@ -83,7 +84,11 @@ export default async function handler(
                     startDay.getTime() <= new Date(z.startDate).getTime() &&
                     new Date(z.startDate).getTime() <= freeAdsEndDay.getTime()
                 ).length;
-                usage.freeAdsUsed = freeAdsCount;
+                usage.freeAdsLimit = user.currentMembership.freeAdsLimit;
+                usage.freeAdsUsed =
+                  freeAdsCount >= user.currentMembership.freeAdsLimit
+                    ? user.currentMembership.freeAdsLimit
+                    : freeAdsCount;
                 usage.adsUsed += adsCount;
                 ads[i].adsUsed = adsCount;
                 ads[i].isPlaced =
