@@ -109,17 +109,45 @@ export function getTotal(cartItems: CartItem[], sellerId?: string) {
   }
 }
 
-export function getDiscountTotal(discountTotal?: any[], sellerId?: string) {
+export function getDiscountTotal(
+  sellerResponse?: any[],
+  discountTotal?: any[],
+  sellerId?: string
+) {
   if (discountTotal && discountTotal.length > 0) {
     if (
       sellerId &&
       discountTotal.find((b) => b.sellerId === sellerId)?.discount
     ) {
-      return discountTotal.find((b) => b.sellerId === sellerId)?.discount;
+      let isRejected = sellerResponse
+        .find((z: any) => z.sellerId === sellerId)
+        .statusHistory.find(
+          (z: any) =>
+            z.status === OrderStatus.Rejected ||
+            z.status === OrderStatus.AutoCancelled
+        );
+      if (isRejected) {
+        return 0;
+      } else {
+        return discountTotal.find((b) => b.sellerId === sellerId)?.discount;
+      }
     } else if (sellerId) {
       return 0;
     } else {
-      return discountTotal.map((b) => b.discount).reduce((a, b) => a + b, 0);
+      return discountTotal
+        .filter(
+          (a) =>
+            sellerResponse.find((z: any) => z.sellerId === a.sellerId) &&
+            !sellerResponse
+              .find((z: any) => z.sellerId === a.sellerId)
+              .statusHistory.find(
+                (z: any) =>
+                  z.status === OrderStatus.Rejected ||
+                  z.status === OrderStatus.AutoCancelled
+              )
+        )
+        .map((b) => b.discount)
+        .reduce((a, b) => a + b, 0);
     }
   }
   return 0;

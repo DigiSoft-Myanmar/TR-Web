@@ -389,6 +389,7 @@ function Default({
                     <p className="text-sm">
                       {formatAmount(
                         getDiscountTotal(
+                          order?.sellerResponse,
                           order?.discountTotal,
                           sellerList.find((z) => z.id === session.id)
                             ? session.id
@@ -411,6 +412,7 @@ function Default({
                             : ""
                         ) -
                           getDiscountTotal(
+                            order?.sellerResponse,
                             order?.discountTotal,
                             sellerList.find((z) => z.id === session.id)
                               ? session.id
