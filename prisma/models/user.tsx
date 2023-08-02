@@ -156,11 +156,15 @@ export const createBuyer = async (data: any) => {
 export const updateUser = async (id: string, updateData: any) => {
   let d = { ...updateData };
   let firebaseRes = { isSuccess: true, error: "" };
+  if (d.email) {
+    d.email = d.email.toLowerCase();
+  }
+
   if (d.password && d.password.length > 0) {
     let body = {
       password: d.password,
       providerToLink: {
-        email: updateData.email,
+        email: d.email,
         uid: updateData.email,
         providerId: "email",
       },

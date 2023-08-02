@@ -46,7 +46,7 @@ function FAQList({ data, updateFn }: Props) {
       ) : (
         <div className="mb-10 flex flex-col items-center space-y-10">
           <h3 className="text-2xl font-semibold">{t("howCanWeHelp")}</h3>
-          <p className="text-sm">{t("chooseCategory")}</p>
+          <p className="text-sm">{t("chooseCategoryFAQ")}</p>
         </div>
       )}
       <div className="w-full overflow-hidden sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl 2xl:max-w-screen-2xl">

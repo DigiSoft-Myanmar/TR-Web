@@ -182,7 +182,7 @@ export default async function handler(
             auction.product.sellerId,
           ],
           details: {
-            web: "/offers",
+            web: "/auctions",
             mobile: {
               screen: "Auctions",
             },

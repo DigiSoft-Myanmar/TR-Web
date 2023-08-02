@@ -85,7 +85,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
   prevYear.setFullYear(new Date().getFullYear() - 1);
 
   React.useEffect(() => {
-    if (parentData) {
+    if (parentData && parentData.newList && parentData.wonList) {
       if (value) {
         setData(
           [...parentData.newList, ...parentData.wonList].filter(

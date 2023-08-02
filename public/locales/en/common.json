@@ -264,5 +264,10 @@
   "updateProduct": "Update Product",
   "updateProductDescription": "Enhance product features with the latest update.",
   "addProduct": "Create Product",
-  "addProductDescription": "Innovate, craft, and launch your dream product effortlessly."
+  "addProductDescription": "Innovate, craft, and launch your dream product effortlessly.",
+  "howCanWeHelp": "How can we help you?",
+  "chooseCategoryFAQ": "Choose a category to quickly find the help you need.",
+  "question": "Question",
+  "answer": "Answer",
+  "notFind": "Don't find what you are looking for?"
 }

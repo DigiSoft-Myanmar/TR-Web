@@ -659,34 +659,34 @@ function Header({
           className={`hidden lg:flex flex-row items-center justify-between px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 min-h-[52px]`}
         >
           <div className="flex flex-row items-center gap-3">
-            {session && session.role === Role.Seller ? (
+            {session && true ? (
               <>
                 <Link
-                  href={"/marketplace"}
+                  href={"/products"}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Products
                 </Link>
                 <Link
-                  href={"/marketplace"}
+                  href={"/orders"}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Orders
                 </Link>
                 <Link
-                  href={"/marketplace"}
+                  href={"/auctions"}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Offers
                 </Link>
                 <Link
-                  href={"/marketplace"}
+                  href={"/shipping Cost"}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Shipping Cost
                 </Link>
                 <Link
-                  href={"/marketplace"}
+                  href={"/promoCode"}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
                   Promo Code
