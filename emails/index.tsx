@@ -16,9 +16,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000/";
+const baseUrl = "http://52.221.211.85/";
 
 export function DefaultEmail() {
   const content: any = {

@@ -38,9 +38,7 @@ import {
 import { sortBy } from "lodash";
 import * as React from "react";
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000/";
+const baseUrl = "http://52.221.211.85/";
 
 type CartItemWithProduct = CartItem & {
   prodDetail: Product & { Brand: Brand; Condition: Condition };
