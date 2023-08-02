@@ -101,16 +101,6 @@ function AuctionPricingSection({
     }
   }, [product]);
 
-  console.log({
-    estimatedPrice: product?.estimatedPrice,
-    openingBid: product?.openingBid,
-    startTime: product?.startTime
-      ? new Date(product.startTime).toISOString()
-      : "",
-    endTime: product?.endTime ? new Date(product.endTime).toISOString() : "",
-  });
-  console.log(watchFields);
-
   function submit(data: AuctionPricing) {
     setProduct((prevValue: any) => {
       return { ...prevValue, ...data };
@@ -183,7 +173,6 @@ function AuctionPricingSection({
           placeHolder={t("enter") + " " + t("startTime")}
           error={errors.startTime?.message}
           type="datetime-local"
-          defaultValue={product?.startTime}
           formControl={{
             ...register("startTime", {
               setValueAs: (v) => (v ? new Date(v).toISOString() : ""),
@@ -199,7 +188,6 @@ function AuctionPricingSection({
           placeHolder={t("enter") + " " + t("endTime")}
           error={errors.endTime?.message}
           type="datetime-local"
-          defaultValue={product?.endTime}
           formControl={{
             ...register("endTime", {
               setValueAs: (v) => (v ? new Date(v).toISOString() : ""),
