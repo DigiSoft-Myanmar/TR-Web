@@ -187,7 +187,6 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
             return res.status(401).json(Unauthorized);
           }
         }
-        return res.status(401).json(Unauthorized);
       }
       let user: any = await getAllUser(type?.toString());
 

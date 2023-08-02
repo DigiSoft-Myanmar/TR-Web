@@ -13,7 +13,7 @@ import { z } from "zod";
 import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
 import { toDateTimeLocal } from "@/util/textHelper";
-import { isInternal } from "@/util/authHelper";
+import { isInternal, isSeller } from "@/util/authHelper";
 
 type Props = {
   backFn: Function;
@@ -37,16 +37,18 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
   const { locale } = useRouter();
   const { data: session }: any = useSession();
 
+  const [memberStartDate, setMemberStartDate] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [sellAllow, setSellAllow] = React.useState(false);
+
   const schema = z.object({
     isBlocked: z.boolean(),
     isDeleted: z.boolean(),
-    sellAllow: z.boolean(),
     adminNote: z
       .string()
       .min(1, { message: t("inputError") })
       .optional()
       .or(z.literal("")),
-    memberStartDate: z.date(),
   });
 
   const { register, handleSubmit, watch, formState, reset } = useForm<Status>({
@@ -55,39 +57,58 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
       adminNote: profile.adminNote,
       isBlocked: profile.isBlocked,
       isDeleted: profile.isDeleted,
-      memberStartDate: new Date(profile.memberStartDate),
-      sellAllow: profile.sellAllow,
     },
     resolver: zodResolver(schema),
   });
   const { errors } = formState;
   const watchFields = watch();
 
-  /* React.useEffect(() => {
+  React.useEffect(() => {
     if (profile.memberStartDate) {
+      setMemberStartDate(
+        new Date(profile.memberStartDate).toISOString().substring(0, 10)
+      );
+      setSellAllow(profile.sellAllow);
       reset({
         adminNote: profile.adminNote,
         isBlocked: profile.isBlocked,
         isDeleted: profile.isDeleted,
-        memberStartDate: new Date(profile.memberStartDate).toISOString(),
-        sellAllow: profile.sellAllow,
       });
     } else {
+      setSellAllow(profile.sellAllow);
       reset({
         adminNote: "",
         isBlocked: false,
         isDeleted: false,
-        memberStartDate: new Date().toISOString(),
-        sellAllow: false,
       });
+      setError("");
     }
-  }, [profile]); */
+  }, [profile]);
 
   function submit(data: Status) {
-    setProfile((prevValue: any) => {
-      return { ...prevValue, ...data };
-    });
-    nextFn();
+    if (isSeller(profile)) {
+      if (memberStartDate) {
+        setProfile((prevValue: any) => {
+          return {
+            ...prevValue,
+            ...data,
+            memberStartDate: new Date(memberStartDate),
+            sellAllow: sellAllow,
+          };
+        });
+        nextFn();
+      } else {
+        setError("Please input member start date");
+      }
+    } else {
+      setProfile((prevValue: any) => {
+        return {
+          ...prevValue,
+          ...data,
+        };
+      });
+      nextFn();
+    }
   }
 
   return (
@@ -102,46 +123,80 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
         {profile &&
           (profile.role === Role.Seller || profile.role === Role.Trader) && (
             <>
-              {/* //TODO check date */}
-              <FormInput
-                label={t("memberStartDate")}
-                placeHolder={t("enter") + " " + t("memberStartDate")}
-                error={errors.memberStartDate?.message}
-                type="date"
-                defaultValue={
-                  profile?.memberStartDate
-                    ? new Date(profile?.memberStartDate)
-                        .toISOString()
-                        .substring(0, 10)
-                    : ""
-                }
-                formControl={{
-                  ...register("memberStartDate", {
-                    setValueAs: (v) => (v ? new Date(v) : ""),
-                  }),
-                }}
-                currentValue={
-                  watchFields.memberStartDate
-                    ? new Date(watchFields.memberStartDate)
-                        ?.toISOString()
-                        .substring(0, 10)
-                    : ""
-                }
-                disabled={!isInternal(session)}
-              />
-              <FormInputCheckbox
-                formControl={{ ...register("sellAllow") }}
-                label={t("sellAllow")}
-                value={
-                  watchFields.isBlocked === true ||
-                  watchFields.isDeleted === true
-                    ? false
-                    : watchFields.sellAllow
-                }
-                disabled={!isInternal(session)}
-              />
+              <div>
+                <label
+                  className={`text-sm font-medium text-gray-400 ${
+                    error
+                      ? "text-error"
+                      : memberStartDate && memberStartDate.length > 0 && !error
+                      ? "text-green-600"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {t("memberStartDate")}
+                  <span className="text-primary">*</span>
+                </label>
+
+                <div className={`relative mt-1`}>
+                  <input
+                    type={"date"}
+                    className={`w-full rounded-lg ${
+                      error
+                        ? "border-error"
+                        : memberStartDate &&
+                          memberStartDate.length > 0 &&
+                          !error
+                        ? "border-green-600"
+                        : "border-gray-200"
+                    } px-4 py-2 pr-12 text-sm leading-6 shadow-sm`}
+                    placeholder={t("enter") + " " + t("memberStartDate")}
+                    defaultValue={memberStartDate}
+                    onWheelCapture={(e) => e.currentTarget.blur()}
+                    disabled={!isInternal(session) === true ? true : false}
+                    value={memberStartDate}
+                    onChange={(e) => {
+                      let value = e.currentTarget.valueAsDate;
+                      if (value) {
+                        setMemberStartDate(
+                          value.toISOString().substring(0, 10)
+                        );
+                      } else {
+                        setError("Please input member start date");
+                      }
+                    }}
+                  />
+                </div>
+                {error && (
+                  <span className="p-2 text-xs text-error">{error}</span>
+                )}
+              </div>
+
+              <div className="form-control flex">
+                <label
+                  className="label cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    if (isInternal(session) === true) {
+                      setSellAllow((prevValue) => !prevValue);
+                    }
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    className="checkbox-primary checkbox"
+                    checked={sellAllow}
+                    defaultChecked={sellAllow}
+                    disabled={!isInternal(session)}
+                  />
+                  <span className="label-text ml-3 flex-grow">
+                    {t("sellAllow")}
+                  </span>
+                </label>
+              </div>
             </>
           )}
+
         <FormInputCheckbox
           formControl={{ ...register("isBlocked") }}
           label={t("isBlocked")}
