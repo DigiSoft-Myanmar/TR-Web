@@ -101,6 +101,16 @@ function AuctionPricingSection({
     }
   }, [product]);
 
+  console.log({
+    estimatedPrice: product?.estimatedPrice,
+    openingBid: product?.openingBid,
+    startTime: product?.startTime
+      ? new Date(product.startTime).toISOString()
+      : "",
+    endTime: product?.endTime ? new Date(product.endTime).toISOString() : "",
+  });
+  console.log(watchFields);
+
   function submit(data: AuctionPricing) {
     setProduct((prevValue: any) => {
       return { ...prevValue, ...data };
