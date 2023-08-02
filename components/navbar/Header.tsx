@@ -667,7 +667,7 @@ function Header({
           className={`hidden lg:flex flex-row items-center justify-between px-3 gap-3 sm:px-6 lg:px-8 max-w-screen-2xl py-1 text-sm border-y-[1px] border-y-gray-200 min-h-[52px]`}
         >
           <div className="flex flex-row items-center gap-3">
-            {session && true ? (
+            {session && session.role === Role.Seller ? (
               <>
                 <Link
                   href={"/products"}
