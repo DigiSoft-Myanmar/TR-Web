@@ -54,20 +54,6 @@ function AuctionPricingSection({
         message: t("inputValidAmount"),
       })
       .nonnegative({ message: t("inputValidAmount") }),
-    startTime: z
-      .string()
-      .refine((arg) =>
-        arg.match(
-          /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)((-(\d{2}):(\d{2})|Z)?)$/
-        )
-      ),
-    endTime: z
-      .string()
-      .refine((arg) =>
-        arg.match(
-          /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)((-(\d{2}):(\d{2})|Z)?)$/
-        )
-      ),
   });
 
   const { register, handleSubmit, watch, formState, reset } =
@@ -79,53 +65,90 @@ function AuctionPricingSection({
   const { errors } = formState;
   const watchFields = watch();
 
+  const [startTime, setStartTime] = React.useState("");
+  const [endTime, setEndTime] = React.useState("");
+  const [startTimeError, setStartTimeError] = React.useState("");
+  const [endTimeError, setEndTimeError] = React.useState("");
+
   React.useEffect(() => {
     if (product) {
       reset({
         estimatedPrice: product?.estimatedPrice,
         openingBid: product?.openingBid,
-        startTime: product?.startTime
-          ? new Date(product.startTime).toISOString()
-          : "",
-        endTime: product?.endTime
-          ? new Date(product.endTime).toISOString()
-          : "",
       });
+      setStartTime(
+        product?.startTime
+          ? toDateTimeLocal(new Date(product.startTime).toISOString())
+          : ""
+      );
+      setEndTime(
+        product?.endTime
+          ? toDateTimeLocal(new Date(product.endTime).toISOString())
+          : ""
+      );
     } else {
       reset({
         estimatedPrice: 0,
         openingBid: 0,
-        startTime: new Date().toISOString(),
-        endTime: "",
       });
     }
   }, [product]);
 
+  React.useEffect(() => {
+    if (startTime && endTime) {
+      if (new Date(endTime).getTime() <= new Date().getTime()) {
+        setStartTimeError("");
+        setEndTimeError("End time is less than today.");
+      } else if (new Date(startTime).getTime() >= new Date(endTime).getTime()) {
+        setStartTimeError("");
+        setEndTimeError("End time must be greater than start time.");
+      } else {
+        setStartTimeError("");
+        setEndTimeError("");
+      }
+    } else if (startTime && !endTime) {
+      setEndTimeError("Please input end time.");
+    } else if (endTime && !startTime) {
+      setStartTimeError("Please input start time.");
+    } else {
+      setEndTimeError("Please input end time.");
+      setStartTimeError("Please input start time.");
+    }
+  }, [startTime, endTime]);
+
   function submit(data: AuctionPricing) {
-    setProduct((prevValue: any) => {
-      return { ...prevValue, ...data };
-    });
-    if (data.startTime && data.endTime) {
-      let start = new Date(data.startTime);
-      let end = new Date(data.endTime);
-      if (start < end) {
-        // Calculate the difference in milliseconds between start time and end time
-        var timeDiff = end.getTime() - start.getTime();
+    if (startTime && endTime) {
+      setProduct((prevValue: any) => {
+        return {
+          ...prevValue,
+          ...data,
+          startTime: new Date(startTime),
+          endTime: new Date(endTime),
+        };
+      });
+      if (startTime && endTime && !startTimeError && !endTimeError) {
+        let start = new Date(startTime);
+        let end = new Date(endTime);
+        if (start < end) {
+          // Calculate the difference in milliseconds between start time and end time
+          var timeDiff = end.getTime() - start.getTime();
 
-        // Calculate the difference in days
-        var diffDays = timeDiff / (1000 * 3600 * 24);
-        console.log(diffDays);
+          // Calculate the difference in days
+          var diffDays = timeDiff / (1000 * 3600 * 24);
 
-        // Check if the difference is less than 3 days
-        if (diffDays <= maxAuctionPeriod) {
-          nextFn();
+          // Check if the difference is less than 3 days
+          if (diffDays <= maxAuctionPeriod) {
+            nextFn();
+          } else {
+            showErrorDialog(
+              "Date must be less than " + maxAuctionPeriod + " days."
+            );
+          }
         } else {
-          showErrorDialog(
-            "Date must be less than " + maxAuctionPeriod + " days."
-          );
+          showErrorDialog("Start time is not greater than end time.");
         }
       } else {
-        showErrorDialog("Start time is not greater than end time.");
+        showErrorDialog(t("fillInformation"));
       }
     } else {
       showErrorDialog(t("fillInformation"));
@@ -168,35 +191,87 @@ function AuctionPricingSection({
           currentValue={watchFields.openingBid}
         />
 
-        <FormInput
-          label={t("startTime")}
-          placeHolder={t("enter") + " " + t("startTime")}
-          error={errors.startTime?.message}
-          type="datetime-local"
-          formControl={{
-            ...register("startTime", {
-              setValueAs: (v) => (v ? new Date(v).toISOString() : ""),
-            }),
-          }}
-          currentValue={
-            watchFields.startTime ? toDateTimeLocal(watchFields.startTime) : ""
-          }
-        />
+        <div>
+          <label
+            className={`text-sm font-medium ${
+              startTimeError
+                ? "text-error"
+                : startTime && new Date(startTime) && !startTimeError
+                ? "text-green-600"
+                : "text-gray-400"
+            }`}
+          >
+            {t("startTime")} <span className="text-primary">*</span>
+          </label>
 
-        <FormInput
-          label={t("endTime")}
-          placeHolder={t("enter") + " " + t("endTime")}
-          error={errors.endTime?.message}
-          type="datetime-local"
-          formControl={{
-            ...register("endTime", {
-              setValueAs: (v) => (v ? new Date(v).toISOString() : ""),
-            }),
-          }}
-          currentValue={
-            watchFields.endTime ? toDateTimeLocal(watchFields.endTime) : ""
-          }
-        />
+          <div className={`relative mt-1`}>
+            <input
+              type={"datetime-local"}
+              className={`w-full rounded-lg ${
+                startTimeError
+                  ? "border-error"
+                  : startTime && new Date(startTime) && !startTimeError
+                  ? "border-green-600"
+                  : "border-gray-200"
+              } px-4 py-2 pr-12 text-sm leading-6 shadow-sm`}
+              placeholder={t("enter") + " " + t("startTime")}
+              onWheelCapture={(e) => e.currentTarget.blur()}
+              value={startTime}
+              onChange={(e) => {
+                let date = e.currentTarget.value;
+                if (date) {
+                  setStartTime(toDateTimeLocal(new Date(date).toISOString()));
+                } else {
+                  setStartTime("");
+                }
+              }}
+            />
+          </div>
+          {startTimeError && (
+            <span className="p-2 text-xs text-error">{startTimeError}</span>
+          )}
+        </div>
+
+        <div>
+          <label
+            className={`text-sm font-medium ${
+              endTimeError
+                ? "text-error"
+                : endTime && new Date(endTime) && !endTimeError
+                ? "text-green-600"
+                : "text-gray-400"
+            }`}
+          >
+            {t("endTime")} <span className="text-primary">*</span>
+          </label>
+
+          <div className={`relative mt-1`}>
+            <input
+              type={"datetime-local"}
+              className={`w-full rounded-lg ${
+                endTimeError
+                  ? "border-error"
+                  : endTime && new Date(endTime) && !endTimeError
+                  ? "border-green-600"
+                  : "border-gray-200"
+              } px-4 py-2 pr-12 text-sm leading-6 shadow-sm`}
+              placeholder={t("enter") + " " + t("endTime")}
+              onWheelCapture={(e) => e.currentTarget.blur()}
+              value={endTime}
+              onChange={(e) => {
+                let date = e.currentTarget.value;
+                if (date) {
+                  setEndTime(toDateTimeLocal(new Date(date).toISOString()));
+                } else {
+                  setEndTime("");
+                }
+              }}
+            />
+          </div>
+          {endTimeError && (
+            <span className="p-2 text-xs text-error">{endTimeError}</span>
+          )}
+        </div>
 
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button

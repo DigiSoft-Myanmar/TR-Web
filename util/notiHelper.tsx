@@ -101,67 +101,73 @@ export async function addNotification(msg: any, token?: any) {
     body: msg.body,
     type: msg.type,
   });
-  let msgCount = sameNoti.filter((e: any) =>
-    isEqual(e.sendList.sort(), msg.sendList.sort())
-  ).length;
+  let isSame = true;
+  if (sameNoti) {
+    let msgCount = sameNoti.filter((e: any) =>
+      isEqual(e.sendList.sort(), msg.sendList.sort())
+    ).length;
+    if (msgCount > 0) {
+      isSame = false;
+    }
+  } else {
+  }
+  if (isSame === false) {
+    return [];
+  }
   let response = [];
 
-  if (msgCount > 0) {
-  } else {
-    if (msg && msg.sendList && msg.sendList.length > 0) {
-      for (let i = 0; i < msg.sendList.length; i++) {
-        let user = await prisma.user.findFirst({
-          where: {
-            id: msg.sendList[i],
-          },
-          include: {
-            NotiToken: true,
-          },
-        });
-        if (user) {
-          if (user.NotiToken) {
-            if (user.NotiToken.length > 0) {
-              let res = await fetch("https://exp.host/--/api/v2/push/send", {
-                method: "POST",
-                body: JSON.stringify({
-                  to: user.NotiToken[user.NotiToken.length - 1]
-                    .notificationToken,
-                  title: msg.title,
-                  body: msg.body,
-                }),
-              });
-              response.push(res);
-            }
+  if (msg && msg.sendList && msg.sendList.length > 0) {
+    for (let i = 0; i < msg.sendList.length; i++) {
+      let user = await prisma.user.findFirst({
+        where: {
+          id: msg.sendList[i],
+        },
+        include: {
+          NotiToken: true,
+        },
+      });
+      if (user) {
+        if (user.NotiToken) {
+          if (user.NotiToken.length > 0) {
+            let res = await fetch("https://exp.host/--/api/v2/push/send", {
+              method: "POST",
+              body: JSON.stringify({
+                to: user.NotiToken[user.NotiToken.length - 1].notificationToken,
+                title: msg.title,
+                body: msg.body,
+              }),
+            });
+            response.push(res);
           }
         }
       }
-    } else {
-      let tokens = await prisma.notiToken.findMany({});
-      for (let i = 0; i < tokens.length; i++) {
-        let res = fetch("https://exp.host/--/api/v2/push/send", {
-          method: "POST",
-          body: JSON.stringify({
-            to: tokens[i].notificationToken,
-            title: msg.title,
-            body: msg.body,
-          }),
-        });
-        response.push(res);
-      }
     }
-
-    if (token) {
-      await sendFCMMessage(msg, token.toString());
-    }
-    let notification = new Notification(msg);
-    notification
-      .save()
-      .then(() => {
-        console.log("success");
-      })
-      .catch((err: any) => {
-        console.log(err);
+  } else {
+    let tokens = await prisma.notiToken.findMany({});
+    for (let i = 0; i < tokens.length; i++) {
+      let res = fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        body: JSON.stringify({
+          to: tokens[i].notificationToken,
+          title: msg.title,
+          body: msg.body,
+        }),
       });
-    return response;
+      response.push(res);
+    }
   }
+
+  if (token) {
+    await sendFCMMessage(msg, token.toString());
+  }
+  let notification = new Notification(msg);
+  notification
+    .save()
+    .then(() => {
+      console.log("success");
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
+  return response;
 }

@@ -31,7 +31,6 @@ function FormInput({
   disabled,
   focusFn,
 }: Props) {
-  console.log(currentValue);
   return (
     <div>
       <label
