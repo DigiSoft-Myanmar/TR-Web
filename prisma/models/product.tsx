@@ -312,7 +312,10 @@ export const updateProduct = async (id: string, data: Product) => {
       },
     });
     if (product) {
-      if (new Date(product.startTime).getTime() <= new Date().getTime()) {
+      if (
+        new Date(product.startTime).getTime() <= new Date().getTime() &&
+        new Date(product.endTime).getTime() > new Date().getTime()
+      ) {
         return { isSuccess: false, data: BadAuction };
       } else if (product.WonList.length > 0) {
         if (product.WonList.filter((z) => z.auction.SKU === d.SKU)) {
@@ -325,8 +328,8 @@ export const updateProduct = async (id: string, data: Product) => {
           return { isSuccess: false, data: BadAuctionPrice };
         }
       }
-    } else {
-      return { isSuccess: true, data: NotAvailable };
+    } else if (d.type !== ProductType.Auction) {
+      return { isSuccess: false, data: NotAvailable };
     }
     const updateProd = await prisma.product.update({
       where: { id: id },

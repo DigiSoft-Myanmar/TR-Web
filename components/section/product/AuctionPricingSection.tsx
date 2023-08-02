@@ -70,13 +70,27 @@ function AuctionPricingSection({
       ),
   });
 
-  const { register, handleSubmit, watch, formState } = useForm<AuctionPricing>({
-    mode: "onChange",
-    defaultValues: product,
-    resolver: zodResolver(schema),
-  });
+  const { register, handleSubmit, watch, formState, reset } =
+    useForm<AuctionPricing>({
+      mode: "onChange",
+      defaultValues: product,
+      resolver: zodResolver(schema),
+    });
   const { errors } = formState;
   const watchFields = watch();
+
+  React.useEffect(() => {
+    if (product) {
+      reset(product);
+    } else {
+      reset({
+        estimatedPrice: 0,
+        openingBid: 0,
+        startTime: new Date().toISOString(),
+        endTime: "",
+      });
+    }
+  }, [product]);
 
   function submit(data: AuctionPricing) {
     setProduct((prevValue: any) => {
