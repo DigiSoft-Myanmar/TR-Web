@@ -215,6 +215,8 @@ export default async function handler(
                 mobile: {
                   screen: "Auctions",
                 },
+                buyer: wonList.auction.createdByUserId,
+                seller: auction.product.sellerId,
               },
             };
             await addNotification(msg, "");
@@ -399,6 +401,8 @@ export default async function handler(
             mobile: {
               screen: "Auctions",
             },
+            buyer: auction.auction.createdByUserId,
+            seller: auction.product.sellerId,
           },
         };
         await addNotification(msg, "");

@@ -110,7 +110,7 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
             details: {
               web: "/products/" + encodeURIComponent(product.slug),
               mobile: {
-                screen: "Products",
+                screen: "ProductUpdate",
                 slug: product.slug,
               },
             },
@@ -163,7 +163,7 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
                 details: {
                   web: "/products/" + encodeURIComponent(product.slug),
                   mobile: {
-                    screen: "Products",
+                    screen: "ProductUpdate",
                     slug: product.slug,
                   },
                 },

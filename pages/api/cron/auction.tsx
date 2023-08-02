@@ -186,6 +186,8 @@ export default async function handler(
             mobile: {
               screen: "Auctions",
             },
+            buyer: auction.auction.createdByUserId,
+            seller: auction.product.sellerId,
           },
         };
         await addNotification(msg, "");

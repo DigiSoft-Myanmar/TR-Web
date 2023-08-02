@@ -19,7 +19,13 @@ function NotiCard({ data }: Props) {
       onClick={() => {
         let d: any = data.details;
         if (d.web) {
-          router.push(d.web);
+          if (d.buyer === session.id) {
+            router.push("/bidHistory");
+          } else if (d.seller === session.id) {
+            router.push("/auctions");
+          } else {
+            router.push(d.web);
+          }
         }
       }}
     >
