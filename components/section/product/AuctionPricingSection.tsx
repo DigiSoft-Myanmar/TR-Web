@@ -81,7 +81,16 @@ function AuctionPricingSection({
 
   React.useEffect(() => {
     if (product) {
-      reset(product);
+      reset({
+        estimatedPrice: product?.estimatedPrice,
+        openingBid: product?.openingBid,
+        startTime: product?.startTime
+          ? new Date(product.startTime).toISOString()
+          : "",
+        endTime: product?.endTime
+          ? new Date(product.endTime).toISOString()
+          : "",
+      });
     } else {
       reset({
         estimatedPrice: 0,
