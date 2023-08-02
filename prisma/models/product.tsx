@@ -299,6 +299,8 @@ export const updateProduct = async (id: string, data: Product) => {
     let product = await prisma.product.findFirst({
       where: {
         id: id,
+        isPublished: true,
+        SKU: d.SKU,
       },
       include: {
         WonList: {
