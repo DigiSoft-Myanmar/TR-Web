@@ -86,7 +86,7 @@ function SKUSection({
           defaultValue={membership?.SKUListing}
           formControl={{
             ...register("SKUListing", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.SKUListing}
@@ -100,7 +100,7 @@ function SKUSection({
           defaultValue={membership?.extraSKUPricing}
           formControl={{
             ...register("extraSKUPricing", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.extraSKUPricing}

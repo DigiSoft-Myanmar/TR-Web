@@ -103,7 +103,7 @@ function AdsSection({
           defaultValue={membership?.freeAdsLimit}
           formControl={{
             ...register("freeAdsLimit", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.freeAdsLimit}
@@ -117,7 +117,7 @@ function AdsSection({
           defaultValue={membership?.adsValidity}
           formControl={{
             ...register("adsValidity", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.adsValidity}
@@ -131,7 +131,7 @@ function AdsSection({
           defaultValue={membership?.adsLifeTime}
           formControl={{
             ...register("adsLifeTime", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.adsLifeTime}
@@ -145,7 +145,7 @@ function AdsSection({
           defaultValue={membership?.extraAdsPricing}
           formControl={{
             ...register("extraAdsPricing", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.extraAdsPricing}

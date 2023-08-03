@@ -113,7 +113,7 @@ function Configurations({
               defaultValue={lowStockLimit}
               formControl={{
                 ...register("lowStockLimit", {
-                  setValueAs: (v) => (v ? parseInt(v) : 0),
+                  setValueAs: (v) => (v ? parseInt(v) : undefined),
                 }),
               }}
               currentValue={watchFields.lowStockLimit}
@@ -127,7 +127,7 @@ function Configurations({
               defaultValue={maximumAuctionPeriod}
               formControl={{
                 ...register("maximumAuctionPeriod", {
-                  setValueAs: (v) => (v ? parseInt(v) : 0),
+                  setValueAs: (v) => (v ? parseInt(v) : undefined),
                 }),
               }}
               currentValue={watchFields.maximumAuctionPeriod}

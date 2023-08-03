@@ -25,7 +25,7 @@ function StockTypeModal({ isModalOpen, setModalOpen, setStock }: Props) {
   const router = useRouter();
   const { t } = useTranslation("common");
   const [stockType, setStockType] = React.useState<StockType>(
-    StockType.InStock,
+    StockType.InStock
   );
 
   const schema = z.object(
@@ -51,7 +51,7 @@ function StockTypeModal({ isModalOpen, setModalOpen, setStock }: Props) {
               message: t("inputValidAmount"),
             })
             .nonnegative({ message: t("inputValidAmount") }),
-        },
+        }
   );
 
   const { register, handleSubmit, watch, formState, reset } = useForm<Form>({
@@ -223,7 +223,7 @@ function StockTypeModal({ isModalOpen, setModalOpen, setStock }: Props) {
                           type="number"
                           formControl={{
                             ...register("stockLevel", {
-                              setValueAs: (v) => (v ? parseInt(v) : 0),
+                              setValueAs: (v) => (v ? parseInt(v) : undefined),
                             }),
                           }}
                           currentValue={watchFields.stockLevel}

@@ -314,7 +314,7 @@ function PromotionModal({
                         defaultValue={promotion?.minimumPurchasePrice}
                         formControl={{
                           ...register("minimumPurchasePrice", {
-                            setValueAs: (v) => (v ? parseInt(v) : 0),
+                            setValueAs: (v) => (v ? parseInt(v) : undefined),
                           }),
                         }}
                         currentValue={watchFields.minimumPurchasePrice}

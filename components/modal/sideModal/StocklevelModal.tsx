@@ -147,7 +147,7 @@ function StockLevelModal({ isModalOpen, setModalOpen, setStockLevel }: Props) {
                         type="number"
                         formControl={{
                           ...register("stockLevel", {
-                            setValueAs: (v) => (v ? parseInt(v) : 0),
+                            setValueAs: (v) => (v ? parseInt(v) : undefined),
                           }),
                         }}
                         currentValue={watchFields.stockLevel}

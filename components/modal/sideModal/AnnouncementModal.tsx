@@ -49,9 +49,7 @@ function AnnouncementModal({
       .min(0, {
         message: t("inputValidAmount"),
       })
-      .nonnegative({ message: t("inputValidAmount") })
-      .optional()
-      .or(z.literal("")),
+      .nonnegative({ message: t("inputValidAmount") }),
   });
 
   const { register, handleSubmit, watch, formState, reset } = useForm<any>({
@@ -227,7 +225,7 @@ function AnnouncementModal({
                         defaultValue={parentAnnounce?.index}
                         formControl={{
                           ...register("index", {
-                            setValueAs: (v) => (v ? parseInt(v) : 0),
+                            setValueAs: (v) => (v ? parseInt(v) : undefined),
                           }),
                         }}
                         currentValue={watchFields.index}

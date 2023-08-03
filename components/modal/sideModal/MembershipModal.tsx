@@ -323,7 +323,7 @@ function MembershipModal({
                           defaultValue={membership?.productLimit}
                           formControl={{
                             ...register("productLimit", {
-                              setValueAs: (v) => (v ? parseInt(v) : 0),
+                              setValueAs: (v) => (v ? parseInt(v) : undefined),
                             }),
                           }}
                           currentValue={watchFields.productLimit}

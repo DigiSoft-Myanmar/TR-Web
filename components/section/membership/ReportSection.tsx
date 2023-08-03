@@ -79,7 +79,7 @@ function ReportSection({
           defaultValue={membership?.subCategoryReport}
           formControl={{
             ...register("subCategoryReport", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.subCategoryReport}

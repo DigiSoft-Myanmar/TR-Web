@@ -171,7 +171,7 @@ function AuctionPricingSection({
           defaultValue={product?.estimatedPrice}
           formControl={{
             ...register("estimatedPrice", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.estimatedPrice}
@@ -185,7 +185,7 @@ function AuctionPricingSection({
           defaultValue={product?.openingBid}
           formControl={{
             ...register("openingBid", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.openingBid}

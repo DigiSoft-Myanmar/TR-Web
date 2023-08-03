@@ -195,7 +195,7 @@ function PricingSection({ backFn, nextFn, currentStep, pricingRef }: Props) {
           defaultValue={product?.regularPrice}
           formControl={{
             ...register("regularPrice", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.regularPrice}

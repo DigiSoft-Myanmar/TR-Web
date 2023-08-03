@@ -801,7 +801,7 @@ function VariationDetailsModal({
                           defaultValue={variation?.regularPrice}
                           formControl={{
                             ...register("regularPrice", {
-                              setValueAs: (v) => (v ? parseInt(v) : 0),
+                              setValueAs: (v) => (v ? parseInt(v) : undefined),
                             }),
                           }}
                           currentValue={watchFields.regularPrice}

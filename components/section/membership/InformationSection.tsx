@@ -109,7 +109,7 @@ function InformationSection({
           defaultValue={membership?.price}
           formControl={{
             ...register("price", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.price}
@@ -123,7 +123,7 @@ function InformationSection({
           defaultValue={membership?.validity}
           formControl={{
             ...register("validity", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.validity}
@@ -137,7 +137,7 @@ function InformationSection({
           defaultValue={membership?.onBoardingLimit}
           formControl={{
             ...register("onBoardingLimit", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.onBoardingLimit}

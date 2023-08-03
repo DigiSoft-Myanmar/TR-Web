@@ -110,7 +110,7 @@ function SellerInfoSection({ backFn, nextFn, submitRef, content }: Props) {
               defaultValue={profile?.defaultShippingCost}
               formControl={{
                 ...register("defaultShippingCost", {
-                  setValueAs: (v) => (v ? parseInt(v) : 0),
+                  setValueAs: (v) => (v ? parseInt(v) : undefined),
                 }),
               }}
               currentValue={watchFields.defaultShippingCost}
@@ -129,7 +129,7 @@ function SellerInfoSection({ backFn, nextFn, submitRef, content }: Props) {
                 defaultValue={profile?.freeShippingCost}
                 formControl={{
                   ...register("freeShippingCost", {
-                    setValueAs: (v) => (v ? parseInt(v) : 0),
+                    setValueAs: (v) => (v ? parseInt(v) : undefined),
                   }),
                 }}
                 currentValue={watchFields.freeShippingCost}

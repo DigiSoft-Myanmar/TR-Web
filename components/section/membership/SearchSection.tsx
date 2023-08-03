@@ -86,7 +86,7 @@ function SearchSection({
           defaultValue={membership?.topSearchStart}
           formControl={{
             ...register("topSearchStart", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.topSearchStart}
@@ -100,7 +100,7 @@ function SearchSection({
           defaultValue={membership?.topSearchEnd}
           formControl={{
             ...register("topSearchEnd", {
-              setValueAs: (v) => (v ? parseInt(v) : 0),
+              setValueAs: (v) => (v ? parseInt(v) : undefined),
             }),
           }}
           currentValue={watchFields.topSearchEnd}
