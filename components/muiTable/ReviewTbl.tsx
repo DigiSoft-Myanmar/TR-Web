@@ -109,7 +109,13 @@ const ReviewTbl = ({
       field: "product",
       headerName: "Product",
       renderCell: ({ row }: CellType) => (
-        <Link href={row.link}>
+        <button
+          onClick={() => {
+            if (row.link) {
+              router.push(row.link);
+            }
+          }}
+        >
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Img src={fileUrl + row.img} alt={`${row.name}`} />
             <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -118,7 +124,7 @@ const ReviewTbl = ({
               </Typography>
             </Box>
           </Box>
-        </Link>
+        </button>
       ),
     },
     {
@@ -168,10 +174,10 @@ const ReviewTbl = ({
         <Link
           href={
             "/account/" +
-            encodeURIComponent(encryptPhone(row.createdBy.phoneNum))
+            encodeURIComponent(encryptPhone(row.createdBy?.phoneNum))
           }
         >
-          <Typography variant="body2">{row.createdBy.username}</Typography>
+          <Typography variant="body2">{row.createdBy?.username}</Typography>
         </Link>
       ),
     },

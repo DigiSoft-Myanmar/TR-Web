@@ -188,7 +188,7 @@ const UGCReportTbl = ({
       renderCell: ({ row }: CellType) => (
         <Tooltip title={row.details}>
           <div className="flex flex-row flex-wrap items-center gap-3">
-            <Typography variant="body2">{row.reasons.join(",")}</Typography>
+            <Typography variant="body2">{row.reasons?.join(",")}</Typography>
             {row.details && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +217,7 @@ const UGCReportTbl = ({
       renderCell: ({ row }: CellType) => (
         <Link
           href={
-            "/account/" + encodeURIComponent(encryptPhone(row.user.phoneNum))
+            "/account/" + encodeURIComponent(encryptPhone(row.user?.phoneNum))
           }
         >
           <Typography variant="body2">{row.user?.username}</Typography>

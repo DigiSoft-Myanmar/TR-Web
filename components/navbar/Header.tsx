@@ -343,82 +343,101 @@ function Header({
                       tabIndex={0}
                       className="dropdown-content z-[1] menu p-2 border mt-3 bg-base-100 rounded-box w-52"
                     >
-                      <span className="text-xs font-bold p-2">GENERAL</span>
                       <li>
-                        <Link
-                          href={
-                            "/account/" +
-                            encodeURIComponent(encryptPhone(session.phoneNum))
-                          }
-                          className="ml-1 font-normal hover:font-semibold"
-                        >
-                          Profile
-                        </Link>
-                      </li>
-                      {(session.role === Role.Buyer ||
-                        session.role === Role.Trader) && (
-                        <li>
-                          <Link
-                            href={"/wishlist/"}
-                            className="ml-1 font-normal hover:font-semibold"
-                          >
-                            Wishlist
-                          </Link>
-                        </li>
-                      )}
-                      <li>
-                        <button
-                          className="ml-1 font-normal hover:font-semibold cursor-pointer"
-                          type="button"
-                          onClick={() => {
-                            turnOffNotiPing();
-                            fetch("/api/notifications/update", {
-                              method: "POST",
-                              headers: getHeaders(session),
-                            });
-                            setNotiModalOpen(true);
-                          }}
-                        >
-                          Notifications{" "}
-                          <span className="indicator-item badge badge-primary badge-sm text-white">
-                            {isNotiPing > 99 ? "99+" : isNotiPing}
-                          </span>
-                        </button>
-                      </li>
-                      {session.role === Role.Buyer ||
-                      session.role === Role.Trader ? (
-                        <>
-                          <hr className="h-[1px] px-2 my-2" />
-                          <span className="text-xs font-bold p-2">Buyer</span>
+                        <details open>
+                          <summary>
+                            <span className="text-xs font-bold p-2">
+                              GENERAL
+                            </span>
+                          </summary>
                           <li>
                             <Link
                               href={
                                 "/account/" +
                                 encodeURIComponent(
                                   encryptPhone(session.phoneNum)
-                                ) +
-                                "#address"
+                                )
                               }
                               className="ml-1 font-normal hover:font-semibold"
                             >
-                              Address
+                              Profile
                             </Link>
                           </li>
+                          {(session.role === Role.Buyer ||
+                            session.role === Role.Trader) && (
+                            <li>
+                              <Link
+                                href={"/wishlist/"}
+                                className="ml-1 font-normal hover:font-semibold"
+                              >
+                                Wishlist
+                              </Link>
+                            </li>
+                          )}
                           <li>
-                            <Link
-                              href={"/orders/purchasedHistory"}
-                              className="ml-1 font-normal hover:font-semibold"
+                            <button
+                              className="ml-1 font-normal hover:font-semibold cursor-pointer"
+                              type="button"
+                              onClick={() => {
+                                turnOffNotiPing();
+                                fetch("/api/notifications/update", {
+                                  method: "POST",
+                                  headers: getHeaders(session),
+                                });
+                                setNotiModalOpen(true);
+                              }}
                             >
-                              Purchase History
-                            </Link>
+                              Notifications{" "}
+                              <span className="indicator-item badge badge-primary badge-sm text-white">
+                                {isNotiPing > 99 ? "99+" : isNotiPing}
+                              </span>
+                            </button>
                           </li>
+                        </details>
+                      </li>
+
+                      {session.role === Role.Buyer ||
+                      session.role === Role.Trader ? (
+                        <>
+                          <hr className="h-[1px] px-2 my-2" />
                           <li>
-                            <Link
-                              href={"/bidHistory"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Bids
-                            </Link>
+                            <details>
+                              <summary>
+                                <span className="text-xs font-bold p-2">
+                                  Buyer
+                                </span>
+                              </summary>
+                              <li>
+                                <Link
+                                  href={
+                                    "/account/" +
+                                    encodeURIComponent(
+                                      encryptPhone(session.phoneNum)
+                                    ) +
+                                    "#address"
+                                  }
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Address
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/orders/purchasedHistory"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Purchase History
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/bidHistory"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Bids
+                                </Link>
+                              </li>
+                            </details>
                           </li>
                         </>
                       ) : (
@@ -429,68 +448,76 @@ function Header({
                       session.role === Role.Trader ? (
                         <>
                           <hr className="h-[1px] px-2 my-2" />
-                          <span className="text-xs font-bold p-2">Seller</span>
                           <li>
-                            <Link
-                              href={"/products/"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Product Listing
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href={"/products?type=Auction"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Auction Listing
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href={"/orders/"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Sales History
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href={"/auctions/"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Auctions History
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href={"/shipping%20Cost/"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Shipping Cost
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href={"/promoCode/"}
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Promo Codes
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href={
-                                "/account/" +
-                                encodeURIComponent(
-                                  encryptPhone(session.phoneNum)
-                                ) +
-                                "#ads"
-                              }
-                              className="ml-1 font-normal hover:font-semibold"
-                            >
-                              Ads
-                            </Link>
+                            <details>
+                              <summary>
+                                <span className="text-xs font-bold p-2">
+                                  Seller
+                                </span>
+                              </summary>
+                              <li>
+                                <Link
+                                  href={"/products/"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Product Listing
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/products?type=Auction"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Auction Listing
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/orders/"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Sales History
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/auctions/"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Auctions History
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/shipping%20Cost/"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Shipping Cost
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/promoCode/"}
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Promo Codes
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={
+                                    "/account/" +
+                                    encodeURIComponent(
+                                      encryptPhone(session.phoneNum)
+                                    ) +
+                                    "#ads"
+                                  }
+                                  className="ml-1 font-normal hover:font-semibold"
+                                >
+                                  Ads
+                                </Link>
+                              </li>
+                            </details>
                           </li>
                         </>
                       ) : (
