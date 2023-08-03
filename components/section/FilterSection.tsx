@@ -149,6 +149,7 @@ function FilterSection({
   };
   conditions: Condition[];
 }) {
+  console.log(categories);
   let priceRangeList = [
     {
       startPrice: 0,

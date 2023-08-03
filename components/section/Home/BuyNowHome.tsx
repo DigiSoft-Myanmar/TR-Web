@@ -314,8 +314,12 @@ function BuyNowHome({
         <div className="mt-10 lg:mt-20 flex flex-row items-center justify-between gap-5 w-full">
           <h3 className="font-semibold text-lg">
             {isPromotion === true
-              ? t("promotionProducts")
-              : t("highlightProducts")}
+              ? getText(
+                  "Promotion Products",
+                  "အထူးလျော့စျေးပစ္စည်းများ",
+                  locale
+                )
+              : getText("Highlight Products", "အသားပေးပစ္စည်းများ", locale)}
           </h3>
           <Link
             href={
