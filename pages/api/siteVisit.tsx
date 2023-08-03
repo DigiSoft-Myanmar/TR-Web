@@ -74,12 +74,16 @@ async function addSiteVisit(req: NextApiRequest, res: NextApiResponse<any>) {
     } else {
       data = JSON.parse(req.body);
     }
+    console.log(data);
 
     if (data) {
       let b: any = {
         ipAddress: queryIp?.toString(),
         visitDate: new Date().toLocaleDateString("en-ca"),
       };
+      if (data?.isMobile === true) {
+        b.isMobile = true;
+      }
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const session = await useAuth(req);
 

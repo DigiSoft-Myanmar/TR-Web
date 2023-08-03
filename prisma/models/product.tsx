@@ -318,7 +318,13 @@ export const updateProduct = async (id: string, data: Product) => {
       ) {
         return { isSuccess: false, data: BadAuction };
       } else if (product.WonList.length > 0) {
-        if (product.WonList.filter((z) => z.auction.SKU === d.SKU)) {
+        if (
+          product.WonList.filter(
+            (z) =>
+              z.auction.SKU === d.SKU &&
+              (z.status === "InCart" || z.status === "Purchased")
+          )
+        ) {
           return { isSuccess: false, data: BadSKU };
         }
       } else if (product.Auctions.length > 0) {

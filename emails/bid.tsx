@@ -150,8 +150,8 @@ export default function BidEmail({
                   <Column>
                     <Img
                       src={`${baseUrl}/api/files/${auction.product.imgList[0]}`}
-                      height="100"
-                      width="100"
+                      height="70"
+                      width="70"
                       alt={auction.product.name}
                       style={{
                         border: "1px #E71D2A solid",

@@ -943,7 +943,7 @@ function Default({
                               <p className="text-sm">{seller.username}</p>
                               <p className="text-xs">{seller.phoneNum}</p>
 
-                              <div className="flex flex-row gap-1">
+                              {/* <div className="flex flex-row gap-1">
                                 <span className="text-primary">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -959,12 +959,23 @@ function Default({
                                   </svg>
                                 </span>
                                 <span className="text-xs">5.0</span>
-                              </div>
+                              </div> */}
                             </div>
                           </div>
                           <div className="flex flex-row items-center justify-start gap-3">
                             {isInternal(session) === false && (
-                              <button className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus">
+                              <button
+                                className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
+                                onClick={() => {
+                                  router.push(
+                                    "/account/" +
+                                      encodeURIComponent(
+                                        encryptPhone(seller.phoneNum)
+                                      ) +
+                                      "#sellerRatings"
+                                  );
+                                }}
+                              >
                                 Submit Review
                               </button>
                             )}

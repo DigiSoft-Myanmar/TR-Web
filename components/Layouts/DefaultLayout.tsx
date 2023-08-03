@@ -86,7 +86,7 @@ function DefaultLayout({ children }: LayoutProps) {
     }
   }, [isOnline, session]);
 
-  /* React.useEffect(() => {
+  React.useEffect(() => {
     if (session) {
       if (!isInternal(session)) {
         if (!session.nrcFront) {
@@ -104,7 +104,7 @@ function DefaultLayout({ children }: LayoutProps) {
         }
       }
     }
-  }, [session, router.asPath]); */
+  }, [session, router.asPath]);
 
   React.useEffect(() => {
     if (device) {

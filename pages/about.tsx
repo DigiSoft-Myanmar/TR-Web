@@ -176,36 +176,6 @@ function About({
               <h4 className="text-center text-sm font-semibold text-primary">
                 {getText("About Us", "ကျွန်ုပ်တို့အကြောင်း", locale)}
               </h4>
-
-              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                {headTitle.map((e: any, index: number) => (
-                  <span
-                    key={index}
-                    className={
-                      e.isHighlight === true
-                        ? "block font-extrabold text-[#B65E16]"
-                        : ""
-                    }
-                  >
-                    {e.text}
-                  </span>
-                ))}
-              </h2>
-
-              <p className="mt-4 text-gray-500 sm:text-xl">
-                {headDescription.map((e: any, index: number) => (
-                  <span
-                    key={index}
-                    className={
-                      e.isHighlight === true
-                        ? "font-extrabold text-[#B65E16]"
-                        : ""
-                    }
-                  >
-                    {e.text}
-                  </span>
-                ))}
-              </p>
             </div>
 
             <div className="mt-8 sm:mt-12">
@@ -266,7 +236,7 @@ function About({
                 ))}
               </h2>
 
-              <p className="mt-4 text-center sm:text-xl sm:leading-relaxed">
+              <p className="mt-4 text-center text-sm sm:leading-relaxed">
                 {homeDescription.map((e: any, index: number) => (
                   <span
                     key={index}
@@ -466,7 +436,7 @@ function About({
               <h2 className="text-primaryText mt-4 text-xl font-bold">
                 {getText("Email us:", "အီးမေးလ်ပို့ရန်", locale)}
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 text-center">
                 {getText(
                   "Email us for general queries, including marketing and partnership opportunities.",
                   "စျေးကွက်ရှာဖွေရေးနှင့် မိတ်ဖက်အခွင့်အလမ်းများအပါအဝင် အထွေထွေမေးခွန်းများအတွက် ကျွန်ုပ်တို့ထံ အီးမေးလ်ပို့ပါ။",
@@ -503,7 +473,7 @@ function About({
               <h2 className="text-primaryText mt-4 text-xl font-bold">
                 {getText("Call us:", "ဖုန်းဖြင့်ဆက်သွယ်ရန်", locale)}
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 text-center">
                 {getText(
                   "Call us to speak to a member of our team. We are always happy to help.",
                   "မိတ်ဆွေတို့အား ကူညီရန် ကျွန်တော့်တို့ဘက်မှ အသင်းသားများ အသင့်ရှိနေပါသည်။ လူကြီးမင်း၏ အခက်အခဲအားပြောပြရန် ဖုန်းဖြင့်ဆက်သွယ်ပါ။",
