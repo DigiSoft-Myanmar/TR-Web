@@ -132,7 +132,7 @@ function BestSellerCard() {
               )}{" "}
               <span className="text-xs font-light">
                 sold with{" "}
-                {formatAmount(data.bestSellerByProfit.units, "en", true, true)}{" "}
+                {formatAmount(data.bestSellerByProfit.units, "en", false, true)}{" "}
                 units
               </span>
             </p>

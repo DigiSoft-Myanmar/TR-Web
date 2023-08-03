@@ -63,25 +63,27 @@ function Footer({ content }: { content: Content }) {
                 onSubmit={(e: any) => {
                   e.preventDefault();
                   const email = e.target.email.value;
-                  fetch("/api/subscribe", {
-                    method: "POST",
-                    body: JSON.stringify({
-                      email: email,
-                    }),
-                  }).then((data) => {
-                    if (data.status === 200) {
-                      showSuccessDialog(
-                        "You have successfully subscribed to our list.",
-                        "သင်သည် ကျွန်ုပ်တို့၏စာရင်းတွင် အောင်မြင်စွာ စာရင်းသွင်းပြီးပါပြီ။"
-                      );
-                    } else {
-                      showErrorDialog(
-                        "This email address is already in our subscription list.",
-                        "ဤအီးမေးလ်လိပ်စာသည် ကျွန်ုပ်တို့၏ စာရင်းသွင်းမှုစာရင်းတွင် ရှိနှင့်ပြီးဖြစ်သည်။",
-                        locale
-                      );
-                    }
-                  });
+                  if (email) {
+                    fetch("/api/subscribe", {
+                      method: "POST",
+                      body: JSON.stringify({
+                        email: email,
+                      }),
+                    }).then((data) => {
+                      if (data.status === 200) {
+                        showSuccessDialog(
+                          "You have successfully subscribed to our list.",
+                          "သင်သည် ကျွန်ုပ်တို့၏စာရင်းတွင် အောင်မြင်စွာ စာရင်းသွင်းပြီးပါပြီ။"
+                        );
+                      } else {
+                        showErrorDialog(
+                          "This email address is already in our subscription list.",
+                          "ဤအီးမေးလ်လိပ်စာသည် ကျွန်ုပ်တို့၏ စာရင်းသွင်းမှုစာရင်းတွင် ရှိနှင့်ပြီးဖြစ်သည်။",
+                          locale
+                        );
+                      }
+                    });
+                  }
                 }}
               >
                 <label htmlFor="UserEmail" className="sr-only">
@@ -96,6 +98,7 @@ function Footer({ content }: { content: Content }) {
                     id="UserEmail"
                     placeholder="john@rhcp.com"
                     className="w-full border-none focus:border-transparent focus:ring-transparent sm:text-sm"
+                    required
                   />
 
                   <button className="mt-1 w-full bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-none hover:bg-primary-focus sm:mt-0 sm:w-auto sm:shrink-0">

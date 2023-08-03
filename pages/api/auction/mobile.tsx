@@ -110,12 +110,22 @@ async function addBid(req: NextApiRequest, res: NextApiResponse<any>) {
             return res.status(400).json(BadAuctionSeller);
           }
 
-          await prisma.auctions.create({
+          let newAuction = await prisma.auctions.create({
             data: {
               amount: body.amount,
               SKU: body.SKU,
               createdByUserId: session.id,
               productId: body.productId,
+            },
+            include: {
+              product: {
+                include: {
+                  Brand: true,
+                  Condition: true,
+                  seller: true,
+                },
+              },
+              createdBy: true,
             },
           });
 
@@ -179,10 +189,10 @@ async function addBid(req: NextApiRequest, res: NextApiResponse<any>) {
           );
 
           let emailSendList = [...adminEmail, ...staffEmail];
-          if (auction.product.sellerId) {
+          if (newAuction.product.sellerId) {
             let seller = await prisma.user.findFirst({
               where: {
-                id: auction.product.sellerId,
+                id: newAuction.product.sellerId,
               },
             });
             if (seller?.email) {
@@ -202,8 +212,8 @@ async function addBid(req: NextApiRequest, res: NextApiResponse<any>) {
               const emailHtml = render(
                 <BidEmail
                   content={content!}
-                  auction={auction}
-                  buyerId={auction.createdByUserId}
+                  auction={newAuction}
+                  buyerId={newAuction.createdByUserId}
                   toBuyer={buyerEmail.find((z) => z === email) ? true : false}
                 />
               );

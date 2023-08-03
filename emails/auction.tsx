@@ -144,8 +144,8 @@ export default function AuctionEmail({
                   <Column>
                     <Img
                       src={`${baseUrl}/api/files/${wonList.product.imgList[0]}`}
-                      height="100"
-                      width="100"
+                      height="80"
+                      width="80"
                       alt={wonList.product.name}
                       style={{
                         border: "1px #E71D2A solid",
