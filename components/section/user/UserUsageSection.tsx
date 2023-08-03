@@ -172,7 +172,6 @@ function UserUsageSection({
 
               <span>
                 Free Ads Limit :{" "}
-                {formatAmount(data?.freeAdsUsed, locale, false)} /{" "}
                 {formatAmount(data?.freeAdsLimit, locale, false)}
               </span>
             </div>
