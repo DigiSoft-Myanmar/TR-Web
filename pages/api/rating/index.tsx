@@ -93,7 +93,7 @@ export default async function handler(
 
               await prisma.review.create({
                 data: {
-                  rating: body.rating,
+                  rating: parseInt(body.rating),
                   createdByUserId: session.id,
                   message: body.message,
                   userId: userId?.toString(),
@@ -134,7 +134,7 @@ export default async function handler(
 
               await prisma.review.create({
                 data: {
-                  rating: body.rating,
+                  rating: parseInt(body.rating),
                   createdByUserId: session.id,
                   message: body.message,
                   productId: productId?.toString(),
@@ -202,7 +202,7 @@ export default async function handler(
 
               await prisma.review.create({
                 data: {
-                  rating: body.rating,
+                  rating: parseInt(body.rating),
                   createdByUserId: session.id,
                   message: body.message,
                   userId: userId?.toString(),
@@ -216,7 +216,7 @@ export default async function handler(
                 id: reviewId.toString(),
               },
               data: {
-                rating: body.rating,
+                rating: parseInt(body.rating),
                 createdByUserId: session.id,
                 message: body.message,
                 userId: userId?.toString(),

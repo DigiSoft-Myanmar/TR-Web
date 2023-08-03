@@ -276,21 +276,23 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
                   )}
                 </p>
               </div>
-              <div className="flex flex-row items-center justify-between gap-3">
-                <h3 className="font-semibold text-sm">
-                  {t("memberStartDate")}
-                </h3>
-                <p>
-                  {new Date(profile.memberStartDate).toLocaleDateString(
-                    "en-ca",
-                    {
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                    }
-                  )}
-                </p>
-              </div>
+              {profile.memberStartDate && (
+                <div className="flex flex-row items-center justify-between gap-3">
+                  <h3 className="font-semibold text-sm">
+                    {t("memberStartDate")}
+                  </h3>
+                  <p>
+                    {new Date(profile.memberStartDate).toLocaleDateString(
+                      "en-ca",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      }
+                    )}
+                  </p>
+                </div>
+              )}
               <div className="flex flex-row items-center justify-between gap-3">
                 <h3 className="font-semibold text-sm">
                   {t("shippingIncluded")}

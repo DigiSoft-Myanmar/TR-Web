@@ -73,6 +73,7 @@ function UserSellerRatingSection({ user }: { user: User }) {
     }).then((data) => {
       if (data.status === 200) {
         showSuccessDialog("Submit success");
+        refetch();
       } else {
         showErrorDialog("Error");
       }

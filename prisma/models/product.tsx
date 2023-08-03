@@ -94,6 +94,9 @@ export const getAllProducts = async (
         },
       },
       where: filter,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     return products;
   } else {
@@ -135,6 +138,9 @@ export const getAllProducts = async (
         },
       },
       where: filter,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return products;
@@ -174,6 +180,9 @@ export const getProductsBySeller = async (id: string) => {
       seller: true,
       Review: true,
       UnitSold: true,
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
   return products;

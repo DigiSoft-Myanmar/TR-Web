@@ -134,7 +134,9 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                   }`}
                 >
                   {t("memberStartDate")}
-                  <span className="text-primary">*</span>
+                  {isInternal(session) && (
+                    <span className="text-primary">*</span>
+                  )}
                 </label>
 
                 <div className={`relative mt-1`}>
