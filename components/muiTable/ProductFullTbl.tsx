@@ -58,6 +58,7 @@ import {
 } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
 import { getHeaders, isSeller } from "@/util/authHelper";
+import Avatar from "../presentational/Avatar";
 
 interface CellType {
   row: any;
@@ -130,7 +131,14 @@ const ProductFullTbl = ({
                 (z: any) =>
                   z.name.toLowerCase().includes(value.toLowerCase()) ||
                   z.nameMM.toLowerCase().includes(value.toLowerCase())
-              )
+              ) ||
+              e.seller?.displayName().includes(value.toLowerCase()) ||
+              (value.toLowerCase() === "published" && e.isPublished === true) ||
+              (value.toLowerCase() === "featured" && e.isFeatured === true) ||
+              (value.toLowerCase() === "not featured" &&
+                e.isFeatured === false) ||
+              (value.toLowerCase() === "not published" &&
+                e.isPublished === false)
           )
         );
       } else {
@@ -164,6 +172,41 @@ const ProductFullTbl = ({
                   <Typography variant="caption" sx={{ color: "text.disabled" }}>
                     {row.productInfo.brandName}
                   </Typography>
+                </Box>
+              </Box>
+            ),
+          },
+          {
+            flex: 0.2,
+            minWidth: 120,
+            field: "Seller",
+            headerName: "Seller",
+            renderCell: ({ row }: CellType) => (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Avatar
+                  profile={row.seller.profile}
+                  username={row.seller.username}
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    marginLeft: 1,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                    {row.seller.username}
+                  </Typography>
+                  {row.displayName ? (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.disabled" }}
+                    >
+                      {row.seller.displayName}
+                    </Typography>
+                  ) : (
+                    <></>
+                  )}
                 </Box>
               </Box>
             ),
@@ -558,6 +601,41 @@ const ProductFullTbl = ({
             ),
           },
           {
+            flex: 0.2,
+            minWidth: 120,
+            field: "Seller",
+            headerName: "Seller",
+            renderCell: ({ row }: CellType) => (
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Avatar
+                  profile={row.seller.profile}
+                  username={row.seller.username}
+                />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    marginLeft: 1,
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+                    {row.seller.username}
+                  </Typography>
+                  {row.displayName ? (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: "text.disabled" }}
+                    >
+                      {row.seller.displayName}
+                    </Typography>
+                  ) : (
+                    <></>
+                  )}
+                </Box>
+              </Box>
+            ),
+          },
+          {
             flex: 0.15,
             minWidth: 100,
             headerName: "SKU",
@@ -781,7 +859,6 @@ const ProductFullTbl = ({
             minWidth: 100,
             field: "status",
             headerName: "Status",
-
             renderCell: ({ row }: CellType) => (
               <div className="flex flex-row items-center gap-1 text-primary">
                 <Tooltip

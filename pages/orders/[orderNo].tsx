@@ -928,7 +928,8 @@ function Default({
                           </div>
                         </summary>
 
-                        {(isInternal(session) || isSeller(session)) && (
+                        {(isInternal(session) ||
+                          sellerList.find((z) => z.id === session.id)) && (
                           <div className="border-t pt-3 mt-3">
                             <h3 className="text-sm font-semibold text-primary">
                               Status

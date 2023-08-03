@@ -3,7 +3,13 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useQuery } from "react-query";
 
-function ProductBidSection({ productId }: { productId: string }) {
+function ProductBidSection({
+  productId,
+  setBidLength,
+}: {
+  productId: string;
+  setBidLength: Function;
+}) {
   const { locale } = useRouter();
   const { data: bidList, refetch } = useQuery(
     ["productBidInfo", productId],
@@ -15,6 +21,13 @@ function ProductBidSection({ productId }: { productId: string }) {
         }
       )
   );
+
+  React.useEffect(() => {
+    if (bidList) {
+      setBidLength(bidList.length);
+    }
+  }, [bidList]);
+
   return bidList ? (
     <div className="flex flex-col gap-5 p-3 w-full">
       <h3 className="font-semibold text-sm">

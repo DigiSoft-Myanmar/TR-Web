@@ -172,7 +172,7 @@ function UserUsageSection({
 
               <span>
                 Free Ads Used : {formatAmount(data?.freeAdsUsed, locale, false)}{" "}
-                / {formatAmount(data?.freeAds, locale, false)}
+                / {formatAmount(data?.freeAdsLimit, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">

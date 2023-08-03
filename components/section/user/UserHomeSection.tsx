@@ -31,7 +31,7 @@ function UserHomeSection({ user }: { user: User }) {
       })
   );
   const { data: productData } = useQuery(["productData", user.id], () =>
-    fetch("/api/marketplace?sellerId=" + user.id).then((res) => {
+    fetch("/api/products?isHome=true&sellerId=" + user.id).then((res) => {
       let json = res.json();
       return json;
     })

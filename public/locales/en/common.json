@@ -271,5 +271,6 @@
   "answer": "Answer",
   "notFind": "Don't find what you are looking for?",
   "invalidSalePrice": "Sale price must be less than regular price.",
-  "inputStockTypeError": "Please define stock type."
+  "inputStockTypeError": "Please define stock type.",
+  "notBid": "Not bid"
 }

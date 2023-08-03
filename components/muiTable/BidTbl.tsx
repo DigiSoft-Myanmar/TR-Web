@@ -138,7 +138,7 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
             (row.isProduct === true
               ? row.sellerId === session.id
               : row.product.sellerId === session.id)
-              ? "/products/" +
+              ? "/marketplace/" +
                 encodeURIComponent(
                   row.isProduct === true ? row.slug : row.product.slug
                 ) +

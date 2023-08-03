@@ -117,6 +117,7 @@ function MarketplacePage({
   const [currentTab, setCurrentTab] = React.useState(TabList.About);
 
   const [pricingInfo, setPricingInfo] = React.useState(getPricing(product));
+  const [bidLength, setBidLength] = React.useState(0);
 
   const [currentVariation, setCurrentVariation] =
     React.useState<any>(undefined);
@@ -559,7 +560,10 @@ function MarketplacePage({
                 {currentTab === TabList.Review ? (
                   <ProductReviewSection productId={product.id} />
                 ) : currentTab === TabList.BidList ? (
-                  <ProductBidSection productId={product.id} />
+                  <ProductBidSection
+                    productId={product.id}
+                    setBidLength={setBidLength}
+                  />
                 ) : (
                   <div className="flex flex-col gap-5 p-3 w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -855,8 +859,8 @@ function MarketplacePage({
                         (z) => z.auctionId === data?.id
                       )) && (
                       <span className="text-xs text-primaryText text-center p-2 bg-rose-300 rounded-md">
-                        This product will add to your cart after closing the
-                        deal.
+                        This product will appear in your cart if you win on
+                        closing the deal.
                       </span>
                     )}
                 </div>
@@ -1028,7 +1032,7 @@ function MarketplacePage({
                       <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
                         <p className="text-gray-500">Total bids</p>
                         <span className="font-semibold text-primaryText">
-                          {formatAmount(data?.totalBids, locale)}
+                          {formatAmount(bidLength, locale)}
                         </span>
                       </div>
 

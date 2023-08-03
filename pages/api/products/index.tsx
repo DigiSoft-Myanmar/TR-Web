@@ -48,7 +48,7 @@ export default async function handler(
     let session = await useAuth(req);
     switch (req.method) {
       case "GET":
-        const { type, sellerId, isFeatured, id: recentId } = req.query;
+        const { type, sellerId, isFeatured, id: recentId, isHome } = req.query;
         if (type === PageType.Featured) {
           let prods = await getFeaturedProducts();
           return res
@@ -105,16 +105,30 @@ export default async function handler(
         }
 
         if (sellerId) {
-          let prods = await getProductsBySeller(sellerId.toString());
-          return res
-            .status(200)
-            .json(
-              prods.filter((e) =>
-                !session || session.role === Role.Buyer
-                  ? e.isPublished === true
-                  : true
-              )
-            );
+          if (isHome === "true") {
+            let prods = await getProductsBySeller(sellerId.toString());
+            return res
+              .status(200)
+              .json(
+                prods.filter((e) =>
+                  !session || session.role === Role.Buyer
+                    ? e.isPublished === true
+                    : true
+                )
+              );
+          }
+          {
+            let prods = await getProductsBySeller(sellerId.toString());
+            return res
+              .status(200)
+              .json(
+                prods.filter((e) =>
+                  !session || session.role === Role.Buyer
+                    ? e.isPublished === true
+                    : true
+                )
+              );
+          }
         }
         if (
           session.role === Role.Staff &&

@@ -125,7 +125,7 @@ export default function BidEmail({
                     "/marketplace/" +
                     encodeURIComponent(auction.product.slug)
                   : baseUrl +
-                    "/products/" +
+                    "/marketplace/" +
                     encodeURIComponent(auction.product.slug) +
                     "?action=view"
               }
