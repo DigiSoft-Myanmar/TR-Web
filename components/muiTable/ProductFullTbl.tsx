@@ -132,7 +132,9 @@ const ProductFullTbl = ({
                   z.name.toLowerCase().includes(value.toLowerCase()) ||
                   z.nameMM.toLowerCase().includes(value.toLowerCase())
               ) ||
-              e.seller?.displayName().includes(value.toLowerCase()) ||
+              e.seller?.displayName
+                ?.toLowerCase()
+                .includes(value.toLowerCase()) ||
               (value.toLowerCase() === "published" && e.isPublished === true) ||
               (value.toLowerCase() === "featured" && e.isFeatured === true) ||
               (value.toLowerCase() === "not featured" &&
@@ -181,6 +183,9 @@ const ProductFullTbl = ({
             minWidth: 120,
             field: "Seller",
             headerName: "Seller",
+            valueGetter(params: any) {
+              return params.row.seller.username;
+            },
             renderCell: ({ row }: CellType) => (
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Avatar
@@ -605,6 +610,9 @@ const ProductFullTbl = ({
             minWidth: 120,
             field: "Seller",
             headerName: "Seller",
+            valueGetter(params: any) {
+              return params.row.seller.username;
+            },
             renderCell: ({ row }: CellType) => (
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Avatar

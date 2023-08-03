@@ -112,6 +112,7 @@ export default function AuctionEmail({
                   <Text style={paragraph}>
                     - on{" "}
                     {new Date(wonList.updatedAt).toLocaleDateString("en-ca", {
+                      timeZone: "Asia/Yangon",
                       year: "numeric",
                       month: "short",
                       day: "2-digit",
@@ -175,6 +176,7 @@ export default function AuctionEmail({
                       {new Date(wonList.auction.createdAt).toLocaleDateString(
                         "en-ca",
                         {
+                          timeZone: "Asia/Yangon",
                           year: "numeric",
                           month: "short",
                           day: "2-digit",

@@ -1032,7 +1032,14 @@ function MarketplacePage({
                       <div className="flex flex-col items-start justify-between gap-1 px-3 text-sm">
                         <p className="text-gray-500">Total bids</p>
                         <span className="font-semibold text-primaryText">
-                          {formatAmount(bidLength, locale)}
+                          {formatAmount(
+                            data?.totalBid === bidLength
+                              ? bidLength
+                              : bidLength > data?.totalBid
+                              ? bidLength
+                              : data?.totalBid,
+                            locale
+                          )}
                         </span>
                       </div>
 

@@ -105,7 +105,7 @@ function SaleOverviewCard() {
             {
               amount: data.totalAdsNearExpired,
               backgroundColor: Colors.warning,
-              label: "Near Expired",
+              label: "Expired Soon",
             },
             {
               amount: data.totalAdsExpired,

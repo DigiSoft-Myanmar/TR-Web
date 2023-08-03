@@ -34,7 +34,7 @@ import {
 import prisma from "@/prisma/prisma";
 import { sortBy } from "lodash";
 import ContentNote from "@/components/presentational/ContentNote";
-import { addCartItems } from "../api/orders";
+import { addCartItems, addOrderDetails } from "../api/orders";
 import Avatar from "@/components/presentational/Avatar";
 import { OrderStatus } from "@/types/orderTypes";
 import OrderCartTbl from "@/components/muiTable/OrderCartTbl";
@@ -48,6 +48,7 @@ import { OrderPermission } from "@/types/permissionTypes";
 import ResendDialog from "@/components/modal/dialog/ResendDialog";
 import Link from "next/link";
 import { encryptPhone } from "@/util/encrypt";
+import { Divider, Tooltip, Typography } from "@mui/material";
 
 const FormInputRichText: any = dynamic(
   () => import("../../components/presentational/FormInputRichTextSun"),
@@ -172,20 +173,75 @@ function Default({
                         order,
                         sellerList.find((z) => z.id === session.id)?.id
                       ).status === OrderStatus.Processing && (
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </span>
+                        <Tooltip
+                          title={order?.invoiceStatus.map(
+                            (e: any, index: number) => (
+                              <React.Fragment key={index}>
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: "common.white",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {e.status}
+                                </Typography>
+                                <br />
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: "common.white",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Seller:
+                                </Typography>{" "}
+                                {e.seller.username}
+                                <br />
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: "common.white",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  Updated Date:
+                                </Typography>{" "}
+                                {new Date(e.updatedDate).toLocaleDateString(
+                                  "en-ca",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  }
+                                )}
+                                <br />
+                                {index !==
+                                  order?.invoiceStatus.filter((e: any) =>
+                                    session && session.role === Role.Seller
+                                      ? e.seller.id === session.id
+                                      : true
+                                  ).length -
+                                    1 && <Divider color="#FFF" />}
+                              </React.Fragment>
+                            )
+                          )}
+                        >
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="w-5 h-5"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </span>
+                        </Tooltip>
                       )}
                     </h3>
 
@@ -488,7 +544,8 @@ function Default({
                   </button>
                 )}
               </div>
-              {(isSeller(session) || isInternal(session)) && (
+              {(sellerList.find((z: any) => z.id === session.id) ||
+                isInternal(session)) && (
                 <div className="bg-white p-3 rounded-md shadow flex flex-col gap-3">
                   <h3 className="font-semibold text-primary">Buyer Info</h3>
                   <div className="flex flex-row items-center gap-3 justify-between flex-wrap">
@@ -501,6 +558,8 @@ function Default({
                       <div className="flex flex-col gap-1">
                         <p className="text-sm">{order.orderBy.username}</p>
                         <p className="text-xs">{order.orderBy.phoneNum}</p>
+                        {/* 
+                        //TODO rating
                         <div className="flex flex-row gap-1">
                           <span className="text-primary">
                             <svg
@@ -517,16 +576,36 @@ function Default({
                             </svg>
                           </span>
                           <span className="text-xs">5.0</span>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                     <div className="flex flex-row items-center justify-start gap-3">
                       {isInternal(session) === false && (
-                        <button className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus">
+                        <button
+                          className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
+                          onClick={() => {
+                            router.push(
+                              "/account/" +
+                                encodeURIComponent(
+                                  encryptPhone(order?.orderBy.phoneNum)
+                                ) +
+                                "#buyerRatings"
+                            );
+                          }}
+                        >
                           Submit Review
                         </button>
                       )}
-                      <button>
+                      <button
+                        onClick={() => {
+                          router.push(
+                            "/account/" +
+                              encodeURIComponent(
+                                encryptPhone(order.orderBy.phoneNum)
+                              )
+                          );
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -577,6 +656,8 @@ function Default({
                                 <p className="text-sm">{seller.username}</p>
                                 <p className="text-xs">{seller.phoneNum}</p>
 
+                                {/* 
+                                //TODO rating
                                 <div className="flex flex-row gap-1">
                                   <span className="text-primary">
                                     <svg
@@ -593,12 +674,23 @@ function Default({
                                     </svg>
                                   </span>
                                   <span className="text-xs">5.0</span>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                             <div className="flex flex-row items-center justify-start gap-3">
                               {isInternal(session) === false && (
-                                <button className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus">
+                                <button
+                                  className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
+                                  onClick={() => {
+                                    router.push(
+                                      "/account/" +
+                                        encodeURIComponent(
+                                          encryptPhone(seller.phoneNum)
+                                        ) +
+                                        "#sellerRatings"
+                                    );
+                                  }}
+                                >
                                   Submit Review
                                 </button>
                               )}
@@ -1216,6 +1308,25 @@ export async function getServerSideProps({ locale, params }: any) {
         sellerList.push(seller);
       }
     }
+    let statusArr = [];
+    for (let j = 0; j < order.sellerResponse.length; j++) {
+      let status: any = order.sellerResponse[j];
+      let s = sortBy(
+        status.statusHistory,
+        (obj: any) => obj.updatedDate
+      ).reverse()[0];
+      let brand = await prisma.user.findFirst({
+        where: {
+          id: status.sellerId,
+        },
+      });
+      statusArr.push({
+        seller: brand,
+        status: s.status,
+        updatedDate: s.updatedDate,
+      });
+    }
+    order.invoiceStatus = statusArr;
   }
 
   return {

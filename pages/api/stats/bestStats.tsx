@@ -193,7 +193,7 @@ async function getBestStats(startDate: Date, endDate: Date) {
   let bestAuctionByUnit = undefined;
   let bestAuctionByAmount = undefined;
 
-  if (d.length > 0) {
+  if (sortedByQuantity.length > 0) {
     let b: any = sortedByQuantity[0];
     let z: any = d.find((z: any) => z.productId === b.productId);
 
@@ -202,17 +202,19 @@ async function getBestStats(startDate: Date, endDate: Date) {
       units: b.quantity,
       totalProfit: b.totalProfit,
     };
-
-    b = sortedByTotalProfit[0];
-    z = d.find((z: any) => z.productId === b.productId);
+  }
+  if (sortedByTotalProfit.length > 0) {
+    let b: any = sortedByTotalProfit[0];
+    let z: any = d.find((z: any) => z.productId === b.productId);
 
     bestProdByProfit = {
       productInfo: z.productInfo,
       units: b.quantity,
       totalProfit: b.totalProfit,
     };
-
-    b = sortByBuyerQty[0];
+  }
+  if (sortByBuyerQty.length > 0) {
+    let b: any = sortByBuyerQty[0];
     let user = await prisma.user.findFirst({
       where: {
         id: b.orderByUserId,
@@ -225,9 +227,10 @@ async function getBestStats(startDate: Date, endDate: Date) {
         totalProfit: b.totalProfit,
       };
     }
-
-    b = sortByBuyerProfit[0];
-    user = await prisma.user.findFirst({
+  }
+  if (sortByBuyerProfit.length > 0) {
+    let b: any = sortByBuyerProfit[0];
+    let user = await prisma.user.findFirst({
       where: {
         id: b.orderByUserId,
       },
@@ -239,9 +242,10 @@ async function getBestStats(startDate: Date, endDate: Date) {
         totalProfit: b.totalProfit,
       };
     }
-
-    b = sortBySellerProfit[0];
-    user = await prisma.user.findFirst({
+  }
+  if (sortBySellerProfit.length > 0) {
+    let b: any = sortBySellerProfit[0];
+    let user = await prisma.user.findFirst({
       where: {
         id: b.sellerId,
       },
@@ -253,9 +257,10 @@ async function getBestStats(startDate: Date, endDate: Date) {
         totalProfit: b.totalProfit,
       };
     }
-
-    b = sortBySellerQty[0];
-    user = await prisma.user.findFirst({
+  }
+  if (sortBySellerQty.length > 0) {
+    let b: any = sortBySellerQty[0];
+    let user = await prisma.user.findFirst({
       where: {
         id: b.sellerId,
       },
@@ -267,9 +272,10 @@ async function getBestStats(startDate: Date, endDate: Date) {
         totalProfit: b.totalProfit,
       };
     }
-
-    b = sortByAuctionProfit[0];
-    z = d.find((z: any) => z.productId === b.productId);
+  }
+  if (sortByAuctionProfit.length > 0) {
+    let b: any = sortByAuctionProfit[0];
+    let z = d.find((z: any) => z.productId === b.productId);
 
     bestAuctionByAmount = {
       productInfo: z.productInfo,
@@ -277,9 +283,10 @@ async function getBestStats(startDate: Date, endDate: Date) {
       totalProfit: b.totalProfit,
       SKU: z.SKU,
     };
-
-    b = sortByAuctionQty[0];
-    z = d.find((z: any) => z.productId === b.productId);
+  }
+  if (sortByAuctionProfit.length > 0) {
+    let b: any = sortByAuctionQty[0];
+    let z = d.find((z: any) => z.productId === b.productId);
 
     bestAuctionByUnit = {
       productInfo: z.productInfo,

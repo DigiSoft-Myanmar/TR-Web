@@ -92,6 +92,7 @@ export default function BidEmail({
                     {new Date(auction.product.endTime).toLocaleDateString(
                       "en-ca",
                       {
+                        timeZone: "Asia/Yangon",
                         year: "numeric",
                         month: "short",
                         day: "2-digit",
@@ -103,6 +104,7 @@ export default function BidEmail({
                   <Text style={paragraph}>
                     - on{" "}
                     {new Date(auction.createdAt).toLocaleDateString("en-ca", {
+                      timeZone: "Asia/Yangon",
                       year: "numeric",
                       month: "short",
                       day: "2-digit",
@@ -176,6 +178,7 @@ export default function BidEmail({
                     <Text style={priceStyle}>Bid Time </Text>
                     <Text>
                       {new Date(auction.createdAt).toLocaleDateString("en-ca", {
+                        timeZone: "Asia/Yangon",
                         year: "numeric",
                         month: "short",
                         day: "2-digit",
