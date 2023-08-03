@@ -90,7 +90,7 @@ async function getBestStats(startDate: Date, endDate: Date) {
         if (!acc[sellerId]) {
           acc[sellerId] = {
             quantity: 0,
-            orderByUserId,
+            sellerId,
             totalProfit,
           };
         }
@@ -306,10 +306,7 @@ async function getBestStats(startDate: Date, endDate: Date) {
     bestAuctionByAmount: bestAuctionByAmount,
     bestAuctionByUnit: bestAuctionByUnit,
 
-    sellerResult,
-    buyerResult,
-    result,
-    auctionResult,
+    d,
   };
 }
 
