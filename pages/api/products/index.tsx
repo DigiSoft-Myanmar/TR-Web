@@ -22,7 +22,7 @@ import {
 } from "@/types/ApiResponseTypes";
 import { PageType } from "@/types/pageType";
 import { AuctionPermission, ProductPermission } from "@/types/permissionTypes";
-import { hasPermission, isSeller } from "@/util/authHelper";
+import { hasPermission, isInternal, isSeller } from "@/util/authHelper";
 import {
   addNotification,
   getAdminIdList,
@@ -111,9 +111,10 @@ export default async function handler(
               .status(200)
               .json(
                 prods.filter((e) =>
-                  !session || session.role === Role.Buyer
-                    ? e.isPublished === true
-                    : true
+                  isInternal(session) ||
+                  (session && session.id === sellerId.toString())
+                    ? true
+                    : e.isPublished === true
                 )
               );
           }
