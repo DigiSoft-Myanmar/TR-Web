@@ -27,17 +27,11 @@ import { ProductNavType } from "@/types/productTypes";
 
 function Default({
   content,
-  categories,
   brands,
   conditions,
   orgCategories,
 }: {
   content: Content;
-  categories: Category[] & {
-    subCategory: (Category & {
-      subCategory: Category[];
-    })[];
-  };
   brands: Brand[];
   conditions: Condition[];
   orgCategories: Category[];
@@ -56,6 +50,13 @@ function Default({
     qry,
     sort,
   } = router.query;
+
+  const { data: categories } = useQuery("categoriesData", () =>
+    fetch("/api/products/categories").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
 
   const { data: adsData } = useQuery("adsDataProduct", () =>
     fetch("/api/siteManagement/ads?placement=" + AdsPage.Marketplace).then(
