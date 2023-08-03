@@ -26,8 +26,6 @@ type Status = {
   isBlocked?: boolean;
   isDeleted?: boolean;
   sellAllow?: boolean;
-
-  memberStartDate?: Date;
   adminNote?: string;
 };
 
@@ -85,8 +83,10 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
     }
   }, [profile]);
 
+  console.log(errors);
+
   function submit(data: Status) {
-    if (isSeller(profile)) {
+    if (isInternal(session)) {
       if (memberStartDate) {
         setProfile((prevValue: any) => {
           return {
@@ -139,6 +139,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
 
                 <div className={`relative mt-1`}>
                   <input
+                    required={false}
                     type={"date"}
                     className={`w-full rounded-lg ${
                       error
