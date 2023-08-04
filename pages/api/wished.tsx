@@ -2,7 +2,7 @@ import useAuth from "@/hooks/useAuth";
 import clientPromise from "@/lib/mongodb";
 import prisma from "@/prisma/prisma";
 import { NotAvailable, Success, Unauthorized } from "@/types/ApiResponseTypes";
-import { isBuyer } from "@/util/authHelper";
+import { isBuyer, isInternal } from "@/util/authHelper";
 import { Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 
@@ -12,6 +12,7 @@ import { getSession } from "next-auth/react";
 async function getWishedItems(req: NextApiRequest, res: NextApiResponse<any>) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);
+  const { id } = req.query;
   if (isBuyer(session)) {
     const wishedItems = await prisma.wishedItems.findFirst({
       where: {
@@ -36,8 +37,28 @@ async function getWishedItems(req: NextApiRequest, res: NextApiResponse<any>) {
     } else {
       return res.status(200).json([]);
     }
+  } else if (isInternal(session) && id) {
+    const wishedItems = await prisma.wishedItems.findFirst({
+      where: {
+        userId: session.id,
+        products: {
+          every: {
+            isPublished: true,
+          },
+        },
+      },
+      include: {
+        products: {
+          include: {
+            Brand: true,
+            categories: true,
+          },
+        },
+      },
+    });
+    return res.status(200).json(wishedItems);
   } else {
-    return res.status(200).json([]);
+    return res.status(200).json(undefined);
   }
 }
 

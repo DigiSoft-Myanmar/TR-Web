@@ -273,5 +273,8 @@
   "invalidSalePrice": "Sale price must be less than regular price.",
   "inputStockTypeError": "Please define stock type.",
   "notBid": "Not bid",
-  "inputValidPercentage": "Percentage must be between 0 and 100."
+  "inputValidPercentage": "Percentage must be between 0 and 100.",
+  "TraderDetails": "Buy, Unlock Seller's Features",
+  "BuyerDetails": "Buy, No Selling Allowed",
+  "SellerDetails": "Unlock Seller's Features, No Buying."
 }

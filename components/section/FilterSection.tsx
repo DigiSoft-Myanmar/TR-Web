@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
 import { SortByType } from "../presentational/SortSelectBox";
+import { sortBy } from "lodash";
 
 type CategoryCheckBoxProps = {
   name: string;
@@ -490,60 +491,61 @@ function FilterSection({
           </div>
 
           {brands &&
-            brands
-              .filter(
+            sortBy(
+              brands.filter(
                 (z) =>
                   z.name.toLowerCase().includes(brandQry.toLowerCase()) ||
                   z.nameMM?.includes(brandQry.toLowerCase())
-              )
-              .map((e: Brand, index: number) => (
-                <div className="form-control" key={index}>
-                  <label className="flex cursor-pointer items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      className="checkbox-primary checkbox checkbox-sm"
-                      checked={
-                        pathBrands
-                          ? typeof pathBrands === "string"
-                            ? pathBrands === e.name
-                            : pathBrands.includes(e.name)
-                          : false
-                      }
-                      onChange={() => {
-                        let cat = [];
-                        if (pathBrands) {
-                          if (typeof pathBrands === "string") {
-                            cat = [pathBrands];
-                          } else {
-                            cat = pathBrands;
-                          }
-                        }
-                        if (cat.includes(e.name)) {
-                          cat = cat.filter((z) => z !== e.name);
+              ),
+              (z) => z.name
+            ).map((e: Brand, index: number) => (
+              <div className="form-control" key={index}>
+                <label className="flex cursor-pointer items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    className="checkbox-primary checkbox checkbox-sm"
+                    checked={
+                      pathBrands
+                        ? typeof pathBrands === "string"
+                          ? pathBrands === e.name
+                          : pathBrands.includes(e.name)
+                        : false
+                    }
+                    onChange={() => {
+                      let cat = [];
+                      if (pathBrands) {
+                        if (typeof pathBrands === "string") {
+                          cat = [pathBrands];
                         } else {
-                          cat = [...cat, encodeURIComponent(e.name)];
+                          cat = pathBrands;
                         }
+                      }
+                      if (cat.includes(e.name)) {
+                        cat = cat.filter((z) => z !== e.name);
+                      } else {
+                        cat = [...cat, encodeURIComponent(e.name)];
+                      }
 
-                        router.push({
-                          pathname: "/marketplace",
-                          query: {
-                            page: 1,
-                            categories: pathCategories,
-                            brands: cat,
-                            startPrice: startPrice,
-                            endPrice: endPrice,
-                            type: type,
-                            conditions: pathConditions,
-                            qry: qry,
-                            sort: sort,
-                          },
-                        });
-                      }}
-                    />
-                    <span className="label-text">{e.name}</span>
-                  </label>
-                </div>
-              ))}
+                      router.push({
+                        pathname: "/marketplace",
+                        query: {
+                          page: 1,
+                          categories: pathCategories,
+                          brands: cat,
+                          startPrice: startPrice,
+                          endPrice: endPrice,
+                          type: type,
+                          conditions: pathConditions,
+                          qry: qry,
+                          sort: sort,
+                        },
+                      });
+                    }}
+                  />
+                  <span className="label-text">{e.name}</span>
+                </label>
+              </div>
+            ))}
         </div>
       </div>
 

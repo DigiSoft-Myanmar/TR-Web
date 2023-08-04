@@ -101,8 +101,8 @@ export async function addNotification(msg: any, token?: any) {
     body: msg.body,
     type: msg.type,
   });
-  let isSame = true;
-  if (sameNoti) {
+  console.log(sameNoti, msg);
+  /*   if (sameNoti) {
     let msgCount = sameNoti.filter((e: any) =>
       isEqual(e.sendList.sort(), msg.sendList.sort())
     ).length;
@@ -110,10 +110,7 @@ export async function addNotification(msg: any, token?: any) {
       isSame = false;
     }
   } else {
-  }
-  if (isSame === false) {
-    return [];
-  }
+  } */
   let response = [];
 
   if (msg && msg.sendList && msg.sendList.length > 0) {

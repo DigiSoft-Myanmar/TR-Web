@@ -3,6 +3,7 @@ import { useProfile } from "@/context/ProfileContext";
 import { authErrors } from "@/types/authErrors";
 import { fileUrl } from "@/types/const";
 import { getHeaders, isSeller } from "@/util/authHelper";
+import { encryptPhone } from "@/util/encrypt";
 import { fetcher } from "@/util/fetcher";
 import {
   showErrorDialog,
@@ -81,16 +82,10 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
                   "",
                   router.locale,
                   () => {
-                    if (
-                      session &&
-                      (session.role === Role.Admin ||
-                        session.role === Role.Staff ||
-                        session.role === Role.SuperAdmin)
-                    ) {
-                      router.push("/");
-                    } else {
-                      router.reload();
-                    }
+                    router.push(
+                      "/account/" +
+                        encodeURIComponent(encryptPhone(profile.phoneNum))
+                    );
                   }
                 );
               } else {
@@ -339,11 +334,11 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
           <div className="flex flex-col gap-3 mt-5 border-t pt-5">
             <div className="flex flex-row items-center justify-between gap-3">
               <h3 className="font-semibold text-sm">{t("isBlocked")}</h3>
-              <p>{profile.isBlocked ? "Blocked" : "Active"}</p>
+              <p>{profile.isBlocked ? "Yes" : "No"}</p>
             </div>
             <div className="flex flex-row items-center justify-between gap-3">
               <h3 className="font-semibold text-sm">{t("isDeleted")}</h3>
-              <p>{profile.isDeleted ? "Deleted" : "Active"}</p>
+              <p>{profile.isDeleted ? "Yes" : "No"}</p>
             </div>
             {isSeller(profile) && (
               <div className="flex flex-row items-center justify-between gap-3">

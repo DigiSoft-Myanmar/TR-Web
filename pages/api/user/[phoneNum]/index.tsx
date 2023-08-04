@@ -11,7 +11,7 @@ import {
   Success,
   Unauthorized,
 } from "@/types/ApiResponseTypes";
-import { decrypt, encrypt } from "@/util/encrypt";
+import { decrypt, encrypt, encryptPhone } from "@/util/encrypt";
 import useAuth from "@/hooks/useAuth";
 import { ObjectId } from "mongodb";
 import { canAccess } from "@/util/roleHelper";
@@ -23,7 +23,13 @@ import {
 } from "@/types/permissionTypes";
 import { Db } from "mongodb";
 import { getUserByPhone, updateUser } from "@/prisma/models/user";
-import { Brand, Role, User } from "@prisma/client";
+import { Brand, NotiType, Role, User } from "@prisma/client";
+import { isInternal, isSeller } from "@/util/authHelper";
+import {
+  addNotification,
+  getAdminIdList,
+  getStaffIdList,
+} from "@/util/notiHelper";
 
 export interface NextConnectApiRequest extends NextApiRequest {
   files: Express.Multer.File[];
@@ -60,8 +66,8 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
       let filesData = req.files;
       try {
         const db = (await clientPromise).db();
-        let u = await getUserByPhone(phoneNum.toString());
-        if (u) {
+        let user = await getUserByPhone(phoneNum.toString());
+        if (user) {
           filesData.forEach(async (element) => {
             let data: any = { ...element };
             data.createdBy = session.user;
@@ -113,7 +119,69 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
           if (profile.Membership) {
             delete profile.Membership;
           }
-          let updateUserRes = await updateUser(u.id, profile);
+
+          if (isSeller(user) && user.membershipId !== profile.membershipId) {
+            let adminList = await getAdminIdList();
+            let staffList = await getStaffIdList(
+              user.role === Role.Seller
+                ? SellerPermission.sellerNotiAllow
+                : user.role === Role.Trader
+                ? TraderPermission.traderNotiAllow
+                : ""
+            );
+
+            let msg: any = {
+              body: "Membership for " + user.username + " was updated",
+              createdAt: new Date().toISOString(),
+              title: "Membership Updated",
+              type: NotiType.UpdateMembership,
+              requireInteraction: false,
+              sendList: [...adminList, ...staffList],
+              details: {
+                web:
+                  "/account/" + encodeURIComponent(encryptPhone(user.phoneNum)),
+              },
+            };
+            await addNotification(msg, "");
+          }
+
+          if (
+            isInternal(session) &&
+            profile.sellAllow === true &&
+            user.sellAllow === false
+          ) {
+            let adminList = await getAdminIdList();
+            let staffList = await getStaffIdList(
+              user.role === Role.Seller
+                ? SellerPermission.sellerNotiAllow
+                : user.role === Role.Trader
+                ? TraderPermission.traderNotiAllow
+                : ""
+            );
+
+            let msg: any = {
+              body:
+                user.username +
+                ", you can now list your products to sell on Marketplace.",
+              createdAt: new Date().toISOString(),
+              title: "Approved Membership",
+              type: NotiType.UpdateMembership,
+              requireInteraction: false,
+              sendList: [...adminList, ...staffList, user.id],
+              details: {
+                web:
+                  "/account/" + encodeURIComponent(encryptPhone(user.phoneNum)),
+                mobile: {
+                  screen: "Account",
+                  slug: user.phoneNum,
+                },
+              },
+            };
+            console.log("Fire");
+            await addNotification(msg, "");
+          }
+
+          let updateUserRes = await updateUser(user.id, profile);
           if (updateUserRes.isSuccess === true) {
             res.status(200).json(Success);
           } else {

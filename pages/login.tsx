@@ -274,7 +274,7 @@ function Login({ siteInfo }: { siteInfo: Content }) {
           {/* <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25"></div> */}
           <div className="relative w-full lg:w-1/2 px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8 bg-red-600">
             <div
-              className={`mx-auto min-w-[400px] max-w-lg rounded-lg bg-white pt-10 shadow-2xl lg:min-w-[500px]`}
+              className={`mx-auto max-w-lg rounded-lg bg-white pt-10 shadow-2xl lg:min-w-[500px]`}
             >
               {isForgot === false ? (
                 <>
@@ -282,7 +282,7 @@ function Login({ siteInfo }: { siteInfo: Content }) {
                     {getText("Log in", "၀င်ရောက်ရန်", locale)}
                   </h1>
 
-                  <p className="mx-auto mt-4 min-w-[400px] text-center text-gray-600 lg:min-w-[500px] ">
+                  <p className="mx-auto mt-4 lg:min-w-[400px] text-center text-gray-600 lg:min-w-[500px] text-sm lg:text-base">
                     {getText(
                       "Welcome to Treasure Rush",
                       "Treasure Rush မှ ကြိုဆိုပါသည်။",

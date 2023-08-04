@@ -170,7 +170,7 @@ function Register({ siteInfo }: { siteInfo: Content }) {
         </div>
         {/* <div className="absolute inset-0 bg-white/75 sm:bg-transparent sm:bg-gradient-to-r sm:from-white/95 sm:to-white/25"></div> */}
         <div className="relative lg:w-1/2 w-full px-4 py-32 sm:px-6 lg:flex lg:items-center lg:px-8 bg-primary">
-          <div className="mx-auto max-w-lg rounded-lg bg-white pt-10 shadow-2xl">
+          <div className="mx-auto max-w-xl rounded-lg bg-white pt-10 shadow-2xl">
             <h1 className="text-center text-2xl font-bold text-primary sm:text-3xl">
               {getText("Create an account", "အကောင့်အသစ်ပြုလုပ်မည်။", locale)}
             </h1>
@@ -185,10 +185,10 @@ function Register({ siteInfo }: { siteInfo: Content }) {
                   Role
                   <span className="text-primary">*</span>
                 </label>
-                <div className="mt-1 flex flex-wrap items-center justify-start gap-3">
+                <div className="mt-1 flex flex-col lg:flex-row lg:items-center justify-start gap-3 flex-wrap">
                   {roleList.map((elem, index) => (
                     <div
-                      className={`flex cursor-pointer items-start space-x-3 rounded-lg border p-4 px-3 shadow-sm transition-colors hover:bg-primary/50 hover:text-white ${
+                      className={`flex-1 group flex flex-col cursor-pointer rounded-lg border p-4 px-3 shadow-sm transition-colors hover:bg-primary/20 hover:text-gray-700 ${
                         role === elem
                           ? "border-primary text-primary ring-1 ring-primary"
                           : "border-gray-200"
@@ -198,29 +198,43 @@ function Register({ siteInfo }: { siteInfo: Content }) {
                         setRole(elem);
                       }}
                     >
-                      <label
-                        className={`block flex-grow cursor-pointer px-4 text-sm font-medium`}
-                      >
-                        <span className="whitespace-nowrap"> {t(elem)} </span>
-                      </label>
-                      {elem === role && (
-                        <svg
-                          className="top-4 right-4 h-5 w-5 cursor-pointer"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
+                      <div className="flex items-start px-4 space-x-3">
+                        <label
+                          className={`block flex-grow cursor-pointer text-sm font-medium`}
                         >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      )}
+                          <span className="whitespace-nowrap"> {t(elem)} </span>
+                        </label>
+                        {elem === role && (
+                          <svg
+                            className="top-4 right-4 h-5 w-5 cursor-pointer"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <p className="mt-1 text-gray-900 px-4 text-xs group-hover:text-gray-500">
+                        {t(elem + "Details")}
+                      </p>
                     </div>
                   ))}
                 </div>
               </div>
+
+              <div className="bg-warning/20 text-warning p-2 text-xs font-semibold text-center">
+                {getText(
+                  "Role cannot be changed in future",
+                  "အထက်ပါ Role အား အနာဂတ်တွင် ပြောင်းလဲ၍မရပါ။",
+                  locale
+                )}
+              </div>
+
               <FormInput
                 label={"Username"}
                 placeHolder={"Enter Username"}

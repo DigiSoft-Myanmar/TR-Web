@@ -192,6 +192,7 @@ export default async function handler(
                           ...c,
                           normalPrice: pricing.regularPrice,
                           salePrice: pricing.saleAmount,
+                          SKU: variation.SKU,
                         });
                       } else {
                         if (c.salePrice) {
@@ -200,6 +201,7 @@ export default async function handler(
                         cartItems.push({
                           ...c,
                           normalPrice: pricing.regularPrice,
+                          SKU: variation.SKU,
                         });
                       }
                       prods.push(prodDetails[j]);
@@ -245,6 +247,7 @@ export default async function handler(
                               ...c,
                               normalPrice: pricing.regularPrice,
                               salePrice: pricing.saleAmount,
+                              SKU: v.SKU,
                             });
                           } else {
                             if (c.salePrice) {
@@ -253,6 +256,7 @@ export default async function handler(
                             cartItems.push({
                               ...c,
                               normalPrice: pricing.regularPrice,
+                              SKU: v.SKU,
                             });
                           }
                           prods.push(prodDetails[j]);
@@ -276,6 +280,7 @@ export default async function handler(
                             ...c,
                             normalPrice: pricing.regularPrice,
                             salePrice: pricing.saleAmount,
+                            SKU: currentVariation.SKU,
                           });
                         } else {
                           if (c.salePrice) {
@@ -284,6 +289,7 @@ export default async function handler(
                           cartItems.push({
                             ...c,
                             normalPrice: pricing.regularPrice,
+                            SKU: currentVariation.SKU,
                           });
                         }
                         prods.push(prodDetails[j]);

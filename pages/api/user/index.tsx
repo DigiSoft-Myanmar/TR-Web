@@ -266,6 +266,7 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
                 b.phoneNum +
                 " was registered at " +
                 new Date().toLocaleDateString("en-ca", {
+                  timeZone: "Asia/Yangon",
                   year: "numeric",
                   month: "short",
                   day: "2-digit",
@@ -346,7 +347,6 @@ export default async function Handler(
             };
             await addNotification(msg, "");
           }
-
           if (
             isInternal(session) &&
             data.sellAllow === true &&
