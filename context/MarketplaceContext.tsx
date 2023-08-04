@@ -45,6 +45,7 @@ type MarketplaceType = {
     salePrice: number,
     productId: string,
     quantity: number,
+    SKU: string,
     stockType: StockType,
     stockLevel: number,
     variation?: any,
@@ -258,7 +259,9 @@ export const MarketplaceProvider = ({
     subTotal -
     promoTotal +
     shippingFee
-      .map((e) => (e.shippingFee ? e.shippingFee : 0))
+      .map((e) =>
+        e.isFreeShipping === true ? 0 : e.shippingFee ? e.shippingFee : 0
+      )
       .reduce((a, b) => a + b, 0);
 
   function calculatePromo() {
@@ -365,8 +368,10 @@ export const MarketplaceProvider = ({
     });
   }
 
-  function modifyCount(productId: string, qty: number) {
-    let prod = cartItems.find((e) => e.productId === productId);
+  function modifyCount(productId: string, SKU: string, qty: number) {
+    let prod = cartItems.find(
+      (e) => e.productId === productId && e.SKU === SKU
+    );
     if (prod) {
       if (qty <= 0) {
         let c = cartItems.filter((e) => e.productId !== productId);
@@ -387,7 +392,9 @@ export const MarketplaceProvider = ({
         );
       } else {
         let c = [...cartItems];
-        let p = cartItems.findIndex((e) => e.productId === productId);
+        let p = cartItems.findIndex(
+          (e) => e.productId === productId && e.SKU === SKU
+        );
         c[p].quantity = qty;
         updateCartItem(
           c,
@@ -398,6 +405,8 @@ export const MarketplaceProvider = ({
           shippingLocation
         );
       }
+    } else {
+      alert("Item not found.");
     }
   }
 
@@ -485,6 +494,7 @@ export const MarketplaceProvider = ({
     salePrice: number,
     productId: string,
     quantity: number,
+    SKU: string,
     stockType: StockType,
     stockLevel: number,
     variation?: any,
@@ -538,15 +548,7 @@ export const MarketplaceProvider = ({
       let c = [...cartItems];
       let index = c.findIndex((z) =>
         variation
-          ? z.productId === productId &&
-            variation.attributes?.every((ea: any) =>
-              z.variation!.attributes?.find(
-                (at: Term) =>
-                  at.name === ea.name &&
-                  at.attributeId === ea.attributeId &&
-                  at.value === ea.value
-              )
-            )
+          ? z.productId === productId && z.SKU === SKU
           : z.productId === productId
       );
       if (index >= 0) {
@@ -585,6 +587,7 @@ export const MarketplaceProvider = ({
               productId: productId,
               quantity: quantity,
               variation: variation,
+              SKU: SKU,
             });
           } else {
             c.push({
@@ -593,6 +596,7 @@ export const MarketplaceProvider = ({
               salePrice: salePrice,
               productId: productId,
               quantity: quantity,
+              SKU: SKU,
             });
           }
         } else if (stockLevel <= 0) {

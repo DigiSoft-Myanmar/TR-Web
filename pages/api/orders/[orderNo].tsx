@@ -100,7 +100,7 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
           let msg: any = {
             body:
               product.name +
-              " was low on stock. Current stock is " +
+              " was low on stock. Current Stock Qty is " +
               stockLevel,
             createdAt: new Date().toISOString(),
             title: "Low Stock: " + product.name,
@@ -153,7 +153,7 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
               let msg: any = {
                 body:
                   product.name +
-                  " was low on stock. Current stock is " +
+                  " was low on stock. Current Stock Qty is " +
                   stockLevel,
                 createdAt: new Date().toISOString(),
                 title: "Low Stock: " + product.name,
@@ -307,7 +307,7 @@ export default async function handler(
                     seller.username +
                     " changed the status to " +
                     status.toString() +
-                    " for #" +
+                    " for Order #" +
                     newOrder.orderNo +
                     " at " +
                     new Date().toLocaleDateString("en-ca", {
@@ -322,7 +322,7 @@ export default async function handler(
                     seller.username +
                     " " +
                     status.toString() +
-                    " for #" +
+                    " Order #" +
                     newOrder.orderNo,
                   type: NotiType.UpdateOrder,
                   requireInteraction: false,
@@ -346,7 +346,7 @@ export default async function handler(
                   seller.username +
                     " " +
                     status.toString() +
-                    " for #" +
+                    " Order #" +
                     newOrder.orderNo
                 );
 

@@ -277,7 +277,7 @@ function CartList() {
                                   }
                                 );
                               } else {
-                                modifyCount(e.productId, 0);
+                                modifyCount(e.productId, e.SKU, 0);
                               }
                             }}
                             className="rounded-md px-2 py-1 text-error transition-colors duration-200 hover:bg-error hover:text-white flex flex-row items-center mt-1"
@@ -369,7 +369,7 @@ function CartList() {
                                 evt.stopPropagation();
                                 evt.preventDefault();
 
-                                modifyCount(e.productId, e.quantity - 1);
+                                modifyCount(e.productId, e.SKU, e.quantity - 1);
                               }}
                               className="rounded-md p-1 transition-colors duration-200 hover:bg-primary hover:text-white"
                             >
@@ -397,13 +397,21 @@ function CartList() {
                                   if (
                                     prodDetail.stockType === StockType.InStock
                                   ) {
-                                    modifyCount(e.productId, e.quantity + 1);
+                                    modifyCount(
+                                      e.productId,
+                                      e.SKU,
+                                      e.quantity + 1
+                                    );
                                   } else if (
                                     prodDetail.stockType ===
                                       StockType.StockLevel &&
                                     prodDetail.stockLevel >= e.quantity + 1
                                   ) {
-                                    modifyCount(e.productId, e.quantity + 1);
+                                    modifyCount(
+                                      e.productId,
+                                      e.SKU,
+                                      e.quantity + 1
+                                    );
                                   } else if (
                                     prodDetail.stockType ===
                                     StockType.StockLevel
@@ -422,23 +430,31 @@ function CartList() {
                                       locale
                                     );
                                   }
-                                } else {
+                                } else if (e.variation) {
                                   let variation: any =
                                     prodDetail.variations.find(
-                                      (z: any) => z.SKU === e.SKU
+                                      (z: any) => z.SKU === e.variation?.SKU
                                     );
                                   if (variation) {
                                     let stockLevel = variation.stockLevel;
                                     if (
                                       variation.stockType === StockType.InStock
                                     ) {
-                                      modifyCount(e.productId, e.quantity + 1);
+                                      modifyCount(
+                                        e.productId,
+                                        e.SKU,
+                                        e.quantity + 1
+                                      );
                                     } else if (
                                       variation.stockType ===
                                         StockType.StockLevel &&
                                       variation.stockLevel >= e.quantity + 1
                                     ) {
-                                      modifyCount(e.productId, e.quantity + 1);
+                                      modifyCount(
+                                        e.productId,
+                                        e.SKU,
+                                        e.quantity + 1
+                                      );
                                     } else if (
                                       variation.stockType ===
                                       StockType.StockLevel

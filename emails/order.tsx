@@ -2,10 +2,14 @@ import { CartItem } from "@/prisma/models/cartItems";
 import { Colors } from "@/types/color";
 import { OrderStatus } from "@/types/orderTypes";
 import {
+  getCartItems,
+  getDiscountTotal,
   getPriceTotal,
   getPromoTotal,
   getShippingFeeTotal,
+  getShippingTotal,
   getSubTotal,
+  getTotal,
   isCartValid,
 } from "@/util/orderHelper";
 import { formatAmount, getInitials } from "@/util/textHelper";
@@ -563,23 +567,51 @@ export default function OrderEmail({
                 <Column align="right">
                   <Text style={priceStyle}>
                     Subtotal :{" "}
-                    {formatAmount(getSubTotal(order, sellerId), "en", true)}
+                    {formatAmount(
+                      getTotal(
+                        getCartItems(order?.cartItems, order?.sellerResponse),
+                        sellerId
+                      ),
+                      "en",
+                      true
+                    )}
                   </Text>
                   <Text style={priceStyle}>
                     Shipping Total:{" "}
                     {formatAmount(
-                      getShippingFeeTotal(order, sellerId),
+                      getShippingTotal(order?.sellerResponse, sellerId),
                       "en",
                       true
                     )}
                   </Text>
                   <Text style={priceStyle}>
                     Discount:{" "}
-                    {formatAmount(getPromoTotal(order, sellerId), "en", true)}
+                    {formatAmount(
+                      getDiscountTotal(
+                        order?.sellerResponse,
+                        order?.discountTotal,
+                        sellerId
+                      ),
+                      "en",
+                      true
+                    )}
                   </Text>
                   <Text style={priceStyle}>
                     Total:{" "}
-                    {formatAmount(getPriceTotal(order, sellerId), "en", true)}
+                    {formatAmount(
+                      getTotal(
+                        getCartItems(order?.cartItems, order?.sellerResponse),
+                        sellerId
+                      ) -
+                        getDiscountTotal(
+                          order?.sellerResponse,
+                          order?.discountTotal,
+                          sellerId
+                        ) +
+                        getShippingTotal(order?.sellerResponse, sellerId),
+                      "en",
+                      true
+                    )}
                   </Text>
                 </Column>
               </Row>

@@ -23,7 +23,7 @@ function Avatar({
             width={isLarge === true ? 56 : size > 0 ? size : 20}
             height={isLarge === true ? 56 : size > 0 ? size : 20}
             alt={username!}
-            className="object-contain rounded-full"
+            className="object-cover rounded-full"
             style={{
               minWidth:
                 isLarge === true ? "56px" : size > 0 ? size + "px" : "20px",

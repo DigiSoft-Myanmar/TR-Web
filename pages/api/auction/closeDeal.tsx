@@ -27,6 +27,7 @@ import { render } from "@react-email/render";
 import AuctionEmail from "@/emails/auction";
 import async from "async";
 import { sendEmailNodeFn } from "@/util/emailNodeHelper";
+import { caesarEncrypt } from "@/util/encrypt";
 
 async function addAuctionList(
   lastOffer: Auctions,
@@ -122,7 +123,11 @@ export default async function handler(
       let auction = await prisma.auctions.findFirst({
         where: { id: id.toString() },
         include: {
-          product: true,
+          product: {
+            include: {
+              seller: true,
+            },
+          },
         },
       });
       if (
@@ -167,10 +172,10 @@ export default async function handler(
                 },
               },
             });
-
+            let userId = caesarEncrypt(wonAuction.auction.createdByUserId, 5);
             let status =
               body.isAccept === true
-                ? "accepted by seller and it is currently in cart with "
+                ? "won by " + userId + " and it is currently in cart with"
                 : auction.product.sellerId === session.id
                 ? "was rejected by seller with "
                 : "was rejected by buyer with ";
@@ -307,6 +312,13 @@ export default async function handler(
             productId: auctionProds[i].id,
             SKU: auctionProds[i].SKU,
           },
+          include: {
+            product: {
+              include: {
+                seller: true,
+              },
+            },
+          },
         });
         if (auction.length > 0) {
           let lastOffer = sortBy(auction, (e) => e.amount).reverse()[0];
@@ -354,7 +366,7 @@ export default async function handler(
         },
       });
       for (let i = 0; i < wonList.length; i++) {
-        let auction = await prisma.wonList.update({
+        let autoCancelAuction = await prisma.wonList.update({
           where: {
             id: wonList[i].id,
           },
@@ -382,27 +394,31 @@ export default async function handler(
           AuctionPermission.allBidAuctionNoti
         );
 
+        let sellerName = autoCancelAuction.product.seller.username;
+
         let msg: any = {
           body:
-            auction.product.name +
-            " was auto cancelled due to inactivity of seller.",
+            autoCancelAuction.product.name +
+            " was auto cancelled since no action taken by seller: " +
+            sellerName +
+            ".",
           createdAt: new Date().toISOString(),
-          title: "Auto cancelled" + " : " + auction.product.name,
+          title: "Auto cancelled" + " : " + autoCancelAuction.product.name,
           type: NotiType.AuctionAutoCancelled,
           requireInteraction: false,
           sendList: [
             ...adminList,
             ...staffList,
-            auction.auction.createdByUserId,
-            auction.product.sellerId,
+            autoCancelAuction.auction.createdByUserId,
+            autoCancelAuction.product.sellerId,
           ],
           details: {
             web: "/auctions",
             mobile: {
               screen: "Auctions",
             },
-            buyer: auction.auction.createdByUserId,
-            seller: auction.product.sellerId,
+            buyer: autoCancelAuction.auction.createdByUserId,
+            seller: autoCancelAuction.product.sellerId,
           },
         };
         await addNotification(msg, "");
@@ -413,22 +429,22 @@ export default async function handler(
         );
 
         let emailSendList = [...adminEmail, ...staffEmail];
-        if (auction.auction.createdBy.email) {
-          emailSendList.push(auction.auction.createdBy.email);
+        if (autoCancelAuction.auction.createdBy.email) {
+          emailSendList.push(autoCancelAuction.auction.createdBy.email);
         }
-        if (auction.product.seller.email) {
-          emailSendList.push(auction.product.seller.email);
+        if (autoCancelAuction.product.seller.email) {
+          emailSendList.push(autoCancelAuction.product.seller.email);
         }
 
         const emailHtml = render(
-          <AuctionEmail content={content!} wonList={auction} />
+          <AuctionEmail content={content!} wonList={autoCancelAuction} />
         );
 
         async.each(
           emailSendList,
           function (email: any, callback) {
             sendEmailNodeFn(
-              "Auto cancelled" + " : " + auction.product.name,
+              "Auto cancelled" + " : " + autoCancelAuction.product.name,
               emailHtml,
               [email]
             );

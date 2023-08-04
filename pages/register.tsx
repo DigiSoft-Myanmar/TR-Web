@@ -42,7 +42,8 @@ function Register({ siteInfo }: { siteInfo: Content }) {
   const [isOTP, setOTP] = React.useState(false);
   const roleList = [Role.Trader, Role.Buyer, Role.Seller];
 
-  console.log(siteInfo);
+  const router = useRouter();
+  const { type } = router.query;
 
   const registerShema = z.object({
     username: z.string().min(1, { message: t("inputError") }),
@@ -61,7 +62,9 @@ function Register({ siteInfo }: { siteInfo: Content }) {
   const [isSubmit, setSubmit] = React.useState(false);
   const { register, handleSubmit, watch, formState } = useForm<RegisterType>({
     mode: "onChange",
-    defaultValues: {},
+    defaultValues: {
+      phoneNum: "+959",
+    },
     resolver: zodResolver(registerShema),
   });
   const { errors }: any = formState;
@@ -69,6 +72,12 @@ function Register({ siteInfo }: { siteInfo: Content }) {
   const [role, setRole] = React.useState<any>(Role.Buyer);
 
   const captchaContainer = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    if (type) {
+      setRole(Role.Trader);
+    }
+  }, [type]);
 
   const checkKeyDown = (e: any) => {
     if (e.code === "Enter") {

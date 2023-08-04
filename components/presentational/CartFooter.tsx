@@ -29,7 +29,13 @@ function CartFooter({ isModal }: { isModal: boolean }) {
         <p className="py-2 text-sm font-semibold text-primary">
           {formatAmount(
             shippingFee
-              .map((z) => (z.shippingFee ? z.shippingFee : 0))
+              .map((z) =>
+                z.isFreeShipping === true
+                  ? 0
+                  : z.shippingFee
+                  ? z.shippingFee
+                  : 0
+              )
               .reduce((a, b) => a + b, 0),
             locale,
             true

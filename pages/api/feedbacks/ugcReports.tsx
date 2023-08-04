@@ -97,7 +97,7 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
 
       let msg: any = {
         body:
-          feedback.user.username + " provides feedbacks for " + +feedbackTitle,
+          feedback.user.username + " provides feedback for " + +feedbackTitle,
         createdAt: new Date().toISOString(),
         title: "New Feedback",
         type: NotiType.Feedback,

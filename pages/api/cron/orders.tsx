@@ -69,10 +69,10 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
               let msg: any = {
                 body:
                   orders[i].orderNo +
-                  " was auto cancelled by system due to inactivity of seller: " +
+                  " was auto cancelled since no action taken by seller: " +
                   seller[j].username,
                 createdAt: new Date().toISOString(),
-                title: "Auto cancelled for #" + orders[i].orderNo,
+                title: "Auto cancelled for Order #" + orders[i].orderNo,
                 type: NotiType.AutoCancelledOrder,
                 requireInteraction: false,
                 sendList: [

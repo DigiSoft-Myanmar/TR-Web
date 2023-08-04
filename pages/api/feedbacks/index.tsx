@@ -31,7 +31,7 @@ async function getContact(req: NextApiRequest, res: NextApiResponse<any>) {
     ) {
       let allowPermission = await canAccess(
         req,
-        otherPermission.helpCenterMessageView,
+        otherPermission.helpCenterMessageView
       );
       if (allowPermission === false) {
         return res.status(401).json(Unauthorized);
@@ -66,7 +66,7 @@ async function addContact(req: NextApiRequest, res: NextApiResponse<any>) {
     let msg: any = {
       body: data.message,
       createdAt: new Date().toISOString(),
-      title: "From " + data.email,
+      title: "New Message from " + data.email,
       type: NotiType.ContactMsg,
       requireInteraction: false,
       sendList: [...adminList, ...staffList],
@@ -86,7 +86,7 @@ async function updateMessage(req: NextApiRequest, res: NextApiResponse<any>) {
     const { id } = req.query;
     let allowPermission = await canAccess(
       req,
-      otherPermission.helpCenterMessageUpdate,
+      otherPermission.helpCenterMessageUpdate
     );
     if (allowPermission === false) {
       return res.status(401).json(Unauthorized);
@@ -122,7 +122,7 @@ async function deleteMessage(req: NextApiRequest, res: NextApiResponse<any>) {
     const { id } = req.query;
     let allowPermission = await canAccess(
       req,
-      otherPermission.helpCenterMessageDelete,
+      otherPermission.helpCenterMessageDelete
     );
     if (allowPermission === false) {
       return res.status(401).json(Unauthorized);
@@ -144,7 +144,7 @@ async function deleteMessage(req: NextApiRequest, res: NextApiResponse<any>) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session = await useAuth(req);

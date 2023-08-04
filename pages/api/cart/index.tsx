@@ -771,7 +771,7 @@ export default async function handler(
                 let msg: any = {
                   body:
                     newOrder.orderBy.username +
-                    " created a new order with #" +
+                    " submitted a new order #" +
                     newOrder.orderNo +
                     " at " +
                     new Date().toLocaleDateString("en-ca", {
@@ -800,7 +800,10 @@ export default async function handler(
                   },
                 };
                 await addNotification(msg, "");
-                await sendOrderEmail(newOrder, "New Order " + newOrder.orderNo);
+                await sendOrderEmail(
+                  newOrder,
+                  "New Order #" + newOrder.orderNo
+                );
 
                 return res.status(200).json({
                   orderNo: newOrder.orderNo,

@@ -158,7 +158,7 @@ export function getShippingTotal(sellerResponse: any[], sellerId?: string) {
     .filter(
       (e: any) => (sellerId ? e.sellerId === sellerId : true) && isCartValid(e)
     )
-    .map((e: any) => (e.shippingFee ? e.shippingFee : 0))
+    .map((e: any) => (e.isFreeShipping ? 0 : e.shippingFee ? e.shippingFee : 0))
     .reduce((a: number, b: number) => a + b, 0);
 }
 

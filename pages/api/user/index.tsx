@@ -260,9 +260,21 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
             );
 
             let msg: any = {
-              body: b.username + ", " + b.phoneNum + " was registered.",
+              body:
+                b.username +
+                ", " +
+                b.phoneNum +
+                " was registered at " +
+                new Date().toLocaleDateString("en-ca", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }) +
+                ".",
               createdAt: new Date().toISOString(),
-              title: "New " + b.role,
+              title: "New " + b.role + " Registration",
               type: NotiType.NewUser,
               requireInteraction: false,
               sendList: [...adminList, ...staffList],
@@ -350,9 +362,11 @@ export default async function Handler(
             );
 
             let msg: any = {
-              body: "You can now list your products.",
+              body:
+                user.username +
+                ", you can now list your products to sell on Marketplace.",
               createdAt: new Date().toISOString(),
-              title: "Allow Selling",
+              title: "Approved Membership",
               type: NotiType.UpdateMembership,
               requireInteraction: false,
               sendList: [...adminList, ...staffList, user.id],

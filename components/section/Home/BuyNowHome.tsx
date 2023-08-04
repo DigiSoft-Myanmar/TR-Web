@@ -285,6 +285,7 @@ function BuyNowHome({
                         pricingInfo.salePrice,
                         highlightProd.id,
                         1,
+                        highlightProd.SKU,
                         highlightProd.stockType,
                         highlightProd.stockLevel,
                         undefined,

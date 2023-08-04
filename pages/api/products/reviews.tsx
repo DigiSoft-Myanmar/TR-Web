@@ -199,7 +199,7 @@ async function addRatings(req: NextApiRequest, res: NextApiResponse<any>) {
       let msg: any = {
         body: (data ? "Update" : "New") + " Review with rating: " + body.rating,
         createdAt: new Date().toISOString(),
-        title: "New Product Review",
+        title: (data ? "Update" : "New") + " Product Review",
         type: data ? NotiType.UpdateProductReview : NotiType.NewProductReview,
         requireInteraction: false,
         sendList: [...adminList, ...staffList, prod.sellerId],

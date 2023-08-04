@@ -29,6 +29,7 @@ import { encryptPhone } from "@/util/encrypt";
 import AdsHere from "@/components/Ads/AdsHere";
 import { AdsLocation, AdsPage } from "@/util/adsHelper";
 import { IconPickerItem } from "react-fa-icon-picker";
+import { t } from "i18next";
 
 export type Register = {
   username: string;
@@ -159,7 +160,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
           ]}
         />
 
-        <section className="relative z-20 overflow-hidden pt-20 pb-12 lg:pt-[120px] lg:pb-[90px]">
+        <section className="relative z-20 overflow-hidden pt-20 lg:pt-[120px]">
           <div className="container mx-auto">
             <div className="-mx-4 flex flex-wrap">
               <div className="w-full px-4">
@@ -192,6 +193,44 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
               </div>
             </div>
             <MembershipTable data={data} content={siteInfo} />
+          </div>
+        </section>
+
+        <section className="bg-gray-50">
+          <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:items-center">
+            <div className="mx-auto max-w-xl text-center">
+              <h1 className="text-xl font-extrabold sm:text-3xl">
+                {getText(
+                  "Join with Treasure Rush and",
+                  "Treasure Rush နှင့် ပူးပေါင်းပြီး",
+                  locale
+                )}{" "}
+                <strong className="font-extrabold text-primary sm:block">
+                  {getText(
+                    "Unlock Exclusive Benefits",
+                    "အကျိုးခံစားခွင့်များ ရယူပါ။",
+                    locale
+                  )}
+                </strong>
+              </h1>
+
+              <p className="mt-4 sm:text-base/relaxed">
+                {getText(
+                  "Start selling today with easy registration. Reach more customers and grow your business.",
+                  "ယခုပဲ စာရင်းပေးသွင်းပြီး ဖောက်သည်များ တိုးပွားကာ သင့်လုပ်ငန်းကို ကြီးထွားလိုက်ပါ။",
+                  locale
+                )}
+              </p>
+
+              <div className="mt-8 flex flex-wrap justify-center gap-4">
+                <Link
+                  className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-white shadow hover:bg-primary-focus focus:outline-none focus:ring active:bg-primary sm:w-auto"
+                  href="/register?type=Seller"
+                >
+                  {getText("Register Now", "စာရင်းပေးသွင်းရန်", locale)}
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </div>
