@@ -899,7 +899,6 @@ export async function getServerSideProps({ locale }: any) {
   currentDate.setHours(0, 0, 0, 0);
   const promotionProducts = await prisma.product.findMany({
     where: {
-      isFeatured: true,
       OR: [
         {
           type: {
