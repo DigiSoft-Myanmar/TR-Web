@@ -52,9 +52,7 @@ function ModifyPriceModal({
             .max(100, {
               message: t("inputValidPercentage"),
             })
-            .nonnegative({ message: t("inputValidPercentage") })
-            .optional()
-            .or(z.literal("")),
+            .nonnegative({ message: t("inputValidPercentage") }),
   });
 
   const { register, handleSubmit, watch, formState, reset } = useForm<Form>({

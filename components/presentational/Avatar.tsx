@@ -24,6 +24,16 @@ function Avatar({
             height={isLarge === true ? 56 : size > 0 ? size : 20}
             alt={username!}
             className="object-contain rounded-full"
+            style={{
+              minWidth:
+                isLarge === true ? "56px" : size > 0 ? size + "px" : "20px",
+              minHeight:
+                isLarge === true ? "56px" : size > 0 ? size + "px" : "20px",
+              maxWidth:
+                isLarge === true ? "56px" : size > 0 ? size + "px" : "20px",
+              maxHeight:
+                isLarge === true ? "56px" : size > 0 ? size + "px" : "20px",
+            }}
           />
         ) : (
           <div className="avatar">

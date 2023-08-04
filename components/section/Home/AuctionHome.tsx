@@ -260,7 +260,7 @@ function AuctionHome({
               <div className="group-hover:flex hidden w-1/2 h-1 rounded-full bg-white mt-2"></div>
             )}
           </div>
-          {categories.map((z: any, index: number) => (
+          {categories?.map((z: any, index: number) => (
             <div
               key={index}
               className={`cursor-pointer text-sm whitespace-nowrap group ${
@@ -305,8 +305,8 @@ function AuctionHome({
                 ? t("browsedAllProducts")
                 : getText(
                     "No products related to " +
-                      categories.find((b) => b.id === current).name,
-                    +categories.find((b) => b.id === current).nameMM +
+                      categories?.find((b) => b.id === current).name,
+                    +categories?.find((b) => b.id === current).nameMM +
                       " နှင့်ပတ်သက်၍ ပစ္စည်းမရှိပါ။",
                     locale
                   )}

@@ -37,15 +37,12 @@ import { otherPermission } from "@/types/permissionTypes";
 
 export function IndexPage({
   sellerList,
-  categories,
   totalReview,
   content,
   prodList,
+  promotionProducts,
 }: {
   sellerList: User[];
-  categories: (Category & {
-    subCategory: Category[];
-  })[];
   totalReview: number;
   content: Content;
   prodList: (Product & {
@@ -53,7 +50,19 @@ export function IndexPage({
     Review: Review[];
     seller: User;
   })[];
+  promotionProducts: (Product & {
+    Brand: Brand;
+    Review: Review[];
+    seller: User;
+  })[];
 }) {
+  const { data: categories } = useQuery("categoriesData", () =>
+    fetch("/api/products/categories").then((res) => {
+      let json = res.json();
+      return json;
+    })
+  );
+
   const { t } = useTranslation("common");
   const router = useRouter();
   const { data: session }: any = useSession();
@@ -509,8 +518,7 @@ export function IndexPage({
             ),
           ]}
         />
-        {prodList?.filter((z) => getPricing(z)?.isPromotion === true).length >
-          0 && (
+        {promotionProducts?.length > 0 && (
           <>
             <section className="px-10 md:px-20">
               <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
@@ -560,9 +568,7 @@ export function IndexPage({
             </section>
             <BuyNowHome
               categories={categories}
-              prodList={prodList.filter(
-                (z) => getPricing(z)?.isPromotion === true
-              )}
+              prodList={promotionProducts}
               isPromotion={true}
             />
           </>
@@ -856,16 +862,7 @@ export async function getServerSideProps({ locale }: any) {
     },
   });
   const content = await prisma.content.findFirst({});
-  const categories = await prisma.category.findMany({
-    include: {
-      subCategory: true,
-    },
-    where: {
-      parentId: {
-        isSet: false,
-      },
-    },
-  });
+
   const today = new Date();
   const totalReview = sellerList
     .map((z) => z.Review.map((b) => b.rating).reduce((a, b) => a + b, 0))
@@ -898,14 +895,57 @@ export async function getServerSideProps({ locale }: any) {
       seller: true,
     },
   });
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  const promotionProducts = await prisma.product.findMany({
+    where: {
+      isFeatured: true,
+      OR: [
+        {
+          type: {
+            in: [ProductType.Fixed, ProductType.Variable],
+          },
+          salePrice: {
+            gt: 0,
+          },
+          isSalePeriod: false,
+        },
+        {
+          type: {
+            in: [ProductType.Fixed, ProductType.Variable],
+          },
+          salePrice: {
+            gt: 0,
+          },
+          saleStartDate: {
+            lte: currentDate,
+          },
+          saleEndDate: {
+            gte: currentDate,
+          },
+          isSalePeriod: true,
+        },
+      ],
+      seller: {
+        sellAllow: true,
+        isBlocked: false,
+        isDeleted: false,
+      },
+    },
+    include: {
+      Brand: true,
+      Review: true,
+      seller: true,
+    },
+  });
 
   return {
     props: {
-      categories: JSON.parse(JSON.stringify(categories)),
       sellerList: JSON.parse(JSON.stringify(sellerList)),
       content: JSON.parse(JSON.stringify(content)),
       totalReview: totalReview,
       prodList: JSON.parse(JSON.stringify(prodList)),
+      promotionProducts: JSON.parse(JSON.stringify(promotionProducts)),
       ...(await serverSideTranslations(locale, ["common"])),
       // Will be passed to the page component as props
     },
