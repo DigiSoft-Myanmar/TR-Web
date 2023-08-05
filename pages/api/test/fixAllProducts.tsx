@@ -32,6 +32,7 @@ export default async function handler(
       if (d.id) {
         delete d.id;
       }
+
       await prisma.product.update({
         where: {
           id: products[i].id,
@@ -40,7 +41,7 @@ export default async function handler(
       });
     }
 
-    let variableProducts = await prisma.product.findMany({
+    /* let variableProducts = await prisma.product.findMany({
       where: {
         type: ProductType.Variable,
       },
@@ -70,7 +71,7 @@ export default async function handler(
         },
         data: d,
       });
-    }
+    } */
 
     return res.status(200).json({ prodCount: 0 });
   } catch (err) {
