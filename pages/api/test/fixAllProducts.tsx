@@ -41,7 +41,7 @@ export default async function handler(
       });
     }
 
-    /* let variableProducts = await prisma.product.findMany({
+    let variableProducts = await prisma.product.findMany({
       where: {
         type: ProductType.Variable,
       },
@@ -52,10 +52,10 @@ export default async function handler(
 
       if (pricingInfo.isPromotion === true) {
         d.isPromotionAll = true;
-        if (pricingInfo.minSaleDiscount && pricingInfo.maxSaleDiscount) {
+        if (pricingInfo.minSaleStartDate && pricingInfo.maxSaleEndDate) {
           d.isPromotionAllPeriod = false;
-          d.isPromotionAllStartDate = pricingInfo.minSaleDiscount;
-          d.isPromotionAllEndDate = pricingInfo.maxSaleDiscount;
+          d.isPromotionAllStartDate = pricingInfo.minSaleStartDate;
+          d.isPromotionAllEndDate = pricingInfo.maxSaleEndDate;
         } else {
           d.isPromotionAllPeriod = true;
         }
@@ -71,7 +71,7 @@ export default async function handler(
         },
         data: d,
       });
-    } */
+    }
 
     return res.status(200).json({ prodCount: 0 });
   } catch (err) {

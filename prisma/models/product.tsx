@@ -248,10 +248,10 @@ export const createProduct = async (data: Product) => {
 
     if (pricingInfo.isPromotion === true) {
       d.isPromotionAll = true;
-      if (pricingInfo.minSaleDiscount && pricingInfo.maxSaleDiscount) {
+      if (pricingInfo.minSaleStartDate && pricingInfo.maxSaleEndDate) {
         d.isPromotionAllPeriod = false;
-        d.isPromotionAllStartDate = pricingInfo.minSaleDiscount;
-        d.isPromotionAllEndDate = pricingInfo.maxSaleDiscount;
+        d.isPromotionAllStartDate = pricingInfo.minSaleStartDate;
+        d.isPromotionAllEndDate = pricingInfo.maxSaleEndDate;
       } else {
         d.isPromotionAllPeriod = true;
       }
@@ -345,10 +345,10 @@ export const updateProduct = async (id: string, data: Product) => {
 
     if (pricingInfo.isPromotion === true) {
       d.isPromotionAll = true;
-      if (pricingInfo.minSaleDiscount && pricingInfo.maxSaleDiscount) {
+      if (pricingInfo.minSaleStartDate && pricingInfo.maxSaleEndDate) {
         d.isPromotionAllPeriod = false;
-        d.isPromotionAllStartDate = pricingInfo.minSaleDiscount;
-        d.isPromotionAllEndDate = pricingInfo.maxSaleDiscount;
+        d.isPromotionAllStartDate = pricingInfo.minSaleStartDate;
+        d.isPromotionAllEndDate = pricingInfo.maxSaleEndDate;
       } else {
         d.isPromotionAllPeriod = true;
       }
