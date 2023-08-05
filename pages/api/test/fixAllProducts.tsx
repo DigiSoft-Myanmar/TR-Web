@@ -15,7 +15,7 @@ export default async function handler(
       },
     });
     for (let i = 0; i < products.length; i++) {
-      let d = products[i];
+      let d = { ...products[i] };
       let pricingInfo = getPricing(d);
       if (pricingInfo.isPromotion === true) {
         d.isPromotionAll = true;
@@ -28,6 +28,9 @@ export default async function handler(
         }
       } else {
         d.isPromotionAll = false;
+      }
+      if (d.id) {
+        delete d.id;
       }
       await prisma.product.update({
         where: {
@@ -43,7 +46,7 @@ export default async function handler(
       },
     });
     for (let i = 0; i < variableProducts.length; i++) {
-      let d = variableProducts[i];
+      let d = { ...variableProducts[i] };
       let pricingInfo = getPricing(d);
 
       if (pricingInfo.isPromotion === true) {
@@ -58,9 +61,12 @@ export default async function handler(
       } else {
         d.isPromotionAll = false;
       }
+      if (d.id) {
+        delete d.id;
+      }
       await prisma.product.update({
         where: {
-          id: products[i].id,
+          id: variableProducts[i].id,
         },
         data: d,
       });
