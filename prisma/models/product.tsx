@@ -17,6 +17,7 @@ import {
 import { ObjectId } from "mongodb";
 import prisma from "../prisma";
 import { sortBy } from "lodash";
+import { getPricing } from "@/util/pricing";
 
 export const getAllCategories = async () => {
   let categories: any = await prisma.category.findMany({});
@@ -223,6 +224,19 @@ export const createProduct = async (data: Product) => {
     delete d.seller;
   }
   if (d.type === ProductType.Fixed) {
+    let pricingInfo = getPricing(d);
+    if (pricingInfo.isPromotion === true) {
+      d.isPromotionAll = true;
+      if (pricingInfo.startDate && pricingInfo.endDate) {
+        d.isPromotionAllPeriod = false;
+        d.isPromotionAllStartDate = pricingInfo.startDate;
+        d.isPromotionAllEndDate = pricingInfo.endDate;
+      } else {
+        d.isPromotionAllPeriod = true;
+      }
+    } else {
+      d.isPromotionAll = false;
+    }
     d.priceIndex = d.regularPrice;
   } else if (d.type === ProductType.Variable) {
     let priceList = sortBy(
@@ -230,6 +244,20 @@ export const createProduct = async (data: Product) => {
       (z: any) => z.regularPrice
     ).reverse()[0];
     d.priceIndex = priceList.regularPrice;
+    let pricingInfo = getPricing(d);
+
+    if (pricingInfo.isPromotion === true) {
+      d.isPromotionAll = true;
+      if (pricingInfo.minSaleDiscount && pricingInfo.maxSaleDiscount) {
+        d.isPromotionAllPeriod = false;
+        d.isPromotionAllStartDate = pricingInfo.minSaleDiscount;
+        d.isPromotionAllEndDate = pricingInfo.maxSaleDiscount;
+      } else {
+        d.isPromotionAllPeriod = true;
+      }
+    } else {
+      d.isPromotionAll = false;
+    }
   } else if (d.type === ProductType.Auction) {
     d.priceIndex = d.openingBid;
   }
@@ -294,12 +322,39 @@ export const updateProduct = async (id: string, data: Product) => {
   }
   if (d.type === ProductType.Fixed) {
     d.priceIndex = d.regularPrice;
+    let pricingInfo = getPricing(d);
+    if (pricingInfo.isPromotion === true) {
+      d.isPromotionAll = true;
+      if (pricingInfo.startDate && pricingInfo.endDate) {
+        d.isPromotionAllPeriod = false;
+        d.isPromotionAllStartDate = pricingInfo.startDate;
+        d.isPromotionAllEndDate = pricingInfo.endDate;
+      } else {
+        d.isPromotionAllPeriod = true;
+      }
+    } else {
+      d.isPromotionAll = false;
+    }
   } else if (d.type === ProductType.Variable) {
     let priceList = sortBy(
       d.variations,
       (z: any) => z.regularPrice
     ).reverse()[0];
     d.priceIndex = priceList.regularPrice;
+    let pricingInfo = getPricing(d);
+
+    if (pricingInfo.isPromotion === true) {
+      d.isPromotionAll = true;
+      if (pricingInfo.minSaleDiscount && pricingInfo.maxSaleDiscount) {
+        d.isPromotionAllPeriod = false;
+        d.isPromotionAllStartDate = pricingInfo.minSaleDiscount;
+        d.isPromotionAllEndDate = pricingInfo.maxSaleDiscount;
+      } else {
+        d.isPromotionAllPeriod = true;
+      }
+    } else {
+      d.isPromotionAll = false;
+    }
   } else if (d.type === ProductType.Auction) {
     d.priceIndex = d.openingBid;
   }

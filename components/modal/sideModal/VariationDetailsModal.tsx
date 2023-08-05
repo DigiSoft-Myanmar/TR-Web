@@ -714,26 +714,36 @@ function VariationDetailsModal({
                                 } rounded-md bg-primary px-3 py-2 text-sm text-white hover:bg-primary-focus`}
                                 onClick={() => {
                                   if (watchFields.SKU && product.sellerId) {
-                                    setChecking(true);
-                                    let url =
-                                      "/api/products/checkSKU?SKU=" +
-                                      watchFields.SKU +
-                                      "&brandId=" +
-                                      product.sellerId;
-                                    if (product.id) {
-                                      url +=
-                                        "&id=" + encodeURIComponent(product.id);
-                                    }
-                                    fetch(url).then((data) => {
-                                      if (data.status === 404) {
-                                        setVerified(true);
-                                        setSKUError("");
-                                      } else {
-                                        setVerified(false);
-                                        setSKUError("SKU Exists");
+                                    if (
+                                      product.variations.find(
+                                        (z: any) => z.SKU === watchFields.SKU
+                                      )
+                                    ) {
+                                      setVerified(false);
+                                      setSKUError("SKU Exists");
+                                    } else {
+                                      setChecking(true);
+                                      let url =
+                                        "/api/products/checkSKU?SKU=" +
+                                        watchFields.SKU +
+                                        "&brandId=" +
+                                        product.sellerId;
+                                      if (product.id) {
+                                        url +=
+                                          "&id=" +
+                                          encodeURIComponent(product.id);
                                       }
-                                    });
-                                    setChecking(false);
+                                      fetch(url).then((data) => {
+                                        if (data.status === 404) {
+                                          setVerified(true);
+                                          setSKUError("");
+                                        } else {
+                                          setVerified(false);
+                                          setSKUError("SKU Exists");
+                                        }
+                                      });
+                                      setChecking(false);
+                                    }
                                   } else if (!watchFields.SKU) {
                                     showErrorDialog(
                                       "Please input SKU first.",

@@ -103,15 +103,11 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
 
             <article className="rounded-md border border-primary/30 bg-white p-6 sm:p-8">
               <div className="flex items-start">
-                <div
-                  className="hidden sm:grid sm:h-20 sm:w-20 sm:shrink-0 sm:place-content-center sm:rounded-full sm:border-2 sm:border-primary"
-                  aria-hidden="true"
-                >
-                  <Avatar
-                    profile={product?.seller?.profile}
-                    username={product?.seller?.username}
-                  />
-                </div>
+                <Avatar
+                  profile={product?.seller?.profile}
+                  username={product?.seller?.username}
+                  size={60}
+                />
 
                 <div className="flex-grow sm:ml-8">
                   <strong className="rounded border border-primary bg-primary px-3 py-1.5 text-[10px] font-medium text-white">
@@ -141,7 +137,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                     <tbody>
                       <tr>
                         <th className="text-sm font-normal">
-                          Product listing in this tier
+                          Free SKU listing in this tier
                         </th>
                         <td className="font-bold text-primary">
                           {
@@ -154,7 +150,7 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                       </tr>
                       <tr>
                         <th className="text-sm font-normal">
-                          Product listing used
+                          Used SKU (This product not included)
                         </th>
                         <td className="flex items-center font-bold text-primary">
                           {usedSKU && usedSKU.Usage
@@ -162,14 +158,11 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                               ? usedSKU.Usage - usedProd
                               : usedSKU.Usage
                             : 0}
-                          <span className="ml-5 text-sm font-normal text-primary">
-                            {t("notIncluded")}
-                          </span>
                         </td>
                       </tr>
                       <tr>
                         <th className="text-sm font-normal">
-                          No. of SKU used in this product
+                          No. of SKU using in this product
                         </th>
                         <td className="flex items-center font-bold text-primary">
                           {usedProd}

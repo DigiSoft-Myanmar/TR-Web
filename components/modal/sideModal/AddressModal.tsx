@@ -77,7 +77,14 @@ function AddressModal({
 
   React.useEffect(() => {
     if (address) {
-      reset(address);
+      if (address.phoneNum) {
+        reset(address);
+      } else {
+        reset({
+          ...address,
+          phoneNum: "+959",
+        });
+      }
       setLocation({
         stateId: address.stateId,
         districtId: address.districtId,

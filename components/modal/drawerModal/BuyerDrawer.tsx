@@ -404,12 +404,20 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                               <li>
                                 <Link
                                   href={
-                                    accessKey
-                                      ? "/address?accessKey=" + accessKey
-                                      : "/address"
+                                    "/account/" +
+                                    encodeURIComponent(
+                                      encryptPhone(session.phoneNum)
+                                    ) +
+                                    "#address"
                                   }
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath.includes("/address")
+                                    router.asPath.includes(
+                                      "/account/" +
+                                        encodeURIComponent(
+                                          encryptPhone(session.phoneNum)
+                                        ) +
+                                        "#address"
+                                    )
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
@@ -421,12 +429,20 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                               <li>
                                 <Link
                                   href={
-                                    accessKey
-                                      ? "/wishlist?accessKey=" + accessKey
-                                      : "/wishlist"
+                                    "/account/" +
+                                    encodeURIComponent(
+                                      encryptPhone(session.phoneNum)
+                                    ) +
+                                    "#wishlist"
                                   }
                                   className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                    router.asPath.includes("/wishlist")
+                                    router.asPath.includes(
+                                      "/account/" +
+                                        encodeURIComponent(
+                                          encryptPhone(session.phoneNum)
+                                        ) +
+                                        "#wishlist"
+                                    )
                                       ? "bg-gray-100"
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}

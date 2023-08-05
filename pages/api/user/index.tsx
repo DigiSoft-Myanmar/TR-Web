@@ -111,21 +111,30 @@ async function getUser(req: NextApiRequest, res: NextApiResponse<any>) {
         isBlocked: user.isBlocked,
         isDeleted: user.isDeleted,
       });
-    }
-    {
+    } else {
       return res.status(404).json(NotAvailable);
     }
   } else if (isLogin && phone) {
     let user = await getUserByPhone(phone.toString());
-    if (user) {
+    if (user && user.isBlocked === false && user.isDeleted === false) {
       return res.status(200).json(user);
+    } else if (user.isBlocked === true || user.isDeleted === true) {
+      return res.status(405).json({
+        isBlocked: user.isBlocked,
+        isDeleted: user.isDeleted,
+      });
     } else {
       return res.status(404).json(NotAvailable);
     }
   } else if (isLogin && email) {
     let user = await getUserByEmail(email.toString());
-    if (user) {
+    if (user && user.isBlocked === false && user.isDeleted === false) {
       return res.status(200).json(user);
+    } else if (user.isBlocked === true || user.isDeleted === true) {
+      return res.status(405).json({
+        isBlocked: user.isBlocked,
+        isDeleted: user.isDeleted,
+      });
     } else {
       return res.status(404).json(NotAvailable);
     }

@@ -128,7 +128,7 @@ function UserBuyerRatingSection({ user }: { user: User }) {
       <div className="bg-white p-5 rounded-md flex flex-col gap-5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:gap-5 justify-between">
           <h3 className="text-lg pl-3">{t("rating")}</h3>
-          <Tooltip title="Ratings are provided by seller based on experience with this user.">
+          <Tooltip title="Ratings are provided based on experience with this user.">
             <div className="text-sm text-gray-500 flex flex-row items-center gap-1 cursor-pointer hover:bg-gray-100 rounded-md p-3">
               <span>Ratings and reviews are verified</span>
               <svg
@@ -333,15 +333,12 @@ function UserBuyerRatingSection({ user }: { user: User }) {
                       <p>
                         {z.createdBy.username}{" "}
                         <time className="block text-sm text-gray-500">
-                          Joined on{" "}
-                          {new Date(z.createdBy.createdAt).toLocaleDateString(
-                            "en-ca",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "2-digit",
-                            }
-                          )}
+                          Reviewed on{" "}
+                          {new Date(z.createdAt).toLocaleDateString("en-ca", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                          })}
                         </time>
                       </p>
                     </div>

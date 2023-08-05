@@ -61,6 +61,8 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
   const { errors } = formState;
   const watchFields = watch();
 
+  console.log(errors);
+
   React.useEffect(() => {
     if (profile.memberStartDate) {
       setMemberStartDate(
@@ -87,7 +89,15 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
 
   function submit(data: Status) {
     if (isInternal(session)) {
-      if (memberStartDate) {
+      if (profile.role === Role.Buyer) {
+        setProfile((prevValue: any) => {
+          return {
+            ...prevValue,
+            ...data,
+          };
+        });
+        nextFn();
+      } else if (memberStartDate) {
         setProfile((prevValue: any) => {
           return {
             ...prevValue,

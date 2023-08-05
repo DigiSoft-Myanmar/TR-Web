@@ -331,15 +331,12 @@ function ProductReviewSection({ productId }: { productId: string }) {
                       <p>
                         {z.createdBy.username}{" "}
                         <time className="block text-sm text-gray-500">
-                          Joined on{" "}
-                          {new Date(z.createdBy.createdAt).toLocaleDateString(
-                            "en-ca",
-                            {
-                              year: "numeric",
-                              month: "short",
-                              day: "2-digit",
-                            }
-                          )}
+                          Reviewed on{" "}
+                          {new Date(z.createdAt).toLocaleDateString("en-ca", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                          })}
                         </time>
                       </p>
                     </div>

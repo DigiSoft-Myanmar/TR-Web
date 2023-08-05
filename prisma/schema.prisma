@@ -369,6 +369,11 @@ model Product {
   priceIndex  Float?
   ratingIndex Float?
 
+  isPromotionAll          Boolean   @default(false)
+  isPromotionAllPeriod    Boolean   @default(false)
+  isPromotionAllStartDate DateTime?
+  isPromotionAllEndDate   DateTime?
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   Review        Review[]

@@ -781,6 +781,7 @@ export default async function handler(
                     newOrder.orderNo +
                     " at " +
                     new Date().toLocaleDateString("en-ca", {
+                      timeZone: "Asia/Yangon",
                       year: "numeric",
                       month: "short",
                       day: "2-digit",

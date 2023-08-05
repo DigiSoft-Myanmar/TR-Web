@@ -367,7 +367,7 @@ function SubCategories({
                   {locale === "mm" ? subDetail.nameMM : subDetail.name}
                 </label>
               </div>
-              {subDetail.subCategory && (
+              {subDetail.subCategory && subDetail.subCategory.length > 0 && (
                 <Disclosure.Button>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

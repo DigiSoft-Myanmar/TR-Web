@@ -367,7 +367,13 @@ function Header({
                             session.role === Role.Trader) && (
                             <li>
                               <Link
-                                href={"/wishlist/"}
+                                href={
+                                  "/account/" +
+                                  encodeURIComponent(
+                                    encryptPhone(session.phoneNum)
+                                  ) +
+                                  "#wishlist"
+                                }
                                 className="ml-1 font-normal hover:font-semibold"
                               >
                                 Wishlist

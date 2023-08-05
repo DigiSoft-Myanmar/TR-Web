@@ -33,12 +33,16 @@ export async function sendOTP(
     ).then(async (res) => {
       if (isLogin === true) {
         if (res.status !== 200) {
-          if (res.status === 403) {
+          if (res.status === 405) {
             let json = await res.json();
             return {
               isSuccess: false,
-              error: "This account is blocked. " + json.error,
-              errorMM: "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error,
+              error: json.error
+                ? "This account is blocked. " + json.error
+                : "This account is blocked.",
+              errorMM: json.error
+                ? "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error
+                : "အကောင့်အပိတ်ခံထားရပါသည်။",
             };
           }
           return {
@@ -166,12 +170,16 @@ export async function verifyEmailLogin(email: string) {
       "/api/user?isLogin=true&email=" + encodeURIComponent(email.toLowerCase())
     ).then(async (res) => {
       if (res.status !== 200) {
-        if (res.status === 403) {
+        if (res.status === 405) {
           let json = await res.json();
           return {
             isSuccess: false,
-            error: "This account is blocked. " + json.error,
-            errorMM: "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error,
+            error: json.error
+              ? "This account is blocked. " + json.error
+              : "This account is blocked.",
+            errorMM: json.error
+              ? "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error
+              : "အကောင့်အပိတ်ခံထားရပါသည်။",
           };
         }
         if (res.status === 405) {

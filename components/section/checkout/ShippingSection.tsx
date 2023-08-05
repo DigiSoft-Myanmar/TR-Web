@@ -3,11 +3,15 @@ import LocationPicker from "@/components/presentational/LocationPicker";
 import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { ShippingAddress, useMarketplace } from "@/context/MarketplaceContext";
 import { showErrorDialog } from "@/util/swalFunction";
+import { getText } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { isEqual } from "lodash";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useQuery } from "react-query";
 import { z } from "zod";
 
 type Props = {
@@ -19,6 +23,16 @@ function ShippingSection({ nextFn, backFn }: Props) {
   const { t } = useTranslation("common");
   const { billingAddress, modifyAddress, isAddressDiff, shippingAddress } =
     useMarketplace();
+  const { data: user }: any = useSession();
+
+  const { data: addressInfo, refetch } = useQuery(["addressdata", user], () =>
+    fetch("/api/user/" + encodeURIComponent(user.phoneNum) + "/address").then(
+      (res) => {
+        let json = res.json();
+        return json;
+      }
+    )
+  );
 
   const schema = z.object({
     name: z.string().min(1, { message: t("inputError") }),
@@ -83,15 +97,74 @@ function ShippingSection({ nextFn, backFn }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 2</h3>
-      <p className="my-1 text-xl font-bold">{t("shippingInfo")}</p>
-      <span className="mb-10 text-sm">{t("fillShippingInfo")}</span>
+      <h3 className="text-sm font-semibold p-gray-500">{t("step")} 2</h3>
+      <p className="my-1 p-xl font-bold">{t("shippingInfo")}</p>
+      <span className="text-sm">{t("fillShippingInfo")}</span>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 my-3">
+        {addressInfo?.shippingAddress.map((item: any) => (
+          <div
+            className={`flex flex-col ${
+              isEqual(watchFields, item)
+                ? "border-2 border-primary"
+                : "border border-gray-400"
+            } p-3 rounded-md flex-1 m-3`}
+            onClick={() => {
+              reset(item);
+              setLocation({
+                stateId: item.stateId,
+                districtId: item.districtId,
+                townshipId: item.townshipId,
+              });
+            }}
+          >
+            <div className="flex flex-row items-center justify-between pb-2">
+              <p className="text-sm font-semibold leading-7">
+                {item.isBillingAddress
+                  ? t("billingAddress")
+                  : t("shippingAddress")}
+              </p>
+            </div>
+
+            <div className="flex flex-col p-1 border-t border-t-gray-400">
+              <div className="flex flex-row items-center justify-between mt-1 gap-3">
+                <p className="text-xs">{t("name")}</p>
+                <p className="text-xs flex-grow text-right">{item?.name}</p>
+              </div>
+              <div className="flex flex-row items-center justify-between mt-1 gap-3">
+                <p className="text-xs">{t("phone")}</p>
+                <p className="text-xs flex-grow text-right">{item?.phoneNum}</p>
+              </div>
+              {item.isBillingAddress && (
+                <div className="flex flex-row items-center justify-between mt-1 gap-3">
+                  <p className="text-xs">{t("email")}</p>
+                  <p className="text-xs flex-grow text-right">{item?.email}</p>
+                </div>
+              )}
+              <div className="flex flex-row items-center justify-between mt-1 gap-3">
+                <p className="text-xs">{t("houseNo")}</p>
+                <p className="text-xs flex-grow text-right">{item?.houseNo}</p>
+              </div>
+              <div className="flex flex-row items-center justify-between mt-1 gap-3">
+                <p className="text-xs">{t("street")}</p>
+                <p className="text-xs flex-grow text-right">{item?.street}</p>
+              </div>
+              <div className="flex flex-row items-center justify-between mt-1 gap-3">
+                <p className="text-xs">{t("location")}</p>
+                <p className="text-xs flex-grow text-right">
+                  {getText(item.township?.name, item.township?.nameMM, locale)}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>
         <FormInput
           label={t("name")}
           placeHolder={t("enter") + " " + t("name")}
           error={errors.name?.message}
-          type="text"
+          type="p"
           defaultValue={shippingAddress?.name}
           formControl={{ ...register("name") }}
           currentValue={watchFields.name}
@@ -117,7 +190,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("phone")}
           placeHolder={t("enter") + " " + t("phone")}
           error={errors.phoneNum?.message}
-          type="text"
+          type="p"
           defaultValue={shippingAddress?.phoneNum}
           formControl={{ ...register("phoneNum") }}
           currentValue={watchFields.phoneNum}
@@ -143,7 +216,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("houseNo")}
           placeHolder={t("enter") + " " + t("houseNo")}
           error={errors.houseNo?.message}
-          type="text"
+          type="p"
           defaultValue={shippingAddress?.houseNo}
           formControl={{ ...register("houseNo") }}
           currentValue={watchFields.houseNo}
@@ -169,7 +242,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("street")}
           placeHolder={t("enter") + " " + t("street")}
           error={errors.street?.message}
-          type="text"
+          type="p"
           defaultValue={shippingAddress?.street}
           formControl={{ ...register("street") }}
           currentValue={watchFields.street}
@@ -205,7 +278,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
         />
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button
-            className={`inline-block rounded-l-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
+            className={`inline-block rounded-l-md border bg-primary p-3 p-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Previous"
             onClick={() => {
               backFn();
@@ -225,7 +298,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
             </svg>
           </button>
           <button
-            className={`inline-block rounded-r-md border bg-primary p-3 text-white shadow-sm hover:bg-primary-focus focus:relative`}
+            className={`inline-block rounded-r-md border bg-primary p-3 p-white shadow-sm hover:bg-primary-focus focus:relative`}
             title="Next"
             type="submit"
           >

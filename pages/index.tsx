@@ -901,28 +901,18 @@ export async function getServerSideProps({ locale }: any) {
     where: {
       OR: [
         {
-          type: {
-            in: [ProductType.Fixed, ProductType.Variable],
-          },
-          salePrice: {
-            gt: 0,
-          },
-          isSalePeriod: false,
+          isPromotionAll: true,
+          isPromotionAllPeriod: true,
         },
         {
-          type: {
-            in: [ProductType.Fixed, ProductType.Variable],
-          },
-          salePrice: {
-            gt: 0,
-          },
-          saleStartDate: {
-            lte: currentDate,
-          },
-          saleEndDate: {
+          isPromotionAll: true,
+          isPromotionAllPeriod: false,
+          isPromotionAllStartDate: {
             gte: currentDate,
           },
-          isSalePeriod: true,
+          isPromotionAllEndDate: {
+            lte: currentDate,
+          },
         },
       ],
       seller: {

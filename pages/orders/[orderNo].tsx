@@ -678,22 +678,23 @@ function Default({
                               </div>
                             </div>
                             <div className="flex flex-row items-center justify-start gap-3">
-                              {isInternal(session) === false && (
-                                <button
-                                  className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
-                                  onClick={() => {
-                                    router.push(
-                                      "/account/" +
-                                        encodeURIComponent(
-                                          encryptPhone(seller.phoneNum)
-                                        ) +
-                                        "#sellerRatings"
-                                    );
-                                  }}
-                                >
-                                  Submit Review
-                                </button>
-                              )}
+                              {isInternal(session) === false &&
+                                order.orderByUserId === session.id && (
+                                  <button
+                                    className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
+                                    onClick={() => {
+                                      router.push(
+                                        "/account/" +
+                                          encodeURIComponent(
+                                            encryptPhone(seller.phoneNum)
+                                          ) +
+                                          "#sellerRatings"
+                                      );
+                                    }}
+                                  >
+                                    Submit Review
+                                  </button>
+                                )}
                               <Link
                                 href={
                                   "/account/" +
@@ -963,22 +964,23 @@ function Default({
                             </div>
                           </div>
                           <div className="flex flex-row items-center justify-start gap-3">
-                            {isInternal(session) === false && (
-                              <button
-                                className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
-                                onClick={() => {
-                                  router.push(
-                                    "/account/" +
-                                      encodeURIComponent(
-                                        encryptPhone(seller.phoneNum)
-                                      ) +
-                                      "#sellerRatings"
-                                  );
-                                }}
-                              >
-                                Submit Review
-                              </button>
-                            )}
+                            {isInternal(session) === false &&
+                              order.orderByUserId === session.id && (
+                                <button
+                                  className="text-xs bg-primary px-3 py-2 rounded-md text-white hover:bg-primary-focus"
+                                  onClick={() => {
+                                    router.push(
+                                      "/account/" +
+                                        encodeURIComponent(
+                                          encryptPhone(seller.phoneNum)
+                                        ) +
+                                        "#sellerRatings"
+                                    );
+                                  }}
+                                >
+                                  Submit Review
+                                </button>
+                              )}
                             <Link
                               href={
                                 "/account/" +

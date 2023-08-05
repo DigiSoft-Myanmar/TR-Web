@@ -370,9 +370,21 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                 session.role === Role.Trader) && (
                                 <li>
                                   <Link
-                                    href={"/wishlist"}
+                                    href={
+                                      "/account/" +
+                                      encodeURIComponent(
+                                        encryptPhone(session.phoneNum)
+                                      ) +
+                                      "#wishlist"
+                                    }
                                     className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
-                                      router.asPath.includes("/wishlist")
+                                      router.asPath.includes(
+                                        "/account/" +
+                                          encodeURIComponent(
+                                            encryptPhone(session.phoneNum)
+                                          ) +
+                                          "#wishlist"
+                                      )
                                         ? "bg-gray-100"
                                         : "hover:bg-gray-100 hover:text-gray-700"
                                     } `}

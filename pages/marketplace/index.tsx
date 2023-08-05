@@ -300,7 +300,7 @@ function Default({
         </div>
 
         <div
-          className="fixed top-[200px] right-0 bg-primary p-3 text-white z-20 rounded-l-md hover:bg-primary-focus"
+          className="flex lg:hidden fixed top-[200px] right-0 bg-primary p-3 text-white z-20 rounded-l-md hover:bg-primary-focus"
           onClick={() => {
             setFilterModalOpen(true);
           }}
