@@ -712,7 +712,7 @@ function AdminSidebar({ isOpen }: Props) {
                       {isOpen === "open" && (
                         <span className="ml-3 whitespace-nowrap text-sm font-medium">
                           {" "}
-                          Auctions{" "}
+                          Auction Listing{" "}
                         </span>
                       )}
                     </Link>

@@ -2,8 +2,10 @@ import FormInput from "@/components/presentational/FormInput";
 import NRCPicker from "@/components/presentational/NRCPicker";
 import { useProfile } from "@/context/ProfileContext";
 import { fileUrl } from "@/types/const";
+import { isInternal } from "@/util/authHelper";
 import { showErrorDialog } from "@/util/swalFunction";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -29,13 +31,40 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
     nrcAvailable,
   } = useProfile();
   const { locale } = useRouter();
+  const { data: session }: any = useSession();
+  const [nrc, setNrc] = React.useState({
+    nrcState: "",
+    nrcTownship: "",
+    nrcType: "",
+    nrcNumber: "",
+  });
+
+  React.useEffect(() => {
+    if (user) {
+      setNrc({
+        nrcState: user?.nrcState,
+        nrcTownship: user?.nrcTownship,
+        nrcType: user?.nrcType,
+        nrcNumber: user?.nrcNumber,
+      });
+    }
+  }, [user]);
 
   function submit() {
-    nextFn();
-    /* setUser((prevValue: any) => {
-      return { ...prevValue, ...data };
-    });
-     */
+    if (nrc.nrcState && nrc.nrcTownship && nrc.nrcType && nrc.nrcNumber) {
+      setUser((prevValue: any) => {
+        return {
+          ...prevValue,
+          nrcState: nrc?.nrcState,
+          nrcTownship: nrc?.nrcTownship,
+          nrcType: nrc?.nrcType,
+          nrcNumber: nrc?.nrcNumber,
+        };
+      });
+      nextFn();
+    } else {
+      showErrorDialog(t("fillInformation"));
+    }
   }
 
   return (
@@ -61,38 +90,42 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                 quality={100}
                 className="h-40 w-full rounded-md border object-contain p-2"
               />
-              <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  multiple={false}
-                  onChange={(e) => {
-                    let fileList = e.currentTarget.files;
-                    if (fileList) {
-                      for (let i = 0; i < fileList.length; i++) {
-                        setNRCFront(fileList[0]);
+              {isInternal(session) && (
+                <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    multiple={false}
+                    onChange={(e) => {
+                      if (isInternal(session)) {
+                        let fileList = e.currentTarget.files;
+                        if (fileList) {
+                          for (let i = 0; i < fileList.length; i++) {
+                            setNRCFront(fileList[0]);
+                          }
+                        }
                       }
-                    }
-                  }}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    }}
                   />
-                </svg>
-                <span className="text-xs ml-3">NRC FRONT</span>
-              </label>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-4 w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    />
+                  </svg>
+                  <span className="text-xs ml-3">NRC FRONT</span>
+                </label>
+              )}
             </div>
           ) : user && user.nrcFront ? (
             <div className="relative mb-3 flex w-full cursor-pointer flex-row">
@@ -104,38 +137,40 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                 quality={100}
                 className="h-40 w-full rounded-md border object-contain p-2"
               />
-              <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  multiple={false}
-                  onChange={(e) => {
-                    let fileList = e.currentTarget.files;
-                    if (fileList) {
-                      for (let i = 0; i < fileList.length; i++) {
-                        setNRCFront(fileList[0]);
+              {isInternal(session) && (
+                <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    multiple={false}
+                    onChange={(e) => {
+                      let fileList = e.currentTarget.files;
+                      if (fileList) {
+                        for (let i = 0; i < fileList.length; i++) {
+                          setNRCFront(fileList[0]);
+                        }
                       }
-                    }
-                  }}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    }}
                   />
-                </svg>
-                <span className="text-xs ml-3">NRC FRONT</span>
-              </label>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-4 w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    />
+                  </svg>
+                  <span className="text-xs ml-3">NRC FRONT</span>
+                </label>
+              )}
             </div>
           ) : (
             <div className="mb-3 flex w-full">
@@ -331,12 +366,21 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
         </div>
         <NRCPicker
           isVerify={nrcAvailable}
-          nrcState={user.nrcState}
-          nrcTownship={user.nrcTownship}
-          nrcType={user.nrcType}
-          nrcNumber={user.nrcNumber}
+          nrcState={nrc.nrcState}
+          nrcTownship={nrc.nrcTownship}
+          nrcType={nrc.nrcType}
+          nrcNumber={nrc.nrcNumber}
           userId={user.id}
-          disabled={false}
+          disabled={
+            isInternal(session)
+              ? false
+              : user.nrcState &&
+                user.nrcTownship &&
+                user.nrcType &&
+                user.nrcNumber
+              ? true
+              : false
+          }
           setNrc={(
             verify: boolean,
             state: string,
@@ -344,7 +388,7 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
             nrcType: string,
             nrcNumber: string
           ) => {
-            setUser((prevValue) => {
+            setNrc((prevValue) => {
               return {
                 ...prevValue,
                 nrcState: state,

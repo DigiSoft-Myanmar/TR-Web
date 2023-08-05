@@ -202,7 +202,7 @@ export default async function handler(
             let msg: any = {
               body:
                 auction.product.name +
-                " was " +
+                " " +
                 status +
                 formatAmount(wonList.auction.amount, "en", true),
               createdAt: new Date().toISOString(),

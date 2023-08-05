@@ -14,6 +14,7 @@ import {
 } from "@/util/notiHelper";
 import { getPricing, getPricingSingle } from "@/util/pricing";
 import {
+  AuctionStatus,
   NotiType,
   Product,
   ProductType,
@@ -673,6 +674,24 @@ export default async function handler(
                         list = list.filter(
                           (z) => z.auctionId !== aItem.auctionId
                         );
+                        let auction = await prisma.auctions.findFirst({
+                          where: {
+                            id: aItem.auctionId,
+                          },
+                          include: {
+                            WonList: true,
+                          },
+                        });
+                        if (auction && auction.WonList.length > 0) {
+                          await prisma.wonList.update({
+                            where: {
+                              id: auction.WonList[0].id,
+                            },
+                            data: {
+                              status: AuctionStatus.Purchased,
+                            },
+                          });
+                        }
                       }
                     }
                   }

@@ -57,7 +57,7 @@ import {
   showWarningDialog,
 } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
-import { getHeaders, isSeller } from "@/util/authHelper";
+import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
 import Avatar from "../presentational/Avatar";
 
 interface CellType {
@@ -1063,7 +1063,7 @@ const ProductFullTbl = ({
                   (session.role === Role.Admin ||
                     session.role === Role.Staff ||
                     session.role === Role.SuperAdmin ||
-                    session.role === Role.Seller) && (
+                    isSeller(session)) && (
                     <Tooltip title="Edit">
                       <IconButton
                         size="small"
@@ -1079,8 +1079,7 @@ const ProductFullTbl = ({
                 {session &&
                   (session.role === Role.Admin ||
                     session.role === Role.Staff ||
-                    session.role === Role.SuperAdmin ||
-                    session.role === Role.Seller) && (
+                    session.role === Role.SuperAdmin) && (
                     <Tooltip title="Delete">
                       <IconButton
                         size="small"
@@ -1240,7 +1239,7 @@ const ProductFullTbl = ({
           <CardContent>
             <div className="flex flex-row items-center justify-between">
               <div className="flex w-fit flex-row flex-wrap items-center gap-3">
-                {selectionModel.length > 0 ? (
+                {selectionModel.length > 0 && isInternal(session) ? (
                   <>
                     <Listbox value={action} onChange={(e) => setAction(e)}>
                       <div className="relative mt-1">

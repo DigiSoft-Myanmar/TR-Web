@@ -96,7 +96,7 @@
   "username": "Username",
   "Fixeddesc": "Better for product with no variation",
   "Variabledesc": "Better for product with more than one variations",
-  "Auctiondesc": "Place your bids, own history.",
+  "Auctiondesc": "Good are sold to the highest bidder",
   "autoGenerate": "Auto Generated slug will be used if you leave blank.",
   "shortDescription": "Short Description",
   "regularPrice": "Regular Price",

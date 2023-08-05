@@ -286,9 +286,9 @@ export const MarketplaceProvider = ({
             }
           }
           if (promoCode[i].isPercent) {
-            totalDiscount = (promoCode[i].discount * subTotal) / 100;
+            totalDiscount += (promoCode[i].discount * subTotal) / 100;
           } else {
-            totalDiscount = promoCode[i].discount;
+            totalDiscount += promoCode[i].discount;
           }
         }
       }

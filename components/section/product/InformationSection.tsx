@@ -132,8 +132,10 @@ function InformationSection({ nextFn, infoRef }: Props) {
   const [SKUError, setSKUError] = React.useState("");
 
   function changeMainImg(img: string) {
+    console.log(img);
     let list = product && product.imgList ? [...product.imgList] : [];
     let index = list.findIndex((e: string) => e === img);
+    console.log(index);
     let tempImg = list[0];
     list[0] = img;
     list[index] = tempImg;
@@ -220,55 +222,75 @@ function InformationSection({ nextFn, infoRef }: Props) {
                   width={200}
                   height={200}
                   className="h-48 w-48 rounded-md object-contain"
-                  alt="prod1"
+                  alt="prod"
                 />
                 {product.imgList.length > 1 && (
                   <div className="grid grid-cols-2 place-items-center gap-5">
-                    <Image
-                      src={fileUrl + product.imgList[1]}
-                      width={200}
-                      height={200}
-                      className="h-24 w-24 rounded-md object-contain"
-                      alt="prod1"
-                      onClick={() => {
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         changeMainImg(product.imgList[1]);
                       }}
-                    />
-                    {product.imgList[2] && (
+                    >
                       <Image
-                        src={fileUrl + product.imgList[2]}
-                        width={100}
-                        height={100}
+                        src={fileUrl + product.imgList[1]}
+                        width={200}
+                        height={200}
                         className="h-24 w-24 rounded-md object-contain"
                         alt="prod1"
-                        onClick={() => {
+                      />
+                    </div>
+                    {product.imgList[2] && (
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           changeMainImg(product.imgList[2]);
                         }}
-                      />
+                      >
+                        <Image
+                          src={fileUrl + product.imgList[2]}
+                          width={100}
+                          height={100}
+                          className="h-24 w-24 rounded-md object-contain"
+                          alt="prod3"
+                        />
+                      </div>
                     )}
                     {product.imgList[3] && (
-                      <Image
-                        src={fileUrl + product.imgList[3]}
-                        width={100}
-                        height={100}
-                        className="h-24 w-24 rounded-md object-contain"
-                        alt="prod1"
-                        onClick={() => {
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           changeMainImg(product.imgList[3]);
                         }}
-                      />
+                      >
+                        <Image
+                          src={fileUrl + product.imgList[3]}
+                          width={100}
+                          height={100}
+                          className="h-24 w-24 rounded-md object-contain"
+                          alt="prod3"
+                        />
+                      </div>
                     )}
                     {product.imgList[4] && (
-                      <Image
-                        src={fileUrl + product.imgList[4]}
-                        width={100}
-                        height={100}
-                        className="h-24 w-24 rounded-md object-contain"
-                        alt="prod1"
-                        onClick={() => {
+                      <div
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
                           changeMainImg(product.imgList[4]);
                         }}
-                      />
+                      >
+                        <Image
+                          src={fileUrl + product.imgList[4]}
+                          width={100}
+                          height={100}
+                          className="h-24 w-24 rounded-md object-contain"
+                          alt="prod4"
+                        />
+                      </div>
                     )}
                   </div>
                 )}

@@ -330,6 +330,7 @@ function ProfileSection({ nextFn, submitRef }: Props) {
           defaultValue={profile?.email}
           formControl={{ ...register("email") }}
           currentValue={watchFields.email}
+          disabled={profile?.email ? true : false}
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
