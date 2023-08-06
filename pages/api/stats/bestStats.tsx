@@ -85,7 +85,14 @@ async function getBestStats(startDate: Date, endDate: Date) {
     d.reduce(
       (
         acc: any,
-        { productId, quantity, orderByUserId, totalProfit, sellerId }: any
+        {
+          productId,
+          quantity,
+          orderByUserId,
+          totalProfit,
+          sellerId,
+          isAuction,
+        }: any
       ) => {
         if (!acc[sellerId]) {
           acc[sellerId] = {
@@ -96,6 +103,7 @@ async function getBestStats(startDate: Date, endDate: Date) {
         }
         acc[sellerId].quantity += quantity;
         acc[sellerId].totalProfit += totalProfit;
+
         return acc;
       },
       {}
@@ -216,86 +224,122 @@ async function getBestStats(startDate: Date, endDate: Date) {
     };
   }
   if (sortByBuyerQty.length > 0) {
-    let b: any = sortByBuyerQty[0];
-    let user = await prisma.user.findFirst({
-      where: {
-        id: b.orderByUserId,
-      },
-    });
-    if (user) {
-      bestBuyerByUnit = {
-        userInfo: user,
-        units: b.quantity,
-        totalProfit: b.totalProfit,
-      };
+    let a: any = sortByBuyerQty[0];
+    let b: any = d.filter((z: any) => z.orderByUserId === a.orderByUserId);
+
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.orderByUserId === b[0].orderByUserId);
+      let user = await prisma.user.findFirst({
+        where: {
+          id: z.orderByUserId,
+        },
+      });
+      if (user) {
+        bestBuyerByUnit = {
+          userInfo: user,
+          units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
+          totalProfit: b
+            .map((z: any) => z.totalProfit)
+            .reduce((a, b) => a + b, 0),
+        };
+      }
     }
   }
   if (sortByBuyerProfit.length > 0) {
-    let b: any = sortByBuyerProfit[0];
-    let user = await prisma.user.findFirst({
-      where: {
-        id: b.orderByUserId,
-      },
-    });
-    if (user) {
-      bestBuyerByProfit = {
-        userInfo: user,
-        units: b.quantity,
-        totalProfit: b.totalProfit,
-      };
+    let a: any = sortByBuyerProfit[0];
+    let b: any = d.filter((z: any) => z.orderByUserId === a.orderByUserId);
+
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.orderByUserId === b[0].orderByUserId);
+      let user = await prisma.user.findFirst({
+        where: {
+          id: z.orderByUserId,
+        },
+      });
+      if (user) {
+        bestBuyerByProfit = {
+          userInfo: user,
+          units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
+          totalProfit: b
+            .map((z: any) => z.totalProfit)
+            .reduce((a, b) => a + b, 0),
+        };
+      }
     }
   }
+
   if (sortBySellerProfit.length > 0) {
-    let b: any = sortBySellerProfit[0];
-    let user = await prisma.user.findFirst({
-      where: {
-        id: b.sellerId,
-      },
-    });
-    if (user) {
-      bestSellerByProfit = {
-        userInfo: user,
-        units: b.quantity,
-        totalProfit: b.totalProfit,
-      };
+    let a: any = sortBySellerProfit[0];
+    let b: any = d.filter((z: any) => z.sellerId === a.sellerId);
+
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.sellerId === b[0].sellerId);
+      let user = await prisma.user.findFirst({
+        where: {
+          id: z.sellerId,
+        },
+      });
+      if (user) {
+        bestSellerByProfit = {
+          userInfo: user,
+          units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
+          totalProfit: b
+            .map((z: any) => z.totalProfit)
+            .reduce((a, b) => a + b, 0),
+        };
+      }
     }
   }
+
   if (sortBySellerQty.length > 0) {
-    let b: any = sortBySellerQty[0];
-    let user = await prisma.user.findFirst({
-      where: {
-        id: b.sellerId,
-      },
-    });
-    if (user) {
-      bestSellerByUnit = {
-        userInfo: user,
-        units: b.quantity,
-        totalProfit: b.totalProfit,
+    let a: any = sortBySellerQty[0];
+    let b: any = d.filter((z: any) => z.sellerId === a.sellerId);
+
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.sellerId === b[0].sellerId);
+      let user = await prisma.user.findFirst({
+        where: {
+          id: z.sellerId,
+        },
+      });
+      if (user) {
+        bestSellerByUnit = {
+          userInfo: user,
+          units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
+          totalProfit: b
+            .map((z: any) => z.totalProfit)
+            .reduce((a, b) => a + b, 0),
+        };
+      }
+    }
+  }
+  if (sortByAuctionProfit.length > 0) {
+    let a: any = sortByAuctionProfit[0];
+    let b: any = d.filter((z: any) => z.productId === a.productId);
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.productId === b[0].productId);
+
+      bestAuctionByAmount = {
+        productInfo: z.productInfo,
+        units: b[0].quantity,
+        totalProfit: b[0].totalProfit,
+        SKU: z.SKU,
       };
     }
   }
   if (sortByAuctionProfit.length > 0) {
-    let b: any = sortByAuctionProfit[0];
-    let z = d.find((z: any) => z.productId === b.productId);
+    let a: any = sortByAuctionProfit[0];
+    let b: any = d.filter((z: any) => z.productId === a.productId);
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.productId === b[0].productId);
 
-    bestAuctionByAmount = {
-      productInfo: z.productInfo,
-      units: b.quantity,
-      totalProfit: b.totalProfit,
-      SKU: z.SKU,
-    };
-  }
-  if (sortByAuctionProfit.length > 0) {
-    let b: any = sortByAuctionQty[0];
-    let z = d.find((z: any) => z.productId === b.productId);
-
-    bestAuctionByUnit = {
-      productInfo: z.productInfo,
-      SKU: z.SKU,
-      units: b.quantity,
-      totalProfit: b.totalProfit,
-    };
+      bestAuctionByUnit = {
+        productInfo: z.productInfo,
+        SKU: z.SKU,
+        units: b[0].quantity,
+        totalProfit: b[0].totalProfit,
+      };
+    }
   }
 
   return {
