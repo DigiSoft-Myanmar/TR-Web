@@ -306,6 +306,14 @@ async function getBestStats(startDate: Date, endDate: Date) {
     bestAuctionByAmount: bestAuctionByAmount,
     bestAuctionByUnit: bestAuctionByUnit,
 
+    sortByAuctionProfit,
+    sortByAuctionQty,
+    sortByBuyerProfit,
+    sortByBuyerQty,
+    sortBySellerProfit,
+    sortBySellerQty,
+    sortedByTotalProfit,
+    sortedByQuantity,
     d,
   };
 }
