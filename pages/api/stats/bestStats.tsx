@@ -144,9 +144,10 @@ async function getBestStats(startDate: Date, endDate: Date) {
             totalProfit,
             SKU: SKU,
           };
-          acc[productId].quantity += bidCount;
-          acc[productId].totalProfit += totalProfit;
         }
+
+        acc[productId].quantity += bidCount;
+        acc[productId].totalProfit += totalProfit;
         return acc;
       },
       {}
