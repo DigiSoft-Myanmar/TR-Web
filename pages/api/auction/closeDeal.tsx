@@ -175,7 +175,7 @@ export default async function handler(
             let userId = caesarEncrypt(wonAuction.auction.createdByUserId, 5);
             let status =
               body.isAccept === true
-                ? "won by " + userId + " and it is currently in cart with"
+                ? "won by " + userId + " and it is currently in cart with "
                 : auction.product.sellerId === session.id
                 ? "was rejected by seller with "
                 : "was rejected by buyer with ";

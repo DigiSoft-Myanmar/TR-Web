@@ -27,6 +27,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { render } from "@react-email/render";
 import AuctionEmail from "@/emails/auction";
 import async from "async";
+import { caesarEncrypt } from "@/util/encrypt";
 
 async function addAuctionList(
   lastOffer: Auctions,
@@ -104,7 +105,7 @@ export default async function handler(
             });
             if (wonList) {
             } else {
-              await prisma.wonList.create({
+              let wonAuction = await prisma.wonList.create({
                 data: {
                   auctionId: lastOffer.id,
                   productId: auctionProds[i].id,
@@ -113,6 +114,20 @@ export default async function handler(
                     auctionProds[i].estimatedPrice <= lastOffer.amount
                       ? AuctionStatus.InCart
                       : AuctionStatus.LowPrice,
+                },
+                include: {
+                  auction: {
+                    include: {
+                      createdBy: true,
+                    },
+                  },
+                  product: {
+                    include: {
+                      Brand: true,
+                      Condition: true,
+                      seller: true,
+                    },
+                  },
                 },
               });
 
@@ -124,6 +139,89 @@ export default async function handler(
                 });
                 await addAuctionList(lastOffer, auctionProds[i], auctionList);
               }
+              let userId = caesarEncrypt(wonAuction.auction.createdByUserId, 5);
+              let status =
+                auctionProds[i].estimatedPrice <= lastOffer.amount
+                  ? wonAuction.product.name +
+                    " won by " +
+                    userId +
+                    " and it is currently in cart with "
+                  : userId +
+                    " placed highest for " +
+                    wonAuction.product.name +
+                    " with " +
+                    formatAmount(wonAuction.auction.amount, "en", true) +
+                    "and waiting for seller approval.";
+
+              let statusTitle =
+                auctionProds[i].estimatedPrice <= lastOffer.amount
+                  ? "Won Auction for " + wonAuction.product.name
+                  : "Approval waiting for " + wonAuction.product.name;
+
+              let statusIcon =
+                auctionProds[i].estimatedPrice <= lastOffer.amount
+                  ? NotiType.AuctionWon
+                  : NotiType.AuctionWaiting;
+
+              let adminList = await getAdminIdList();
+              let staffList = await getStaffIdList(
+                AuctionPermission.allBidAuctionNoti
+              );
+
+              let msg: any = {
+                body: status,
+                createdAt: new Date().toISOString(),
+                title: statusTitle,
+                type: statusIcon,
+                requireInteraction: false,
+                sendList: [
+                  ...adminList,
+                  ...staffList,
+                  wonAuction.auction.createdByUserId,
+                  wonAuction.product.sellerId,
+                ],
+                details: {
+                  web: "/auctions",
+                  mobile: {
+                    screen: "Auctions",
+                  },
+                  buyer: wonAuction.auction.createdByUserId,
+                  seller: wonAuction.product.sellerId,
+                },
+              };
+
+              await addNotification(msg, "");
+
+              let adminEmail = await getAdminEmailList();
+              let staffEmail = await getStaffEmailList(
+                AuctionPermission.allBidAuctionEmail
+              );
+
+              let emailSendList = [...adminEmail, ...staffEmail];
+              if (wonAuction.auction.createdBy.email) {
+                emailSendList.push(wonAuction.auction.createdBy.email);
+              }
+              if (wonAuction.product.seller.email) {
+                emailSendList.push(wonAuction.product.seller.email);
+              }
+
+              const emailHtml = render(
+                <AuctionEmail content={content!} wonList={wonAuction} />
+              );
+
+              async.each(
+                emailSendList,
+                function (email: any, callback) {
+                  sendEmailNodeFn(statusTitle, emailHtml, [email]);
+                },
+                function (error) {
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log("Email Sent Successfully.");
+                  }
+                }
+              );
             }
           }
         }

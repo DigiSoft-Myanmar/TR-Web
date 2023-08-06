@@ -70,6 +70,7 @@ enum NotiType {
   AuctionRejectedBySeller
   AuctionRejectedByBuyer
   AuctionAutoCancelled
+  AuctionWaiting
   MembershipExpired
   MembershipNearExpired
   AutoCancelledOrder
