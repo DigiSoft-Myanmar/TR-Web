@@ -204,24 +204,49 @@ async function getBestStats(startDate: Date, endDate: Date) {
   let bestAuctionByAmount = undefined;
 
   if (sortedByQuantity.length > 0) {
-    let b: any = sortedByQuantity[0];
-    let z: any = d.find((z: any) => z.productId === b.productId);
-
-    bestProdByUnit = {
-      productInfo: z.productInfo,
-      units: b.quantity,
-      totalProfit: b.totalProfit,
-    };
+    let a: any = sortedByQuantity[0];
+    let b: any = d.filter((z: any) => z.productId === a.productId);
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.productId === b[0].productId);
+      if (b[0].isAuction === true) {
+        bestProdByUnit = {
+          productInfo: z.productInfo,
+          units: b[0].quantity,
+          totalProfit: b[0].totalProfit,
+        };
+      } else {
+        bestProdByProfit = {
+          productInfo: z.productInfo,
+          units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
+          totalProfit: b
+            .map((z: any) => z.totalProfit)
+            .reduce((a, b) => a + b, 0),
+        };
+      }
+    }
   }
-  if (sortedByTotalProfit.length > 0) {
-    let b: any = sortedByTotalProfit[0];
-    let z: any = d.find((z: any) => z.productId === b.productId);
 
-    bestProdByProfit = {
-      productInfo: z.productInfo,
-      units: b.quantity,
-      totalProfit: b.totalProfit,
-    };
+  if (sortedByTotalProfit.length > 0) {
+    let a: any = sortedByTotalProfit[0];
+    let b: any = d.filter((z: any) => z.productId === a.productId);
+    if (b && b.length > 0) {
+      let z = d.find((z: any) => z.productId === b[0].productId);
+      if (b[0].isAuction === true) {
+        bestProdByProfit = {
+          productInfo: z.productInfo,
+          units: b[0].quantity,
+          totalProfit: b[0].totalProfit,
+        };
+      } else {
+        bestProdByProfit = {
+          productInfo: z.productInfo,
+          units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
+          totalProfit: b
+            .map((z: any) => z.totalProfit)
+            .reduce((a, b) => a + b, 0),
+        };
+      }
+    }
   }
   if (sortByBuyerQty.length > 0) {
     let a: any = sortByBuyerQty[0];
@@ -351,16 +376,6 @@ async function getBestStats(startDate: Date, endDate: Date) {
     bestSellerByProfit: bestSellerByProfit,
     bestAuctionByAmount: bestAuctionByAmount,
     bestAuctionByUnit: bestAuctionByUnit,
-
-    sortByAuctionProfit,
-    sortByAuctionQty,
-    sortByBuyerProfit,
-    sortByBuyerQty,
-    sortBySellerProfit,
-    sortBySellerQty,
-    sortedByTotalProfit,
-    sortedByQuantity,
-    d,
   };
 }
 
