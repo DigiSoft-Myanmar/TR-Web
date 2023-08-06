@@ -87,8 +87,21 @@ export default function BidEmail({
                         " bids " +
                         formatAmount(auction.amount, "en", true)}
                   </Text>
+
                   <Text style={paragraph}>
-                    The auction will ends in{" "}
+                    - on{" "}
+                    {new Date(auction.createdAt).toLocaleDateString("en-ca", {
+                      timeZone: "Asia/Yangon",
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </Text>
+
+                  <Text style={paragraph}>
+                    The auction will end in{" "}
                     {new Date(auction.product.endTime).toLocaleDateString(
                       "en-ca",
                       {
@@ -100,17 +113,6 @@ export default function BidEmail({
                         minute: "2-digit",
                       }
                     )}
-                  </Text>
-                  <Text style={paragraph}>
-                    - on{" "}
-                    {new Date(auction.createdAt).toLocaleDateString("en-ca", {
-                      timeZone: "Asia/Yangon",
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
                   </Text>
                 </Column>
               </Row>

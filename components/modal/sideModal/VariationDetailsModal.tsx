@@ -716,7 +716,9 @@ function VariationDetailsModal({
                                   if (watchFields.SKU && product.sellerId) {
                                     if (
                                       product.variations.find(
-                                        (z: any) => z.SKU === watchFields.SKU
+                                        (z: any, index) =>
+                                          z.SKU === watchFields.SKU &&
+                                          index !== currentIndex
                                       )
                                     ) {
                                       setVerified(false);

@@ -4,6 +4,7 @@ import prisma from "@/prisma/prisma";
 import {
   BadAuctionClose,
   BadAuctionLessAmount,
+  BadAuctionNotStarted,
   BadAuctionSeller,
   BadRequest,
   NotAvailable,
@@ -233,6 +234,10 @@ async function addBid(req: NextApiRequest, res: NextApiResponse<any>) {
           );
 
           return res.status(200).json(Success);
+        } else if (
+          new Date(product.startTime).getTime() > new Date().getTime()
+        ) {
+          return res.status(400).json(BadAuctionNotStarted);
         } else {
           return res.status(400).json(BadAuctionClose);
         }

@@ -31,7 +31,7 @@ function UserWishlistSection({ user }: { user: User }) {
       <h3 className="text-lg ml-3 mt-3">
         {getText("Wished List", "စိတ်ဝင်စားသောပစ္စည်းများ", locale)}
       </h3>
-      {data && data.productIds.length > 0 ? (
+      {data && data.productIds?.length > 0 ? (
         <div className="bg-white p-3 rounded-md border grid grid-cols-auto200 gap-3">
           {data.products.map((b, index) => (
             <React.Fragment key={index}>

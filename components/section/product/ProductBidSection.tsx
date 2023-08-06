@@ -47,7 +47,7 @@ function ProductBidSection({
             <span>{formatAmount(z.amount, locale, true)}</span>
           </div>
           <span className="text-xs text-gray-500">
-            At{" "}
+            On{" "}
             {new Date(z.createdAt).toLocaleDateString("en-ca", {
               year: "numeric",
               month: "short",

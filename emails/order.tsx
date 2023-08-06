@@ -585,7 +585,7 @@ export default function OrderEmail({
                     )}
                   </Text>
                   <Text style={priceStyle}>
-                    Discount:{" "}
+                    Promo Discount:{" "}
                     {formatAmount(
                       getDiscountTotal(
                         order?.sellerResponse,

@@ -176,7 +176,8 @@ const OrderCartTbl = ({
                     : "line-through",
                 }}
               >
-                SKU - {row.productInfo.SKU}
+                SKU -{" "}
+                {row.variation?.SKU ? row.variation.SKU : row.productInfo.SKU}
               </Typography>
               {row.productInfo.variation ? (
                 <>
