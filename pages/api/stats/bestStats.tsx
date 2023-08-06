@@ -215,7 +215,7 @@ async function getBestStats(startDate: Date, endDate: Date) {
           totalProfit: b[0].totalProfit,
         };
       } else {
-        bestProdByProfit = {
+        bestProdByUnit = {
           productInfo: z.productInfo,
           units: b.map((z: any) => z.quantity).reduce((a, b) => a + b, 0),
           totalProfit: b
