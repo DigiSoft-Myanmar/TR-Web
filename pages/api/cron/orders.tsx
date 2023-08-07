@@ -54,6 +54,7 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
       });
       for (let i = 0; i < orders.length; i++) {
         let sellerResponse: any = [...orders[i].sellerResponse];
+        let update = false;
         for (let j = 0; j < seller.length; j++) {
           let status = sellerResponse.find((z) => z.sellerId === seller[j].id);
           if (status) {
@@ -97,27 +98,30 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
                   status: OrderStatus.AutoCancelled,
                   updatedDate: new Date().toISOString(),
                 });
+              update = true;
             }
           }
         }
-        let order = await prisma.order.update({
-          where: {
-            id: orders[i].id,
-          },
-          data: {
-            sellerResponse: sellerResponse,
-          },
-        });
-        for (let k = 0; k < seller.length; k++) {
-          if (order.sellerIds.includes(seller[k].id)) {
-            await sendOrderEmail(
-              order,
-              seller[k].username +
-                " " +
-                OrderStatus.AutoCancelled +
-                " for #" +
-                order.orderNo
-            );
+        if (update === true) {
+          let order = await prisma.order.update({
+            where: {
+              id: orders[i].id,
+            },
+            data: {
+              sellerResponse: sellerResponse,
+            },
+          });
+          for (let k = 0; k < seller.length; k++) {
+            if (order.sellerIds.includes(seller[k].id)) {
+              await sendOrderEmail(
+                order,
+                seller[k].username +
+                  " " +
+                  OrderStatus.AutoCancelled +
+                  " for #" +
+                  order.orderNo
+              );
+            }
           }
         }
       }
