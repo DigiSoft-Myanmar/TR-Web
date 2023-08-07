@@ -64,6 +64,12 @@ function NRCPicker({
   */
 
   React.useEffect(() => {
+    if (parentNrcNumber) {
+      setNrcNumber(parentNrcNumber);
+    }
+  }, [parentNrcNumber]);
+
+  React.useEffect(() => {
     if (data) {
       setStateList(
         data.map((elem: any) => {

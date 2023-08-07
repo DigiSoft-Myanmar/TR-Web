@@ -35,7 +35,13 @@ function AuthHeader() {
               >
                 <li>
                   <Link
-                    href={path[1] === "" ? "/" : "/" + path[1]}
+                    href={
+                      path[1] === ""
+                        ? "/"
+                        : path[1] === "account"
+                        ? "/users"
+                        : "/" + path[1]
+                    }
                     className="flex space-x-2 transition hover:text-gray-700"
                   >
                     <span className="sr-only"> Home </span>
@@ -318,6 +324,8 @@ function AuthHeader() {
                     <span>
                       {path[1] === ""
                         ? "Dashboard"
+                        : path[1] === "account"
+                        ? "Users"
                         : capitalizeFirstLetter(decodeURIComponent(path[1]))}
                     </span>
                   </Link>
