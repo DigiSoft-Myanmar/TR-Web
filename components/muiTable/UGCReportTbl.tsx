@@ -21,6 +21,7 @@ import {
   Review,
   Role,
   StockType,
+  UGCReportType,
 } from "@prisma/client";
 import { fileUrl } from "@/types/const";
 import { formatAmount, formatDate, getText } from "@/util/textHelper";
@@ -61,6 +62,8 @@ import { getPricing } from "@/util/pricing";
 import { getHeaders } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
 import Avatar from "../presentational/Avatar";
+import ExportCSVButton from "../presentational/ExportCSVButton";
+import { otherPermission } from "@/types/permissionTypes";
 
 interface CellType {
   row: any;
@@ -230,15 +233,13 @@ const UGCReportTbl = ({
       field: "createdAt",
       headerName: "Created At",
       renderCell: ({ row }: CellType) => (
-        <Link href="/">
-          <Typography variant="body2">
-            {new Date(row.createdAt).toLocaleDateString("en-ca", {
-              year: "numeric",
-              month: "short",
-              day: "2-digit",
-            })}
-          </Typography>
-        </Link>
+        <Typography variant="body2">
+          {new Date(row.createdAt).toLocaleDateString("en-ca", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+          })}
+        </Typography>
       ),
     },
     {
@@ -307,30 +308,42 @@ const UGCReportTbl = ({
               <h3 className="text-xl font-semibold">UGC Reports</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
-              <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                  />
-                </svg>
-                <span className="text-sm">Download CSV</span>
-              </button>
-              <button
+              <ExportCSVButton
+                csvData={data?.map((row: any) => {
+                  return {
+                    Report:
+                      row.feedbackType === FeedbackType.Product
+                        ? row.product.name
+                        : row.seller?.username,
+                    Type: row.feedbackType,
+                    Message: row.details,
+                    Reasons: row.reasons.join(", "),
+                    Reporter: row.user?.username,
+                    "Reporter Phone": row.user?.phoneNum,
+                    "Reporter Email": row.user?.email ? row.user?.email : "-",
+                    "Created Date": new Date(row.createdAt).toLocaleDateString(
+                      "en-ca",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    ),
+                  };
+                })}
+                fileName={
+                  "Report data " +
+                  new Date().toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })
+                }
+                permission={otherPermission.feedbacksExport}
+              />
+              {/*  <button
                 type="button"
                 className="flex flex-row items-center gap-3 rounded-md bg-info px-3 py-2 text-white transition-colors hover:bg-info-content hover:text-gray-800"
                 onClick={() => {
@@ -353,7 +366,7 @@ const UGCReportTbl = ({
                 </svg>
 
                 <span className="text-sm">Filter</span>
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">

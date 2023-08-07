@@ -13,7 +13,14 @@ import CardContent from "@mui/material/CardContent";
 import LinearProgress from "@mui/material/LinearProgress";
 
 // ** Type Imports
-import { Category, Product, Review, Role, StockType } from "@prisma/client";
+import {
+  Category,
+  HelpMessage,
+  Product,
+  Review,
+  Role,
+  StockType,
+} from "@prisma/client";
 import { fileUrl } from "@/types/const";
 import { formatAmount, formatDate, getText } from "@/util/textHelper";
 import { useRouter } from "next/router";
@@ -52,6 +59,8 @@ import StatsCard from "../card/StatsCard";
 import { getPricing } from "@/util/pricing";
 import MessageSideModal from "../modal/sideModal/MessageSideModal";
 import { getHeaders } from "@/util/authHelper";
+import { otherPermission } from "@/types/permissionTypes";
+import ExportCSVButton from "../presentational/ExportCSVButton";
 
 interface CellType {
   row: any;
@@ -300,30 +309,38 @@ const HelpCenterTbl = ({
               <h3 className="text-xl font-semibold">Messages</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
-              <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                  />
-                </svg>
-                <span className="text-sm">Download CSV</span>
-              </button>
-              <button
+              <ExportCSVButton
+                csvData={data?.map((row: HelpMessage) => {
+                  return {
+                    Message: row.message,
+                    "Questioner Name": row.name,
+                    "Questioner Email": row.email,
+                    "Questioner Phone": row.phone,
+                    "Is Solved": row.isSolved ? "Solved" : "Not solved",
+                    Answer: row.solution ? row.solution : "-",
+                    "Created Time": new Date(row.createdAt).toLocaleDateString(
+                      "en-ca",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    ),
+                  };
+                })}
+                fileName={
+                  "Help message data " +
+                  new Date().toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })
+                }
+                permission={otherPermission.helpCenterMessageExport}
+              />
+              {/* <button
                 type="button"
                 className="flex flex-row items-center gap-3 rounded-md bg-info px-3 py-2 text-white transition-colors hover:bg-info-content hover:text-gray-800"
                 onClick={() => {
@@ -346,7 +363,7 @@ const HelpCenterTbl = ({
                 </svg>
 
                 <span className="text-sm">Filter</span>
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">

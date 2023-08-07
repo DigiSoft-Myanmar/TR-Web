@@ -59,6 +59,10 @@ import {
 import StatsCard from "../card/StatsCard";
 import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
 import Avatar from "../presentational/Avatar";
+import { ProductPermission } from "@/types/permissionTypes";
+import ExportCSVButton from "../presentational/ExportCSVButton";
+import { getPricing } from "@/util/pricing";
+import { sortBy } from "lodash";
 
 interface CellType {
   row: any;
@@ -87,6 +91,7 @@ const ProductFullTbl = ({
   const [data, setData] = React.useState<any>();
   const router = useRouter();
   const { locale } = router;
+  const { type } = router.query;
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
   const [selectionModel, setSelectionModel] = React.useState<any>([]);
@@ -1138,30 +1143,185 @@ const ProductFullTbl = ({
               <h3 className="text-xl font-semibold">Products</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
-              <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                  />
-                </svg>
-                <span className="text-sm">Download CSV</span>
-              </button>
-              <button
+              <ExportCSVButton
+                csvData={data?.map((row: any) => {
+                  let common = {
+                    Name: row.name,
+                    NameMM: row.nameMM,
+                    Type: row.type,
+                    SKU:
+                      row.type === ProductType.Variable
+                        ? row.variations.map((z: any) => z.SKU).join(", ")
+                        : row.SKU,
+                    Categories: row.categories
+                      .map((e: Category) => getText(e.name, e.nameMM, locale))
+                      .join(", "),
+                  };
+
+                  let others = {};
+
+                  if (row.type === ProductType.Auction) {
+                    others = {
+                      "Opening bid": formatAmount(row.openingBid, "en", true),
+                      "Estimated Price": row.estimatedPrice
+                        ? formatAmount(row.estimatedPrice, "en", true)
+                        : "-",
+                      "Start Time": row.startTime
+                        ? new Date(row.startTime).toLocaleDateString("en-ca", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-",
+                      "End Time": row.endTime
+                        ? new Date(row.endTime).toLocaleDateString("en-ca", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "-",
+                    };
+                  } else if (row.type === ProductType.Fixed) {
+                    others = {
+                      "Regular Price": formatAmount(
+                        row.regularPrice,
+                        "en",
+                        true
+                      ),
+                      "Sale Price": row.salePrice
+                        ? formatAmount(row.salePrice, "en", true)
+                        : "-",
+                      "Sale Period": row.isSalePeriod ? "Yes" : "No",
+                      "Sale Start Date": row.saleStartDate
+                        ? new Date(row.saleStartDate).toLocaleDateString(
+                            "en-ca",
+                            { year: "numeric", month: "short", day: "2-digit" }
+                          )
+                        : "-",
+                      "Sale End Date": row.saleEndDate
+                        ? new Date(row.saleEndDate).toLocaleDateString(
+                            "en-ca",
+                            { year: "numeric", month: "short", day: "2-digit" }
+                          )
+                        : "-",
+                      "Stock Type": row.stockType,
+                    };
+                    if (row.stockType === StockType.StockLevel) {
+                      others["Stock Level"] = row.stockLevel;
+                    }
+                  } else if (row.type === ProductType.Variable) {
+                    let pricingInfo = getPricing(row);
+                    others = {
+                      "Min Regular Price": formatAmount(
+                        pricingInfo.minRegPrice,
+                        "en",
+                        true
+                      ),
+                      "Max Regular Price": formatAmount(
+                        pricingInfo.maxRegPrice,
+                        "en",
+                        true
+                      ),
+
+                      "Min Sale Price": pricingInfo.minSalePrice
+                        ? formatAmount(pricingInfo.minSalePrice, "en", true)
+                        : "-",
+                      "Max Sale Price": pricingInfo.maxSalePrice
+                        ? formatAmount(pricingInfo.maxSalePrice, "en", true)
+                        : "-",
+
+                      "Sale Period":
+                        pricingInfo.minSaleStartDate &&
+                        pricingInfo.maxSaleStartDate
+                          ? "Yes"
+                          : "No",
+                      "Min Sale Start Date": pricingInfo.minSaleStartDate
+                        ? new Date(
+                            pricingInfo.minSaleStartDate
+                          ).toLocaleDateString("en-ca", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                          })
+                        : "-",
+                      "Max Sale End Date": pricingInfo.minSaleEndDate
+                        ? new Date(
+                            pricingInfo.minSaleEndDate
+                          ).toLocaleDateString("en-ca", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                          })
+                        : "-",
+                      "Stock Type": row.variations.find(
+                        (z) => z.stockType === StockType.InStock
+                      )
+                        ? StockType.InStock
+                        : row.variations.find(
+                            (z) =>
+                              z.stockType === StockType.OutOfStock ||
+                              (z.stockType === StockType.StockLevel &&
+                                z.stockLevel <= 0)
+                          )
+                        ? StockType.OutOfStock
+                        : StockType.StockLevel,
+                    };
+                    if (others["Stock Type"] === StockType.StockLevel) {
+                      others["Stock Level"] = sortBy(
+                        row.variations
+                          .filter(
+                            (z) =>
+                              z.stockType === StockType.StockLevel &&
+                              z.stockLevel > 0
+                          )
+                          .map((z) => z.stockLevel),
+                        (b) => b
+                      ).reverse()[0];
+                    }
+                  }
+
+                  let seller = {
+                    Seller: row.seller.username,
+                    "Seller Phone": row.seller.phoneNum,
+                    "Seller Email": row.seller.email ? row.seller.email : "-",
+                    Membership: row.seller.currentMembership
+                      ? row.seller.currentMembership.name
+                      : "-",
+                    "Member Start Date": new Date(
+                      row.seller.memberStartDate
+                    ).toLocaleDateString("en-ca", {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                    }),
+                    "Sell Allow": row.seller.sellAllow ? "Yes" : "No",
+                    "Is Blocked?": row.seller.isBlocked ? "Yes" : "No",
+                    "Is Deleted?": row.seller.isDeleted ? "Yes" : "No",
+                  };
+                  return {
+                    ...common,
+                    ...others,
+                    "Is Published": row.isPublished ? "Yes" : "No",
+                    "Is Featured": row.isFeatured ? "Yes" : "No",
+                    ...seller,
+                  };
+                })}
+                fileName={
+                  (type ? "Products" : type) +
+                  " data " +
+                  new Date().toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })
+                }
+                permission={ProductPermission.productExportAllow}
+              />
+              {/*  <button
                 className="flex flex-row items-center gap-3 rounded-md bg-primary px-3 py-2 transition-colors hover:bg-primary-focus text-white"
                 onClick={() => router.push("/products/newProduct")}
               >
@@ -1174,7 +1334,7 @@ const ProductFullTbl = ({
                   <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
                 </svg>
                 <span className="text-sm">Add Product</span>
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
