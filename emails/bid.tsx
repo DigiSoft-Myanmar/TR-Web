@@ -156,8 +156,6 @@ export default function BidEmail({
                       width="70"
                       alt={auction.product.name}
                       style={{
-                        border: "1px #E71D2A solid",
-                        borderRadius: 10,
                         marginTop: 10,
                       }}
                     />

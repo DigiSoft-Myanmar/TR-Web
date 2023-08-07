@@ -126,7 +126,7 @@ async function modifyStock(order: any, sellerId: string, isReduce: boolean) {
         });
       } else if (product.type === ProductType.Variable) {
         let variableIndex: any = product.variations.findIndex(
-          (z: any) => (z.SKU = cartItems[i].variation.SKU)
+          (z: any) => z.SKU === cartItems[i].variation.SKU
         );
         let variations: any = [...product.variations];
         if (variableIndex >= 0) {

@@ -4,24 +4,82 @@ import ProductImg from "@/components/card/ProductImg";
 import Avatar from "@/components/presentational/Avatar";
 import { fileUrl } from "@/types/const";
 import { isInternal, isSeller } from "@/util/authHelper";
+import { getPricing } from "@/util/pricing";
 import {
   formatAmount,
   getPromoAvailCount,
   getPromoCount,
+  getText,
   getUsageCount,
 } from "@/util/textHelper";
-import { Category, ProductType, PromoCode, User } from "@prisma/client";
+import {
+  Category,
+  Product,
+  ProductType,
+  PromoCode,
+  StockType,
+  User,
+} from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
 
+enum Tab {
+  BuyNow,
+  Promotions,
+  LiveAuctions,
+  Auctions,
+  EndedAuctions,
+  LowStock,
+  OutOfStock,
+}
+
+let TabList = [
+  {
+    TabInfo: Tab.BuyNow,
+    name: "Buy Now",
+    nameMM: "ဝယ်ယူရရှိနိုင်သော ပစ္စည်းများ",
+  },
+  {
+    TabInfo: Tab.Promotions,
+    name: "Promotions",
+    nameMM: "လျေ့စျေး ပစ္စည်းများ",
+  },
+  {
+    TabInfo: Tab.LiveAuctions,
+    name: "Live Auctions",
+    nameMM: "လက်ရှိ လေလံပစ္စည်းများ",
+  },
+  {
+    TabInfo: Tab.Auctions,
+    name: "Auctions",
+    nameMM: "လေလံပစ္စည်းများ",
+  },
+  {
+    TabInfo: Tab.EndedAuctions,
+    name: "Ended Auctions",
+    nameMM: "ပြီးဆုံးသွားသော လေလံပစ္စည်းများ",
+  },
+  {
+    TabInfo: Tab.LowStock,
+    name: "Low Stock Products",
+    nameMM: "လက်ကျန်နည်းနေသော ပစ္စည်းများ",
+  },
+  {
+    TabInfo: Tab.OutOfStock,
+    name: "Out of Stock Products",
+    nameMM: "လက်ကျန်ပြတ်တောက်နေသော ပစ္စည်းများ",
+  },
+];
+
 function UserHomeSection({ user }: { user: User }) {
   const { data: session } = useSession();
   const router = useRouter();
   const { locale } = router;
   const { t } = useTranslation("common");
+  const [currentStep, setCurrentStep] = React.useState(Tab.BuyNow);
   const { isLoading, error, data, refetch } = useQuery(
     ["promoData", user.id],
     () =>
@@ -77,15 +135,23 @@ function UserHomeSection({ user }: { user: User }) {
                   <div className="flex flex-row items-center gap-3">
                     <img
                       src={fileUrl + z.icon}
-                      className="w-5 h-5 rounded-md"
+                      className="w-[100px] h-[100px] rounded-md min-h-[100px] min-w-[100px]"
                     />
                     <span className="text-lg font-light uppercase">
                       {z.name}
                     </span>
                   </div>
-                  <span className="text-[100px] font-extrabold">
-                    {z.prodCount > 99 ? "99+" : z.prodCount}
-                  </span>
+                  {isSeller(user) && (
+                    <span className="text-[100px] font-extrabold">
+                      {productData.filter((b: Product) =>
+                        b.categoryIds.includes(z.id)
+                      ).length > 99
+                        ? "99+"
+                        : productData.filter((b: Product) =>
+                            b.categoryIds.includes(z.id)
+                          ).length}
+                    </span>
+                  )}
                 </div>
               ))}
           </div>
@@ -181,25 +247,90 @@ function UserHomeSection({ user }: { user: User }) {
       {productData && isSeller(user) && (
         <>
           <h3 className="text-lg ml-3 mt-3">Products</h3>
-          {productData.length > 0 ? (
-            <div className="bg-white p-3 rounded-md border grid grid-cols-auto200 gap-3">
-              {productData.map((b, index) => (
-                <React.Fragment key={index}>
-                  {b.type === ProductType.Auction ? (
-                    <AuctionCard product={b} />
-                  ) : (
-                    <ProductCard product={b} />
-                  )}
-                </React.Fragment>
-              ))}
+
+          <div className="px-3 bg-white pt-5">
+            <div className="border-b border-gray-200 overflow-auto scrollbar-hide">
+              <nav className="-mb-px flex gap-3" aria-label="Tabs">
+                {TabList.map((b, index) => (
+                  <div
+                    key={index}
+                    className={
+                      currentStep === b.TabInfo
+                        ? "shrink-0 border-b-2 border-primary px-1 pb-4 text-sm font-medium text-primary cursor-pointer"
+                        : "shrink-0 border-b-2 border-transparent px-1 pb-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 cursor-pointer"
+                    }
+                    aria-current="page"
+                    onClick={() => {
+                      setCurrentStep(b.TabInfo);
+                    }}
+                  >
+                    {getText(b.name, b.nameMM, locale)}
+                  </div>
+                ))}
+              </nav>
             </div>
-          ) : (
-            <div className="grid p-10 bg-white place-content-center rounded-md border">
-              <h1 className="tracking-widest text-gray-500 uppercase">
-                This seller doesn't have any products yet.
-              </h1>
-            </div>
-          )}
+
+            {productData.length > 0 ? (
+              <div className="bg-white py-3 grid grid-cols-auto200 gap-3 mt-3 place-items-center lg:place-items-start">
+                {productData
+                  .filter((z: any) =>
+                    currentStep === Tab.Auctions
+                      ? z.type === ProductType.Auction
+                      : currentStep === Tab.BuyNow
+                      ? z.type !== ProductType.Auction
+                      : currentStep === Tab.EndedAuctions
+                      ? z.type === ProductType.Auction &&
+                        new Date(z.endTime).getTime() < new Date().getTime()
+                      : currentStep === Tab.LiveAuctions
+                      ? z.type === ProductType.Auction &&
+                        new Date(z.startTime).getTime() <=
+                          new Date().getTime() &&
+                        new Date(z.endTime).getTime() >= new Date().getTime()
+                      : currentStep === Tab.LowStock
+                      ? (z.type === ProductType.Fixed &&
+                          z.stockType === StockType.StockLevel &&
+                          z.stockLevel <= 10) ||
+                        (z.type === ProductType.Variable &&
+                          z.variations.find(
+                            (b: any) =>
+                              b.stockType === StockType.StockLevel &&
+                              b.stockLevel <= 10
+                          ))
+                      : currentStep === Tab.OutOfStock
+                      ? (z.type === ProductType.Fixed &&
+                          (z.stockType === StockType.OutOfStock ||
+                            (z.stockType === StockType.StockLevel &&
+                              z.stockLevel <= 0))) ||
+                        (z.type === ProductType.Variable &&
+                          z.variations.find(
+                            (b: any) =>
+                              b.stockType === StockType.OutOfStock ||
+                              (b.stockType === StockType.StockLevel &&
+                                b.stockLevel <= 0)
+                          ))
+                      : currentStep === Tab.Promotions
+                      ? z.type !== ProductType.Auction &&
+                        getPricing(z).isPromotion === true
+                      : false
+                  )
+                  .map((b, index) => (
+                    <React.Fragment key={index}>
+                      {b.type === ProductType.Auction ? (
+                        <AuctionCard product={b} />
+                      ) : (
+                        <ProductCard product={b} />
+                      )}
+                    </React.Fragment>
+                  ))}
+              </div>
+            ) : (
+              <div className="grid p-10 bg-white place-content-center rounded-md border">
+                <h1 className="tracking-widest text-gray-500 uppercase">
+                  This seller doesn't have any products yet.
+                </h1>
+              </div>
+            )}
+          </div>
         </>
       )}
     </div>

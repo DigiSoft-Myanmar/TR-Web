@@ -148,8 +148,6 @@ export default function AuctionEmail({
                       width="80"
                       alt={wonList.product.name}
                       style={{
-                        border: "1px #E71D2A solid",
-                        borderRadius: 10,
                         marginTop: 10,
                       }}
                     />
