@@ -232,6 +232,16 @@ export const deleteUser = async (id: string) => {
     where: { id: id },
   });
   if (user) {
+    await prisma.user.update({
+      where: { id: id },
+      data: {
+        isDeleted: true,
+      },
+    });
+  } else {
+    return { success: false, data: NotAvailable };
+  }
+  /* if (user) {
     if (user.role === Role.Buyer) {
       const orders = await prisma.order.count({
         where: {
@@ -262,5 +272,5 @@ export const deleteUser = async (id: string) => {
     }
   } else {
     return { success: false, data: NotAvailable };
-  }
+  } */
 };

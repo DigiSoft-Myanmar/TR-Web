@@ -172,9 +172,15 @@ const StaffTbl = ({
       field: "isBlocked",
       renderCell: ({ row }: CellType) => (
         <Typography variant="body2">
-          {row.isBlocked ? (
+          {row.isBlocked || row.isDeleted ? (
             <span className="rounded-md bg-error/20 px-3 py-1 text-error">
-              Blocked
+              {row.isBlocked && row.isDeleted
+                ? "Blocked & Deleted"
+                : row.isBlocked
+                ? "Blocked"
+                : row.isDeleted
+                ? "Deleted"
+                : ""}
             </span>
           ) : (
             <span className="rounded-md bg-success/20 px-3 py-1 text-success">
