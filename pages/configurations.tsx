@@ -28,6 +28,8 @@ function Configurations({
   senderEmailTSL,
   lowStockLimit,
   maximumAuctionPeriod,
+  androidSellAllow,
+  iosSellAllow,
 }: any) {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
@@ -56,6 +58,8 @@ function Configurations({
       })
       .nonnegative({ message: t("inputValidAmount") }),
     senderEmailTSL: z.boolean(),
+    androidSellAllow: z.boolean(),
+    iosSellAllow: z.boolean(),
   });
 
   const { register, handleSubmit, watch, formState, reset } =
@@ -192,14 +196,32 @@ function Configurations({
               defaultValue={senderEmailTSL}
             />
           </div>
+        </div>
+        <div className="flex flex-col bg-white border-t">
+          <h3 className="px-10 text-lg font-semibold mt-10">
+            Sell Permissions
+          </h3>
+          <div className="flex flex-col gap-3 px-10 py-5">
+            <FormInputCheckbox
+              formControl={{ ...register("androidSellAllow") }}
+              label={"Is android sell allow ?"}
+              defaultValue={androidSellAllow}
+            />
 
-          <div className="flex items-center justify-end px-10 py-5">
-            <div>
-              <SubmitBtn
-                isSubmit={isSubmit}
-                submitTxt={"Loading..."}
-                text={"Submit"}
-              />
+            <FormInputCheckbox
+              formControl={{ ...register("iosSellAllow") }}
+              label={"Is IOS sell allow ?"}
+              defaultValue={iosSellAllow}
+            />
+
+            <div className="flex items-center justify-end px-10 py-5">
+              <div>
+                <SubmitBtn
+                  isSubmit={isSubmit}
+                  submitTxt={"Loading..."}
+                  text={"Submit"}
+                />
+              </div>
             </div>
           </div>
         </div>

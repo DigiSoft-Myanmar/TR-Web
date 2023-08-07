@@ -68,18 +68,18 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
       setMemberStartDate(
         new Date(profile.memberStartDate).toISOString().substring(0, 10)
       );
-      setSellAllow(profile.sellAllow);
+      setSellAllow(profile?.sellAllow ? profile?.sellAllow : false);
       reset({
-        adminNote: profile.adminNote,
-        isBlocked: profile.isBlocked,
-        isDeleted: profile.isDeleted,
+        adminNote: profile?.adminNote ? profile.adminNote : "",
+        isBlocked: profile?.isBlocked ? profile?.isBlocked : false,
+        isDeleted: profile?.isDeleted ? profile?.isDeleted : false,
       });
     } else {
-      setSellAllow(profile.sellAllow);
+      setSellAllow(profile?.sellAllow ? profile?.sellAllow : false);
       reset({
-        adminNote: "",
-        isBlocked: false,
-        isDeleted: false,
+        adminNote: profile?.adminNote ? profile.adminNote : "",
+        isBlocked: profile?.isBlocked ? profile?.isBlocked : false,
+        isDeleted: profile?.isDeleted ? profile?.isDeleted : false,
       });
       setError("");
     }
@@ -198,7 +198,6 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                   <input
                     type="checkbox"
                     className="checkbox-primary checkbox"
-                    checked={sellAllow}
                     defaultChecked={sellAllow}
                     disabled={!isInternal(session)}
                   />

@@ -582,6 +582,8 @@ model Configuration {
   senderEmailHost      String
   senderEmailPort      String
   senderEmailTSL       Boolean
+  androidSellAllow     Boolean  @default(false)
+  iosSellAllow         Boolean  @default(false)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }
