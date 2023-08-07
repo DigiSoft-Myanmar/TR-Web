@@ -108,11 +108,11 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
             sellerResponse: sellerResponse,
           },
         });
-        for (let i = 0; i < seller.length; i++) {
-          if (order.sellerIds.includes(seller[i].id)) {
+        for (let k = 0; k < seller.length; k++) {
+          if (order.sellerIds.includes(seller[k].id)) {
             await sendOrderEmail(
               order,
-              seller[i].username +
+              seller[k].username +
                 " " +
                 OrderStatus.AutoCancelled +
                 " for #" +
