@@ -21,11 +21,15 @@ export default async function Handler(
         let d: any = {
           lowStockLimit: 10,
           maximumAuctionPeriod: 14,
+          androidSellAllow: false,
+          iosSellAllow: false,
         };
         if (configuration) {
           d = {
             lowStockLimit: configuration.lowStockLimit,
             maximumAuctionPeriod: configuration.maximumAuctionPeriod,
+            androidSellAllow: configuration.androidSellAllow,
+            iosSellAllow: configuration.iosSellAllow,
           };
         }
         return res.status(200).json(d);
