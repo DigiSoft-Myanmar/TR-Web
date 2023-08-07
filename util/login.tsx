@@ -35,15 +35,27 @@ export async function sendOTP(
         if (res.status !== 200) {
           if (res.status === 405) {
             let json = await res.json();
-            return {
-              isSuccess: false,
-              error: json.error
-                ? "This account is blocked. " + json.error
-                : "This account is blocked.",
-              errorMM: json.error
-                ? "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error
-                : "အကောင့်အပိတ်ခံထားရပါသည်။",
-            };
+            if (json.isBlocked) {
+              return {
+                isSuccess: false,
+                error: json.error
+                  ? "This account is blocked. " + json.error
+                  : "This account is blocked.",
+                errorMM: json.error
+                  ? "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error
+                  : "အကောင့်အပိတ်ခံထားရပါသည်။",
+              };
+            } else if (json.isDeleted) {
+              return {
+                isSuccess: false,
+                error: json.error
+                  ? "This account is deleted. " + json.error
+                  : "This account is deleted.",
+                errorMM: json.error
+                  ? "အကောင့်ဖျက်သိမ်းထားပါသည်။ " + json.error
+                  : "အကောင့်ဖျက်သိမ်းထားပါသည်။",
+              };
+            }
           }
           return {
             isSuccess: false,
@@ -172,23 +184,27 @@ export async function verifyEmailLogin(email: string) {
       if (res.status !== 200) {
         if (res.status === 405) {
           let json = await res.json();
-          return {
-            isSuccess: false,
-            error: json.error
-              ? "This account is blocked. " + json.error
-              : "This account is blocked.",
-            errorMM: json.error
-              ? "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error
-              : "အကောင့်အပိတ်ခံထားရပါသည်။",
-          };
-        }
-        if (res.status === 405) {
-          let json = await res.json();
-          return {
-            isSuccess: false,
-            error: json.error,
-            errorMM: json.errorMM,
-          };
+          if (json.isBlocked) {
+            return {
+              isSuccess: false,
+              error: json.error
+                ? "This account is blocked. " + json.error
+                : "This account is blocked.",
+              errorMM: json.error
+                ? "အကောင့်အပိတ်ခံထားရပါသည်။ " + json.error
+                : "အကောင့်အပိတ်ခံထားရပါသည်။",
+            };
+          } else if (json.isDeleted) {
+            return {
+              isSuccess: false,
+              error: json.error
+                ? "This account is deleted. " + json.error
+                : "This account is deleted.",
+              errorMM: json.error
+                ? "အကောင့်ဖျက်သိမ်းထားပါသည်။ " + json.error
+                : "အကောင့်ဖျက်သိမ်းထားပါသည်။",
+            };
+          }
         }
         return {
           isSuccess: false,
