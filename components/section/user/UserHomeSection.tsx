@@ -141,7 +141,7 @@ function UserHomeSection({ user }: { user: User }) {
                       {z.name}
                     </span>
                   </div>
-                  {isSeller(user) && (
+                  {isSeller(user) && productData && (
                     <span className="text-[100px] font-extrabold">
                       {productData.filter((b: Product) =>
                         b.categoryIds.includes(z.id)
@@ -270,7 +270,45 @@ function UserHomeSection({ user }: { user: User }) {
               </nav>
             </div>
 
-            {productData.length > 0 ? (
+            {productData.filter((z: any) =>
+              currentStep === Tab.Auctions
+                ? z.type === ProductType.Auction
+                : currentStep === Tab.BuyNow
+                ? z.type !== ProductType.Auction
+                : currentStep === Tab.EndedAuctions
+                ? z.type === ProductType.Auction &&
+                  new Date(z.endTime).getTime() < new Date().getTime()
+                : currentStep === Tab.LiveAuctions
+                ? z.type === ProductType.Auction &&
+                  new Date(z.startTime).getTime() <= new Date().getTime() &&
+                  new Date(z.endTime).getTime() >= new Date().getTime()
+                : currentStep === Tab.LowStock
+                ? (z.type === ProductType.Fixed &&
+                    z.stockType === StockType.StockLevel &&
+                    z.stockLevel <= 10) ||
+                  (z.type === ProductType.Variable &&
+                    z.variations.find(
+                      (b: any) =>
+                        b.stockType === StockType.StockLevel &&
+                        b.stockLevel <= 10
+                    ))
+                : currentStep === Tab.OutOfStock
+                ? (z.type === ProductType.Fixed &&
+                    (z.stockType === StockType.OutOfStock ||
+                      (z.stockType === StockType.StockLevel &&
+                        z.stockLevel <= 0))) ||
+                  (z.type === ProductType.Variable &&
+                    z.variations.find(
+                      (b: any) =>
+                        b.stockType === StockType.OutOfStock ||
+                        (b.stockType === StockType.StockLevel &&
+                          b.stockLevel <= 0)
+                    ))
+                : currentStep === Tab.Promotions
+                ? z.type !== ProductType.Auction &&
+                  getPricing(z).isPromotion === true
+                : false
+            ).length > 0 ? (
               <div className="bg-white py-3 grid grid-cols-auto200 gap-3 mt-3 place-items-center lg:place-items-start">
                 {productData
                   .filter((z: any) =>
@@ -326,7 +364,7 @@ function UserHomeSection({ user }: { user: User }) {
             ) : (
               <div className="grid p-10 bg-white place-content-center rounded-md border">
                 <h1 className="tracking-widest text-gray-500 uppercase">
-                  This seller doesn't have any products yet.
+                  This seller doesn't have any products related to this tab.
                 </h1>
               </div>
             )}
