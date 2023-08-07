@@ -13,7 +13,7 @@ import CardContent from "@mui/material/CardContent";
 import LinearProgress from "@mui/material/LinearProgress";
 
 // ** Type Imports
-import { Category, Product, Role, StockType } from "@prisma/client";
+import { Category, Product, Role, StockType, User } from "@prisma/client";
 import { fileUrl } from "@/types/const";
 import { formatAmount, formatDate, getText } from "@/util/textHelper";
 import { useRouter } from "next/router";
@@ -53,6 +53,7 @@ import StatsCard from "../card/StatsCard";
 import { sortBy } from "lodash";
 import { getHeaders } from "@/util/authHelper";
 import { encryptPhone } from "@/util/encrypt";
+import ExportCSVButton from "../presentational/ExportCSVButton";
 
 interface CellType {
   row: any;
@@ -279,53 +280,36 @@ const OtherTbl = ({
               <h3 className="text-xl font-semibold">{type} Users</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
-              <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                  />
-                </svg>
-                <span className="text-sm">Download CSV</span>
-              </button>
-              <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md bg-info px-3 py-2 text-white transition-colors hover:bg-info-content hover:text-gray-800"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
-                  />
-                </svg>
-
-                <span className="text-sm">Filter</span>
-              </button>
+              <ExportCSVButton
+                csvData={data.map((e: User) => {
+                  return {
+                    username: e.username,
+                    "Display Name": e.displayName ? e.displayName : "-",
+                    email: e.email ? e.email : "-",
+                    role: e.role,
+                    phone: e.phoneNum ? e.phoneNum : "-",
+                    "Last Login": e.lastLogin
+                      ? new Date(e.lastLogin).toLocaleDateString("en-ca", {
+                          year: "numeric",
+                          month: "short",
+                          day: "2-digit",
+                        })
+                      : "-",
+                    Blocked: e.isBlocked ? "Yes" : "No",
+                    Deleted: e.isDeleted ? "Yes" : "No",
+                  };
+                })}
+                fileName={
+                  type +
+                  " data " +
+                  new Date().toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })
+                }
+                permission={""}
+              />
             </div>
           </div>
           <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">

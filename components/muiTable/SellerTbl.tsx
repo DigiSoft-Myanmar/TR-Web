@@ -61,6 +61,8 @@ import { isTodayBetween } from "@/util/verify";
 import Avatar from "../presentational/Avatar";
 import { encryptPhone } from "@/util/encrypt";
 import { RoleNav } from "@/types/role";
+import { SellerPermission, TraderPermission } from "@/types/permissionTypes";
+import ExportCSVButton from "../presentational/ExportCSVButton";
 
 interface CellType {
   row: any;
@@ -447,29 +449,57 @@ const SellerTbl = ({
               <h3 className="text-xl font-semibold">{type}</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
-              <button
-                type="button"
-                className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
-                onClick={() => {
-                  showWarningDialog("Will implement later");
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                  />
-                </svg>
-                <span className="text-sm">Download CSV</span>
-              </button>
+              <ExportCSVButton
+                csvData={data.map((e: any) => {
+                  return {
+                    username: e.username,
+                    "Display Name": e.displayName ? e.displayName : "-",
+                    email: e.email ? e.email : "-",
+                    role: e.role,
+                    phone: e.phoneNum ? e.phoneNum : "-",
+                    membership: e.currentMembership
+                      ? e.currentMembership.name
+                      : "-",
+                    "member start date": e.memberStartDate
+                      ? new Date(e.memberStartDate).toLocaleDateString(
+                          "en-ca",
+                          {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                          }
+                        )
+                      : "-",
+                    "# Products": formatAmount(e.prodCount),
+                    State: e.state?.name ? e.state.name : "-",
+                    District: e.district?.name ? e.district.name : "-",
+                    Township: e.township?.name ? e.township.name : "-",
+                    "Last Login": e.lastLogin
+                      ? new Date(e.lastLogin).toLocaleDateString("en-ca", {
+                          year: "numeric",
+                          month: "short",
+                          day: "2-digit",
+                        })
+                      : "-",
+                    Blocked: e.isBlocked ? "Yes" : "No",
+                    Deleted: e.isDeleted ? "Yes" : "No",
+                  };
+                })}
+                fileName={
+                  (type === RoleNav.Sellers ? Role.Seller : Role.Trader) +
+                  " data " +
+                  new Date().toLocaleDateString("en-ca", {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  })
+                }
+                permission={
+                  type === RoleNav.Sellers
+                    ? SellerPermission.sellerExportAllow
+                    : TraderPermission.traderExportAllow
+                }
+              />
               <button
                 className="flex flex-row items-center gap-3 rounded-md bg-primary px-3 py-2 transition-colors hover:bg-primary-focus text-white"
                 onClick={() =>

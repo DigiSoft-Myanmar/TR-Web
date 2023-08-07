@@ -46,7 +46,11 @@ export default async function handler(
       let wonList = await prisma.wonList.findMany({
         where: filter,
         include: {
-          product: true,
+          product: {
+            include: {
+              seller: true,
+            },
+          },
           auction: {
             include: {
               createdBy: true,
@@ -80,6 +84,7 @@ export default async function handler(
               createdBy: true,
             },
           },
+          seller: true,
         },
       });
       let list = prodList.filter(

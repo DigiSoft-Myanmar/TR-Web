@@ -38,6 +38,7 @@ import Avatar from "../presentational/Avatar";
 import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
 import { encryptPhone } from "@/util/encrypt";
 import LoadingScreen from "../screen/LoadingScreen";
+import ExportCSVButton from "../presentational/ExportCSVButton";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -339,30 +340,51 @@ const AdsTable = ({
           <h3 className="text-xl font-semibold">Ads</h3>
         </div>
         <div className="flex flex-row items-center gap-3">
-          <button
-            type="button"
-            className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
-            onClick={() => {
-              showWarningDialog("Will implement later");
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="h-5 w-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9.75v6.75m0 0l-3-3m3 3l3-3m-8.25 6a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-              />
-            </svg>
-            <span className="text-sm">Download CSV</span>
-          </button>
-          <button
+          <ExportCSVButton
+            csvData={data.map((e: any) => {
+              return {
+                adsImg: e.adsImg,
+                placed: e.adsLocations.length > 0 ? "Placed" : "Not Placed",
+                "upload date": new Date(e.createdAt).toLocaleDateString(
+                  "en-ca",
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                  }
+                ),
+                membership: e.seller.currentMembership
+                  ? e.seller.currentMembership.name
+                  : "-",
+                "member start date": e.seller.memberStartDate
+                  ? new Date(e.seller.memberStartDate).toLocaleDateString(
+                      "en-ca",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      }
+                    )
+                  : "-",
+                username: e.seller.username,
+                "Display Name": e.seller.displayName
+                  ? e.seller.displayName
+                  : "-",
+                email: e.seller.email ? e.seller.email : "-",
+                phone: e.seller.phoneNum ? e.seller.phoneNum : "-",
+              };
+            })}
+            fileName={
+              "Ads data " +
+              new Date().toLocaleDateString("en-ca", {
+                year: "numeric",
+                month: "short",
+                day: "2-digit",
+              })
+            }
+            permission={""}
+          />
+          {/* <button
             type="button"
             className="flex flex-row items-center gap-3 rounded-md bg-info px-3 py-2 text-white transition-colors hover:bg-info-content hover:text-gray-800"
             onClick={() => {
@@ -385,7 +407,7 @@ const AdsTable = ({
             </svg>
 
             <span className="text-sm">Filter</span>
-          </button>
+          </button> */}
         </div>
       </div>
       {data && (

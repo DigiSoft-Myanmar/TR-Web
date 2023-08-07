@@ -26,7 +26,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-const baseUrl = "http://52.221.211.85/";
+const baseUrl = "https://treasurerush.com.mm/";
 
 export default function BidEmail({
   content,
