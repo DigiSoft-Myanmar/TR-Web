@@ -18,7 +18,10 @@ export default async function Handler(
     switch (req.method) {
       case "GET":
         let configuration = await getConfiguration();
-        let d: any = undefined;
+        let d: any = {
+          lowStockLimit: 10,
+          maximumAuctionPeriod: 14,
+        };
         if (configuration) {
           d = {
             lowStockLimit: configuration.lowStockLimit,

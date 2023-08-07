@@ -4,7 +4,9 @@ import ProductImg from "@/components/card/ProductImg";
 import Avatar from "@/components/presentational/Avatar";
 import { fileUrl } from "@/types/const";
 import { isInternal, isSeller } from "@/util/authHelper";
+import { fetcher } from "@/util/fetcher";
 import { getPricing } from "@/util/pricing";
+import useSWR from "swr";
 import {
   formatAmount,
   getPromoAvailCount,
@@ -80,6 +82,7 @@ function UserHomeSection({ user }: { user: User }) {
   const { locale } = router;
   const { t } = useTranslation("common");
   const [currentStep, setCurrentStep] = React.useState(Tab.BuyNow);
+  const { data: settingsData } = useSWR("/api/configurations", fetcher);
   const { isLoading, error, data, refetch } = useQuery(
     ["promoData", user.id],
     () =>
@@ -285,12 +288,16 @@ function UserHomeSection({ user }: { user: User }) {
                 : currentStep === Tab.LowStock
                 ? (z.type === ProductType.Fixed &&
                     z.stockType === StockType.StockLevel &&
-                    z.stockLevel <= 10) ||
+                    (settingsData
+                      ? z.stockLevel <= settingsData.lowStockLimit
+                      : z.stockLevel <= 10)) ||
                   (z.type === ProductType.Variable &&
                     z.variations.find(
                       (b: any) =>
                         b.stockType === StockType.StockLevel &&
-                        b.stockLevel <= 10
+                        (settingsData
+                          ? b.stockLevel <= settingsData.lowStockLimit
+                          : b.stockLevel <= 10)
                     ))
                 : currentStep === Tab.OutOfStock
                 ? (z.type === ProductType.Fixed &&
@@ -362,7 +369,7 @@ function UserHomeSection({ user }: { user: User }) {
                   ))}
               </div>
             ) : (
-              <div className="grid p-10 bg-white place-content-center rounded-md border">
+              <div className="grid p-10 bg-white place-content-center">
                 <h1 className="tracking-widest text-gray-500 uppercase">
                   This seller doesn't have any products related to this tab.
                 </h1>
