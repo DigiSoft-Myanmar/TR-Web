@@ -9,10 +9,10 @@ let test: any = undefined;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>,
+  res: NextApiResponse<any>
 ) {
   try {
-    if (req.method === "DELETE") {
+    if (req.method === "POST") {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const session = await useAuth(req);
 

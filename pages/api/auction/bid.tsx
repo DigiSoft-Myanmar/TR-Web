@@ -70,16 +70,7 @@ export default async function handler(
         };
       } else if (session.role === Role.Trader) {
         filter = {
-          OR: [
-            {
-              createdByUserId: session.id,
-            },
-            {
-              product: {
-                sellerId: session.id,
-              },
-            },
-          ],
+          createdByUserId: session.id,
         };
       }
 

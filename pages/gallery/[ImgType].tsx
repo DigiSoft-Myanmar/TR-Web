@@ -182,7 +182,7 @@ function GalleryPage() {
                   locale,
                   () => {
                     fetch("/api/gallery/manage", {
-                      method: "DELETE",
+                      method: "POST",
                       body: JSON.stringify(selectedImage),
                       headers: getHeaders(session),
                     }).then(async (data) => {
