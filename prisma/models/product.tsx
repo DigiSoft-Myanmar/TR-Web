@@ -359,7 +359,13 @@ export const updateProduct = async (id: string, data: Product) => {
     d.priceIndex = d.openingBid;
   }
 
-  if (d.type === ProductType.Auction) {
+  const updateProd = await prisma.product.update({
+    where: { id: id },
+    data: d,
+  });
+  return { isSuccess: true, data: updateProd };
+
+  /* if (d.type === ProductType.Auction) {
     let product = await prisma.product.findFirst({
       where: {
         id: id,
@@ -412,7 +418,7 @@ export const updateProduct = async (id: string, data: Product) => {
       data: d,
     });
     return { isSuccess: true, data: product };
-  }
+  } */
 };
 
 export const getOriginalCategories = async () => {
