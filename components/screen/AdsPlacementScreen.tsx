@@ -2,7 +2,12 @@ import { Ads, AdsPlacement } from "@prisma/client";
 import React, { DetailedReactHTMLElement } from "react";
 import AdsList from "../presentational/AdsList";
 import AdsDetailList from "../presentational/AdsDetailList";
-import { AdsLocation, AdsPage, checkExpire } from "@/util/adsHelper";
+import {
+  AdsLocation,
+  AdsPage,
+  checkExpire,
+  checkPlaced,
+} from "@/util/adsHelper";
 import AdsPickerDialog from "../modal/dialog/AdsPickerDialog";
 import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
 import AdsCard from "../card/AdsCard";
@@ -32,97 +37,121 @@ function AdsPlacementScreen({
         {
           title: AdsLocation.HomeAds1,
           type: AdsPlacement.OneCol,
-          ads: data.filter((z) =>
-            z.adsLocations.find((z: any) => z.location === AdsLocation.HomeAds1)
+          ads: data.filter((z: any) =>
+            z.adsLocations.find(
+              (b: any) =>
+                b.location === AdsLocation.HomeAds1 &&
+                checkPlaced(b, z.seller.currentMembership)
+            )
           ),
         },
         {
           title: AdsLocation.HomeAds21,
           type: AdsPlacement.TwoCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds21
+              (b: any) =>
+                b.location === AdsLocation.HomeAds21 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds22,
           type: AdsPlacement.TwoCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds22
+              (b: any) =>
+                b.location === AdsLocation.HomeAds22 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds31,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds31
+              (b: any) =>
+                b.location === AdsLocation.HomeAds31 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds32,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds32
+              (b: any) =>
+                b.location === AdsLocation.HomeAds32 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds33,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds33
+              (b: any) =>
+                b.location === AdsLocation.HomeAds33 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds34,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds34
+              (b: any) =>
+                b.location === AdsLocation.HomeAds34 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds41,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds41
+              (b: any) =>
+                b.location === AdsLocation.HomeAds41 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds42,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds42
+              (b: any) =>
+                b.location === AdsLocation.HomeAds42 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds43,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds43
+              (b: any) =>
+                b.location === AdsLocation.HomeAds43 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.HomeAds44,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.HomeAds44
+              (b: any) =>
+                b.location === AdsLocation.HomeAds44 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
@@ -134,54 +163,66 @@ function AdsPlacementScreen({
         {
           title: AdsLocation.ProductAds11,
           type: AdsPlacement.TwoCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.ProductAds11
+              (b: any) =>
+                b.location === AdsLocation.ProductAds11 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.ProductAds12,
           type: AdsPlacement.TwoCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.ProductAds12
+              (b: any) =>
+                b.location === AdsLocation.ProductAds12 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.ProductAds21,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.ProductAds21
+              (b: any) =>
+                b.location === AdsLocation.ProductAds21 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.ProductAds22,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.ProductAds22
+              (b: any) =>
+                b.location === AdsLocation.ProductAds22 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.ProductAds23,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.ProductAds23
+              (b: any) =>
+                b.location === AdsLocation.ProductAds23 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.ProductAds24,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.ProductAds24
+              (b: any) =>
+                b.location === AdsLocation.ProductAds24 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
@@ -193,45 +234,55 @@ function AdsPlacementScreen({
         {
           title: AdsLocation.Marketplace1,
           type: AdsPlacement.OneCol,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.Marketplace1
+              (b: any) =>
+                b.location === AdsLocation.Marketplace1 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.Marketplace21,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.Marketplace21
+              (b: any) =>
+                b.location === AdsLocation.Marketplace21 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.Marketplace22,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.Marketplace22
+              (b: any) =>
+                b.location === AdsLocation.Marketplace22 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.Marketplace23,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.Marketplace23
+              (b: any) =>
+                b.location === AdsLocation.Marketplace23 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
         {
           title: AdsLocation.Marketplace24,
           type: AdsPlacement.ThreeCols,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.Marketplace24
+              (b: any) =>
+                b.location === AdsLocation.Marketplace24 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },
@@ -243,9 +294,11 @@ function AdsPlacementScreen({
         {
           title: AdsLocation.Memberships1,
           type: AdsPlacement.OneCol,
-          ads: data.filter((z) =>
+          ads: data.filter((z: any) =>
             z.adsLocations.find(
-              (z: any) => z.location === AdsLocation.Memberships1
+              (b: any) =>
+                b.location === AdsLocation.Memberships1 &&
+                checkPlaced(b, z.seller.currentMembership)
             )
           ),
         },

@@ -9,8 +9,13 @@ import {
   Success,
   Unauthorized,
 } from "@/types/ApiResponseTypes";
-import { AdsLocation, AdsPage } from "@/util/adsHelper";
-import { isSeller } from "@/util/authHelper";
+import {
+  AdsLocation,
+  AdsPage,
+  checkExpire,
+  checkPlaced,
+} from "@/util/adsHelper";
+import { isInternal, isSeller } from "@/util/authHelper";
 import { Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -20,10 +25,20 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   try {
+    const session = await useAuth(req);
+
     if (req.method === "GET") {
       let { placement } = req.query;
       if (placement) {
-        let ads = await prisma.ads.findMany({});
+        let ads = await prisma.ads.findMany({
+          include: {
+            seller: {
+              include: {
+                currentMembership: true,
+              },
+            },
+          },
+        });
 
         switch (placement.toString()) {
           case AdsPage.Marketplace:
@@ -81,7 +96,18 @@ export default async function handler(
             );
             break;
         }
-        return res.status(200).json(ads);
+        if (isInternal(session)) {
+          return res.status(200).json(ads);
+        } else {
+          return res.status(200).json(
+            ads.filter((z) =>
+              z.adsLocations.find((b: any) => {
+                let status = checkPlaced(b, z.seller.currentMembership);
+                return status;
+              })
+            )
+          );
+        }
       } else {
         let ads = await prisma.ads.findMany({
           include: {
@@ -96,7 +122,6 @@ export default async function handler(
       }
     }
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const session = await useAuth(req);
     if (
       session &&
       (session.role === Role.Admin ||

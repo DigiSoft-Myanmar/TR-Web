@@ -16,7 +16,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -67,6 +67,7 @@ function Login({ siteInfo }: { siteInfo: Content }) {
       message: t("inputValidEmailError"),
     }),
   });
+  const router = useRouter();
   const [isOTP, setOTP] = React.useState(false);
 
   const phoneLoginShema = z.object({
@@ -98,6 +99,7 @@ function Login({ siteInfo }: { siteInfo: Content }) {
     ),
   });
 
+  const { data: session }: any = useSession();
   const { errors }: any = formState;
   const watchFields: any = watch();
 
@@ -224,6 +226,12 @@ function Login({ siteInfo }: { siteInfo: Content }) {
       }
     }
   }
+
+  React.useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [session]);
 
   return (
     <>

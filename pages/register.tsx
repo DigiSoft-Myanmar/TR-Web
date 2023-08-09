@@ -6,7 +6,7 @@ import { defaultDescription, fileUrl } from "@/types/const";
 import { registerWithOTP, sendOTP } from "@/util/login";
 import { showErrorDialog } from "@/util/swalFunction";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -72,6 +72,13 @@ function Register({ siteInfo }: { siteInfo: Content }) {
   const [role, setRole] = React.useState<any>(Role.Buyer);
 
   const captchaContainer = React.useRef<HTMLDivElement | null>(null);
+  const { data: session } = useSession();
+
+  React.useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [session]);
 
   React.useEffect(() => {
     if (type) {

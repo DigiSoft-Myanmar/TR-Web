@@ -137,7 +137,22 @@ export function checkExpire(
   if (isExpired === true) {
     return differenceDays <= 0;
   }
-  if (differenceDays <= 1) {
+  if (differenceDays <= 1 && differenceDays > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export function checkPlaced(adsLocation: any, sellerMembership: Membership) {
+  let startDate = new Date(adsLocation.startDate);
+  let adsLifeTime = sellerMembership.adsLifeTime;
+  startDate.setDate(startDate.getDate() + adsLifeTime);
+  const differenceMs: number = startDate.getTime() - new Date().getTime();
+  const differenceDays: number = Math.floor(
+    differenceMs / (1000 * 60 * 60 * 24)
+  );
+  if (differenceDays > 0) {
     return true;
   } else {
     return false;

@@ -9,6 +9,7 @@ import { useSession } from "next-auth/react";
 import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
 import { useTranslation } from "react-i18next";
 import AdsCard from "@/components/card/AdsCard";
+import { checkPlaced } from "@/util/adsHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -29,7 +30,7 @@ function AdsPickerDialog({ isModalOpen, setModalOpen, type, location }: Props) {
   const { data: session }: any = useSession();
   const [currentTab, setCurrentTab] = React.useState<any>(TabList.All);
   const [seller, setSeller] = React.useState<User | undefined>(undefined);
-  const [currentAd, setCurrentAd] = React.useState<Ads | undefined>(undefined);
+  const [currentAd, setCurrentAd] = React.useState<any | undefined>(undefined);
   const [isSubmit, setSubmit] = React.useState(false);
   const { t } = useTranslation("common");
 
@@ -261,7 +262,12 @@ function AdsPickerDialog({ isModalOpen, setModalOpen, type, location }: Props) {
 
                           if (
                             adsLocation.find(
-                              (z: any) => z.location === location
+                              (z: any) =>
+                                z.location === location &&
+                                checkPlaced(
+                                  z,
+                                  currentAd.seller.currentMembership
+                                )
                             )
                           ) {
                             showErrorDialog(

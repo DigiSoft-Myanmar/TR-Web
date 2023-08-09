@@ -39,6 +39,7 @@ import AdsDetailDialog from "../modal/dialog/AdsDetailDialog";
 import { encryptPhone } from "@/util/encrypt";
 import LoadingScreen from "../screen/LoadingScreen";
 import ExportCSVButton from "../presentational/ExportCSVButton";
+import { checkExpire, checkPlaced } from "@/util/adsHelper";
 
 const Img = styled("img")(({ theme }) => ({
   width: 32,
@@ -110,12 +111,19 @@ const AdsTable = ({
       field: "img",
       minWidth: 90,
       headerName: "Ads Image",
-      renderCell: ({ row }: CellType) => (
+      renderCell: ({ row }: any) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Img src={fileUrl + row.adsImg} alt={`${row.adsImg}`} />
-          {row.adsLocations.length > 0 ? (
+          {row.adsLocations.length > 0 &&
+          row.adsLocations.find((b: any) =>
+            checkPlaced(b, row.seller.currentMembership)
+          ) ? (
             <div className="bg-primary text-white px-2 py-1 rounded-md text-xs font-semibold">
               Placed
+            </div>
+          ) : row.adsLocations.length > 0 ? (
+            <div className="bg-info text-white px-2 py-1 rounded-md text-xs font-semibold">
+              Expired
             </div>
           ) : (
             <div className="bg-warning text-white px-2 py-1 rounded-md text-xs font-semibold">
