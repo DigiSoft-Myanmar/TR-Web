@@ -100,12 +100,22 @@ export default async function handler(
           return res.status(200).json(ads);
         } else {
           return res.status(200).json(
-            ads.filter((z) =>
-              z.adsLocations.find((b: any) => {
-                let status = checkPlaced(b, z.seller.currentMembership);
-                return status;
-              })
-            )
+            ads.map((z) => {
+              let adsLocations = z.adsLocations
+                .map((b: any) => {
+                  let status = checkPlaced(b, z.seller.currentMembership);
+                  if (status) {
+                    return b;
+                  } else {
+                    return undefined;
+                  }
+                })
+                .filter((b: any) => b);
+              return {
+                ...z,
+                adsLocations: adsLocations,
+              };
+            })
           );
         }
       } else {
