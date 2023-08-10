@@ -14,6 +14,7 @@ import { getHeaders } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "react-i18next";
 import { encryptPhone } from "@/util/encrypt";
+import { checkPlaced } from "@/util/adsHelper";
 
 interface Props {
   isModalOpen: boolean;
@@ -251,8 +252,7 @@ function AdsDetailDialog({
                                 )}
                               </span>
                             </p>
-                            {new Date(adsEndDate).getTime() >
-                              new Date().getTime() && (
+                            {checkPlaced(z, ads?.seller?.currentMembership) && (
                               <div className="flex flex-row justify-end w-full">
                                 <button
                                   className="bg-primary p-1 rounded-md text-white hover:bg-primary-focus"

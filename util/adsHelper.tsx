@@ -146,15 +146,12 @@ export function checkExpire(
 
 export function checkPlaced(adsLocation: any, sellerMembership: Membership) {
   let startDate = new Date(adsLocation.startDate);
-  let adsLifeTime = sellerMembership.adsLifeTime;
-  startDate.setDate(startDate.getDate() + adsLifeTime);
-  const differenceMs: number = startDate.getTime() - new Date().getTime();
-  const differenceDays: number = Math.floor(
-    differenceMs / (1000 * 60 * 60 * 24)
+  const adsLifeTime = sellerMembership.adsLifeTime;
+  const adsEndDate = new Date(adsLocation.startDate);
+  adsEndDate.setDate(adsEndDate.getDate() + adsLifeTime);
+
+  return (
+    new Date(adsEndDate).getTime() > new Date().getTime() &&
+    new Date(startDate).getTime() < new Date().getTime()
   );
-  if (differenceDays > 0) {
-    return true;
-  } else {
-    return false;
-  }
 }

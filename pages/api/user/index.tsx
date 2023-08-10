@@ -216,7 +216,7 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
     if (data.role) {
       if (isInternal(session)) {
         let body = {
-          email: data.email.toLowerCase(),
+          email: data.email?.toLowerCase(),
           emailVerified: false,
           phoneNumber: data.phoneNum,
           password: data.password,
@@ -321,7 +321,9 @@ export default async function Handler(
     case "GET":
       return getUser(req, res);
     case "POST":
-      return addUser(req, res);
+      let response = await addUser(req, res);
+      console.log(response);
+      return response;
     case "PUT":
       let { id } = req.query;
       let data = JSON.parse(req.body);
