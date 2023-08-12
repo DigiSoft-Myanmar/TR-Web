@@ -85,7 +85,11 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
     }
   }, [profile]);
 
-  console.log(errors);
+  React.useEffect(() => {
+    if (watchFields.isBlocked || watchFields.isDeleted) {
+      setSellAllow(false);
+    }
+  }, [watchFields]);
 
   function submit(data: Status) {
     if (isInternal(session)) {
@@ -184,21 +188,22 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                 )}
               </div>
 
-              <div className="form-control flex">
-                <label
-                  className="label cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    if (isInternal(session) === true) {
-                      setSellAllow((prevValue) => !prevValue);
-                    }
-                  }}
-                >
+              <div
+                className="form-control flex"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (isInternal(session) === true) {
+                    setSellAllow((prevValue) => !prevValue);
+                  }
+                }}
+              >
+                <label className="label cursor-pointer">
                   <input
                     type="checkbox"
                     className="checkbox-primary checkbox"
                     defaultChecked={sellAllow}
+                    checked={sellAllow}
                     disabled={!isInternal(session)}
                   />
                   <span className="label-text ml-3 flex-grow">
