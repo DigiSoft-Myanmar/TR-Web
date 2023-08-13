@@ -8,6 +8,7 @@ import { Role } from "@prisma/client";
 import { ImgType } from "@/types/orderTypes";
 import prisma from "@/prisma/prisma";
 import { getSession, useSession } from "next-auth/react";
+import { isSeller } from "@/util/authHelper";
 
 export interface NextConnectApiRequest extends NextApiRequest {
   files: Express.Multer.File[];
@@ -45,8 +46,8 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
         data.createdBy = session.id;
         if (reqData && reqData.sellerId) {
           data.sellerId = reqData.sellerId;
-        } else if (session.role === Role.Seller) {
-          data.sellerId = session.sellerId;
+        } else if (isSeller(session)) {
+          data.sellerId = session.id;
         }
         if (type) {
           data.type = type;
