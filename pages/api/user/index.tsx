@@ -316,6 +316,7 @@ export default async function Handler(
   res: NextApiResponse<any>
 ) {
   const session = await useAuth(req);
+  let { id, type } = req.query;
 
   switch (req.method) {
     case "GET":
@@ -409,12 +410,12 @@ export default async function Handler(
 
     case "DELETE":
       if (
-        session &&
-        (session.role === Role.Admin ||
-          session.role === Role.Staff ||
-          session.role === Role.SuperAdmin)
+        (session &&
+          (session.role === Role.Admin ||
+            session.role === Role.Staff ||
+            session.role === Role.SuperAdmin)) ||
+        (id && session.id === id)
       ) {
-        let { id, type } = req.query;
         if (type === RoleNav.Subscribe && id) {
           await prisma.subscribe.delete({
             where: {
