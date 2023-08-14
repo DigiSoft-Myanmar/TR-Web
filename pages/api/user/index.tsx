@@ -326,7 +326,6 @@ export default async function Handler(
       console.log(response);
       return response;
     case "PUT":
-      let { id } = req.query;
       let data = JSON.parse(req.body);
       if (id) {
         let user = await prisma.user.findFirst({
@@ -414,7 +413,7 @@ export default async function Handler(
           (session.role === Role.Admin ||
             session.role === Role.Staff ||
             session.role === Role.SuperAdmin)) ||
-        (id && session.id === id)
+        (session && id && session.id === id)
       ) {
         if (type === RoleNav.Subscribe && id) {
           await prisma.subscribe.delete({
