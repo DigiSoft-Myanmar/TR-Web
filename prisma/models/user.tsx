@@ -238,6 +238,7 @@ export const deleteUser = async (id: string) => {
         isDeleted: true,
       },
     });
+    return { success: true };
   } else {
     return { success: false, data: NotAvailable };
   }
