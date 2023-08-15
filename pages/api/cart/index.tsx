@@ -479,6 +479,7 @@ export default async function handler(
               cartItems = cartItems.filter(
                 (z: any) => !rejectedSeller.includes(z.sellerId)
               );
+              prods = prods.filter((z) => !rejectedSeller.includes(z.sellerId));
             } else {
               let order = await prisma.order.findFirst({
                 where: {
