@@ -308,6 +308,7 @@ export default async function handler(
                   dz.splice(c, 1);
                 }
               }
+              let rejectedSeller = [];
               for (let b = 0; b < sellerIds.length; b++) {
                 if (
                   isAddressDiff === true &&
@@ -331,61 +332,65 @@ export default async function handler(
                       let exists = shippingFee.findIndex(
                         (e) => e.sellerId === sellerIds[b]
                       );
-                      if (exists >= 0) {
-                        if (json.shippingCost! >= 0) {
-                          shippingFee[exists].shippingFee = json.shippingCost;
-                        } else {
-                          shippingFee[exists].shippingFee =
-                            json.defaultShippingCost;
-                        }
-                        if (json.isOfferFreeShipping === true) {
-                          let subTotal = cartItems
-                            .filter((e: any) => e.sellerId === sellerIds[b])
-                            .map((e: any) =>
-                              e.salePrice
-                                ? e.salePrice * e.quantity
-                                : e.normalPrice * e.quantity
-                            )
-                            .reduce((a, b) => a + b, 0);
+                      if (json.shippingIncluded) {
+                        if (exists >= 0) {
+                          if (json.shippingCost! >= 0) {
+                            shippingFee[exists].shippingFee = json.shippingCost;
+                          } else {
+                            shippingFee[exists].shippingFee =
+                              json.defaultShippingCost;
+                          }
+                          if (json.isOfferFreeShipping === true) {
+                            let subTotal = cartItems
+                              .filter((e: any) => e.sellerId === sellerIds[b])
+                              .map((e: any) =>
+                                e.salePrice
+                                  ? e.salePrice * e.quantity
+                                  : e.normalPrice * e.quantity
+                              )
+                              .reduce((a, b) => a + b, 0);
 
-                          if (subTotal >= json.freeShippingCost) {
-                            shippingFee[exists].isFreeShipping = true;
+                            if (subTotal >= json.freeShippingCost) {
+                              shippingFee[exists].isFreeShipping = true;
+                            } else {
+                              shippingFee[exists].isFreeShipping = false;
+                            }
                           } else {
                             shippingFee[exists].isFreeShipping = false;
                           }
                         } else {
-                          shippingFee[exists].isFreeShipping = false;
-                        }
-                      } else {
-                        let freeShipping = false;
-                        if (json.isOfferFreeShipping === true) {
-                          let subTotal = cartItems
-                            .filter((e: any) => e.sellerId === sellerIds[b])
-                            .map((e: any) =>
-                              e.salePrice
-                                ? e.salePrice * e.quantity
-                                : e.normalPrice * e.quantity
-                            )
-                            .reduce((a, b) => a + b, 0);
-                          if (subTotal >= json.freeShippingCost) {
-                            freeShipping = true;
+                          let freeShipping = false;
+                          if (json.isOfferFreeShipping === true) {
+                            let subTotal = cartItems
+                              .filter((e: any) => e.sellerId === sellerIds[b])
+                              .map((e: any) =>
+                                e.salePrice
+                                  ? e.salePrice * e.quantity
+                                  : e.normalPrice * e.quantity
+                              )
+                              .reduce((a, b) => a + b, 0);
+                            if (subTotal >= json.freeShippingCost) {
+                              freeShipping = true;
+                            }
+                          }
+                          if (json.shippingIncluded === true) {
+                            shippingFee.push({
+                              sellerId: sellerIds[b],
+                              deliveryType: DeliveryType.DoorToDoor,
+                              isFreeShipping: freeShipping,
+                              shippingFee: undefined,
+                            });
+                          } else {
+                            shippingFee.push({
+                              sellerId: sellerIds[b],
+                              deliveryType: DeliveryType.DoorToDoor,
+                              isFreeShipping: freeShipping,
+                              shippingFee: undefined,
+                            });
                           }
                         }
-                        if (json.shippingIncluded === true) {
-                          shippingFee.push({
-                            sellerId: sellerIds[b],
-                            deliveryType: DeliveryType.DoorToDoor,
-                            isFreeShipping: freeShipping,
-                            shippingFee: undefined,
-                          });
-                        } else {
-                          shippingFee.push({
-                            sellerId: sellerIds[b],
-                            deliveryType: DeliveryType.DoorToDoor,
-                            isFreeShipping: freeShipping,
-                            shippingFee: undefined,
-                          });
-                        }
+                      } else {
+                        rejectedSeller.push(sellerIds[b]);
                       }
                     });
                 } else if (
@@ -409,65 +414,71 @@ export default async function handler(
                       let exists = shippingFee.findIndex(
                         (e) => e.sellerId === sellerIds[b]
                       );
-
-                      if (exists >= 0) {
-                        if (json.shippingCost! >= 0) {
-                          shippingFee[exists].shippingFee = json.shippingCost;
-                        } else {
-                          shippingFee[exists].shippingFee =
-                            json.defaultShippingCost;
-                        }
-                        if (json.isOfferFreeShipping === true) {
-                          let subTotal = cartItems
-                            .filter((e: any) => e.sellerId === sellerIds[b])
-                            .map((e: any) =>
-                              e.salePrice
-                                ? e.salePrice * e.quantity
-                                : e.normalPrice * e.quantity
-                            )
-                            .reduce((a, b) => a + b, 0);
-                          if (subTotal >= json.freeShippingCost) {
-                            shippingFee[exists].isFreeShipping = true;
+                      if (json.shippingIncluded) {
+                        if (exists >= 0) {
+                          if (json.shippingCost! >= 0) {
+                            shippingFee[exists].shippingFee = json.shippingCost;
+                          } else {
+                            shippingFee[exists].shippingFee =
+                              json.defaultShippingCost;
+                          }
+                          if (json.isOfferFreeShipping === true) {
+                            let subTotal = cartItems
+                              .filter((e: any) => e.sellerId === sellerIds[b])
+                              .map((e: any) =>
+                                e.salePrice
+                                  ? e.salePrice * e.quantity
+                                  : e.normalPrice * e.quantity
+                              )
+                              .reduce((a, b) => a + b, 0);
+                            if (subTotal >= json.freeShippingCost) {
+                              shippingFee[exists].isFreeShipping = true;
+                            } else {
+                              shippingFee[exists].isFreeShipping = false;
+                            }
                           } else {
                             shippingFee[exists].isFreeShipping = false;
                           }
                         } else {
-                          shippingFee[exists].isFreeShipping = false;
-                        }
-                      } else {
-                        let freeShipping = false;
-                        if (json.isOfferFreeShipping === true) {
-                          let subTotal = cartItems
-                            .filter((e: any) => e.sellerId === sellerIds[b])
-                            .map((e: any) =>
-                              e.salePrice
-                                ? e.salePrice * e.quantity
-                                : e.normalPrice * e.quantity
-                            )
-                            .reduce((a, b) => a + b, 0);
-                          if (subTotal >= json.freeShippingCost) {
-                            freeShipping = true;
+                          let freeShipping = false;
+                          if (json.isOfferFreeShipping === true) {
+                            let subTotal = cartItems
+                              .filter((e: any) => e.sellerId === sellerIds[b])
+                              .map((e: any) =>
+                                e.salePrice
+                                  ? e.salePrice * e.quantity
+                                  : e.normalPrice * e.quantity
+                              )
+                              .reduce((a, b) => a + b, 0);
+                            if (subTotal >= json.freeShippingCost) {
+                              freeShipping = true;
+                            }
+                          }
+                          if (json.shippingIncluded === true) {
+                            shippingFee.push({
+                              sellerId: sellerIds[b],
+                              deliveryType: DeliveryType.DoorToDoor,
+                              isFreeShipping: freeShipping,
+                              shippingFee: json.defaultShippingCost,
+                            });
+                          } else {
+                            shippingFee.push({
+                              sellerId: sellerIds[b],
+                              deliveryType: DeliveryType.DoorToDoor,
+                              isFreeShipping: freeShipping,
+                              shippingFee: undefined,
+                            });
                           }
                         }
-                        if (json.shippingIncluded === true) {
-                          shippingFee.push({
-                            sellerId: sellerIds[b],
-                            deliveryType: DeliveryType.DoorToDoor,
-                            isFreeShipping: freeShipping,
-                            shippingFee: json.defaultShippingCost,
-                          });
-                        } else {
-                          shippingFee.push({
-                            sellerId: sellerIds[b],
-                            deliveryType: DeliveryType.DoorToDoor,
-                            isFreeShipping: freeShipping,
-                            shippingFee: undefined,
-                          });
-                        }
+                      } else {
+                        rejectedSeller.push(sellerIds[b]);
                       }
                     });
                 }
               }
+              cartItems = cartItems.filter(
+                (z: any) => !rejectedSeller.includes(z.sellerId)
+              );
             } else {
               let order = await prisma.order.findFirst({
                 where: {

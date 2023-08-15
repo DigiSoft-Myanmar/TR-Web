@@ -36,6 +36,7 @@ function CheckoutPage() {
       : [Step.Billing, Step.Confirmation];
   const [currentStep, setCurrentStep] = React.useState(Step.Billing);
   const promoRef = React.useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   function nextFn(addDiff: boolean) {
     setCurrentStep((prevValue) => {
@@ -65,6 +66,20 @@ function CheckoutPage() {
       return prevStep;
     });
   }
+
+  React.useEffect(() => {
+    if (cartItems && cartItems.length > 0) {
+    } else {
+      showErrorDialog(
+        "Empty cart. Please buy and try again.",
+        "",
+        locale,
+        () => {
+          router.push("/marketplace");
+        }
+      );
+    }
+  }, [cartItems]);
 
   return (
     <div>

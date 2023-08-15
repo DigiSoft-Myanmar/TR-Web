@@ -278,7 +278,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
         />
         <span className="mt-5 flex justify-end divide-x overflow-hidden">
           <button
-            className={`inline-block rounded-l-md border bg-primary p-3 p-white shadow-sm hover:bg-primary-focus focus:relative`}
+            className={`inline-block rounded-l-md border bg-primary p-3 p-white shadow-sm hover:bg-primary-focus focus:relative text-white`}
             title="Previous"
             onClick={() => {
               backFn();
@@ -298,7 +298,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
             </svg>
           </button>
           <button
-            className={`inline-block rounded-r-md border bg-primary p-3 p-white shadow-sm hover:bg-primary-focus focus:relative`}
+            className={`inline-block rounded-r-md border bg-primary p-3 p-white shadow-sm hover:bg-primary-focus focus:relative text-white`}
             title="Next"
             type="submit"
           >
