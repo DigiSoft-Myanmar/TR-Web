@@ -49,6 +49,8 @@ export default async function handler(
           product: {
             include: {
               seller: true,
+              Brand: true,
+              Review: true,
             },
           },
           auction: {
@@ -85,6 +87,8 @@ export default async function handler(
             },
           },
           seller: true,
+          Brand: true,
+          Review: true,
         },
       });
       let list = prodList.filter(
