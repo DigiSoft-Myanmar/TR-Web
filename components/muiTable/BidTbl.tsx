@@ -265,47 +265,53 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
         </div>
         <div className="flex flex-row items-center gap-3">
           <ExportCSVButton
-            csvData={data?.map((row: any) => {
-              return {
-                "Product Name": row.product.name,
-                "Product SKU": row.product.SKU,
-                "Seller Name": row.product.seller.username,
-                "Seller Phone": row.product.seller.phoneNum,
-                "Seller Email": row.product.seller.email
-                  ? row.product.seller.email
-                  : "-",
-                Status:
-                  new Date(row.product.endTime) <= new Date()
-                    ? "Ended"
-                    : new Date(row.product.endTime) > new Date()
-                    ? "Live"
-                    : "",
-                "Bid Amount": formatAmount(row.amount, locale, true, false),
-                "Estimated Amount": formatAmount(
-                  row.product.estimatedPrice
-                    ? row.product.estimatedPrice
-                    : row.product.estimatedAmount,
-                  locale,
-                  true,
-                  false
-                ),
-                Bidder: row.createdBy.username,
-                "Bidder Display Name": row.createdBy.displayName,
-                "Bidder Phone": row.createdBy.phoneNum,
-                "Bidder Email": row.createdBy.email ? row.createdBy.email : "-",
+            csvData={
+              data &&
+              data.length > 0 &&
+              data?.map((row: any) => {
+                return {
+                  "Product Name": row.product.name,
+                  "Product SKU": row.product.SKU,
+                  "Seller Name": row.product.seller.username,
+                  "Seller Phone": row.product.seller.phoneNum,
+                  "Seller Email": row.product.seller.email
+                    ? row.product.seller.email
+                    : "-",
+                  Status:
+                    new Date(row.product.endTime) <= new Date()
+                      ? "Ended"
+                      : new Date(row.product.endTime) > new Date()
+                      ? "Live"
+                      : "",
+                  "Bid Amount": formatAmount(row.amount, locale, true, false),
+                  "Estimated Amount": formatAmount(
+                    row.product.estimatedPrice
+                      ? row.product.estimatedPrice
+                      : row.product.estimatedAmount,
+                    locale,
+                    true,
+                    false
+                  ),
+                  Bidder: row.createdBy.username,
+                  "Bidder Display Name": row.createdBy.displayName,
+                  "Bidder Phone": row.createdBy.phoneNum,
+                  "Bidder Email": row.createdBy.email
+                    ? row.createdBy.email
+                    : "-",
 
-                "Bid Time": new Date(row.createdAt).toLocaleDateString(
-                  "en-ca",
-                  {
-                    year: "numeric",
-                    month: "short",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }
-                ),
-              };
-            })}
+                  "Bid Time": new Date(row.createdAt).toLocaleDateString(
+                    "en-ca",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  ),
+                };
+              })
+            }
             fileName={
               "Bid data " +
               new Date().toLocaleDateString("en-ca", {
