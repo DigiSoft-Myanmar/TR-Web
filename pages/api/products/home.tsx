@@ -26,16 +26,60 @@ export default async function handler(
         const prodList = await prisma.product.findMany({
           where: {
             isFeatured: true,
+
+            type: {
+              not: ProductType.Auction,
+            },
+
+            seller: {
+              sellAllow: true,
+              isBlocked: false,
+              isDeleted: false,
+            },
+          },
+          include: {
+            Brand: true,
+            Review: true,
+            seller: true,
+          },
+        });
+
+        const auctionProd = await prisma.product.findMany({
+          where: {
+            type: ProductType.Auction,
+            endTime: {
+              gt: today,
+            },
+            seller: {
+              sellAllow: true,
+              isBlocked: false,
+              isDeleted: false,
+            },
+          },
+          include: {
+            Brand: true,
+            Review: true,
+            seller: true,
+          },
+        });
+
+        let currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        const promotionProducts = await prisma.product.findMany({
+          where: {
             OR: [
               {
-                type: ProductType.Auction,
-                endTime: {
-                  gt: today,
-                },
+                isPromotionAll: true,
+                isPromotionAllPeriod: true,
               },
               {
-                type: {
-                  not: ProductType.Auction,
+                isPromotionAll: true,
+                isPromotionAllPeriod: false,
+                isPromotionAllStartDate: {
+                  gte: currentDate,
+                },
+                isPromotionAllEndDate: {
+                  lte: currentDate,
                 },
               },
             ],
@@ -51,7 +95,12 @@ export default async function handler(
             seller: true,
           },
         });
-        return res.status(200).json(prodList);
+
+        return res.status(200).json({
+          buyNow: prodList,
+          auctionProd: auctionProd,
+          promotionProducts: promotionProducts,
+        });
       default:
         return res.status(501).json(NotAvailable);
     }

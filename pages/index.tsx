@@ -36,12 +36,18 @@ import AdminDashboard from "@/components/screen/AdminDashboard";
 import { otherPermission } from "@/types/permissionTypes";
 
 export function IndexPage({
+  auctionList,
   sellerList,
   totalReview,
   content,
   prodList,
   promotionProducts,
 }: {
+  auctionList: (Product & {
+    Brand: Brand;
+    Review: Review[];
+    seller: User;
+  })[];
   sellerList: User[];
   totalReview: number;
   content: Content;
@@ -67,10 +73,8 @@ export function IndexPage({
   const router = useRouter();
   const { data: session }: any = useSession();
 
-  const totalAuction = prodList.filter(
-    (z) => z.type === ProductType.Auction
-  ).length;
-  const totalBuyNow = prodList.length - totalAuction;
+  const totalAuction = auctionList.length;
+  const totalBuyNow = prodList.length;
   const auctionFeaturedCount = 0;
   const buyNowFeaturedCount = 0;
   const totalPromotion = 0;
@@ -400,12 +404,7 @@ export function IndexPage({
               </div>
             </section>
             {totalAuction > 0 && (
-              <AuctionHome
-                prodList={prodList.filter(
-                  (z) => z.type === ProductType.Auction
-                )}
-                categories={categories}
-              />
+              <AuctionHome prodList={auctionList} categories={categories} />
             )}
           </>
         )}
@@ -870,19 +869,9 @@ export async function getServerSideProps({ locale }: any) {
   const prodList = await prisma.product.findMany({
     where: {
       isFeatured: true,
-      OR: [
-        {
-          type: ProductType.Auction,
-          endTime: {
-            gt: today,
-          },
-        },
-        {
-          type: {
-            not: ProductType.Auction,
-          },
-        },
-      ],
+      type: {
+        not: ProductType.Auction,
+      },
       seller: {
         sellAllow: true,
         isBlocked: false,
@@ -895,6 +884,25 @@ export async function getServerSideProps({ locale }: any) {
       seller: true,
     },
   });
+  const auctionProd = await prisma.product.findMany({
+    where: {
+      type: ProductType.Auction,
+      endTime: {
+        gt: today,
+      },
+      seller: {
+        sellAllow: true,
+        isBlocked: false,
+        isDeleted: false,
+      },
+    },
+    include: {
+      Brand: true,
+      Review: true,
+      seller: true,
+    },
+  });
+
   let currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
   const promotionProducts = await prisma.product.findMany({
@@ -930,6 +938,7 @@ export async function getServerSideProps({ locale }: any) {
 
   return {
     props: {
+      auctionList: JSON.parse(JSON.stringify(auctionProd)),
       sellerList: JSON.parse(JSON.stringify(sellerList)),
       content: JSON.parse(JSON.stringify(content)),
       totalReview: totalReview,
