@@ -188,26 +188,17 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                 )}
               </div>
 
-              <div
-                className="form-control flex"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  if (isInternal(session) === true) {
-                    setSellAllow((prevValue) => !prevValue);
-                  }
-                }}
-              >
+              <div className="form-control flex">
                 <label className="label cursor-pointer">
                   <input
                     type="checkbox"
+                    name="sellAllow"
                     className="checkbox-primary checkbox"
-                    defaultChecked={sellAllow}
                     checked={sellAllow}
                     disabled={!isInternal(session)}
                     onChange={(e) => {
                       if (isInternal(session) === true) {
-                        setSellAllow((prevValue) => !prevValue);
+                        setSellAllow(e.currentTarget.checked);
                       }
                     }}
                   />
