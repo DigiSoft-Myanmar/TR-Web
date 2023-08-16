@@ -1795,7 +1795,8 @@ function AdminSidebar({ isOpen }: Props) {
 
           {session &&
             (session.role === Role.Admin ||
-              session.role === Role.SuperAdmin) && (
+              session.role === Role.SuperAdmin ||
+              session.role === Role.Staff) && (
               <details
                 className="group"
                 open={isOpen === "close" || router.asPath.includes("/contents")}
@@ -1849,68 +1850,72 @@ function AdminSidebar({ isOpen }: Props) {
                       : "ml-8 flex flex-col"
                   }
                 >
-                  <Tooltip title="Memberships" placement="right">
-                    <Link
-                      href={"/contents/memberships"}
-                      className={
-                        router.asPath.includes("/contents/memberships")
-                          ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                          : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-5 w-5 opacity-75"
+                  {hasPermission(session, otherPermission.membershipView) && (
+                    <Tooltip title="Memberships" placement="right">
+                      <Link
+                        href={"/contents/memberships"}
+                        className={
+                          router.asPath.includes("/contents/memberships")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
-                        />
-                      </svg>
-                      {isOpen === "open" && (
-                        <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                          {" "}
-                          Memberships{" "}
-                        </span>
-                      )}
-                    </Link>
-                  </Tooltip>
-                  <Tooltip title="Roles" placement="right">
-                    <Link
-                      href={"/contents/roles"}
-                      className={
-                        router.asPath.includes("/contents/roles")
-                          ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                          : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-5 w-5 opacity-75"
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-5 w-5 opacity-75"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+                          />
+                        </svg>
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            Memberships{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
+                  {session.role !== Role.Staff && (
+                    <Tooltip title="Roles" placement="right">
+                      <Link
+                        href={"/contents/roles"}
+                        className={
+                          router.asPath.includes("/contents/roles")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
-                        />
-                      </svg>
-                      {isOpen === "open" && (
-                        <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                          {" "}
-                          Roles{" "}
-                        </span>
-                      )}
-                    </Link>
-                  </Tooltip>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-5 w-5 opacity-75"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                          />
+                        </svg>
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            Roles{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
                   <Tooltip title="Site Management" placement="right">
                     <Link
                       href={"/contents/site"}
@@ -1943,37 +1948,39 @@ function AdminSidebar({ isOpen }: Props) {
                       )}
                     </Link>
                   </Tooltip>
-                  <Tooltip title="FAQs" placement="right">
-                    <Link
-                      href={"/contents/faqs"}
-                      className={
-                        router.asPath.includes("/contents/faqs")
-                          ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                          : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-5 w-5 opacity-75"
+                  {hasPermission(session, otherPermission.faqView) && (
+                    <Tooltip title="FAQs" placement="right">
+                      <Link
+                        href={"/contents/faqs"}
+                        className={
+                          router.asPath.includes("/contents/faqs")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
-                        />
-                      </svg>
-                      {isOpen === "open" && (
-                        <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                          {" "}
-                          FAQs{" "}
-                        </span>
-                      )}
-                    </Link>
-                  </Tooltip>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-5 w-5 opacity-75"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
+                          />
+                        </svg>
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            FAQs{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
                   <Tooltip title="Contact" placement="right">
                     <Link
                       href={"/contents/contact"}
@@ -2005,68 +2012,72 @@ function AdminSidebar({ isOpen }: Props) {
                       )}
                     </Link>
                   </Tooltip>
-                  <Tooltip title="Legal" placement="right">
-                    <Link
-                      href={"/contents/legal"}
-                      className={
-                        router.asPath.includes("/contents/legal")
-                          ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                          : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-5 w-5 opacity-75"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
-                        />
-                      </svg>
-                      {isOpen === "open" && (
-                        <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                          {" "}
-                          Legal{" "}
-                        </span>
-                      )}
-                    </Link>
-                  </Tooltip>
-                  <Tooltip title="Townships" placement="right">
-                    <Link
-                      href={"/contents/townships"}
-                      className={
-                        router.asPath.includes("/contents/townships")
-                          ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                          : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                      }
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="h-5 w-5 opacity-75"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"
-                        />
-                      </svg>
-                      {isOpen === "open" && (
-                        <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                          {" "}
-                          Townships{" "}
-                        </span>
-                      )}
-                    </Link>
-                  </Tooltip>
+                  {session.role !== Role.Staff && (
+                    <>
+                      <Tooltip title="Legal" placement="right">
+                        <Link
+                          href={"/contents/legal"}
+                          className={
+                            router.asPath.includes("/contents/legal")
+                              ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                              : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="h-5 w-5 opacity-75"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
+                            />
+                          </svg>
+                          {isOpen === "open" && (
+                            <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                              {" "}
+                              Legal{" "}
+                            </span>
+                          )}
+                        </Link>
+                      </Tooltip>
+                      <Tooltip title="Townships" placement="right">
+                        <Link
+                          href={"/contents/townships"}
+                          className={
+                            router.asPath.includes("/contents/townships")
+                              ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                              : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                          }
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="h-5 w-5 opacity-75"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"
+                            />
+                          </svg>
+                          {isOpen === "open" && (
+                            <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                              {" "}
+                              Townships{" "}
+                            </span>
+                          )}
+                        </Link>
+                      </Tooltip>
+                    </>
+                  )}
                 </nav>
               </details>
             )}

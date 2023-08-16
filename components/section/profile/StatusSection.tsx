@@ -205,6 +205,11 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
                     defaultChecked={sellAllow}
                     checked={sellAllow}
                     disabled={!isInternal(session)}
+                    onChange={(e) => {
+                      if (isInternal(session) === true) {
+                        setSellAllow((prevValue) => !prevValue);
+                      }
+                    }}
                   />
                   <span className="label-text ml-3 flex-grow">
                     {t("sellAllow")}
