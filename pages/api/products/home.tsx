@@ -26,7 +26,7 @@ export default async function handler(
         const prodList = await prisma.product.findMany({
           where: {
             isFeatured: true,
-
+            isPublished: true,
             type: {
               not: ProductType.Auction,
             },
@@ -55,7 +55,9 @@ export default async function handler(
               isBlocked: false,
               isDeleted: false,
             },
+            isPublished: true,
           },
+
           include: {
             Brand: true,
             Review: true,
@@ -83,6 +85,7 @@ export default async function handler(
                 },
               },
             ],
+            isPublished: true,
             seller: {
               sellAllow: true,
               isBlocked: false,

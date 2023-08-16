@@ -869,6 +869,7 @@ export async function getServerSideProps({ locale }: any) {
   const prodList = await prisma.product.findMany({
     where: {
       isFeatured: true,
+      isPublished: true,
       type: {
         not: ProductType.Auction,
       },
@@ -890,6 +891,7 @@ export async function getServerSideProps({ locale }: any) {
       endTime: {
         gt: today,
       },
+      isPublished: true,
       seller: {
         sellAllow: true,
         isBlocked: false,
@@ -907,6 +909,7 @@ export async function getServerSideProps({ locale }: any) {
   currentDate.setHours(0, 0, 0, 0);
   const promotionProducts = await prisma.product.findMany({
     where: {
+      isPublished: true,
       OR: [
         {
           isPromotionAll: true,
