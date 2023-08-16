@@ -27,7 +27,7 @@ export default async function handler(
         } else {
           let filter: any = {
             sellerId: brandId?.toString(),
-            SKU: SKU?.toString(),
+            SKU: { mode: "insensitive", equals: SKU?.toString().toLowerCase() },
           };
           if (id) {
             filter = {
@@ -43,7 +43,42 @@ export default async function handler(
           if (prod > 0) {
             return res.status(200).json(Exists);
           } else {
-            return res.status(404).json(NotAvailable);
+            let prod = await prisma.product.findMany({
+              where: {
+                sellerId: brandId?.toString(),
+                type: "Variable",
+              },
+            });
+            let variableCount = prod.filter((z) =>
+              z.variations.filter(
+                (b: any) =>
+                  b.SKU.toLowerCase() === SKU?.toString().toLowerCase()
+              ).length > 0
+                ? true
+                : false
+            ).length;
+            if (variableCount > 0) {
+              return res.status(200).json(Exists);
+            } else {
+              let wonList = await prisma.wonList.count({
+                where: {
+                  auction: {
+                    SKU: {
+                      mode: "insensitive",
+                      equals: SKU?.toString().toLowerCase(),
+                    },
+                  },
+                  status: {
+                    in: ["InCart", "Purchased"],
+                  },
+                },
+              });
+              if (wonList > 0) {
+                return res.status(200).json(Exists);
+              } else {
+                return res.status(404).json(NotAvailable);
+              }
+            }
           }
         }
       } else {
