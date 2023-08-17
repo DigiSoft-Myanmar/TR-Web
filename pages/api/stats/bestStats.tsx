@@ -1,7 +1,8 @@
 import useAuth from "@/hooks/useAuth";
 import prisma from "@/prisma/prisma";
 import { Unauthorized } from "@/types/ApiResponseTypes";
-import { isInternal } from "@/util/authHelper";
+import { otherPermission } from "@/types/permissionTypes";
+import { hasPermission, isInternal } from "@/util/authHelper";
 import { isCompleted } from "@/util/orderHelper";
 import { NextApiRequest, NextApiResponse } from "next";
 import { abort } from "process";
@@ -385,7 +386,10 @@ export default async function handler(
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session: any = await useAuth(req);
-  if (isInternal(session)) {
+  if (
+    isInternal(session) &&
+    hasPermission(session, otherPermission.dashboardView)
+  ) {
     const startDate = new Date(new Date().getFullYear(), 0, 1);
     startDate.setHours(0, 0, 0, 0);
     const endDate = new Date(new Date().getFullYear(), 11, 31);

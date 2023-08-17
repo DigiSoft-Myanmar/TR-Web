@@ -55,6 +55,10 @@ function Header({
     shippingLocation,
     setShippingLocation,
     isLoading,
+    isAddressDiff,
+    billingAddress,
+    modifyAddress,
+    shippingAddress,
   } = useMarketplace();
 
   const { locale } = router;
@@ -877,6 +881,25 @@ function Header({
                       districtId: data.districtId,
                       townshipId: data.townshipId,
                     });
+                    if (isAddressDiff === false) {
+                      if (
+                        billingAddress &&
+                        billingAddress.stateId === data.stateId &&
+                        billingAddress.districtId === data.districtId &&
+                        billingAddress.townshipId === data.townshipId
+                      ) {
+                      } else {
+                        let d = {
+                          ...billingAddress,
+                          houseNo: "",
+                          street: "",
+                          stateId: data.stateId,
+                          districtId: data.districtId,
+                          townshipId: data.townshipId,
+                        };
+                        modifyAddress(d, isAddressDiff, shippingAddress);
+                      }
+                    }
                   }}
                 />
               </div>

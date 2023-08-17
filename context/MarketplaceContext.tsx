@@ -178,7 +178,6 @@ export const MarketplaceProvider = ({
     if (cartData?.isAddressDiff === true) {
       return true;
     } else if (cartData?.isAddressDiff === false) {
-      setShippingLocation(billingAddress);
       return false;
     } else {
       if (

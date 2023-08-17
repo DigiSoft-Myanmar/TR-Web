@@ -1,7 +1,8 @@
 import useAuth from "@/hooks/useAuth";
 import prisma from "@/prisma/prisma";
 import { Unauthorized } from "@/types/ApiResponseTypes";
-import { isInternal } from "@/util/authHelper";
+import { otherPermission } from "@/types/permissionTypes";
+import { hasPermission, isInternal } from "@/util/authHelper";
 import { Role, SiteVisit } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -149,7 +150,10 @@ export default async function handler(
 ) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const session: any = await useAuth(req);
-  if (isInternal(session)) {
+  if (
+    isInternal(session) &&
+    hasPermission(session, otherPermission.dashboardView)
+  ) {
     const today = new Date();
 
     // Calculate start and end dates of the week
