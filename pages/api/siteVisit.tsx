@@ -74,7 +74,7 @@ async function addSiteVisit(req: NextApiRequest, res: NextApiResponse<any>) {
     } else {
       data = JSON.parse(req.body);
     }
-    console.log(data);
+    console.log(data, "data");
 
     if (data) {
       let b: any = {
@@ -111,6 +111,10 @@ async function addSiteVisit(req: NextApiRequest, res: NextApiResponse<any>) {
           ipAddress: queryIp?.toString(),
         },
       });
+
+      console.log(b, "b");
+
+      console.log(exists, "Exists");
 
       if (exists) {
         //update

@@ -37,7 +37,7 @@ export default function SellerSelectBox({
   return (
     <div>
       <label className={`text-sm font-medium text-gray-400`}>
-        Sellers <span className="text-primary">*</span>
+        Seller <span className="text-primary">*</span>
       </label>
       <Listbox value={selected} onChange={(e) => setSelected(e)}>
         <div className="relative mt-1">

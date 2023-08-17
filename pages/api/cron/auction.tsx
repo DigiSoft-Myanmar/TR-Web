@@ -151,7 +151,7 @@ export default async function handler(
                     wonAuction.product.name +
                     " with " +
                     formatAmount(wonAuction.auction.amount, "en", true) +
-                    "and waiting for seller approval.";
+                    " and waiting for seller approval.";
 
               let statusTitle =
                 auctionProds[i].estimatedPrice <= lastOffer.amount
