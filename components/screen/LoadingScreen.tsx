@@ -5,7 +5,7 @@ import React from "react";
 
 function LoadingScreen() {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
+    <div className="inset-0 z-50 flex flex-col items-center justify-center min-h-screen">
       <Head>
         <title>Loading | Treasure Rush</title>
         <meta name="description" content={defaultDescription} />
