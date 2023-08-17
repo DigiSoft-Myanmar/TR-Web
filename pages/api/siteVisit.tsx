@@ -74,7 +74,6 @@ async function addSiteVisit(req: NextApiRequest, res: NextApiResponse<any>) {
     } else {
       data = JSON.parse(req.body);
     }
-    console.log(data, "data");
 
     if (data) {
       let b: any = {
