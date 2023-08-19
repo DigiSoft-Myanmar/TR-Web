@@ -194,6 +194,8 @@ function MarketplacePage({
     }
   }, [product]);
 
+  console.log(pricingInfo);
+
   React.useEffect(() => {
     try {
       fetch("https://api.ipify.org/?format=json")
