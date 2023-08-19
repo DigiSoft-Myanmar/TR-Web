@@ -45,6 +45,9 @@ export default async function handler(
           } else {
             let prod = await prisma.product.findMany({
               where: {
+                id: {
+                  not: id?.toString(),
+                },
                 sellerId: brandId?.toString(),
                 type: "Variable",
               },
