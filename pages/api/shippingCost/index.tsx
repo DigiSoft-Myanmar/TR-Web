@@ -139,9 +139,11 @@ export default async function handler(
             }
             if (township) {
               filter.townshipId = township.toString();
-            } else if (district) {
+            }
+            if (district) {
               filter.districtId = district.toString();
-            } else if (state) {
+            }
+            if (state) {
               filter.stateId = state.toString();
             }
             if (state || district || township) {

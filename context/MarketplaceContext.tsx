@@ -463,7 +463,30 @@ export const MarketplaceProvider = ({
         }
       }
     } else {
-      return false;
+      if (shippingLocation.townshipId) {
+        let data = await fetch(
+          "/api/shippingCost?sellerId=" +
+            sellerId +
+            "&state=" +
+            shippingLocation.stateId +
+            "&district=" +
+            shippingLocation.districtId +
+            "&township=" +
+            shippingLocation.townshipId
+        )
+          .then((data) => data.json())
+          .then((json) => {
+            return json;
+          });
+
+        if (data.shippingIncluded === true) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     }
   }
 
