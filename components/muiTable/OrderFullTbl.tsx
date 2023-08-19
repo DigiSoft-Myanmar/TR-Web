@@ -185,7 +185,21 @@ const OrderFullTbl = ({
       minWidth: 200,
       field: "invoiceStatus",
       renderHeader: () => "Status",
-
+      valueGetter(params: any) {
+        let row = params.row;
+        let data = row.invoiceStatus;
+        let status = "";
+        if (data && data.length > 1) {
+          let sellerId = row.sellerIds.find((z) => z === session.id);
+          data = row.invoiceStatus.filter((z) =>
+            sellerId ? z.seller.id === sellerId : true
+          );
+          status = getOrderStatus(row, sellerId).status;
+        } else {
+          status = data[0].status;
+        }
+        return status;
+      },
       renderCell: ({ row }: any) => {
         let data = row.invoiceStatus;
 

@@ -125,6 +125,21 @@ apiRoute.get(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
             gallery[i].usage = ads;
           }
           break;
+        case ImgType.Profile:
+          for (let i = 0; i < gallery.length; i++) {
+            let fileName = gallery[i].filename;
+            let ads = await prisma.user.findMany({
+              where: {
+                OR: [
+                  { profile: fileName },
+                  { nrcFront: fileName },
+                  { nrcBack: fileName },
+                ],
+              },
+            });
+            gallery[i].usage = ads;
+          }
+          break;
         case ImgType.Attribute:
           for (let i = 0; i < gallery.length; i++) {
             let fileName = gallery[i].filename;
@@ -179,7 +194,34 @@ apiRoute.get(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
 
         case ImgType.SiteManagement:
           for (let i = 0; i < gallery.length; i++) {
-            gallery[i].usage = [];
+            let fileName = gallery[i].filename;
+            gallery[i].usage = await prisma.content.findMany({
+              where: {
+                OR: [
+                  {
+                    homeHeroImg: fileName,
+                  },
+                  {
+                    auctionHeroImg: fileName,
+                  },
+                  {
+                    promotionHeroImg: fileName,
+                  },
+                  {
+                    mobileImg: fileName,
+                  },
+                  {
+                    forgotPwdImg: fileName,
+                  },
+                  {
+                    featureHeroImg: fileName,
+                  },
+                  {
+                    membershipHeroImg: fileName,
+                  },
+                ],
+              },
+            });
           }
           break;
         case ImgType.Others:

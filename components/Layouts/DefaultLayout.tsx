@@ -55,6 +55,9 @@ function DefaultLayout({ children }: LayoutProps) {
   //const { data: paymentMethods } = useSWR("/api/paymentMethods", fetcher);
   const [device, setDevice] = React.useState<any>();
   const [isOnline, setIsOnline] = React.useState<boolean>(true);
+  const [isReload, setReload] = React.useState(true);
+
+  const { reload } = router.query;
 
   React.useEffect(() => {
     if (getDevice()) {
@@ -87,7 +90,13 @@ function DefaultLayout({ children }: LayoutProps) {
   }, [isOnline, session]);
 
   React.useEffect(() => {
-    if (session) {
+    if (reload === "true") {
+      setReload(false);
+    }
+  }, [reload]);
+
+  React.useEffect(() => {
+    if (session && isReload) {
       if (!isInternal(session)) {
         if (!session.nrcFront) {
           router.push(
@@ -104,7 +113,7 @@ function DefaultLayout({ children }: LayoutProps) {
         }
       }
     }
-  }, [session, router.asPath]);
+  }, [session, router.asPath, isReload]);
 
   React.useEffect(() => {
     if (device) {

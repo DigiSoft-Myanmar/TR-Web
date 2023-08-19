@@ -136,8 +136,8 @@ function ScheduleModal({ isModalOpen, setModalOpen, setSchedule }: Props) {
                         isSalePeriod={true}
                         error={error}
                         setError={setError}
-                        saleEndDate={date?.saleStartDate}
-                        saleStartDate={date?.saleEndDate}
+                        saleEndDate={date?.saleEndDate}
+                        saleStartDate={date?.saleStartDate}
                         setSaleDate={(startDate: Date, endDate: Date) => {
                           setDate((prevValue: any) => {
                             if (startDate === null && endDate === null) {

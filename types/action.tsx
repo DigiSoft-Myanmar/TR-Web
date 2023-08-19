@@ -14,6 +14,7 @@ export enum AuctionAction {
 export enum ProductAction {
   IncreaseRegularPrice = "Increase Regular Price",
   DecreaseRegularPrice = "Decrease Regular Price",
+  SetSalesPrice = "Set Sales Price",
   IncreaseSalesPrice = "Increase Sales Price",
   DecreaseSalesPrice = "Decrease Sales Price",
   SetSalesPeriod = "Set Sales Period",

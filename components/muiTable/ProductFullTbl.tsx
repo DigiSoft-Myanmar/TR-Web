@@ -107,6 +107,8 @@ const ProductFullTbl = ({
 
   const [scheduleModalOpen, setScheduledModalOpen] = React.useState(false);
   const [stockLevelModalOpen, setStockLevelModalOpen] = React.useState(false);
+  const [isSalePriceModalOpen, setSetSalePriceModalOpen] =
+    React.useState(false);
 
   const doublePrevYear = new Date();
   doublePrevYear.setFullYear(new Date().getFullYear() - 2);
@@ -1490,6 +1492,9 @@ const ProductFullTbl = ({
                             setModifySalePriceModalOpen(true);
                             setIncrease(false);
                             break;
+                          case ProductAction.SetSalesPrice:
+                            setSetSalePriceModalOpen(true);
+                            break;
                           case ProductAction.SetSalesPeriod:
                             setScheduledModalOpen(true);
                             break;
@@ -1687,6 +1692,49 @@ const ProductFullTbl = ({
               });
           }}
         />
+
+        <ModifyPriceModal
+          isModalOpen={isSalePriceModalOpen}
+          setModalOpen={setSetSalePriceModalOpen}
+          title={"Set Sale Price"}
+          setPrice={(e: number, isPercent: boolean) => {
+            fetch(
+              "/api/products/update?action=" +
+                encodeURIComponent(action) +
+                selectionModel.map((z) => "&id=" + z).join(""),
+              {
+                method: "PUT",
+                body: JSON.stringify({
+                  amount: e,
+                  isPercent: isPercent,
+                }),
+                headers: getHeaders(session),
+              }
+            )
+              .then((data) => data.json())
+              .then((json) => {
+                if (json.successCount || json.failedCount) {
+                  if (json.successCount > 0) {
+                    showSuccessDialog(
+                      json.successCount + " products update successfully.",
+                      "",
+                      locale,
+                      () => {
+                        refetch();
+                      }
+                    );
+                  } else {
+                    showErrorDialog("Update failed", "", locale);
+                  }
+                } else if (json.error) {
+                  showErrorDialog(json.error, json?.errorMM, locale);
+                } else {
+                  showErrorDialog(t("somethingWentWrong"), "", locale);
+                }
+              });
+          }}
+        />
+
         <ScheduleModal
           isModalOpen={scheduleModalOpen}
           setModalOpen={setScheduledModalOpen}

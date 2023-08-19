@@ -131,6 +131,32 @@ export default async function handler(
                     }
                     successCnt++;
                     break;
+                  case ProductAction.SetSalesPrice:
+                    let salePrice = 0;
+                    if (body.isPercent === true) {
+                      salePrice =
+                        prods[i].regularPrice! -
+                        Math.ceil(
+                          (prods[i].regularPrice! * body.amount!) / 100
+                        );
+                    } else {
+                      salePrice = body.amount;
+                    }
+                    if (
+                      parseInt(salePrice.toFixed()) < prods[i].regularPrice!
+                    ) {
+                      await prisma.product.update({
+                        where: {
+                          id: prods[i].id,
+                        },
+                        data: {
+                          salePrice: parseInt(salePrice.toFixed()),
+                          isPercent: false,
+                        },
+                      });
+                      successCnt++;
+                    }
+                    break;
                   case ProductAction.IncreaseSalesPrice:
                     let incSAmt = 0;
                     let saleAmt = prods[i].salePrice;
@@ -289,6 +315,34 @@ export default async function handler(
                           id: prods[i].id,
                         },
                         data: { variations: v1 },
+                      });
+                      successCnt++;
+                    }
+                    break;
+                  case ProductAction.SetSalesPrice:
+                    let chS = 0;
+                    let vS: any = [...prods[i].variations];
+                    let salePrice = 0;
+                    for (let j = 0; j < vS.length; j++) {
+                      if (body.isPercent === true) {
+                        salePrice =
+                          vS[i].regularPrice! -
+                          Math.ceil((vS[i].regularPrice! * body.amount!) / 100);
+                      } else {
+                        salePrice = body.amount;
+                      }
+                      if (parseInt(salePrice.toFixed()) < vS[i].regularPrice!) {
+                        vS[j].salePrice = parseInt(salePrice.toFixed());
+                        vS[j].isPercent = false;
+                        chS++;
+                      }
+                    }
+                    if (chS > 0) {
+                      await prisma.product.update({
+                        where: {
+                          id: prods[i].id,
+                        },
+                        data: { variations: vS },
                       });
                       successCnt++;
                     }

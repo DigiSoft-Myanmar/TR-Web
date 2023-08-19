@@ -10,7 +10,8 @@ import {
   Success,
   Unauthorized,
 } from "@/types/ApiResponseTypes";
-import { isInternal } from "@/util/authHelper";
+import { BrandPermission } from "@/types/permissionTypes";
+import { hasPermission, isInternal } from "@/util/authHelper";
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -42,67 +43,76 @@ export default async function handler(
       return res.status(200).json(manufacture);
     }
 
-    if (
-      session &&
-      (session.role === Role.Admin || session.role === Role.SuperAdmin)
-    ) {
+    if (isInternal(session)) {
       switch (req.method) {
         case "POST":
-          let newData = JSON.parse(req.body);
-          let exists = await prisma.brand.findFirst({
-            where: {
-              name: newData.name,
-            },
-          });
-          if (exists) {
-            return res.status(400).json(AlreadyExists);
-          } else {
-            let term = await prisma.brand.create({
-              data: newData,
+          if (hasPermission(session, BrandPermission.brandCreateAllow)) {
+            let newData = JSON.parse(req.body);
+            let exists = await prisma.brand.findFirst({
+              where: {
+                name: newData.name,
+              },
             });
-            return res.status(200).json(term);
+            if (exists) {
+              return res.status(400).json(AlreadyExists);
+            } else {
+              let term = await prisma.brand.create({
+                data: newData,
+              });
+              return res.status(200).json(term);
+            }
+          } else {
+            return res.status(401).json(Unauthorized);
           }
         case "PUT":
-          let data = JSON.parse(req.body);
-          if (data.id) {
-            delete data.id;
-          }
-          if (id) {
-            let newTerm = await prisma.brand.update({
-              where: {
-                id: id.toString(),
-              },
-              data: data,
-            });
-            return res.status(200).json(newTerm);
+          if (hasPermission(session, BrandPermission.brandUpdateAllow)) {
+            let data = JSON.parse(req.body);
+            if (data.id) {
+              delete data.id;
+            }
+            if (id) {
+              let newTerm = await prisma.brand.update({
+                where: {
+                  id: id.toString(),
+                },
+                data: data,
+              });
+              return res.status(200).json(newTerm);
+            } else {
+              return res.status(400).json(BadRequest);
+            }
           } else {
-            return res.status(400).json(BadRequest);
+            return res.status(401).json(Unauthorized);
           }
         case "DELETE":
-          if (id) {
-            let manufacture = await prisma.brand.findFirst({
-              where: {
-                id: id.toString(),
-              },
-              include: {
-                Product: true,
-              },
-            });
-            if (manufacture) {
-              if (manufacture.Product.length > 0) {
-                return res.status(400).json(Exists);
-              } else {
-                await prisma.brand.delete({
-                  where: {
-                    id: id.toString(),
-                  },
-                });
-                return res.status(200).json(Success);
+          if (hasPermission(session, BrandPermission.brandDeleteAllow)) {
+            if (id) {
+              let manufacture = await prisma.brand.findFirst({
+                where: {
+                  id: id.toString(),
+                },
+                include: {
+                  Product: true,
+                },
+              });
+              if (manufacture) {
+                if (manufacture.Product.length > 0) {
+                  return res.status(400).json(Exists);
+                } else {
+                  await prisma.brand.delete({
+                    where: {
+                      id: id.toString(),
+                    },
+                  });
+                  return res.status(200).json(Success);
+                }
               }
+              return res.status(404).json(NotAvailable);
+            } else {
+              return res.status(400).json(BadRequest);
             }
-            return res.status(404).json(NotAvailable);
           } else {
-            return res.status(400).json(BadRequest);
+            return res.status(401).json(Unauthorized);
           }
         default:
           return res.status(501).json(Unauthorized);

@@ -84,7 +84,12 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
                   () => {
                     router.push(
                       "/account/" +
-                        encodeURIComponent(encryptPhone(profile.phoneNum))
+                        encodeURIComponent(encryptPhone(profile.phoneNum)) +
+                        "?reload=true",
+                      null,
+                      {
+                        shallow: false,
+                      }
                     );
                   }
                 );

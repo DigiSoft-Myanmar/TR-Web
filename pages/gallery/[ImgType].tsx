@@ -44,10 +44,7 @@ function GalleryPage() {
     refetch();
   }, [path]);
 
-  return session &&
-    (session.role === Role.Admin ||
-      session.role === Role.Staff ||
-      session.role === Role.SuperAdmin) ? (
+  return session && session.role === Role.SuperAdmin ? (
     <div>
       <Head>
         <title>{ImgType} Gallery | Treasure Rush</title>

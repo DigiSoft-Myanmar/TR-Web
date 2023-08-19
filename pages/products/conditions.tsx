@@ -22,8 +22,9 @@ import {
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import ErrorScreen from "@/components/screen/ErrorScreen";
-import { getHeaders, isInternal } from "@/util/authHelper";
+import { getHeaders, hasPermission, isInternal } from "@/util/authHelper";
 import TextModal from "@/components/modal/sideModal/TextModal";
+import { ConditionPermission } from "@/types/permissionTypes";
 
 interface CellType {
   row: any;
@@ -155,7 +156,8 @@ function Default() {
     },
   ];
 
-  return isInternal(session, true) ? (
+  return isInternal(session) &&
+    hasPermission(session, ConditionPermission.conditionViewAllow) ? (
     <div>
       <Head>
         <title>Conditions | Treasure Rush</title>

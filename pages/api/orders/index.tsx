@@ -41,11 +41,21 @@ export async function addOrderDetails(order: any, sellerId?: string) {
           id: status.sellerId,
         },
       });
-      statusArr.push({
-        seller: brand,
-        status: s.status,
-        updatedDate: s.updatedDate,
-      });
+      if (sellerId) {
+        if (sellerId === brand.id) {
+          statusArr.push({
+            seller: brand,
+            status: s.status,
+            updatedDate: s.updatedDate,
+          });
+        }
+      } else {
+        statusArr.push({
+          seller: brand,
+          status: s.status,
+          updatedDate: s.updatedDate,
+        });
+      }
     }
     order[i].invoiceStatus = statusArr;
     order[i].actions = order[i].orderNo;
