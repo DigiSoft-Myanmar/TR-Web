@@ -223,6 +223,7 @@ export default async function handler(
                           id: prods[i].id,
                         },
                         data: {
+                          isSalePeriod: true,
                           saleStartDate: body.saleStartDate,
                           saleEndDate: body.saleEndDate,
                         },
@@ -423,6 +424,7 @@ export default async function handler(
                     let v4: any = [...prods[i].variations];
                     for (let j = 0; j < v4.length; j++) {
                       if (v4[j].salePrice) {
+                        v4[j].isSalePeriod = true;
                         v4[j].saleStartDate = body.saleStartDate;
                         v4[j].saleEndDate = body.saleEndDate;
                         ch4++;
