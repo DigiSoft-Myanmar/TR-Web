@@ -1,9 +1,16 @@
 import { firebaseAdmin } from "@/lib/firebaseAdmin";
-import { Exists, NotAvailable } from "@/types/ApiResponseTypes";
+import { Exists, NotAvailable, Unauthorized } from "@/types/ApiResponseTypes";
 import { RoleNav } from "@/types/role";
 import { Brand, Gender, Role } from "@prisma/client";
 import { User } from "@prisma/client";
 import prisma from "../prisma";
+import { hasPermission } from "@/util/authHelper";
+import {
+  BuyerPermission,
+  SellerPermission,
+  StaffPermission,
+  TraderPermission,
+} from "@/types/permissionTypes";
 
 export const getAllUser = async (type?: any) => {
   let include: any = {
@@ -227,11 +234,43 @@ async function deleteUserFirebase(phoneNum: string, id: string) {
   }
 }
 
-export const deleteUser = async (id: string) => {
+export const deleteUser = async (id: string, session: any) => {
   const user = await prisma.user.findFirst({
     where: { id: id },
   });
   if (user) {
+    if (
+      session.role === Role.Staff &&
+      user.role === Role.Buyer &&
+      !hasPermission(session, BuyerPermission.buyerDeleteAllow)
+    ) {
+      return { success: false, data: Unauthorized, status: 401 };
+    }
+
+    if (
+      session.role === Role.Staff &&
+      user.role === Role.Seller &&
+      !hasPermission(session, SellerPermission.sellerDeleteAllow)
+    ) {
+      return { success: false, data: Unauthorized, status: 401 };
+    }
+
+    if (
+      session.role === Role.Staff &&
+      user.role === Role.Trader &&
+      !hasPermission(session, TraderPermission.traderDeleteAllow)
+    ) {
+      return { success: false, data: Unauthorized, status: 401 };
+    }
+
+    if (
+      session.role === Role.Staff &&
+      user.role === Role.Staff &&
+      !hasPermission(session, StaffPermission.staffDeleteAllow)
+    ) {
+      return { success: false, data: Unauthorized, status: 401 };
+    }
+
     await prisma.user.update({
       where: { id: id },
       data: {

@@ -23,6 +23,7 @@ import {
   BuyerPermission,
   SellerPermission,
   StaffPermission,
+  SubscribePermission,
   TraderPermission,
 } from "@/types/permissionTypes";
 import { RoleNav } from "@/types/role";
@@ -215,6 +216,38 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
     }
     if (data.role) {
       if (isInternal(session)) {
+        if (
+          session.role === Role.Staff &&
+          data.role === Role.Buyer &&
+          !hasPermission(session, BuyerPermission.buyerCreateAllow)
+        ) {
+          return res.status(401).json(Unauthorized);
+        }
+
+        if (
+          session.role === Role.Staff &&
+          data.role === Role.Seller &&
+          !hasPermission(session, SellerPermission.sellerCreateAllow)
+        ) {
+          return res.status(401).json(Unauthorized);
+        }
+
+        if (
+          session.role === Role.Staff &&
+          data.role === Role.Trader &&
+          !hasPermission(session, TraderPermission.traderCreateAllow)
+        ) {
+          return res.status(401).json(Unauthorized);
+        }
+
+        if (
+          session.role === Role.Staff &&
+          data.role === Role.Staff &&
+          !hasPermission(session, StaffPermission.staffUpdateAllow)
+        ) {
+          return res.status(401).json(Unauthorized);
+        }
+
         let body = {
           email: data.email?.toLowerCase(),
           emailVerified: false,
@@ -334,6 +367,35 @@ export default async function Handler(
           },
         });
         if (user) {
+          if (
+            session.role === Role.Staff &&
+            user.role === Role.Buyer &&
+            !hasPermission(session, BuyerPermission.buyerUpdateAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
+          if (
+            session.role === Role.Staff &&
+            user.role === Role.Seller &&
+            !hasPermission(session, SellerPermission.sellerUpdateAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
+          if (
+            session.role === Role.Staff &&
+            user.role === Role.Trader &&
+            !hasPermission(session, TraderPermission.traderUpdateAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
+          if (
+            session.role === Role.Staff &&
+            user.role === Role.Staff &&
+            !hasPermission(session, StaffPermission.staffUpdateAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
+
           if (isSeller(user) && user.membershipId !== data.membershipId) {
             let adminList = await getAdminIdList();
             let staffList = await getStaffIdList(
@@ -416,6 +478,12 @@ export default async function Handler(
         (session && id && session.id === id)
       ) {
         if (type === RoleNav.Subscribe && id) {
+          if (
+            session.role === Role.Staff &&
+            !hasPermission(session, SubscribePermission.subscribeDeleteAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
           await prisma.subscribe.delete({
             where: {
               id: id.toString(),
@@ -423,11 +491,15 @@ export default async function Handler(
           });
           return res.status(200).json(Success);
         } else if (id) {
-          let d = await deleteUser(id?.toString());
+          let d = await deleteUser(id?.toString(), session);
           if (d.success === true) {
             return res.status(200).json(Success);
           } else {
-            return res.status(400).json(d.data);
+            if (d.status) {
+              return res.status(401).json(d.data);
+            } else {
+              return res.status(400).json(d.data);
+            }
           }
         } else {
           return res.status(400).json(BadRequest);

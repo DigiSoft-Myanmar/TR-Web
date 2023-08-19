@@ -235,6 +235,12 @@ export default async function handler(
           );
       case "POST":
         if (session && session.role !== Role.Buyer) {
+          if (
+            session.role === Role.Staff &&
+            !hasPermission(session, ProductPermission.productCreateAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
           let newData: any = {};
           if (typeof req.body === "object") {
             newData = req.body;
@@ -271,6 +277,12 @@ export default async function handler(
         }
       case "PUT":
         if (session && session.role !== Role.Buyer) {
+          if (
+            session.role === Role.Staff &&
+            !hasPermission(session, ProductPermission.productUpdateAllow)
+          ) {
+            return res.status(401).json(Unauthorized);
+          }
           let data: any = {};
           if (typeof req.body === "object") {
             data = req.body;
@@ -329,10 +341,23 @@ export default async function handler(
             if (isExists) {
               return res.status(400).json(Exists);
             } else {
-              let prod = await prisma.product.delete({
-                where: { id: deleteId.toString() },
-              });
-              return res.status(200).json(Success);
+              if (session.role === Role.Staff) {
+                if (
+                  hasPermission(session, ProductPermission.productDeleteAllow)
+                ) {
+                  let prod = await prisma.product.delete({
+                    where: { id: deleteId.toString() },
+                  });
+                  return res.status(200).json(Success);
+                } else {
+                  return res.status(401).json(Unauthorized);
+                }
+              } else {
+                let prod = await prisma.product.delete({
+                  where: { id: deleteId.toString() },
+                });
+                return res.status(200).json(Success);
+              }
             }
           } else {
             return res.status(400).json(BadRequest);

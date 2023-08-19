@@ -195,8 +195,10 @@ const OrderFullTbl = ({
             sellerId ? z.seller.id === sellerId : true
           );
           status = getOrderStatus(row, sellerId).status;
-        } else {
+        } else if (data && data.length === 1) {
           status = data[0].status;
+        } else {
+          status = "Invalid";
         }
         return status;
       },

@@ -10,7 +10,7 @@ import {
 } from "@/types/ApiResponseTypes";
 import { OrderStatus } from "@/types/orderTypes";
 import { OrderPermission, ProductPermission } from "@/types/permissionTypes";
-import { isInternal, isSeller } from "@/util/authHelper";
+import { hasPermission, isInternal, isSeller } from "@/util/authHelper";
 import { sendOrderEmail } from "@/util/emailNodeHelper";
 import {
   addNotification,
@@ -276,6 +276,12 @@ export default async function handler(
               });
             case "PUT":
               if (isSeller(session) || isInternal(session)) {
+                if (
+                  session.role === Role.Staff &&
+                  !hasPermission(session, OrderPermission.orderUpdateAllow)
+                ) {
+                  return res.status(401).json(Unauthorized);
+                }
                 const seller = await prisma.user.findFirst({
                   where: {
                     id: sellerId.toString(),

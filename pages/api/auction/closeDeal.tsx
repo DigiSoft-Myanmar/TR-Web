@@ -4,7 +4,7 @@ import { CartItem } from "@/prisma/models/cartItems";
 import prisma from "@/prisma/prisma";
 import { NotAvailable, Success, Unauthorized } from "@/types/ApiResponseTypes";
 import { AuctionPermission } from "@/types/permissionTypes";
-import { isInternal } from "@/util/authHelper";
+import { hasPermission, isInternal } from "@/util/authHelper";
 import {
   addNotification,
   getAdminEmailList,
@@ -20,6 +20,7 @@ import {
   NotiType,
   Product,
   ProductType,
+  Role,
 } from "@prisma/client";
 import _, { includes, sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -112,7 +113,7 @@ export default async function handler(
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const session = await useAuth(req);
     const { id, key } = req.query;
-    if (id && req.method === "PUT") {
+    if (id && req.method === "PUT" && session) {
       let body: any = {};
       if (typeof req.body === "object") {
         body = req.body;
@@ -135,6 +136,22 @@ export default async function handler(
         auction.product.sellerId === session.id ||
         auction.createdByUserId === session.id
       ) {
+        if (
+          body.isAccept === true &&
+          session &&
+          session.role === Role.Staff &&
+          !hasPermission(session, AuctionPermission.endedAuctionAllow)
+        ) {
+          return res.status(401).json(Unauthorized);
+        }
+        if (
+          body.isAccept === false &&
+          session &&
+          session.role === Role.Staff &&
+          !hasPermission(session, AuctionPermission.endedAuctionReject)
+        ) {
+          return res.status(401).json(Unauthorized);
+        }
         if (auction) {
           let wonList = await prisma.wonList.findFirst({
             where: {
