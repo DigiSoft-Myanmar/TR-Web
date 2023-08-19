@@ -48,6 +48,7 @@ export default async function handler(
                 id: {
                   not: id?.toString(),
                 },
+
                 sellerId: brandId?.toString(),
                 type: "Variable",
               },
@@ -69,6 +70,9 @@ export default async function handler(
                     SKU: {
                       mode: "insensitive",
                       equals: SKU?.toString().toLowerCase(),
+                    },
+                    product: {
+                      sellerId: brandId.toString(),
                     },
                   },
                   status: {
