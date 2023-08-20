@@ -17,6 +17,17 @@ export function getPricingSingle(product: any) {
     isPromotion: false,
   };
   if (product.isSalePeriod && product.isSalePeriod === true) {
+    console.log(
+      isBetween(
+        typeof product.saleStartDate === "object"
+          ? new Date(product.saleStartDate).toLocaleDateString("en-ca")
+          : product.saleStartDate,
+        typeof product.saleEndDate === "object"
+          ? new Date(product.saleEndDate).toLocaleDateString("en-ca")
+          : product.saleEndDate
+      ),
+      "Between"
+    );
     if (
       isBetween(
         typeof product.saleStartDate === "object"
