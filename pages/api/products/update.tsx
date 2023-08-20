@@ -5,6 +5,7 @@ import prisma from "@/prisma/prisma";
 import { ProductAction } from "@/types/action";
 import { BadRequest } from "@/types/ApiResponseTypes";
 import { ProductType, Role, StockType } from "@prisma/client";
+import { sortBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -98,7 +99,10 @@ export default async function handler(
                       where: {
                         id: prods[i].id,
                       },
-                      data: { regularPrice: parseInt(incAmt.toFixed(0)) },
+                      data: {
+                        regularPrice: parseInt(incAmt.toFixed(0)),
+                        priceIndex: parseInt(incAmt.toFixed()),
+                      },
                     });
                     successCnt++;
                     break;
@@ -125,7 +129,10 @@ export default async function handler(
                           where: {
                             id: prods[i].id,
                           },
-                          data: { regularPrice: parseInt(dcAmt.toFixed(0)) },
+                          data: {
+                            regularPrice: parseInt(dcAmt.toFixed(0)),
+                            priceIndex: parseInt(dcAmt.toFixed()),
+                          },
                         });
                       }
                     }
@@ -153,6 +160,7 @@ export default async function handler(
                           salePrice: parseInt(salePrice.toFixed()),
                           isPercent: false,
                           isPromotionAll: true,
+                          isPromotionAllPeriod: true,
                         },
                       });
                       successCnt++;
@@ -183,6 +191,7 @@ export default async function handler(
                             salePrice: parseInt(incSAmt.toFixed()),
                             isPercent: false,
                             isPromotionAll: true,
+                            isPromotionAllPeriod: true,
                           },
                         });
                         successCnt++;
@@ -213,6 +222,7 @@ export default async function handler(
                             salePrice: parseInt(dcAmt1.toFixed()),
                             isPercent: false,
                             isPromotionAll: true,
+                            isPromotionAllPeriod: true,
                           },
                         });
                         successCnt++;
@@ -230,7 +240,7 @@ export default async function handler(
                           saleStartDate: body.saleStartDate,
                           saleEndDate: body.saleEndDate,
                           isPromotionAll: true,
-                          isPromotionAllPeriod: true,
+                          isPromotionAllPeriod: false,
                           isPromotionAllStartDate: body.saleStartDate,
                           isPromotionAllEndDate: body.saleEndDate,
                         },
@@ -281,11 +291,16 @@ export default async function handler(
                       ch++;
                     }
                     if (ch > 0) {
+                      let priceList = sortBy(
+                        v,
+                        (z: any) => z.regularPrice
+                      ).reverse()[0];
+                      let priceIndex = priceList.regularPrice;
                       await prisma.product.update({
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v },
+                        data: { variations: v, priceIndex: priceIndex },
                       });
                       successCnt++;
                     }
@@ -318,11 +333,16 @@ export default async function handler(
                       }
                     }
                     if (ch1 > 0) {
+                      let priceList = sortBy(
+                        v,
+                        (z: any) => z.regularPrice
+                      ).reverse()[0];
+                      let priceIndex = priceList.regularPrice;
                       await prisma.product.update({
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v1 },
+                        data: { variations: v1, priceIndex: priceIndex },
                       });
                       successCnt++;
                     }
@@ -350,7 +370,11 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: vS, isPromotionAll: true },
+                        data: {
+                          variations: vS,
+                          isPromotionAll: true,
+                          isPromotionAllPeriod: true,
+                        },
                       });
                       successCnt++;
                     }
@@ -385,7 +409,11 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v2, isPromotionAll: true },
+                        data: {
+                          variations: v2,
+                          isPromotionAll: true,
+                          isPromotionAllPeriod: true,
+                        },
                       });
                       successCnt++;
                     }
@@ -421,7 +449,11 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v3, isPromotionAll: true },
+                        data: {
+                          variations: v3,
+                          isPromotionAll: true,
+                          isPromotionAllPeriod: true,
+                        },
                       });
                       successCnt++;
                     }
@@ -445,7 +477,7 @@ export default async function handler(
                         data: {
                           variations: v4,
                           isPromotionAll: true,
-                          isPromotionAllPeriod: true,
+                          isPromotionAllPeriod: false,
                           isPromotionAllStartDate: body.saleStartDate,
                           isPromotionAllEndDate: body.saleEndDate,
                         },

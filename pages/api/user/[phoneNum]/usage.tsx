@@ -64,7 +64,7 @@ export default async function handler(
                 },
               },
             });
-
+            usage.freeAdsLimit = user.currentMembership.freeAdsLimit;
             for (let i = 0; i < ads.length; i++) {
               if (
                 ads[i].adsLocations.find(
@@ -84,7 +84,7 @@ export default async function handler(
                     startDay.getTime() <= new Date(z.startDate).getTime() &&
                     new Date(z.startDate).getTime() <= freeAdsEndDay.getTime()
                 ).length;
-                usage.freeAdsLimit = user.currentMembership.freeAdsLimit;
+
                 usage.freeAdsUsed =
                   freeAdsCount >= user.currentMembership.freeAdsLimit
                     ? user.currentMembership.freeAdsLimit
