@@ -142,6 +142,7 @@ export default async function handler(
                       prodDetails[j].stockLevel! >= c.quantity)
                   ) {
                     let pricing = getPricing(prodDetails[j]);
+                    console.log(pricing.isPromotion);
                     if (pricing?.isPromotion === true) {
                       cartItems.push({
                         ...c,
