@@ -172,7 +172,7 @@ export const updateUser = async (id: string, updateData: any) => {
       password: d.password,
       providerToLink: {
         email: d.email,
-        uid: updateData.email,
+        uid: d.email,
         providerId: "email",
       },
     };
@@ -192,20 +192,20 @@ export const updateUser = async (id: string, updateData: any) => {
       });
   }
 
-  delete updateData?.password;
-  delete updateData?.confirmPassword;
-  delete updateData?.note;
-  delete updateData?.state;
-  delete updateData?.district;
-  delete updateData?.township;
-  delete updateData?.currentMembership;
-  delete updateData?.userDefinedRole;
+  delete d?.password;
+  delete d?.confirmPassword;
+  delete d?.note;
+  delete d?.state;
+  delete d?.district;
+  delete d?.township;
+  delete d?.currentMembership;
+  delete d?.userDefinedRole;
   if (firebaseRes.isSuccess === true) {
     const user = await prisma.user.update({
       where: {
         id: id,
       },
-      data: { ...updateData },
+      data: { ...d },
     });
     return { isSuccess: true, error: "", data: user };
   } else {

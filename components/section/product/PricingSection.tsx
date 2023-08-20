@@ -164,7 +164,30 @@ function PricingSection({ backFn, nextFn, currentStep, pricingRef }: Props) {
 
   function submit(data: Pricing) {
     setProduct((prevValue: any) => {
-      return { ...prevValue, ...data };
+      if (data.salePrice) {
+        return { ...prevValue, ...data };
+      } else {
+        let d = {
+          ...prevValue,
+        };
+        if (d.salePrice) {
+          delete d.salePrice;
+        }
+        if (d.isSalePeriod) {
+          d.isSalePeriod = false;
+        }
+        if (d.saleStartDate) {
+          delete d.saleStartDate;
+        }
+        if (d.saleEndDate) {
+          delete d.saleEndDate;
+        }
+        let a = {
+          ...d,
+          ...data,
+        };
+        return a;
+      }
     });
     if ((error && error.length === 0) || !error) {
       if (

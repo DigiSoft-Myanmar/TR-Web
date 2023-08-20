@@ -181,6 +181,10 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
             await addNotification(msg, "");
           }
 
+          if (profile.email) {
+            profile.email = profile.email.toLowerCase();
+          }
+
           let updateUserRes = await updateUser(user.id, profile);
           if (updateUserRes.isSuccess === true) {
             res.status(200).json(Success);

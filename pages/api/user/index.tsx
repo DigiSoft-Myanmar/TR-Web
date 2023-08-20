@@ -330,6 +330,9 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
             };
             await addNotification(msg, "");
           }
+          if (b.email) {
+            b.email = b.email.toLowerCase();
+          }
           let user = await prisma.user.create({
             data: b,
           });

@@ -67,6 +67,7 @@ export default async function handler(
 
         let currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
+        console.log(currentDate);
         const promotionProducts = await prisma.product.findMany({
           where: {
             OR: [
@@ -78,10 +79,10 @@ export default async function handler(
                 isPromotionAll: true,
                 isPromotionAllPeriod: false,
                 isPromotionAllStartDate: {
-                  gte: currentDate,
+                  lte: currentDate,
                 },
                 isPromotionAllEndDate: {
-                  lte: currentDate,
+                  gte: currentDate,
                 },
               },
             ],

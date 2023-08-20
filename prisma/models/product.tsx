@@ -407,11 +407,31 @@ export const updateProduct = async (id: string, data: Product) => {
     });
     return { isSuccess: true, data: updateProd };
   } else {
-    const product = await prisma.product.update({
-      where: { id: id },
-      data: d,
-    });
-    return { isSuccess: true, data: product };
+    if (d.salePrice) {
+      const product = await prisma.product.update({
+        where: { id: id },
+        data: d,
+      });
+      return { isSuccess: true, data: product };
+    } else {
+      const product = await prisma.product.update({
+        where: { id: id },
+        data: {
+          ...d,
+          salePrice: {
+            unset: true,
+          },
+          isSalePeriod: false,
+          saleStartDate: {
+            unset: true,
+          },
+          saleEndDate: {
+            unset: true,
+          },
+        },
+      });
+      return { isSuccess: true, data: product };
+    }
   }
 };
 

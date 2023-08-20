@@ -119,10 +119,10 @@ export default async function handler(
                   isPromotionAll: true,
                   isPromotionAllPeriod: false,
                   isPromotionAllStartDate: {
-                    gte: currentDate,
+                    lte: currentDate,
                   },
                   isPromotionAllEndDate: {
-                    lte: currentDate,
+                    gte: currentDate,
                   },
                 },
               ],
