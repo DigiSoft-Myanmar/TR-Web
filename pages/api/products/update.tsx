@@ -152,6 +152,7 @@ export default async function handler(
                         data: {
                           salePrice: parseInt(salePrice.toFixed()),
                           isPercent: false,
+                          isPromotionAll: true,
                         },
                       });
                       successCnt++;
@@ -181,6 +182,7 @@ export default async function handler(
                           data: {
                             salePrice: parseInt(incSAmt.toFixed()),
                             isPercent: false,
+                            isPromotionAll: true,
                           },
                         });
                         successCnt++;
@@ -210,6 +212,7 @@ export default async function handler(
                           data: {
                             salePrice: parseInt(dcAmt1.toFixed()),
                             isPercent: false,
+                            isPromotionAll: true,
                           },
                         });
                         successCnt++;
@@ -226,6 +229,10 @@ export default async function handler(
                           isSalePeriod: true,
                           saleStartDate: body.saleStartDate,
                           saleEndDate: body.saleEndDate,
+                          isPromotionAll: true,
+                          isPromotionAllPeriod: true,
+                          isPromotionAllStartDate: body.saleStartDate,
+                          isPromotionAllEndDate: body.saleEndDate,
                         },
                       });
                       successCnt++;
@@ -343,7 +350,7 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: vS },
+                        data: { variations: vS, isPromotionAll: true },
                       });
                       successCnt++;
                     }
@@ -378,7 +385,7 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v2 },
+                        data: { variations: v2, isPromotionAll: true },
                       });
                       successCnt++;
                     }
@@ -414,7 +421,7 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v3 },
+                        data: { variations: v3, isPromotionAll: true },
                       });
                       successCnt++;
                     }
@@ -435,7 +442,13 @@ export default async function handler(
                         where: {
                           id: prods[i].id,
                         },
-                        data: { variations: v4 },
+                        data: {
+                          variations: v4,
+                          isPromotionAll: true,
+                          isPromotionAllPeriod: true,
+                          isPromotionAllStartDate: body.saleStartDate,
+                          isPromotionAllEndDate: body.saleEndDate,
+                        },
                       });
                       successCnt++;
                     }
