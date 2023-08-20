@@ -186,11 +186,11 @@ function MarketplacePage({
     if (product.type === ProductType.Variable) {
       setCurrentVariation(product.variations[0]);
       setAttributes(product.variations[0].attributes);
-      setPricingInfo(product.variations[0]);
+      setPricingInfo(getPricing(product.variations[0]));
     } else {
       setCurrentVariation(undefined);
       setAttributes([]);
-      setPricingInfo(product);
+      setPricingInfo(getPricing(product));
     }
   }, [product]);
 
