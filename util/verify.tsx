@@ -309,6 +309,7 @@ export function isBetween(startDate: string, endDate: string) {
     parseInt(endDateArr[1]) - 1,
     parseInt(endDateArr[2])
   );
+  console.log(today, start, end);
   return today >= start && today <= end;
 }
 

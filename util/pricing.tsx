@@ -20,10 +20,14 @@ export function getPricingSingle(product: any) {
     console.log(
       isBetween(
         typeof product.saleStartDate === "object"
-          ? new Date(product.saleStartDate).toLocaleDateString("en-ca")
+          ? new Date(product.saleStartDate).toLocaleDateString("en-ca", {
+              timeZone: "Asia/Yangon",
+            })
           : product.saleStartDate,
         typeof product.saleEndDate === "object"
-          ? new Date(product.saleEndDate).toLocaleDateString("en-ca")
+          ? new Date(product.saleEndDate).toLocaleDateString("en-ca", {
+              timeZone: "Asia/Yangon",
+            })
           : product.saleEndDate
       ),
       "Between"
@@ -31,10 +35,14 @@ export function getPricingSingle(product: any) {
     if (
       isBetween(
         typeof product.saleStartDate === "object"
-          ? new Date(product.saleStartDate).toLocaleDateString("en-ca")
+          ? new Date(product.saleStartDate).toLocaleDateString("en-ca", {
+              timeZone: "Asia/Yangon",
+            })
           : product.saleStartDate,
         typeof product.saleEndDate === "object"
-          ? new Date(product.saleEndDate).toLocaleDateString("en-ca")
+          ? new Date(product.saleEndDate).toLocaleDateString("en-ca", {
+              timeZone: "Asia/Yangon",
+            })
           : product.saleEndDate
       )
     ) {
