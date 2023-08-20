@@ -462,8 +462,8 @@ const PromoTbl = ({
                 e.startDate &&
                 e.endDate &&
                 isBetween(
-                  new Date(e.startDate).toLocaleDateString("en-ca"),
-                  new Date(e.endDate).toLocaleDateString("en-ca")
+                  new Date(e.startDate).toISOString().slice(0, 10),
+                  new Date(e.endDate).toISOString().slice(0, 10)
                 )
             ).length
           }
@@ -474,8 +474,8 @@ const PromoTbl = ({
                 e.startDate &&
                 e.endDate &&
                 isBetween(
-                  new Date(e.startDate).toLocaleDateString("en-ca"),
-                  new Date(e.endDate).toLocaleDateString("en-ca")
+                  new Date(e.startDate).toISOString().slice(0, 10),
+                  new Date(e.endDate).toISOString().slice(0, 10)
                 )
             ).length
           }
@@ -486,8 +486,8 @@ const PromoTbl = ({
                 e.startDate &&
                 e.endDate &&
                 isBetween(
-                  new Date(e.startDate).toLocaleDateString("en-ca"),
-                  new Date(e.endDate).toLocaleDateString("en-ca")
+                  new Date(e.startDate).toISOString().slice(0, 10),
+                  new Date(e.endDate).toISOString().slice(0, 10)
                 ) === false
             ).length
           }
