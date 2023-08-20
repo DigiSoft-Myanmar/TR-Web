@@ -17,17 +17,6 @@ export function getPricingSingle(product: any) {
     isPromotion: false,
   };
   if (product.isSalePeriod && product.isSalePeriod === true) {
-    console.log(
-      isBetween(
-        typeof product.saleStartDate === "object"
-          ? new Date(product.saleStartDate).toISOString().slice(0, 10)
-          : product.saleStartDate,
-        typeof product.saleEndDate === "object"
-          ? new Date(product.saleEndDate).toISOString().slice(0, 10)
-          : product.saleEndDate
-      ),
-      "Between"
-    );
     if (
       isBetween(
         typeof product.saleStartDate === "object"
@@ -41,8 +30,8 @@ export function getPricingSingle(product: any) {
       if (product.salePrice) {
         pricing = {
           ...pricing,
-          startDate: product.saleStartDate,
-          endDate: product.saleEndDate,
+          saleStartDate: product.saleStartDate,
+          saleEndDate: product.saleEndDate,
         };
         if (product.isPercent === true) {
           pricing = {
