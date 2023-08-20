@@ -235,38 +235,40 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                 quality={100}
                 className="h-40 w-full rounded-md border object-contain p-2"
               />
-              <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  multiple={false}
-                  onChange={(e) => {
-                    let fileList = e.currentTarget.files;
-                    if (fileList) {
-                      for (let i = 0; i < fileList.length; i++) {
-                        setNRCBack(fileList[0]);
+              {isInternal(session) && (
+                <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    multiple={false}
+                    onChange={(e) => {
+                      let fileList = e.currentTarget.files;
+                      if (fileList) {
+                        for (let i = 0; i < fileList.length; i++) {
+                          setNRCBack(fileList[0]);
+                        }
                       }
-                    }
-                  }}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    }}
                   />
-                </svg>
-                <span className="text-xs ml-3">NRC BACK</span>
-              </label>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-4 w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    />
+                  </svg>
+                  <span className="text-xs ml-3">NRC BACK</span>
+                </label>
+              )}
             </div>
           ) : user && user.nrcBack ? (
             <div className="relative mb-3 flex w-full cursor-pointer flex-row">
@@ -278,38 +280,40 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
                 quality={100}
                 className="h-40 w-full rounded-md border object-contain p-2"
               />
-              <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  multiple={false}
-                  onChange={(e) => {
-                    let fileList = e.currentTarget.files;
-                    if (fileList) {
-                      for (let i = 0; i < fileList.length; i++) {
-                        setNRCBack(fileList[0]);
+              {isInternal(session) && (
+                <label className="absolute bottom-0 right-0 flex w-fit cursor-pointer items-center justify-center rounded-full bg-primary p-2 text-sm text-white hover:bg-primary-focus focus:relative">
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    multiple={false}
+                    onChange={(e) => {
+                      let fileList = e.currentTarget.files;
+                      if (fileList) {
+                        for (let i = 0; i < fileList.length; i++) {
+                          setNRCBack(fileList[0]);
+                        }
                       }
-                    }
-                  }}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    }}
                   />
-                </svg>
-                <span className="text-xs ml-3">NRC BACK</span>
-              </label>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="h-4 w-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                    />
+                  </svg>
+                  <span className="text-xs ml-3">NRC BACK</span>
+                </label>
+              )}
             </div>
           ) : (
             <div className="mb-3 flex w-full">

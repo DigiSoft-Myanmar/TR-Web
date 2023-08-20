@@ -96,7 +96,7 @@ function DefaultLayout({ children }: LayoutProps) {
   }, [reload]);
 
   React.useEffect(() => {
-    if (session && isReload) {
+    if (session && isReload === true && !reload) {
       if (!isInternal(session)) {
         if (!session.nrcFront) {
           router.push(
