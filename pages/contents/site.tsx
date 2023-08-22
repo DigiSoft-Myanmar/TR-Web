@@ -28,9 +28,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "@/components/presentational/FormInput";
 import FormInputTextArea from "@/components/presentational/FormInputTextArea";
-import { getHeaders } from "@/util/authHelper";
+import { getHeaders, hasPermission, isInternal } from "@/util/authHelper";
 import SingleUploadModal from "@/components/modal/sideModal/SingleUploadModal";
 import ImgFeaturesModal from "@/components/modal/sideModal/ImgFeatureModal";
+import { otherPermission } from "@/types/permissionTypes";
 
 enum Page {
   Home,
@@ -235,8 +236,7 @@ function ContactPage({ data }: { data?: Content }) {
     });
   }
 
-  return session &&
-    (session.role === Role.Admin || session.role === Role.SuperAdmin) ? (
+  return session && isInternal(session) ? (
     <div>
       <Head>
         <title>Site Management | Treasure Rush</title>

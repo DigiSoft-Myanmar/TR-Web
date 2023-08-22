@@ -1101,7 +1101,10 @@ function AdminSidebar({ isOpen }: Props) {
           )}
           {session &&
           (session.role === Role.Admin ||
-            session.role === Role.Staff ||
+            (session.role === Role.Staff &&
+              (hasPermission(session, otherPermission.reviewView) ||
+                hasPermission(session, otherPermission.helpCenterMessageView) ||
+                hasPermission(session, otherPermission.feedbacksView))) ||
             session.role === Role.SuperAdmin) ? (
             <details
               className="group"
@@ -1545,186 +1548,19 @@ function AdminSidebar({ isOpen }: Props) {
             <></>
           )}
 
-          <details
-            className="group"
-            open={isOpen === "close" || router.asPath.includes("/reports")}
-          >
-            {isOpen === "open" ? (
-              <summary className="flex cursor-pointer items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="h-5 w-5 opacity-75"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-                  />
-                </svg>
-
-                <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                  {" "}
-                  Reports{" "}
-                </span>
-
-                <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-              </summary>
-            ) : (
-              <summary></summary>
-            )}
-
-            <nav
-              aria-label="Teams Nav"
-              className={
-                isOpen === "close"
-                  ? "flex flex-col border-t border-t-slate-200"
-                  : "ml-8 flex flex-col"
-              }
-            >
-              {hasPermission(
-                session,
-                ReportPermission.reportBuyerViewAllow
-              ) && (
-                <Tooltip title="Buyer Location Reports" placement="right">
-                  <Link
-                    href={"/reports/buyerLocation"}
-                    className={
-                      router.asPath.includes("/reports/buyerLocation")
-                        ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                        : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5 opacity-75"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 01-1.161.886l-.143.048a1.107 1.107 0 00-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 01-1.652.928l-.679-.906a1.125 1.125 0 00-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 00-8.862 12.872M12.75 3.031a9 9 0 016.69 14.036m0 0l-.177-.529A2.25 2.25 0 0017.128 15H16.5l-.324-.324a1.453 1.453 0 00-2.328.377l-.036.073a1.586 1.586 0 01-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 01-5.276 3.67m0 0a9 9 0 01-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25"
-                      />
-                    </svg>
-
-                    {isOpen === "open" && (
-                      <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                        {" "}
-                        Buyer Location{" "}
-                      </span>
-                    )}
-                  </Link>
-                </Tooltip>
-              )}
-              {hasPermission(
-                session,
-                ReportPermission.reportCategoryViewAllow
-              ) && (
-                <Tooltip title="Category Reports" placement="right">
-                  <Link
-                    href={"/reports/category"}
-                    className={
-                      router.asPath.includes("/reports/category")
-                        ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                        : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="w-5 h-5 opacity-75"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                      />
-                    </svg>
-                    {isOpen === "open" && (
-                      <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                        {" "}
-                        Category Reports{" "}
-                      </span>
-                    )}
-                  </Link>
-                </Tooltip>
-              )}
-              {hasPermission(
-                session,
-                ReportPermission.reportBrandViewAllow
-              ) && (
-                <Tooltip title="Brands Reports" placement="right">
-                  <Link
-                    href={"/reports/brands"}
-                    className={
-                      router.asPath.includes("/reports/brands")
-                        ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                        : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                    }
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5 opacity-75"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 6h.008v.008H6V6z"
-                      />
-                    </svg>
-                    {isOpen === "open" && (
-                      <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                        {" "}
-                        Brands Reports{" "}
-                      </span>
-                    )}
-                  </Link>
-                </Tooltip>
-              )}
-              {hasPermission(
-                session,
-                ReportPermission.reportClickViewAllow
-              ) && (
-                <Tooltip title="Click Reports" placement="right">
-                  <Link
-                    href={"/reports/clicks"}
-                    className={
-                      router.asPath.includes("/reports/clicks")
-                        ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
-                        : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-                    }
-                  >
+          {hasPermission(session, ReportPermission.reportBrandViewAllow) ||
+            hasPermission(session, ReportPermission.reportBuyerViewAllow) ||
+            hasPermission(session, ReportPermission.reportClickViewAllow) ||
+            (hasPermission(
+              session,
+              ReportPermission.reportCategoryViewAllow
+            ) && (
+              <details
+                className="group"
+                open={isOpen === "close" || router.asPath.includes("/reports")}
+              >
+                {isOpen === "open" ? (
+                  <summary className="flex cursor-pointer items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -1736,20 +1572,195 @@ function AdminSidebar({ isOpen }: Props) {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"
+                        d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
                       />
                     </svg>
-                    {isOpen === "open" && (
-                      <span className="ml-3 whitespace-nowrap text-sm font-medium">
-                        {" "}
-                        Click Reports{" "}
-                      </span>
-                    )}
-                  </Link>
-                </Tooltip>
-              )}
-            </nav>
-          </details>
+
+                    <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                      {" "}
+                      Reports{" "}
+                    </span>
+
+                    <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  </summary>
+                ) : (
+                  <summary></summary>
+                )}
+
+                <nav
+                  aria-label="Teams Nav"
+                  className={
+                    isOpen === "close"
+                      ? "flex flex-col border-t border-t-slate-200"
+                      : "ml-8 flex flex-col"
+                  }
+                >
+                  {hasPermission(
+                    session,
+                    ReportPermission.reportBuyerViewAllow
+                  ) && (
+                    <Tooltip title="Buyer Location Reports" placement="right">
+                      <Link
+                        href={"/reports/buyerLocation"}
+                        className={
+                          router.asPath.includes("/reports/buyerLocation")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-5 h-5 opacity-75"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12.75 3.03v.568c0 .334.148.65.405.864l1.068.89c.442.369.535 1.01.216 1.49l-.51.766a2.25 2.25 0 01-1.161.886l-.143.048a1.107 1.107 0 00-.57 1.664c.369.555.169 1.307-.427 1.605L9 13.125l.423 1.059a.956.956 0 01-1.652.928l-.679-.906a1.125 1.125 0 00-1.906.172L4.5 15.75l-.612.153M12.75 3.031a9 9 0 00-8.862 12.872M12.75 3.031a9 9 0 016.69 14.036m0 0l-.177-.529A2.25 2.25 0 0017.128 15H16.5l-.324-.324a1.453 1.453 0 00-2.328.377l-.036.073a1.586 1.586 0 01-.982.816l-.99.282c-.55.157-.894.702-.8 1.267l.073.438c.08.474.49.821.97.821.846 0 1.598.542 1.865 1.345l.215.643m5.276-3.67a9.012 9.012 0 01-5.276 3.67m0 0a9 9 0 01-10.275-4.835M15.75 9c0 .896-.393 1.7-1.016 2.25"
+                          />
+                        </svg>
+
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            Buyer Location{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
+                  {hasPermission(
+                    session,
+                    ReportPermission.reportCategoryViewAllow
+                  ) && (
+                    <Tooltip title="Category Reports" placement="right">
+                      <Link
+                        href={"/reports/category"}
+                        className={
+                          router.asPath.includes("/reports/category")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-5 h-5 opacity-75"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                          />
+                        </svg>
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            Category Reports{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
+                  {hasPermission(
+                    session,
+                    ReportPermission.reportBrandViewAllow
+                  ) && (
+                    <Tooltip title="Brands Reports" placement="right">
+                      <Link
+                        href={"/reports/brands"}
+                        className={
+                          router.asPath.includes("/reports/brands")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-5 h-5 opacity-75"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 6h.008v.008H6V6z"
+                          />
+                        </svg>
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            Brands Reports{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
+                  {hasPermission(
+                    session,
+                    ReportPermission.reportClickViewAllow
+                  ) && (
+                    <Tooltip title="Click Reports" placement="right">
+                      <Link
+                        href={"/reports/clicks"}
+                        className={
+                          router.asPath.includes("/reports/clicks")
+                            ? "active-route flex items-center bg-gray-100 px-4 py-2 text-gray-700"
+                            : "flex items-center px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                        }
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="h-5 w-5 opacity-75"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"
+                          />
+                        </svg>
+                        {isOpen === "open" && (
+                          <span className="ml-3 whitespace-nowrap text-sm font-medium">
+                            {" "}
+                            Click Reports{" "}
+                          </span>
+                        )}
+                      </Link>
+                    </Tooltip>
+                  )}
+                </nav>
+              </details>
+            ))}
           {isOpen === "open" && <div className="h-[1px] w-full bg-slate-200" />}
 
           {session && (

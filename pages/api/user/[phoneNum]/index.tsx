@@ -24,7 +24,7 @@ import {
 import { Db } from "mongodb";
 import { getUserByPhone, updateUser } from "@/prisma/models/user";
 import { Brand, NotiType, Role, User } from "@prisma/client";
-import { isInternal, isSeller } from "@/util/authHelper";
+import { hasPermission, isInternal, isSeller } from "@/util/authHelper";
 import {
   addNotification,
   getAdminIdList,
@@ -62,6 +62,31 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
         session.role === Role.Staff ||
         session.role === Role.SuperAdmin))
   ) {
+    if (
+      session.role === Role.Staff &&
+      reqData &&
+      reqData.user.role === Role.Buyer &&
+      !hasPermission(session, BuyerPermission.buyerUpdateAllow)
+    ) {
+      return res.status(401).json(Unauthorized);
+    }
+    if (
+      session.role === Role.Staff &&
+      reqData &&
+      reqData.user.role === Role.Seller &&
+      !hasPermission(session, SellerPermission.sellerUpdateAllow)
+    ) {
+      return res.status(401).json(Unauthorized);
+    }
+    if (
+      session.role === Role.Staff &&
+      reqData &&
+      reqData.user.role === Role.Trader &&
+      !hasPermission(session, TraderPermission.traderUpdateAllow)
+    ) {
+      return res.status(401).json(Unauthorized);
+    }
+
     if (phoneNum && reqData) {
       let filesData = req.files;
       try {

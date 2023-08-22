@@ -57,7 +57,12 @@ import {
   showWarningDialog,
 } from "@/util/swalFunction";
 import StatsCard from "../card/StatsCard";
-import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
+import {
+  getHeaders,
+  hasPermission,
+  isInternal,
+  isSeller,
+} from "@/util/authHelper";
 import Avatar from "../presentational/Avatar";
 import { ProductPermission } from "@/types/permissionTypes";
 import ExportCSVButton from "../presentational/ExportCSVButton";
@@ -535,7 +540,11 @@ const ProductFullTbl = ({
                   )}
                 {session &&
                   (session.role === Role.Admin ||
-                    session.role === Role.Staff ||
+                    (session.role === Role.Staff &&
+                      hasPermission(
+                        session,
+                        ProductPermission.productDeleteAllow
+                      )) ||
                     session.role === Role.SuperAdmin) && (
                     <Tooltip title="Delete">
                       <IconButton
@@ -1085,7 +1094,11 @@ const ProductFullTbl = ({
                   )}
                 {session &&
                   (session.role === Role.Admin ||
-                    session.role === Role.Staff ||
+                    (session.role === Role.Staff &&
+                      hasPermission(
+                        session,
+                        ProductPermission.productDeleteAllow
+                      )) ||
                     session.role === Role.SuperAdmin) && (
                     <Tooltip title="Delete">
                       <IconButton
