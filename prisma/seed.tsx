@@ -3,7 +3,7 @@ import { Gender, PrismaClient, Role } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function seedUsers() {
-  await prisma.user.upsert({
+  /* await prisma.user.upsert({
     where: { email: "heinhtoozaw99@gmail.com" },
     update: {
       username: "Hein Htoo",
@@ -16,32 +16,32 @@ async function seedUsers() {
       role: Role.SuperAdmin,
       gender: Gender.Male,
     },
-  });
+  }); */
   await prisma.user.upsert({
-    where: { email: "hninyushwe@gmail.com" },
+    where: { email: "digisoftmm@gmail.com" },
     update: {
-      username: "Hnin Yu",
-      email: "hninyushwe@gmail.com",
+      username: "DigiSoftMM",
+      email: "digisoftmm@gmail.com",
       role: Role.SuperAdmin,
     },
     create: {
-      username: "Hnin Yu",
-      email: "hninyushwe@gmail.com",
+      username: "DigiSoftMM",
+      email: "digisoftmm@gmail.com",
       role: Role.SuperAdmin,
       gender: Gender.Female,
     },
   });
 
   await prisma.user.upsert({
-    where: { email: "thandar.phyu@gmail.com" },
+    where: { email: "info@digisoftmm.com" },
     update: {
-      username: "Thandar Phyu",
-      email: "thandar.phyu@gmail.com",
+      username: "Info DigiSoft",
+      email: "info@digisoftmm.com",
       role: Role.SuperAdmin,
     },
     create: {
-      username: "Thandar Phyu",
-      email: "thandar.phyu@gmail.com",
+      username: "Info DigiSoft",
+      email: "info@digisoftmm.com",
       role: Role.SuperAdmin,
       gender: Gender.Female,
     },
@@ -103,7 +103,7 @@ async function seedTownships() {
 }
 
 async function main() {
-  seedTownships();
+  //seedTownships();
   seedUsers();
 }
 
