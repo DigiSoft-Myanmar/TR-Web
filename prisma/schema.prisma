@@ -8,7 +8,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = "mongodb://trUser:TRA51p2BD*5t@localhost:27017/treasure-rush-redesign?replicaSet=rs0"
+  url      = "mongodb://trUser:TRA51p2BD*5t@localhost:27017/treasure-rush-prod?replicaSet=rs0"
 }
 
 enum AttrType {
