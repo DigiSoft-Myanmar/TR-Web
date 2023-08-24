@@ -186,10 +186,12 @@ function UserDetailsSection({
             </svg>
 
             <span>
-              {getText(user?.state.name, user?.state.nameMM, locale) +
-                "-" +
-                getText(user?.district.name, user?.district.nameMM, locale) +
-                getText(user?.township.name, user?.township.nameMM, locale)}
+              {user.state && user.district && user.township
+                ? getText(user?.state.name, user?.state.nameMM, locale) +
+                  "-" +
+                  getText(user?.district.name, user?.district.nameMM, locale) +
+                  getText(user?.township.name, user?.township.nameMM, locale)
+                : "Not set"}
             </span>
           </div>
           <div className="flex flex-row items-center gap-3 text-sm">
@@ -315,7 +317,7 @@ function UserDetailsSection({
 
             <span>Role: {user.role}</span>
           </div>
-          {user.role === Role.Staff && (
+          {user.role === Role.Staff && user.userDefinedRole && (
             <div className="flex flex-row items-center gap-3 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -380,11 +382,13 @@ function UserDetailsSection({
 
                 <span>
                   Membership:{" "}
-                  {getText(
-                    user.currentMembership.name,
-                    user.currentMembership.nameMM,
-                    locale
-                  )}
+                  {user.currentMembership
+                    ? getText(
+                        user.currentMembership.name,
+                        user.currentMembership.nameMM,
+                        locale
+                      )
+                    : "Not set"}
                 </span>
               </div>
               {user.memberStartDate && (
