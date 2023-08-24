@@ -56,6 +56,7 @@ import { encryptPhone } from "@/util/encrypt";
 import { RoleNav } from "@/types/role";
 import ExportCSVButton from "../presentational/ExportCSVButton";
 import { BuyerPermission } from "@/types/permissionTypes";
+import Avatar from "../presentational/Avatar";
 
 interface CellType {
   row: any;
@@ -112,13 +113,26 @@ const BuyerTbl = ({
     {
       flex: 0.2,
       minWidth: 120,
-      field: "username",
-      headerName: "Username",
+      field: "profile",
+      headerName: "Profile",
+      valueGetter(params: any) {
+        return params.row.username;
+      },
       renderCell: ({ row }: CellType) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
-            {row.username}
-          </Typography>
+          <Avatar profile={row.profile} username={row.username} />
+          <Box sx={{ display: "flex", flexDirection: "column", marginLeft: 1 }}>
+            <Typography sx={{ fontWeight: 500, fontSize: "0.875rem" }}>
+              {row.username}
+            </Typography>
+            {row.displayName ? (
+              <Typography variant="caption" sx={{ color: "text.disabled" }}>
+                {row.displayName}
+              </Typography>
+            ) : (
+              <></>
+            )}
+          </Box>
         </Box>
       ),
     },
@@ -345,7 +359,15 @@ const BuyerTbl = ({
                 "Window Shopping Buyers (" + new Date().getFullYear() + ")"
               }
               currentCount={
-                data.filter((e: any) => !e.Order || e.Order.length === 0).length
+                data.filter(
+                  (e: any) =>
+                    !e.Order ||
+                    e.Order.length === 0 ||
+                    (e.Order &&
+                      e.Order.length > 0 &&
+                      sortBy(e.Order, (obj: any) => obj.createdAt).reverse()[0]
+                        .createdAt < prevYear.toISOString())
+                ).length
               }
               prevCount={
                 data.filter(
@@ -368,7 +390,7 @@ const BuyerTbl = ({
                     (e.Order &&
                       e.Order.length > 0 &&
                       sortBy(e.Order, (obj: any) => obj.createdAt).reverse()[0]
-                        .createdAt > prevYear.toISOString())
+                        .createdAt < prevYear.toISOString())
                 ).length
               }
             />
