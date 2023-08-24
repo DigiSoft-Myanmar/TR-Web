@@ -345,15 +345,7 @@ const BuyerTbl = ({
                 "Window Shopping Buyers (" + new Date().getFullYear() + ")"
               }
               currentCount={
-                data.filter(
-                  (e: any) =>
-                    !e.Order ||
-                    e.Order.length === 0 ||
-                    (e.Order &&
-                      e.Order.length > 0 &&
-                      sortBy(e.Order, (obj: any) => obj.createdAt).reverse()[0]
-                        .createdAt < prevYear.toISOString())
-                ).length
+                data.filter((e: any) => !e.Order || e.Order.length === 0).length
               }
               prevCount={
                 data.filter(
