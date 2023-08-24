@@ -24,6 +24,7 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
   const router = useRouter();
   const { locale } = router;
   const {
+    cartItems,
     promoCode,
     clearCart,
     removePromotion,
@@ -185,32 +186,44 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
             type="button"
             onClick={() => {
               if (getHeaders(session)) {
-                fetch("api/cart?type=Order", {
-                  method: "POST",
-                  body: JSON.stringify({
-                    promoIds: promoCode.map((z) => z.id),
-                    orderNote: orderNote,
-                  }),
-                  headers: getHeaders(session),
-                }).then(async (data) => {
-                  let json = await data.json();
-                  if (data.status === 200) {
-                    showSuccessDialog(
-                      "Order placed successfully.",
-                      "",
-                      locale,
-                      () => {
-                        clearCart();
-                        removePromotion();
-                        router.push("/orders/" + json.orderNo);
-                      }
-                    );
-                  } else {
+                if (cartItems && cartItems.length > 0) {
+                  fetch("api/cart?type=Order", {
+                    method: "POST",
+                    body: JSON.stringify({
+                      promoIds: promoCode.map((z) => z.id),
+                      orderNote: orderNote,
+                    }),
+                    headers: getHeaders(session),
+                  }).then(async (data) => {
                     let json = await data.json();
-                    console.log(json);
-                    showErrorDialog(t("somethingWentWrong"), "", router.locale);
-                  }
-                });
+                    if (data.status === 200) {
+                      showSuccessDialog(
+                        "Order placed successfully.",
+                        "",
+                        locale,
+                        () => {
+                          clearCart();
+                          removePromotion();
+                          router.push("/orders/" + json.orderNo);
+                        }
+                      );
+                    } else {
+                      let json = await data.json();
+                      console.log(json);
+                      showErrorDialog(
+                        t("somethingWentWrong"),
+                        "",
+                        router.locale
+                      );
+                    }
+                  });
+                } else {
+                  showErrorDialog(
+                    "Empty cart. Please buy and try again.",
+                    "",
+                    locale
+                  );
+                }
               } else {
                 showUnauthorizedDialog(locale, () => {
                   router.push("/login");

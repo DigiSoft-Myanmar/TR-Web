@@ -521,7 +521,7 @@ export default async function handler(
                 },
               });
 
-              if (data) {
+              if (data && data.cartItems.length > 0) {
                 let currentOrder = await prisma.order.findFirst({
                   orderBy: {
                     orderNo: "desc",

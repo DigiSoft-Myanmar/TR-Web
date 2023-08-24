@@ -1,4 +1,4 @@
-import { showWarningDialog } from "@/util/swalFunction";
+import { showErrorDialog, showWarningDialog } from "@/util/swalFunction";
 import * as XLSX from "xlsx";
 import * as FileSaver from "file-saver";
 import React from "react";
@@ -32,7 +32,11 @@ function ExportCSVButton({ csvData, fileName, permission }: Props) {
       type="button"
       className="flex flex-row items-center gap-3 rounded-md border border-gray-800 bg-white px-3 py-2 transition-colors hover:bg-gray-200"
       onClick={() => {
-        exportCSV(csvData, fileName);
+        if (csvData && csvData.length > 0) {
+          exportCSV(csvData, fileName);
+        } else {
+          showErrorDialog("Empty data");
+        }
       }}
     >
       <svg

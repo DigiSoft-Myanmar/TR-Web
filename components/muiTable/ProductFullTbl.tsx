@@ -1326,7 +1326,7 @@ const ProductFullTbl = ({
                   };
                 })}
                 fileName={
-                  (type ? "Products" : type) +
+                  (type ? type : "Products") +
                   " data " +
                   new Date().toLocaleDateString("en-ca", {
                     year: "numeric",
