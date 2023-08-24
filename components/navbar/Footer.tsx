@@ -102,7 +102,7 @@ function Footer({ content }: { content: Content }) {
                   />
 
                   <button className="mt-1 w-full bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-none hover:bg-primary-focus sm:mt-0 sm:w-auto sm:shrink-0">
-                    Subscribed
+                    Subscribe
                   </button>
                 </div>
               </form>
