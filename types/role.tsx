@@ -5,7 +5,7 @@ export enum RoleNav {
   Staff = "Staffs",
   Admin = "Admins",
   Banned = "Banned Users",
-  Subscribe = "Subscribe Users",
+  Subscribe = "Subscribed Users",
   Inactive = "Inactive Users",
   Deleted = "Deleted Users",
 }

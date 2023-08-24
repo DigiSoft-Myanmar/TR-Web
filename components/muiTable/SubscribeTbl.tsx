@@ -196,7 +196,7 @@ const SubscribeTbl = ({
         <Card>
           <div className="flex w-full flex-row flex-wrap items-center px-5 pt-5">
             <div className="flex flex-grow flex-row items-end gap-3">
-              <h3 className="text-xl font-semibold">Subscribe Users</h3>
+              <h3 className="text-xl font-semibold">Subscribed Users</h3>
             </div>
             <div className="flex flex-row items-center gap-3">
               <ExportCSVButton
@@ -226,7 +226,7 @@ const SubscribeTbl = ({
           </div>
           <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
             <StatsCard
-              label="Total Subscribe Users"
+              label="Total Subscribed Users"
               currentCount={
                 data.filter((e: any) => e.createdAt > prevYear.toISOString())
                   .length
