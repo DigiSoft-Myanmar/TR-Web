@@ -352,7 +352,7 @@ const BuyerTbl = ({
                     (e.Order &&
                       e.Order.length > 0 &&
                       sortBy(e.Order, (obj: any) => obj.createdAt).reverse()[0]
-                        .createdAt > prevYear.toISOString())
+                        .createdAt < prevYear.toISOString())
                 ).length
               }
               prevCount={
@@ -363,7 +363,7 @@ const BuyerTbl = ({
                     (e.Order &&
                       e.Order.length > 0 &&
                       sortBy(e.Order, (obj: any) => obj.createdAt).reverse()[0]
-                        .createdAt > prevYear.toISOString() &&
+                        .createdAt < prevYear.toISOString() &&
                       sortBy(e.Order, (obj: any) => obj.createdAt).reverse()[0]
                         .createdAt > doublePrevYear.toISOString())
                 ).length
