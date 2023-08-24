@@ -219,8 +219,8 @@ function ConfirmationSection({ backFn, stepNum }: Props) {
                   });
                 } else {
                   showErrorDialog(
-                    "Empty cart. Please buy and try again.",
-                    "",
+                    "May be you deleted items or some items are removed from the cart due to delivery restriction!",
+                    "သင်သည် ပစ္စည်းများကို ဖျက်လိုက်ခြင်း သို့မဟုတ် ပို့ဆောင်မှုကန့်သတ်ချက်ကြောင့် အချို့သောပစ္စည်းများကို တွန်းလှည်းမှ ဖယ်ရှားလိုက်ခြင်းဖြစ်နိုင်သည်။",
                     locale
                   );
                 }
