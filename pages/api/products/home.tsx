@@ -42,6 +42,7 @@ export default async function handler(
             Review: true,
             seller: true,
           },
+          take: 10,
         });
 
         const auctionProd = await prisma.product.findMany({
@@ -63,11 +64,11 @@ export default async function handler(
             Review: true,
             seller: true,
           },
+          take: 10,
         });
 
         let currentDate = new Date();
         currentDate.setHours(0, 0, 0, 0);
-        console.log(currentDate);
         const promotionProducts = await prisma.product.findMany({
           where: {
             OR: [
@@ -98,6 +99,7 @@ export default async function handler(
             Review: true,
             seller: true,
           },
+          take: 10,
         });
 
         return res.status(200).json({

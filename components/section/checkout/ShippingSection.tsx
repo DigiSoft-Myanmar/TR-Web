@@ -57,7 +57,16 @@ function ShippingSection({ nextFn, backFn }: Props) {
 
   React.useEffect(() => {
     if (shippingAddress) {
-      reset(shippingAddress);
+      if (shippingAddress.phoneNum) {
+        reset({
+          ...shippingAddress,
+        });
+      } else {
+        reset({
+          ...shippingAddress,
+          phoneNum: "+959",
+        });
+      }
     } else {
       reset({});
     }
