@@ -16,7 +16,7 @@ import {
   checkPlaced,
 } from "@/util/adsHelper";
 import { isInternal, isSeller } from "@/util/authHelper";
-import { Role } from "@prisma/client";
+import { AdsPlacement, Role } from "@prisma/client";
 import { ObjectId } from "mongodb";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -147,6 +147,17 @@ export default async function handler(
             body = req.body;
           } else {
             body = JSON.parse(req.body);
+          }
+          if (body.adsPlacement) {
+            if (body.adsPlacement === "OneCol") {
+              body.adsPlacement = AdsPlacement.OneCol;
+            } else if (body.adsPlacement === "TwoCols") {
+              body.adsPlacement = AdsPlacement.TwoCols;
+            } else if (body.adsPlacement === "ThreeCols") {
+              body.adsPlacement = AdsPlacement.ThreeCols;
+            } else {
+              body.adsPlacement = AdsPlacement.Unknown;
+            }
           }
           await prisma.ads.create({
             data: body,
