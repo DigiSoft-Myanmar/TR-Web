@@ -41,6 +41,7 @@ export default async function handler(
             Brand: true,
             Review: true,
             seller: true,
+            Condition: true,
           },
           take: 10,
         });
@@ -63,6 +64,7 @@ export default async function handler(
             Brand: true,
             Review: true,
             seller: true,
+            Condition: true,
           },
           take: 10,
         });
@@ -98,6 +100,7 @@ export default async function handler(
             Brand: true,
             Review: true,
             seller: true,
+            Condition: true,
           },
           take: 10,
         });
