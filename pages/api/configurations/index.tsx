@@ -5,10 +5,12 @@ import {
   modifyConfiguration,
 } from "@/prisma/models/configuration";
 import { getAllUser } from "@/prisma/models/user";
+import prisma from "@/prisma/prisma";
 import { NotAvailable, Unauthorized } from "@/types/ApiResponseTypes";
 import { encrypt } from "@/util/encrypt";
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { config } from "process";
 
 export default async function Handler(
   req: NextApiRequest,
@@ -25,13 +27,16 @@ export default async function Handler(
           iosSellAllow: false,
           currentVersion: "",
         };
-        if (configuration) {
+        let content = await prisma.content.findFirst({});
+        if (configuration && content) {
           d = {
             lowStockLimit: configuration.lowStockLimit,
             maximumAuctionPeriod: configuration.maximumAuctionPeriod,
             androidSellAllow: configuration.androidSellAllow,
             iosSellAllow: configuration.iosSellAllow,
             currentVersion: configuration.currentVersion,
+            playStoreURL: content.playStoreURL,
+            appStoreURL: content.appStoreURL,
           };
         }
         return res.status(200).json(d);
