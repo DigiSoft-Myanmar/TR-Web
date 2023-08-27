@@ -202,7 +202,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                       >
                         <div>
                           <strong className="block text-xs font-medium uppercase text-gray-400">
-                            General
+                            {getText("General", "အထွေထွေ", locale)}
                           </strong>
 
                           <ul className="mt-2 space-y-1">
@@ -332,7 +332,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                         {session ? (
                           <div>
                             <strong className="block text-xs font-medium uppercase text-gray-400">
-                              GENERAL
+                              {getText("General", "အထွေထွေ", locale)}
                             </strong>
 
                             <ul className="mt-2 space-y-1">
@@ -362,7 +362,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  {t("profile")}
+                                  {getText(
+                                    "Profile",
+                                    "ကိုယ်ရေးအချက်အလက်",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
 
@@ -411,7 +415,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                     setNotiModalOpen(true);
                                   }}
                                 >
-                                  Notifications{" "}
+                                  {getText(
+                                    "Notifications",
+                                    "အသိပေးချက်များ",
+                                    locale
+                                  )}{" "}
                                   <span className="indicator-item badge badge-primary badge-sm text-white">
                                     {isNotiPing > 99 ? "99+" : isNotiPing}
                                   </span>
@@ -426,7 +434,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                         {isBuyer(session) ? (
                           <div>
                             <strong className="block text-xs font-medium uppercase text-gray-400">
-                              BUYER
+                              {getText("BUYER", "၀ယ်ယူသူ", locale)}
                             </strong>
 
                             <ul className="mt-2 space-y-1">
@@ -450,7 +458,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Address
+                                  {getText("Address", "လိပ်စာ", locale)}
                                 </Link>
                               </li>
 
@@ -463,7 +471,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Purchase History
+                                  {getText(
+                                    "Purchased History",
+                                    "၀ယ်ယူမှု မှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -475,7 +487,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Bids
+                                  {getText(
+                                    "Bids",
+                                    "လေလံ၀ယ်ယူမှုမှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                             </ul>
@@ -487,7 +503,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                         {isSeller(session) ? (
                           <div>
                             <strong className="block text-xs font-medium uppercase text-gray-400">
-                              SELLER
+                              {getText("SELLER", "ရောင်းချသူ", locale)}
                             </strong>
 
                             <ul className="mt-2 space-y-1">
@@ -500,7 +516,27 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Products
+                                  {getText(
+                                    "Product Listing",
+                                    "ကုန်ပစ္စည်းများ",
+                                    locale
+                                  )}
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href={"/products?type=Auction"}
+                                  className={`block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 ${
+                                    router.asPath === "/products?type=Auction"
+                                      ? "bg-gray-100"
+                                      : "hover:bg-gray-100 hover:text-gray-700"
+                                  } `}
+                                >
+                                  {getText(
+                                    "Auction Listing",
+                                    "လေလံပစ္စည်းများ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
 
@@ -513,7 +549,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Orders
+                                  {getText(
+                                    "Sales History",
+                                    "ရောင်းချမှုမှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -525,7 +565,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Offers
+                                  {getText(
+                                    "Auction History",
+                                    "လေလံရောင်းချမှုမှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -537,7 +581,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Shipping Cost
+                                  {getText(
+                                    "Shipping Cost",
+                                    "ပို့ဆောင်ခ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -549,7 +597,11 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Promo Code
+                                  {getText(
+                                    "Promo Codes",
+                                    "ပရိုမိုကုဒ်များ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -572,7 +624,7 @@ function NavModal({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  Ads
+                                  {getText("Ads", "ကြော်ငြာများ", locale)}
                                 </Link>
                               </li>
                             </ul>

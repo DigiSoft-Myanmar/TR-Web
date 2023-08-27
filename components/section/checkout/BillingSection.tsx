@@ -4,6 +4,7 @@ import LocationPicker from "@/components/presentational/LocationPicker";
 import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { BillingAddress, useMarketplace } from "@/context/MarketplaceContext";
 import { showErrorDialog } from "@/util/swalFunction";
+import { formatAmount } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -80,7 +81,9 @@ function BillingSection({ nextFn }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 1</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(1, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("billingInfo")}</p>
       <span className="mb-10 text-sm">{t("fillBillingInfo")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>

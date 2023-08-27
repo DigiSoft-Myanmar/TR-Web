@@ -30,6 +30,7 @@ function Configurations({
   maximumAuctionPeriod,
   androidSellAllow,
   iosSellAllow,
+  currentVersion,
 }: any) {
   const { t } = useTranslation("common");
   const { data: session }: any = useSession();
@@ -60,6 +61,7 @@ function Configurations({
     senderEmailTSL: z.boolean(),
     androidSellAllow: z.boolean(),
     iosSellAllow: z.boolean(),
+    currentVersion: z.string().min(1, { message: t("inputError") }),
   });
 
   const { register, handleSubmit, watch, formState, reset } =
@@ -67,6 +69,7 @@ function Configurations({
       mode: "onChange",
       resolver: zodResolver(schema),
       defaultValues: {
+        currentVersion: currentVersion,
         senderEmail: senderEmail,
         senderEmailHost: senderEmailHost,
         senderEmailPort: senderEmailPort,
@@ -214,6 +217,17 @@ function Configurations({
               defaultValue={iosSellAllow}
             />
 
+            <FormInput
+              label={"Current App Version"}
+              placeHolder={t("enter") + " " + "current app version"}
+              error={errors.currentVersion?.message}
+              type="text"
+              defaultValue={currentVersion}
+              formControl={{
+                ...register("currentVersion"),
+              }}
+              currentValue={watchFields.currentVersion}
+            />
             <div className="flex items-center justify-end px-10 py-5">
               <div>
                 <SubmitBtn

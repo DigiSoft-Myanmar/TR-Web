@@ -19,6 +19,7 @@ import LoadingScreen from "@/components/screen/LoadingScreen";
 import PromoTbl from "@/components/muiTable/PromoTbl";
 import PromotionModal from "@/components/modal/sideModal/PromotionModal";
 import { isInternal, isSeller } from "@/util/authHelper";
+import { getText } from "@/util/textHelper";
 
 function PromoCodePage() {
   const [isModalOpen, setModalOpen] = React.useState(false);
@@ -30,14 +31,16 @@ function PromoCodePage() {
       return json;
     })
   );
-  const [title, setTitle] = React.useState("Create Promo Code");
+  const { locale } = useRouter();
+  const [title, setTitle] = React.useState(
+    getText("Create Promo Code", "ပရိုမိုကုဒ်ပြုလုပ်ရန်", locale)
+  );
   const [promotion, setPromotion] = React.useState<any>({
     sellerId: undefined,
     isPercent: false,
     isCouponUsagePerUserInfinity: true,
     isCouponUsageInfinity: true,
   });
-  const { locale } = useRouter();
 
   return session &&
     (session.role === Role.Admin ||
@@ -71,7 +74,7 @@ function PromoCodePage() {
           <EmptyScreen
             onClickFn={() => {
               setModalOpen(true);
-              setTitle("Create Promo Code");
+
               setPromotion({
                 isAllowAllBrand: true,
                 isAllowAllBuyers: true,
@@ -81,7 +84,9 @@ function PromoCodePage() {
                 isCouponUsageInfinity: true,
               });
               setModalOpen(true);
-              setTitle("Create Promo Code");
+              setTitle(
+                getText("Create Promo Code", "ပရိုမိုကုဒ်ပြုလုပ်ရန်", locale)
+              );
             }}
           />
         )}
@@ -89,7 +94,9 @@ function PromoCodePage() {
           className="fixed right-3 bottom-3 rounded-full bg-primary p-3 text-white"
           onClick={() => {
             setModalOpen(true);
-            setTitle("Create Promo Code");
+            setTitle(
+              getText("Create Promo Code", "ပရိုမိုကုဒ်ပြုလုပ်ရန်", locale)
+            );
             setPromotion({
               isPercent: false,
               isCouponUsagePerUserInfinity: true,

@@ -293,7 +293,11 @@ function Header({
               <input
                 className="w-full border-gray-200 border-2 border-r-0 rounded-l-full focus:ring-0 focus:border-primary-focus text-sm py-2 lg:px-5"
                 type="search"
-                placeholder="Search for the ultimate shopping experience..."
+                placeholder={getText(
+                  "Search for the ultimate shopping experience...",
+                  "အ​ကောင်းဆုံး​​သော စျေးဝယ်အတွေ့အကြုံများကိုရှာဖွေလိုက်ပါ",
+                  locale
+                )}
                 name="qry"
               />
               <button
@@ -314,7 +318,9 @@ function Header({
                     d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                   />
                 </svg>
-                <span className="hidden lg:flex">Search</span>
+                <span className="hidden lg:flex">
+                  {getText("Search", "ရှာဖွေရန်", locale)}
+                </span>
               </button>
             </form>
             <nav
@@ -351,7 +357,7 @@ function Header({
                         <details open>
                           <summary>
                             <span className="text-xs font-bold p-2">
-                              GENERAL
+                              {getText("General", "အထွေထွေ", locale)}
                             </span>
                           </summary>
                           <li>
@@ -364,7 +370,7 @@ function Header({
                               }
                               className="ml-1 font-normal hover:font-semibold"
                             >
-                              Profile
+                              {getText("Profile", "ကိုယ်ရေးအချက်အလက်", locale)}
                             </Link>
                           </li>
                           {(session.role === Role.Buyer ||
@@ -380,7 +386,11 @@ function Header({
                                 }
                                 className="ml-1 font-normal hover:font-semibold"
                               >
-                                Wishlist
+                                {getText(
+                                  "Wishlist",
+                                  "ကြိုက်နှစ်သက်သည့်ပစ္စည်းများ",
+                                  locale
+                                )}
                               </Link>
                             </li>
                           )}
@@ -397,7 +407,11 @@ function Header({
                                 setNotiModalOpen(true);
                               }}
                             >
-                              Notifications{" "}
+                              {getText(
+                                "Notifications",
+                                "အသိပေးချက်များ",
+                                locale
+                              )}{" "}
                               <span className="indicator-item badge badge-primary badge-sm text-white">
                                 {isNotiPing > 99 ? "99+" : isNotiPing}
                               </span>
@@ -414,7 +428,7 @@ function Header({
                             <details>
                               <summary>
                                 <span className="text-xs font-bold p-2">
-                                  Buyer
+                                  {getText("BUYER", "၀ယ်ယူသူ", locale)}
                                 </span>
                               </summary>
                               <li>
@@ -428,7 +442,7 @@ function Header({
                                   }
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Address
+                                  {getText("Address", "လိပ်စာ", locale)}
                                 </Link>
                               </li>
                               <li>
@@ -436,7 +450,11 @@ function Header({
                                   href={"/orders/purchasedHistory"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Purchase History
+                                  {getText(
+                                    "Purchased History",
+                                    "၀ယ်ယူမှု မှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -444,7 +462,11 @@ function Header({
                                   href={"/bidHistory"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Bids
+                                  {getText(
+                                    "Bids",
+                                    "လေလံ၀ယ်ယူမှုမှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                             </details>
@@ -462,7 +484,7 @@ function Header({
                             <details>
                               <summary>
                                 <span className="text-xs font-bold p-2">
-                                  Seller
+                                  {getText("SELLER", "ရောင်းချသူ", locale)}
                                 </span>
                               </summary>
                               <li>
@@ -470,7 +492,11 @@ function Header({
                                   href={"/products/"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Product Listing
+                                  {getText(
+                                    "Product Listing",
+                                    "ကုန်ပစ္စည်းများ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -478,7 +504,11 @@ function Header({
                                   href={"/products?type=Auction"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Auction Listing
+                                  {getText(
+                                    "Auction Listing",
+                                    "လေလံပစ္စည်းများ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -486,7 +516,11 @@ function Header({
                                   href={"/orders/"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Sales History
+                                  {getText(
+                                    "Sales History",
+                                    "ရောင်းချမှုမှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -494,7 +528,11 @@ function Header({
                                   href={"/auctions/"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Auctions History
+                                  {getText(
+                                    "Auction History",
+                                    "လေလံရောင်းချမှုမှတ်တမ်း",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -502,7 +540,11 @@ function Header({
                                   href={"/shipping%20Cost/"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Shipping Cost
+                                  {getText(
+                                    "Shipping Cost",
+                                    "ပို့ဆောင်ခ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -510,7 +552,11 @@ function Header({
                                   href={"/promoCode/"}
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Promo Codes
+                                  {getText(
+                                    "Promo Codes",
+                                    "ပရိုမိုကုဒ်များ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                               <li>
@@ -524,7 +570,7 @@ function Header({
                                   }
                                   className="ml-1 font-normal hover:font-semibold"
                                 >
-                                  Ads
+                                  {getText("Ads", "ကြော်ငြာများ", locale)}
                                 </Link>
                               </li>
                             </details>
@@ -560,7 +606,7 @@ function Header({
                             });
                           }}
                         >
-                          Logout
+                          {getText("Logout", "အကောင့်မှထွက်ရန်", locale)}
                         </button>
                       </li>
                     </ul>
@@ -759,7 +805,9 @@ function Header({
                       />
                     </svg>
 
-                    <span>Categories</span>
+                    <span>
+                      {getText("Categories", "အမျိုးအစားများ", locale)}
+                    </span>
                   </label>
                   <ul
                     tabIndex={0}
@@ -795,19 +843,19 @@ function Header({
                   href={"/marketplace?type=" + ProductNavType.Promotion}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
-                  Promotions
+                  {getText("Promotions", "ပရိုမိုးရှင်း", locale)}
                 </Link>
                 <Link
                   href={"/marketplace?type=" + ProductNavType.Auction}
                   className="hidden xl:flex whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
-                  Live Auctions
+                  {getText("Live Auctions", "လက်ရှိလေလံများ", locale)}
                 </Link>
                 <Link
                   href={isSeller(session) ? "/products" : "/memberships"}
                   className="whitespace-nowrap border-r pr-3 border-r-neutral hover:text-primary hover:underline "
                 >
-                  Sell on Treasure Rush
+                  {getText("Sell on Treasure Rush", "ရောင်းချရန်", locale)}
                 </Link>
               </>
             )}
@@ -815,7 +863,7 @@ function Header({
               href={"/faqs"}
               className="hidden xl:flex whitespace-nowrap hover:text-primary hover:underline "
             >
-              FAQs
+              {getText("FAQs", "မေးခွန်းများ", locale)}
             </Link>
           </div>
           <div className="flex flex-row items-center gap-3">

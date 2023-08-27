@@ -643,7 +643,7 @@ function Login({ siteInfo }: { siteInfo: Content }) {
                       ? getText("Back to Login", "၀င်ရောက်ရန်", locale)
                       : getText(
                           "Forget Password?",
-                          "စကား၀ှက်မေ့နေပါသလား။",
+                          "စကားဝှက်မေ့နေပါသလား။",
                           locale
                         )}
                   </button>

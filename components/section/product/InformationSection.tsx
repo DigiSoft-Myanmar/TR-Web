@@ -31,6 +31,7 @@ import SellerSelectBox from "@/components/presentational/SellerSelectBox";
 import BrandAutoCompleteBox from "@/components/presentational/BrandAutoCompleteBox";
 import SelectBox from "@/components/presentational/SelectBox";
 import { useQuery } from "react-query";
+import { formatAmount } from "@/util/textHelper";
 
 const FormInputRichText: any = dynamic(
   () => import("@/components/presentational/FormInputRichTextSun"),
@@ -203,7 +204,9 @@ function InformationSection({ nextFn, infoRef }: Props) {
   return (
     <>
       <div className="flex flex-col">
-        <h3 className="text-sm font-semibold text-gray-500">{t("step")} 1</h3>
+        <h3 className="text-sm font-semibold text-gray-500">
+          {t("step")} {formatAmount(1, locale)}
+        </h3>
         <p className="my-1 text-xl font-bold">{t("information")}</p>
         <span className="mb-10 text-sm">{t("fillInformation")}</span>
         <form

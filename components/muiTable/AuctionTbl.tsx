@@ -138,7 +138,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Product",
       minWidth: 90,
-      headerName: "Product",
+      headerName: getText("Product", "ပစ္စည်း", locale),
       renderCell: ({ row }: CellType) => (
         <Link
           href={
@@ -192,7 +192,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "status",
       minWidth: 90,
-      headerName: "Status",
+      headerName: getText("Status", "အခြေအနေ", locale),
       renderCell: ({ row }: CellType) =>
         row.isProduct ? (
           <div className="flex flex-row items-center gap-3 bg-warning/20 text-warning px-2 py-1 rounded-md font-semibold border">
@@ -223,7 +223,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Bid Amount",
       minWidth: 90,
-      headerName: "Bid Amount",
+      headerName: getText("Bid Amount", "လေလံပမာဏ", locale),
       renderCell: ({ row }: CellType) => (
         <Typography>
           {formatAmount(row.auction.amount, locale, true, false)}
@@ -234,7 +234,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Estimated Amount",
       minWidth: 90,
-      headerName: "Estimated Amount",
+      headerName: getText("Estimated Amount", "မျှော်မှန်းပမာဏ", locale),
       renderCell: ({ row }: CellType) => (
         <Typography>
           {formatAmount(
@@ -250,7 +250,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Bidder",
       minWidth: 90,
-      headerName: "Bidder",
+      headerName: getText("Bidder", "လေလံဆွဲသူ", locale),
       renderCell: ({ row }: CellType) => (
         <Link
           href={
@@ -286,7 +286,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.3,
       minWidth: 125,
       field: "createdAt",
-      headerName: "Created Date",
+      headerName: getText("Created Date", "ပြုလုပ်သည့်နေ့", locale),
       renderCell: ({ row }: CellType) => (
         <Typography variant="body2">
           {new Date(
@@ -303,7 +303,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.25,
       minWidth: 90,
       field: "Action",
-      headerName: "Action",
+      headerName: getText("Action", "လုပ်ဆောင်ချက်", locale),
       renderCell: ({ row }: CellType) => (
         <div className="flex flex-row items-center gap-3 flex-wrap">
           {row.isProduct === true ? (
@@ -533,7 +533,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
       {data && (
         <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
           <StatsCard
-            label="Total Auctions"
+            label={getText("Total Auctions", "လေလံစုစုပေါင်း", locale)}
             currentCount={
               data?.filter((e: any) => e.createdAt > prevYear.toISOString())
                 .length
@@ -548,7 +548,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
             totalCount={data?.length}
           />
           <StatsCard
-            label="Total Purchased"
+            label={getText("Total Purchased", "ဝယ်ယူမှုစုစုပေါင်း", locale)}
             currentCount={
               data?.filter(
                 (e: any) =>
@@ -570,7 +570,11 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
             }
           />
           <StatsCard
-            label="Total Rejected"
+            label={getText(
+              "Total Rejected",
+              "ငြင်းပယ်ခဲ့မှုစုစုပေါင်း",
+              locale
+            )}
             currentCount={
               data?.filter(
                 (e: any) =>
@@ -600,7 +604,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
             }
           />
           <StatsCard
-            label="Total Cart"
+            label={getText("Total Cart", "ဈေးခြင်းအရေအတွက်စုစုပေါင်း", locale)}
             currentCount={
               data?.filter(
                 (e: any) =>
@@ -621,7 +625,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
             }
           />
           <StatsCard
-            label="Total Ended"
+            label={getText("Total Ended", "လေလံပြီးဆုံးမှုစုစုပေါင်း", locale)}
             currentCount={
               data?.filter(
                 (e: any) => e.auction?.createdAt > prevYear.toISOString()
@@ -659,7 +663,7 @@ const AuctionTbl = ({ data: parentData }: { data: any }) => {
               </Typography>
               <TextField
                 size="small"
-                placeholder={"Search Orders"}
+                placeholder={"Search Auctions"}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 className="rounded-md border-0 bg-white"

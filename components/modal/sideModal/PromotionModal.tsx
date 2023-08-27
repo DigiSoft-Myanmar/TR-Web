@@ -16,6 +16,7 @@ import FormSaleDatePicker from "@/components/presentational/FormSaleDatePicker";
 import SellerSelectBox from "@/components/presentational/SellerSelectBox";
 import { getHeaders, isInternal, isSeller } from "@/util/authHelper";
 import { useSession } from "next-auth/react";
+import { getText } from "@/util/textHelper";
 
 type PromoCodeWithBrandsUsers = PromoCode & { seller: User };
 
@@ -284,8 +285,12 @@ function PromotionModal({
                   <form onSubmit={handleSubmit(submitPromoCode)}>
                     <div className="mt-2 flex flex-col gap-3">
                       <FormInput
-                        label={"Promo Code"}
-                        placeHolder={"Enter Promo Code"}
+                        label={getText("Promo Code", "ပရိုမိုကုဒ်အမည်", locale)}
+                        placeHolder={getText(
+                          "Enter Promo Code",
+                          "ပရိုမိုကုဒ်စာသားကိုထည့်သွင်းပါ",
+                          locale
+                        )}
                         error={errors.promoCode?.message}
                         type="text"
                         defaultValue={promotion?.promoCode}
@@ -307,7 +312,11 @@ function PromotionModal({
                         />
                       )}
                       <FormInput
-                        label={"Minimum Purchase Price"}
+                        label={getText(
+                          "Minimum Purchase Price",
+                          "အနည်းဆုံးဝယ်ယူရမည့် ပမာဏ",
+                          locale
+                        )}
                         placeHolder={"Enter Minimum Purchase Price"}
                         error={errors.minimumPurchasePrice?.message}
                         type="number"
@@ -324,7 +333,7 @@ function PromotionModal({
                         <div className="flex-grow">
                           <FormInput
                             disableRoundedRight={true}
-                            label={"Discount"}
+                            label={getText("Discount", "လျှော့ဈေး", locale)}
                             placeHolder={"Enter discount"}
                             error={errors.discount?.message}
                             type="number"
@@ -399,19 +408,31 @@ function PromotionModal({
 
                       <FormInputCheckbox
                         formControl={{ ...register("isShippingFree") }}
-                        label={"Is Shipping Free?"}
+                        label={getText(
+                          "Is Shipping Free?",
+                          "အခမဲ့ ပို့ဆောင်ပေးမည်",
+                          locale
+                        )}
                         value={watchFields.isShippingFree}
                       />
 
                       <FormInputCheckbox
                         formControl={{ ...register("isCouponUsageInfinity") }}
-                        label={"Is Coupon Usage Infinity?"}
+                        label={getText(
+                          "Is Coupon Usage Infinity?",
+                          "အရေအတွက် အကန့်အသတ်မရှိ သုံးခွင့်ပေးမည်။",
+                          locale
+                        )}
                         value={watchFields.isCouponUsageInfinity}
                       />
 
                       {watchFields.isCouponUsageInfinity === false && (
                         <FormInput
-                          label={"Coupon Usage"}
+                          label={getText(
+                            "Coupon Usage",
+                            "အသုံးပြုနိုင်သည့် အရေအတွက်",
+                            locale
+                          )}
                           placeHolder={"Enter Coupon Usage"}
                           error={errors.couponUsage?.message}
                           type="number"
@@ -429,13 +450,21 @@ function PromotionModal({
                         formControl={{
                           ...register("isCouponUsagePerUserInfinity"),
                         }}
-                        label={"Is Coupon Usage Per User Infinity?"}
+                        label={getText(
+                          "Is coupon usage per user infinity?",
+                          "လူတစ်ဦးလျှင် အရေအတွက် အကန့်အသတ်မရှိ အသုံးပြုခွင့်ပေးမည်။",
+                          locale
+                        )}
                         value={watchFields.isCouponUsagePerUserInfinity}
                       />
 
                       {watchFields.isCouponUsagePerUserInfinity === false && (
                         <FormInput
-                          label={"Coupon Usage Per User"}
+                          label={getText(
+                            "Coupon usage per user",
+                            "လူတစ်ဦးလျှင် အသုံးပြုနိုင်သည့် အရေအတွက်",
+                            locale
+                          )}
                           placeHolder={"Enter Coupon Usage Per User"}
                           error={errors.couponUsagePerUser?.message}
                           type="number"

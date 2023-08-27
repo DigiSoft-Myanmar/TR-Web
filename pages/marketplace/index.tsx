@@ -20,7 +20,7 @@ import prisma from "@/prisma/prisma";
 import FilterSection from "@/components/section/FilterSection";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { getPageNumbers } from "@/util/textHelper";
+import { getPageNumbers, getText } from "@/util/textHelper";
 import AuctionCard from "@/components/card/AuctionCard";
 import ProductCard from "@/components/card/ProductCard";
 import { ProductNavType } from "@/types/productTypes";
@@ -290,10 +290,14 @@ function Default({
           ) : (
             <div className="grid px-4 place-content-center flex-grow h-[50vh]">
               <h1 className="tracking-normal text-gray-500 uppercase text-3xl font-extralight">
-                Sorry !
+                {getText("Sorry", "ဝမ်းနည်းပါတယ်", locale)} !
               </h1>
               <h1 className="tracking-widest text-gray-500 uppercase mt-1">
-                There are no products available right now.
+                {getText(
+                  "There are no products available right now.",
+                  "သင်ရှာဖွေသောကုန်ပစ္စည်းများ မရှိသေးပါ။",
+                  locale
+                )}
               </h1>
             </div>
           )}

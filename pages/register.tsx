@@ -243,7 +243,7 @@ function Register({ siteInfo }: { siteInfo: Content }) {
               </div>
 
               <FormInput
-                label={"Username"}
+                label={t("username")}
                 placeHolder={"Enter Username"}
                 error={errors.username?.message}
                 type="text"
@@ -268,7 +268,7 @@ function Register({ siteInfo }: { siteInfo: Content }) {
               />
 
               <FormInput
-                label={"Phone"}
+                label={t("phone")}
                 placeHolder={"Enter Phone"}
                 error={errors.phoneNum?.message}
                 type="text"

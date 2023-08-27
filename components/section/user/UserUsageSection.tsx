@@ -45,12 +45,14 @@ function UserUsageSection({
         }`}
       >
         <div className="flex flex-row items-center gap-3 mt-3">
-          <h3 className="text-lg ml-3">{t("usage")}</h3>
+          <h3 className="text-lg ml-3">
+            {getText("Usage", "အသုံးပြုမှု", locale)}
+          </h3>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="bg-white p-3 rounded-md border flex flex-col gap-5">
             <h3 className="text-lg text-primaryText border-b pb-3">
-              Membership Info
+              {getText("Membership Info", "အဖွဲ့၀င်အချက်အလက်", locale)}
             </h3>
             <div className="flex flex-row items-center gap-3 text-sm">
               <svg
@@ -69,7 +71,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Membership:{" "}
+                {getText("Membership", "အဖွဲ့၀င်အမျိုးအစား", locale)}:{" "}
                 {getText(
                   user.currentMembership.name,
                   user.currentMembership.nameMM,
@@ -94,7 +96,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Start Date:{" "}
+                {getText("Start Date", "အဖွဲ့၀င်စတင်သည့်နေ့", locale)}: :{" "}
                 {new Date(user.memberStartDate).toLocaleDateString("en-ca", {
                   year: "numeric",
                   month: "short",
@@ -119,7 +121,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Expired Date:{" "}
+                {getText("Expired Date", "အဖွဲ့၀င်ကုန်ဆုံးသည့်နေ့", locale)}:{" "}
                 {date.toLocaleDateString("en-ca", {
                   year: "numeric",
                   month: "short",
@@ -144,14 +146,14 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Price:{" "}
+                {getText("Price", "အဖွဲ့ဝင်ကြေး", locale)}:{" "}
                 {formatAmount(user.currentMembership.price, locale, true)}
               </span>
             </div>
           </div>
           <div className="bg-white p-3 rounded-md border flex flex-col gap-5">
             <h3 className="text-lg text-primaryText border-b pb-3">
-              Ads Usage
+              {getText("Ads Usage", "ကြော်ငြာအသုံးပြုမှု", locale)}
             </h3>
 
             <div className="flex flex-row items-center gap-3 text-sm">
@@ -171,8 +173,12 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Free Ads Limit :{" "}
-                {formatAmount(data?.freeAdsLimit, locale, false)}
+                {getText(
+                  "Free Ads Limit",
+                  "အခမဲ့အသုံးပြုနိုင်သည့်ပမာဏ",
+                  locale
+                )}
+                : {formatAmount(data?.freeAdsLimit, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">
@@ -192,7 +198,8 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Total Ads Used : {formatAmount(data?.adsUsed, locale, false)}
+                {getText("Total Ads Used", "အသုံးပြုထားသည့်ပမာဏ", locale)}:{" "}
+                {formatAmount(data?.adsUsed, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">
@@ -212,7 +219,11 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Extra Ads Cost :{" "}
+                {getText(
+                  "Extra Ads Cost",
+                  "အပိုကြော်ငြာ ၁ ခုအတွက် နှုန်းထား",
+                  locale
+                )}
                 {formatAmount(
                   user.currentMembership.extraAdsPricing,
                   locale,
@@ -237,7 +248,7 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Total Ads Cost:{" "}
+                {getText("Total Ads Cost", "စုစုပေါင်းကျသင့်ငွေ", locale)}:{" "}
                 {formatAmount(
                   data?.adsUsed - data?.freeAdsUsed > 0
                     ? (data?.adsUsed - data?.freeAdsUsed) *
@@ -251,7 +262,7 @@ function UserUsageSection({
           </div>
           <div className="bg-white p-3 rounded-md border flex flex-col gap-5">
             <h3 className="text-lg text-primaryText border-b pb-3">
-              SKU Usage
+              {getText("SKU Usage", "SKU အသုံးပြုမှု", locale)}
             </h3>
             <div className="flex flex-row items-center gap-3 text-sm">
               <svg
@@ -270,7 +281,12 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Free SKU Listing :{" "}
+                {getText(
+                  "Free SKU Listing",
+                  "အခမဲ့အသုံးပြုနိုင်သည့် ပမာဏ",
+                  locale
+                )}
+                :
                 {formatAmount(user.currentMembership.SKUListing, locale, false)}
               </span>
             </div>
@@ -291,7 +307,8 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Total SKU Used : {formatAmount(data?.skuUsed, locale, false)}
+                {getText("Total SKU Used", "အသုံးပြုထားသည့် ပမာဏ", locale)}:{" "}
+                {formatAmount(data?.skuUsed, locale, false)}
               </span>
             </div>
             <div className="flex flex-row items-center gap-3 text-sm">
@@ -311,7 +328,12 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Extra SKU Cost :{" "}
+                {getText(
+                  "Extra SKU Cost",
+                  "အပို SKU ၁ခု အတွက် နှုန်းထား",
+                  locale
+                )}
+                :{" "}
                 {formatAmount(
                   user.currentMembership.extraSKUPricing,
                   locale,
@@ -336,7 +358,12 @@ function UserUsageSection({
               </svg>
 
               <span>
-                Total SKU Cost:{" "}
+                {getText(
+                  "Total SKU Cost",
+                  "စုစုပေါင်း SKU ကုန်ကျစရိတ်",
+                  locale
+                )}
+                :{" "}
                 {formatAmount(
                   data?.skuUsed - user.currentMembership.SKUListing > 0
                     ? (data?.skuUsed - user.currentMembership.SKUListing) *
@@ -352,7 +379,9 @@ function UserUsageSection({
         <details className="group w-full" open>
           <summary className="flex w-full cursor-pointer items-center justify-between bg-white p-3 rounded-md border open:rounded-t-md group-open:rounded-b-none">
             <div className="flex flex-row items-center gap-3">
-              <h3 className="text-lg">{t("product")}</h3>
+              <h3 className="text-lg">
+                {getText("Products", "ပစ္စည်းများ", locale)}
+              </h3>
             </div>
             <span className="ml-auto shrink-0 transition duration-300 group-open:-rotate-180">
               <svg

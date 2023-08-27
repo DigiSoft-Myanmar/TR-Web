@@ -9,6 +9,7 @@ import {
   showErrorDialog,
   showWarningDialog,
 } from "@/util/swalFunction";
+import { formatAmount } from "@/util/textHelper";
 import { AttrType, Role } from "@prisma/client";
 import { differenceBy } from "lodash";
 import { useSession } from "next-auth/react";
@@ -43,13 +44,13 @@ function AttributeSection({ backFn, nextFn }: Props) {
       if (product.attributes) {
         for (let i = 0; i < attrArr.length; i++) {
           let prodAttr = product.attributes.find(
-            (a: any) => a.id === attrArr[i].id,
+            (a: any) => a.id === attrArr[i].id
           );
           if (prodAttr && prodAttr.Term) {
             const difference = differenceBy(
               prodAttr.Term,
               attrArr[i].Term,
-              "name",
+              "name"
             );
             attrArr[i].Term = [...attrArr[i].Term, ...difference];
           }
@@ -73,7 +74,9 @@ function AttributeSection({ backFn, nextFn }: Props) {
   return (
     <>
       <div className="flex flex-col">
-        <h3 className="text-sm font-semibold text-gray-500">{t("step")} 2</h3>
+        <h3 className="text-sm font-semibold text-gray-500">
+          {t("step")} {formatAmount(2, locale)}
+        </h3>
         <p className="my-1 text-xl font-bold">{t("attributes")}</p>
         <span className="mb-10 text-sm">{t("fillAttributes")}</span>
         <form
@@ -128,7 +131,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
                             product.attributes.find(
                               (e: any) =>
                                 e.id === elem.id &&
-                                e.Term.find((a: any) => a.name === el.name),
+                                e.Term.find((a: any) => a.name === el.name)
                             )
                               ? "border-primary  ring-1 ring-primary"
                               : "border-gray-500"
@@ -139,11 +142,11 @@ function AttributeSection({ backFn, nextFn }: Props) {
                               attr = [...product.attributes];
                             }
                             let prodAttrIndex: number = attr.findIndex(
-                              (e: any) => e.id === elem.id,
+                              (e: any) => e.id === elem.id
                             );
                             if (prodAttrIndex >= 0) {
                               let isExists = attr[prodAttrIndex].Term.find(
-                                (e: any) => e.name === el.name,
+                                (e: any) => e.name === el.name
                               );
                               if (isExists) {
                                 if (product.variations) {
@@ -152,24 +155,24 @@ function AttributeSection({ backFn, nextFn }: Props) {
                                       e.attributes.find(
                                         (z: any) =>
                                           (el.id && z.id === el.id) ||
-                                          el.name === z.name,
-                                      ),
+                                          el.name === z.name
+                                      )
                                   );
                                   if (variationExists) {
                                     showWarningDialog(
                                       "Variation already exists cannot remove.",
                                       "ရှိနှင့်ပြီးသား ပုံစံကွဲများကို ဖယ်ရှား၍မရပါ။",
-                                      locale,
+                                      locale
                                     );
                                   } else {
                                     attr[prodAttrIndex].Term = attr[
                                       prodAttrIndex
                                     ].Term.filter(
-                                      (e: any) => e.name !== el.name,
+                                      (e: any) => e.name !== el.name
                                     );
                                     if (attr[prodAttrIndex].Term.length === 0) {
                                       attr = attr.filter(
-                                        (e: any) => e.id !== elem.id,
+                                        (e: any) => e.id !== elem.id
                                       );
                                     }
                                   }
@@ -179,7 +182,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
                                   ].Term.filter((e: any) => e.name !== el.name);
                                   if (attr[prodAttrIndex].Term.length === 0) {
                                     attr = attr.filter(
-                                      (e: any) => e.id !== elem.id,
+                                      (e: any) => e.id !== elem.id
                                     );
                                   }
                                 }
@@ -225,7 +228,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
                             product.attributes.find(
                               (e: any) =>
                                 e.id === elem.id &&
-                                e.Term.find((a: any) => a.name === el.name),
+                                e.Term.find((a: any) => a.name === el.name)
                             ) && (
                               <svg
                                 className="top-4 right-4 h-5 w-5 cursor-pointer"
@@ -254,7 +257,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
                                     attr = [...product.attributes];
                                   }
                                   let prodAttrIndex: number = attr.findIndex(
-                                    (e: any) => e.id === elem.id,
+                                    (e: any) => e.id === elem.id
                                   );
                                   if (prodAttrIndex >= 0) {
                                     let isExists = attr[
@@ -267,14 +270,14 @@ function AttributeSection({ backFn, nextFn }: Props) {
                                             e.attributes.find(
                                               (z: any) =>
                                                 (el.id && z.id === el.id) ||
-                                                el.name === z.name,
-                                            ),
+                                                el.name === z.name
+                                            )
                                           );
                                         if (variationExists) {
                                           showWarningDialog(
                                             "Variation already exists cannot remove.",
                                             "ရှိနှင့်ပြီးသား ပုံစံကွဲများကို ဖယ်ရှား၍မရပါ။",
-                                            locale,
+                                            locale
                                           );
                                         } else {
                                           deleteTerm(index, el.name);
@@ -408,7 +411,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
           attributeList = [...attributes];
 
           let index = attributeList.findIndex(
-            (e: any) => e.id === term.attributeId,
+            (e: any) => e.id === term.attributeId
           );
           if (termIndex === -1) {
             if (
@@ -423,7 +426,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
           } else {
             if (
               !attributeList[index].Term.find(
-                (e: any) => e.name === term.name,
+                (e: any) => e.name === term.name
               ) ||
               attributeList[index].Term[termIndex].name === term.name
             ) {
@@ -436,7 +439,7 @@ function AttributeSection({ backFn, nextFn }: Props) {
                   let attr = varia[i].attributes.findIndex(
                     (e: any) =>
                       e.attributeId === term.attributeId &&
-                      e.name === prevValue.name,
+                      e.name === prevValue.name
                   );
                   if (attr >= 0) {
                     varia[i].attributes[attr] = term;

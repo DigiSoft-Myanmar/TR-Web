@@ -83,7 +83,7 @@ export function IndexPage({
   const headDescription = getHighlightText(
     getText(
       content.homeHeroSectionDescription,
-      content.homeHeroSectionDescription,
+      content.homeHeroSectionDescriptionMM,
       locale
     )
   );

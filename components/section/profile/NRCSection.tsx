@@ -4,6 +4,7 @@ import { useProfile } from "@/context/ProfileContext";
 import { fileUrl } from "@/types/const";
 import { isInternal } from "@/util/authHelper";
 import { showErrorDialog } from "@/util/swalFunction";
+import { formatAmount } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -69,7 +70,9 @@ function NRCSection({ backFn, nextFn, submitRef }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 2</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(2, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("nrcInfo")}</p>
       <span className="mb-10 text-sm">{t("fillNRCInfo")}</span>
       <form

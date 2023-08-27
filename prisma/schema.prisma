@@ -584,6 +584,7 @@ model Configuration {
   senderEmailTSL       Boolean
   androidSellAllow     Boolean  @default(false)
   iosSellAllow         Boolean  @default(false)
+  currentVersion       String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 }

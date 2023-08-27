@@ -16,6 +16,7 @@ import Image from "next/image";
 import { SocialIcon } from "react-social-icons";
 import { Colors } from "@/types/color";
 import { isSeller } from "@/util/authHelper";
+import { getText } from "@/util/textHelper";
 
 export const subscribeList = [
   { name: "allUpdates", value: "All" },
@@ -142,7 +143,9 @@ function Footer({ content }: { content: Content }) {
             </div>
 
             <div className="col-span-2 sm:col-span-1">
-              <p className="font-medium text-gray-900">Services</p>
+              <p className="font-medium text-gray-900">
+                {getText("Services", "ဝန်ဆောင်မှု", locale)}
+              </p>
 
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
@@ -150,7 +153,7 @@ function Footer({ content }: { content: Content }) {
                     href={"/marketplace"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    Marketplace
+                    {getText("Marketplace", "ကုန်ပစ္စည်းများ", locale)}
                   </Link>
                 </li>
 
@@ -159,7 +162,7 @@ function Footer({ content }: { content: Content }) {
                     href={"/marketplace?type=" + ProductNavType.Auction}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    Live Auctions
+                    {getText("Live Auctions", "လက်ရှိလေလံများ", locale)}
                   </Link>
                 </li>
 
@@ -168,7 +171,7 @@ function Footer({ content }: { content: Content }) {
                     href={"/marketplace?type=" + ProductNavType.Promotion}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    Promotions
+                    {getText("Promotions", "ပရိုမိုးရှင်းများ", locale)}
                   </Link>
                 </li>
 
@@ -177,14 +180,20 @@ function Footer({ content }: { content: Content }) {
                     href={isSeller(session) ? "/products" : "/memberships"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    Sell on Treasure Rush
+                    {getText(
+                      "Sell on Treasure Rush",
+                      "ပစ္စည်းရောင်းချရန်",
+                      locale
+                    )}
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div className="col-span-2 sm:col-span-1">
-              <p className="font-medium text-gray-900">Helpful Links</p>
+              <p className="font-medium text-gray-900">
+                {getText("Helpful Links", "ပစ္စည်းရောင်းချရန်", locale)}
+              </p>
 
               <ul className="mt-6 space-y-4 text-sm">
                 <li>
@@ -192,7 +201,7 @@ function Footer({ content }: { content: Content }) {
                     href={"/about#contact"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    Contact
+                    {getText("Contact", "ဆက်သွယ်ရန်", locale)}
                   </Link>
                 </li>
 
@@ -201,7 +210,7 @@ function Footer({ content }: { content: Content }) {
                     href={"/faqs"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    FAQs
+                    {getText("FAQs", "မေးလေ့ရှိသောမေးခွန်းများ", locale)}
                   </Link>
                 </li>
 
@@ -210,7 +219,7 @@ function Footer({ content }: { content: Content }) {
                     href={"/memberships"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    Membership
+                    {getText("Membership", "အဖွဲ့၀င်အချက်အလက်များ", locale)}
                   </Link>
                 </li>
 
@@ -219,14 +228,20 @@ function Footer({ content }: { content: Content }) {
                     href={"/about"}
                     className="text-gray-700 transition hover:text-primary hover:border-b-2 hover:border-b-primary"
                   >
-                    About Treasure Rush
+                    {getText(
+                      "About Treasure Rush",
+                      "ကျွန်ုပ်တို့အကြောင်း",
+                      locale
+                    )}
                   </Link>
                 </li>
               </ul>
             </div>
 
             <div className="col-span-2 sm:col-span-1">
-              <p className="font-medium text-gray-900">Downloads</p>
+              <p className="font-medium text-gray-900">
+                {getText("Downloads App", "App ရယူရန်", locale)}
+              </p>
 
               <ul className="mt-6 space-y-4 text-sm">
                 <li>

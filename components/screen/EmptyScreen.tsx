@@ -1,6 +1,10 @@
+import { getText } from "@/util/textHelper";
+import { useRouter } from "next/router";
 import React from "react";
 
 function EmptyScreen({ onClickFn }: { onClickFn: Function }) {
+  const { locale } = useRouter();
+
   return (
     <div className="grid h-[calc(100vh-20vh)] place-content-center px-4">
       <div className="text-center">
@@ -10,7 +14,9 @@ function EmptyScreen({ onClickFn }: { onClickFn: Function }) {
           Empty Page
         </p>
 
-        <p className="mt-4 text-gray-500">Currently there is no data.</p>
+        <p className="mt-4 text-gray-500">
+          {getText("Currently there is no data.", "ပစ္စည်းမရှိသေးပါ။", locale)}
+        </p>
 
         <button
           className="mt-5 inline-flex items-center rounded border border-primary bg-primary px-8 py-3 text-white hover:bg-transparent hover:text-primary focus:outline-none focus:ring active:text-primary"
@@ -19,7 +25,10 @@ function EmptyScreen({ onClickFn }: { onClickFn: Function }) {
             onClickFn();
           }}
         >
-          <span className="text-sm font-medium"> Create new </span>
+          <span className="text-sm font-medium">
+            {" "}
+            {getText("Create new", "အသစ်ပြုလုပ်ရန်", locale)}{" "}
+          </span>
 
           <svg
             xmlns="http://www.w3.org/2000/svg"

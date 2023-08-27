@@ -47,7 +47,7 @@ let TabList = [
   {
     TabInfo: Tab.Promotions,
     name: "Promotions",
-    nameMM: "လျေ့စျေး ပစ္စည်းများ",
+    nameMM: "လျှော့စျေး ပစ္စည်းများ",
   },
   {
     TabInfo: Tab.LiveAuctions,
@@ -371,7 +371,11 @@ function UserHomeSection({ user }: { user: User }) {
             ) : (
               <div className="grid p-10 bg-white place-content-center">
                 <h1 className="tracking-widest text-gray-500 uppercase">
-                  This seller doesn't have any products related to this tab.
+                  {getText(
+                    "This seller doesn't have any products related to this tab.",
+                    "ဤရောင်းချသူတွင် ယခုခေါင်းစဉ်နှင့်ပတ်သက်သော ပစ္စည်းမရှိပါ။",
+                    locale
+                  )}
                 </h1>
               </div>
             )}

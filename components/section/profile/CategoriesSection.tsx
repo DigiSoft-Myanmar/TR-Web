@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { fetcher } from "@/util/fetcher";
 import { showErrorDialog } from "@/util/swalFunction";
 import { Category } from "@prisma/client";
-import { getText } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 
 type Props = {
   backFn: Function;
@@ -38,7 +38,9 @@ function CategoriesSection({ backFn, nextFn }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 4</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(4, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("categoriesInfo")}</p>
       <span className="mb-10 text-sm">{t("fillCategoriesInfo")}</span>
       <form

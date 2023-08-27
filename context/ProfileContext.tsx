@@ -1,5 +1,7 @@
 import { fetcher } from "@/util/fetcher";
+import { getText } from "@/util/textHelper";
 import { Brand, Membership, Role, User } from "@prisma/client";
+import { useRouter } from "next/router";
 import React, { createContext } from "react";
 import useSWR from "swr";
 
@@ -56,6 +58,7 @@ export const ProfileProvider = ({
 }) => {
   const { data } = useSWR("/api/townships?allow=true", fetcher);
 
+  const { locale } = useRouter();
   const [user, setUser] = React.useState<User | undefined>(parentUser);
   const [profileImg, setProfileImg] = React.useState<any>();
   const [nrcFront, setNRCFront] = React.useState<any>();
@@ -116,21 +119,21 @@ export const ProfileProvider = ({
       ) {
         if (data) {
           let state = data.find((z) => z.id === parentUser.stateId);
-          let stateStr = state.name;
+          let stateStr = getText(state.name, state.nameMM, locale);
           let district = state.districts.find(
             (z) => z.id === parentUser.districtId
           );
-          let districtStr = district.name;
+          let districtStr = getText(district.name, district.nameMM, locale);
           let township = district.townships.find(
             (z) => z.id === parentUser.townshipId
           );
-          let townshipStr = township.name;
+          let townshipStr = getText(township.name, township.nameMM, locale);
           setLocationStr(stateStr + "-" + districtStr + "-" + townshipStr);
         }
       }
     }
     setUser(parentUser);
-  }, [parentUser, data]);
+  }, [parentUser, data, locale]);
 
   return (
     <ProfileContext.Provider

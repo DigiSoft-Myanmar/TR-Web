@@ -6,6 +6,7 @@ import {
   calculateRating,
   calculateRatingPercentage,
   formatAmount,
+  getText,
 } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Rating, Tooltip } from "@mui/material";
@@ -219,7 +220,7 @@ function UserBuyerRatingSection({ user }: { user: User }) {
                 false,
                 true
               )}{" "}
-              ratings
+              {getText("Ratings", "အဆင့်သတ်မှတ်ချက်", locale)}
             </p>
           </div>
           <div className="flex-grow">

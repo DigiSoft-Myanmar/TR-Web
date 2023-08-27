@@ -320,7 +320,7 @@ function BuyNowHome({
                   "အထူးလျော့စျေးပစ္စည်းများ",
                   locale
                 )
-              : getText("Highlight Products", "အသားပေးပစ္စည်းများ", locale)}
+              : getText("Highlight Products", "အထူးပစ္စည်းများ", locale)}
           </h3>
           <Link
             href={

@@ -4,7 +4,7 @@ import LocationPickerFull from "@/components/presentational/LocationPickerFull";
 import { useProfile } from "@/context/ProfileContext";
 import { fileUrl } from "@/types/const";
 import { showErrorDialog } from "@/util/swalFunction";
-import { getText } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender, Role } from "@prisma/client";
 import { useTranslation } from "next-i18next";
@@ -84,7 +84,9 @@ function ProfileSection({ nextFn, submitRef }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 1</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(1, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("profile")}</p>
       <span className="mb-10 text-sm">{t("fillProfile")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>

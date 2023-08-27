@@ -20,7 +20,7 @@ import Typography from "@mui/material/Typography";
 // ** Icon Imports
 import Icon from "@/components/presentational/Icon";
 import { Order, Role } from "@prisma/client";
-import { formatAmount } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 import { useRouter } from "next/router";
 import { OrderStatus } from "@/types/orderTypes";
 import { Colors } from "@/types/color";
@@ -133,7 +133,7 @@ const OrderFullTbl = ({
       flex: 0.2,
       field: "orderNo",
       minWidth: 90,
-      headerName: "Order #",
+      headerName: getText("Order #", "အော်ဒါနံပါတ်", locale),
       renderCell: ({ row }: CellType) => (
         <Typography>{`#${row.orderNo}`}</Typography>
       ),
@@ -142,7 +142,7 @@ const OrderFullTbl = ({
       flex: 0.2,
       field: "orderBy",
       minWidth: 90,
-      headerName: "Order By",
+      headerName: getText("Order By", "ဝယ်ယူသူအမည်", locale),
       valueGetter(params: any) {
         return params.row.orderBy.username;
       },
@@ -154,7 +154,7 @@ const OrderFullTbl = ({
       flex: 0.3,
       minWidth: 125,
       field: "createdAt",
-      headerName: "Ordered Date",
+      headerName: getText("Ordered Date", "အော်ဒါတင်သည့်နေ့", locale),
       renderCell: ({ row }: any) => (
         <Typography variant="body2">
           {new Date(row.createdAt).toLocaleDateString("en-ca", {
@@ -169,7 +169,7 @@ const OrderFullTbl = ({
       flex: 0.25,
       minWidth: 90,
       field: "total",
-      headerName: "Sub Total",
+      headerName: getText("Sub Total", "စုစုပေါင်းတန်ဖိုး", locale),
       valueGetter(params: any) {
         return params.row.total;
       },
@@ -184,7 +184,7 @@ const OrderFullTbl = ({
       flex: 0.15,
       minWidth: 200,
       field: "invoiceStatus",
-      renderHeader: () => "Status",
+      renderHeader: () => getText("Status", "အခြေအနေ", locale),
       valueGetter(params: any) {
         let row = params.row;
         let data = row.invoiceStatus;
@@ -363,7 +363,7 @@ const OrderFullTbl = ({
       minWidth: 130,
       sortable: false,
       field: "actions",
-      headerName: "Actions",
+      headerName: getText("Actions", "လုပ်ဆောင်ချက်", locale),
       renderCell: ({ row }: any) => (
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {session && session.role === Role.Buyer ? (
@@ -475,7 +475,7 @@ const OrderFullTbl = ({
         </div>
         <div className="flex w-full flex-row flex-wrap items-center justify-between gap-3 p-5">
           <StatsCard
-            label="Total Orders"
+            label={getText("Total Orders", "စုစုပေါင်းအော်ဒါ", locale)}
             currentCount={
               data.filter((e: any) => e.createdAt > prevYear.toISOString())
                 .length
@@ -490,7 +490,7 @@ const OrderFullTbl = ({
             totalCount={data.length}
           />
           <StatsCard
-            label={"Shipped Orders"}
+            label={getText("Shipped Orders", "ပို့ဆောင်ပြီးအော်ဒါများ", locale)}
             currentCount={
               data.filter(
                 (e: any) =>
@@ -523,7 +523,7 @@ const OrderFullTbl = ({
             }
           />
           <StatsCard
-            label={"Pending Orders"}
+            label={getText("Pending Orders", "လုပ်ဆောင်ဆဲအော်ဒါများ", locale)}
             currentCount={
               data.filter(
                 (e: any) =>
@@ -564,7 +564,11 @@ const OrderFullTbl = ({
             }
           />
           <StatsCard
-            label={"Cancelled Orders"}
+            label={getText(
+              "Cancelled Orders",
+              "ငြင်းပယ်ထားသည့်အော်ဒါများ",
+              locale
+            )}
             currentCount={
               data.filter(
                 (e: any) =>
@@ -616,11 +620,15 @@ const OrderFullTbl = ({
                 }}
               >
                 <Typography variant="body2" sx={{ mr: 2 }}>
-                  Search:
+                  {getText("Search:", "ရှာဖွေရန်:", locale)}
                 </Typography>
                 <TextField
                   size="small"
-                  placeholder={"Search Orders"}
+                  placeholder={getText(
+                    "Search Orders",
+                    "အော်ဒါရှာဖွေရန်",
+                    locale
+                  )}
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                   className="rounded-md border-0 bg-white"

@@ -5,7 +5,7 @@ import {
   showSuccessDialog,
   showUnauthorizedDialog,
 } from "@/util/swalFunction";
-import { formatAmount } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
@@ -254,7 +254,9 @@ function ConfirmationSection({
                   </>
                 ) : (
                   <>
-                    <span className="text-sm font-semibold">Submit</span>
+                    <span className="text-sm font-semibold">
+                      {getText("Submit", "ပေးပို့ရန်", locale)}
+                    </span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

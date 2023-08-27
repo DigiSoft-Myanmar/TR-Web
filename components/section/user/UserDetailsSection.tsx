@@ -13,6 +13,7 @@ import {
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 function UserDetailsSection({
   user,
@@ -25,6 +26,7 @@ function UserDetailsSection({
     userDefinedRole: UserDefinedRole;
   };
 }) {
+  const { t } = useTranslation("common");
   const { data: session }: any = useSession();
   const { locale } = useRouter();
   const date = new Date(user?.memberStartDate);
@@ -43,7 +45,7 @@ function UserDetailsSection({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="bg-white p-3 rounded-md border flex flex-col gap-5 text-gray-500">
           <h3 className="text-lg text-primaryText border-b pb-3">
-            Profile Info
+            {t("profileInfo")}
           </h3>
           <div className="flex flex-row items-center gap-3 text-sm">
             <svg
@@ -279,7 +281,9 @@ function UserDetailsSection({
           </div>
         </div>
         <div className="bg-white p-3 rounded-md border flex flex-col gap-3">
-          <h3 className="text-lg text-primaryText border-b pb-3">NRC Info</h3>
+          <h3 className="text-lg text-primaryText border-b pb-3">
+            {t("nrcInfo")}
+          </h3>
           {!user.nrcFront && !user.nrcBack && (
             <span className="text-sm text-gray-500">Not Set</span>
           )}
@@ -298,7 +302,13 @@ function UserDetailsSection({
         </div>
 
         <div className="bg-white p-3 rounded-md border flex flex-col gap-5 text-gray-500">
-          <h3 className="text-lg text-primaryText border-b pb-3">Status</h3>
+          <h3 className="text-lg text-primaryText border-b pb-3">
+            {getText(
+              "Status",
+              "အဖွဲ့ဝင်နှင့်သက်ဆိုင်သော အချက်အလက်များ",
+              locale
+            )}
+          </h3>
           <div className="flex flex-row items-center gap-3 text-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"

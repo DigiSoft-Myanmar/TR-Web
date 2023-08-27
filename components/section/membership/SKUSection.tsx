@@ -1,5 +1,6 @@
 import FormInput from "@/components/presentational/FormInput";
 import { useMembership } from "@/context/MemberContext";
+import { formatAmount } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Membership } from "@prisma/client";
 import { useSession } from "next-auth/react";
@@ -74,7 +75,9 @@ function SKUSection({
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 3</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(3, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("skuListingMember")}</p>
       <span className="mb-10 text-sm">{t("fillSKUListingMember")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>

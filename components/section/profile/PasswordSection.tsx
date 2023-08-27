@@ -1,5 +1,6 @@
 import FormInput from "@/components/presentational/FormInput";
 import { useProfile } from "@/context/ProfileContext";
+import { formatAmount } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -58,7 +59,9 @@ function PasswordSection({ backFn, nextFn, submitRef }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 3</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(3, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("mailPassword")}</p>
       <span className="mb-10 text-sm">{t("fillPassword")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>

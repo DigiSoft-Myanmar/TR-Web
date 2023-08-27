@@ -7,7 +7,12 @@ import { useTranslation } from "next-i18next";
 import { defaultDescription } from "@/types/const";
 import prisma from "@/prisma/prisma";
 import { FeedbackType, Role, User } from "@prisma/client";
-import { calculateRating, formatAmount, getNotiTime } from "@/util/textHelper";
+import {
+  calculateRating,
+  formatAmount,
+  getNotiTime,
+  getText,
+} from "@/util/textHelper";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import ProductImg from "@/components/card/ProductImg";
@@ -154,14 +159,15 @@ export default function UserScreen({ user }: { user: any }) {
                                   data.buyerTotalReview + data.sellerTotalReview
                                 )
                               : ""}{" "}
-                            Ratings{" . "}
+                            {getText("Ratings", "အဆင့်သတ်မှတ်ချက်", locale)}
+                            {" . "}
                             {formatAmount(
                               data.buyerTotalReview + data.sellerTotalReview,
                               locale,
                               false,
                               true
                             )}{" "}
-                            Reviews
+                            {getText("Reviews", "မှတ်ချက်", locale)}
                           </span>
                         </>
                       )}
@@ -231,7 +237,7 @@ export default function UserScreen({ user }: { user: any }) {
                           />
                         </svg>
                         <h3 className="text-sm">
-                          Products:{" "}
+                          {getText("Products", "ပစ္စည်းအရေအတွက်", locale)}:{" "}
                           <span className="font-semibold text-primary">
                             {formatAmount(data.noOfProducts, locale)}
                           </span>
@@ -253,7 +259,7 @@ export default function UserScreen({ user }: { user: any }) {
                           />
                         </svg>
                         <h3 className="text-sm">
-                          Auctions:{" "}
+                          {getText("Auctions", "လေလံပစ္စည်း", locale)}:{" "}
                           <span className="font-semibold text-primary">
                             {formatAmount(data.noOfAuctions, locale)}
                           </span>
@@ -279,7 +285,12 @@ export default function UserScreen({ user }: { user: any }) {
                       </svg>
 
                       <h3 className="text-sm">
-                        Ratings (as buyer):{" "}
+                        {getText(
+                          "Ratings (Buyer)",
+                          "အဆင့်သတ်မှတ်ချက် (ဝယ်ယူသူ)",
+                          locale
+                        )}{" "}
+                        :{" "}
                         <span className="font-semibold text-primary">
                           {calculateRating(
                             data.buyerReview,
@@ -307,7 +318,12 @@ export default function UserScreen({ user }: { user: any }) {
                       </svg>
 
                       <h3 className="text-sm">
-                        Ratings (as seller):{" "}
+                        {getText(
+                          "Ratings (Seller)",
+                          "အဆင့်သတ်မှတ်ချက် (ရောင်းချသူ)",
+                          locale
+                        )}{" "}
+                        :{" "}
                         <span className="font-semibold text-primary">
                           {calculateRating(
                             data.sellerReview,
@@ -335,7 +351,12 @@ export default function UserScreen({ user }: { user: any }) {
                       </svg>
 
                       <h3 className="text-sm">
-                        Units sold:{" "}
+                        {getText(
+                          "Units sold",
+                          "ရောင်းချခဲ့သော အရေအတွက်",
+                          locale
+                        )}
+                        :{" "}
                         <span className="font-semibold text-primary">
                           {formatAmount(data.noOfUnitSold, locale)}
                         </span>
@@ -359,7 +380,7 @@ export default function UserScreen({ user }: { user: any }) {
                     </svg>
 
                     <h3 className="text-sm">
-                      Joined Date:{" "}
+                      {getText("Joined Date", "စာရင်းသွင်းသည့်နေ့", locale)}:{" "}
                       <span className="font-semibold text-primary">
                         {new Date(user.createdAt).toLocaleDateString("en-ca", {
                           year: "numeric",
@@ -394,7 +415,9 @@ export default function UserScreen({ user }: { user: any }) {
                           />
                         </svg>
                       </span>
-                      <span>Edit Profile</span>
+                      <span>
+                        {getText("Edit Profile", "ပြင်ဆင်ရန်", locale)}
+                      </span>
                     </Link>
                   )}
                 </div>
@@ -422,7 +445,7 @@ export default function UserScreen({ user }: { user: any }) {
                   );
                 }}
               >
-                Home
+                {getText("Home", "ပင်မ", locale)}
               </div>
 
               {isBuyer(user) &&
@@ -445,7 +468,7 @@ export default function UserScreen({ user }: { user: any }) {
                       );
                     }}
                   >
-                    Wishlist
+                    {getText("Wishlist", "စိတ်ဝင်စားသည့်ပစ္စည်းများ", locale)}
                   </div>
                 )}
 
@@ -469,7 +492,7 @@ export default function UserScreen({ user }: { user: any }) {
                       );
                     }}
                   >
-                    Address
+                    {getText("Address", "လိပ်စာ", locale)}
                   </div>
                 )}
 
@@ -493,7 +516,7 @@ export default function UserScreen({ user }: { user: any }) {
                       );
                     }}
                   >
-                    Ads
+                    {getText("Ads", "ကြော်ငြာ", locale)}
                   </div>
                 )}
               {isBuyer(user) && (
@@ -515,7 +538,7 @@ export default function UserScreen({ user }: { user: any }) {
                     );
                   }}
                 >
-                  Buyer Ratings
+                  {getText("Buyer Ratings", "ဝယ်ယူသူအဆင့်သတ်မှတ်ချက်", locale)}
                 </div>
               )}
 
@@ -538,7 +561,11 @@ export default function UserScreen({ user }: { user: any }) {
                     );
                   }}
                 >
-                  Seller Ratings
+                  {getText(
+                    "Seller Ratings",
+                    "ရောင်းချသူအဆင့်သတ်မှတ်ချက်",
+                    locale
+                  )}
                 </div>
               )}
 
@@ -562,7 +589,7 @@ export default function UserScreen({ user }: { user: any }) {
                       );
                     }}
                   >
-                    Usage
+                    {getText("Usage", "အသုံးပြုမှု", locale)}
                   </div>
                 )}
 
@@ -585,7 +612,7 @@ export default function UserScreen({ user }: { user: any }) {
                     );
                   }}
                 >
-                  Details
+                  {getText("Details", "အသေးစိတ်", locale)}
                 </div>
               )}
             </nav>

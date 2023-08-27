@@ -212,6 +212,7 @@
   "Purchased": "Purchased",
   "InCart": "In Cart",
   "LowPrice": "Low Price",
+  "SKUListing": "SKU Listing",
   "freeSKUListing": "Free SKU Listing",
   "extraSKUPricing": "Extra SKU Pricing",
   "freeAdsListing": "Free Ads Listing",
@@ -276,5 +277,22 @@
   "inputValidPercentage": "Percentage must be between 0 and 100.",
   "TraderDetails": "Buy, Unlock Seller's Features",
   "BuyerDetails": "Buy, No Selling Allowed",
-  "SellerDetails": "Unlock Seller's Features, No Buying."
+  "SellerDetails": "Unlock Seller's Features, No Buying.",
+
+  "uploadNRCFront": "Upload NRC (Front)",
+  "uploadNRCBack": "Upload NRC (Back)",
+  "success": "Success",
+  "Buy Now": "Buy Now",
+  "Auction": "Auction",
+  "Promotion": "Promotion",
+  "next": "Next",
+  "SortByDefault": "Default",
+  "SortByNameAsc": "Name (Ascending)",
+  "SortByNameDesc": "Name (Descending)",
+  "SortByPriceAsc": "Price (Ascending)",
+  "SortByPriceDesc": "Price (Descending)",
+  "SortByNewest": "Newest",
+  "SortByOldest": "Oldest",
+  "SortByRatingAsc": "Rating (Ascending)",
+  "SortByRatingDesc": "Rating (Descending)"
 }

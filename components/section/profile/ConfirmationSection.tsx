@@ -195,7 +195,7 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
             </div>
             <div className="flex flex-row items-center justify-between gap-3">
               <h3 className="font-semibold text-sm">{t("gender")}</h3>
-              <p>{profile.gender}</p>
+              <p>{t(profile.gender)}</p>
             </div>
           </div>
 
@@ -402,7 +402,9 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
               </>
             ) : (
               <>
-                <span className="text-sm font-semibold">Submit</span>
+                <span className="text-sm font-semibold">
+                  {getText("Submit", "ပေးပို့ရန်", locale)}
+                </span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

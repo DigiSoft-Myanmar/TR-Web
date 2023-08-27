@@ -407,7 +407,7 @@ function About({
                   <SubmitBtn
                     isSubmit={isSubmit}
                     submitTxt="Loading..."
-                    text={getText("Send Message", "OTP ရယူရန်", locale)}
+                    text={getText("Send Message", "ပေးပို့ရန်", locale)}
                   />
                 </form>
               </div>

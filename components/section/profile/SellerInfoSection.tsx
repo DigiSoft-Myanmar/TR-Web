@@ -90,7 +90,9 @@ function SellerInfoSection({ backFn, nextFn, submitRef, content }: Props) {
 
   return (
     <div className="flex flex-col">
-      <h3 className="text-sm font-semibold text-gray-500">{t("step")} 5</h3>
+      <h3 className="text-sm font-semibold text-gray-500">
+        {t("step")} {formatAmount(5, locale)}
+      </h3>
       <p className="my-1 text-xl font-bold">{t("sellerInfo")}</p>
       <span className="mb-10 text-sm">{t("fillSellerInfo")}</span>
       <form className="flex flex-col space-y-3" onSubmit={handleSubmit(submit)}>

@@ -217,7 +217,7 @@ function Sell({ siteInfo }: { siteInfo: Content }) {
               <p className="mt-4 sm:text-base/relaxed">
                 {getText(
                   "Start selling today with easy registration. Reach more customers and grow your business.",
-                  "ယခုပဲ စာရင်းပေးသွင်းပြီး ဖောက်သည်များ တိုးပွားကာ သင့်လုပ်ငန်းကို ကြီးထွားလိုက်ပါ။",
+                  "သင့်လုပ်ငန်း ပိုမိုကြီးထွားစေရန် လွယ်ကူစွာ စာရင်းပေးသွင်းခြင်းဖြင့် ယခုပဲ စတင်ရောင်းချလိုက်ပါ။",
                   locale
                 )}
               </p>

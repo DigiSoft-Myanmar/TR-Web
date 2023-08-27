@@ -23,6 +23,7 @@ export default async function Handler(
           maximumAuctionPeriod: 14,
           androidSellAllow: false,
           iosSellAllow: false,
+          currentVersion: "",
         };
         if (configuration) {
           d = {
@@ -30,6 +31,7 @@ export default async function Handler(
             maximumAuctionPeriod: configuration.maximumAuctionPeriod,
             androidSellAllow: configuration.androidSellAllow,
             iosSellAllow: configuration.iosSellAllow,
+            currentVersion: configuration.currentVersion,
           };
         }
         return res.status(200).json(d);

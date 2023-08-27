@@ -13,7 +13,7 @@ import {
   showSuccessDialog,
   showUnauthorizedDialog,
 } from "@/util/swalFunction";
-import { formatAmount } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 import useSWR from "swr";
 import { useQuery } from "react-query";
 import ShippingCostCard from "@/components/card/ShippingCostCard";
@@ -123,9 +123,15 @@ function Edit(data: any) {
                 role="alert"
                 className="flex-1 rounded bg-white py-4 px-6 shadow-md"
               >
-                <h3 className="text-sm font-semibold">Default Shipping Cost</h3>
+                <h3 className="text-sm font-semibold">
+                  {getText("Default Shipping Cost", "ပုံသေပို့ဆောင်ခ", locale)}
+                </h3>
                 <p className="mt-2 text-sm text-gray-700">
-                  If no value is specified, the default value will be applied.
+                  {getText(
+                    "If no value is specified, the default value will be applied.",
+                    "သီးသန့်ဝန်ဆောင်ခ သတ်မှတ်ထားခြင်းမရှိပါက ဤပို့ဆောင်ခကို အသုံးပြုပါမည်။",
+                    locale
+                  )}
                 </p>
                 <div className="mt-5 flex flex-row items-center gap-3">
                   <div className="flex flex-row items-center gap-2">
@@ -197,7 +203,11 @@ function Edit(data: any) {
                       }
                     }}
                   >
-                    Disable Shipping
+                    {getText(
+                      "Disable Shipping",
+                      "ပို့ဆောင်ခ မသတ်မှတ်ပါ",
+                      locale
+                    )}
                   </button>
                   <button
                     className="mt-3 rounded-md bg-primary px-3 py-2 text-sm text-white hover:bg-primary-focus"
@@ -208,7 +218,11 @@ function Edit(data: any) {
                       setDialogOpen(true);
                     }}
                   >
-                    Set Default Shipping Fee
+                    {getText(
+                      "Set Default Shipping Fee",
+                      "ပုံသေပို့ဆောင်ခသတ်မှတ်မည်",
+                      locale
+                    )}
                   </button>
                 </div>
               </div>
@@ -233,13 +247,20 @@ function Edit(data: any) {
 
                     <strong className="block font-medium">
                       {" "}
-                      Free Shipping Cost Excluded{" "}
+                      {getText(
+                        "Free Shipping Cost Excluded",
+                        "အခမဲ့ပို့ဆောင်မှု ထည့်သွင်းထားခြင်းမရှိပါ။",
+                        locale
+                      )}{" "}
                     </strong>
                   </div>
 
                   <p className="mt-2 text-sm text-yellow-700">
-                    Offer free shipping and attract more customers to boost
-                    sales and increase loyalty.
+                    {getText(
+                      "Offer free shipping and attract more customers to boost sales and increase loyalty.",
+                      "အခမဲ့ပို့ဆောင်မှုပေးခြင်းဖြင့် ဝယ်ယူသူများကို ပိုမိုဆွဲဆောင်နိုင်ပြီး ရောင်းအားတိုးမြင့်လာစေပါသည်။ ",
+                      locale
+                    )}
                   </p>
                   <div className="flex flex-row justify-end">
                     <button
@@ -287,7 +308,11 @@ function Edit(data: any) {
                         }
                       }}
                     >
-                      Enable Free Shipping
+                      {getText(
+                        "Enable Free Shipping",
+                        "အခမဲ့ပို့ဆောင်မှု ထည့်သွင်းမည်",
+                        locale
+                      )}
                     </button>
                   </div>
                 </div>

@@ -64,7 +64,7 @@ function MembershipTable({
         <tbody>
           <tr className="flex lg:hidden text-left">
             <td className="sticky left-0 min-w-[100%] max-w-[100%] lg:min-w-[300px] lg:max-w-[300px] flex w-1/3 sm:w-1/4 p-4 border lg:border-r-0 border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col text-primary font-semibold">
-              Pricing
+              {getText("Pricing", "အဖွဲ့ဝင်ကြေး", locale)}
             </td>
             {data?.map((z: Membership, index: number) => (
               <td
@@ -85,7 +85,7 @@ function MembershipTable({
               scope="col"
               className="sticky left-0 hidden lg:min-w-[300px] lg:max-w-[300px] w-1/3 sm:w-1/4 p-4 border border-t-0 bg-gray-100 border-gray-300 lg:flex flex-col"
             >
-              Pricing
+              {getText("Pricing", "အဖွဲ့ဝင်ကြေး", locale)}
             </th>
 
             {data?.map((z: Membership, index: number) => (
@@ -105,7 +105,13 @@ function MembershipTable({
                     {formatAmount(z.price, locale, true)}
                   </p>
                   <p className="text-xs font-normal text-center mt-3">
-                    per {z.validity} {t("days")}
+                    {getText(
+                      `per ${z.validity} ${t("days")}`,
+                      "ရက်ပေါင်း " +
+                        formatAmount(z.validity, locale) +
+                        " အတွက်",
+                      locale
+                    )}
                   </p>
                   <div className="font-normal text-xs ml-2">
                     {/* <p>billed anually</p> */}

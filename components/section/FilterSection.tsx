@@ -7,6 +7,7 @@ import React from "react";
 import useSWR from "swr";
 import { SortByType } from "../presentational/SortSelectBox";
 import { sortBy } from "lodash";
+import { useTranslation } from "react-i18next";
 
 type CategoryCheckBoxProps = {
   name: string;
@@ -150,7 +151,8 @@ function FilterSection({
   };
   conditions: Condition[];
 }) {
-  console.log(categories);
+  const { t } = useTranslation("common");
+
   let priceRangeList = [
     {
       startPrice: 0,
@@ -209,6 +211,7 @@ function FilterSection({
     qry,
     sort,
   } = router.query;
+  const { locale } = router;
 
   const [brandQry, setBrandQry] = React.useState("");
   const [conditionQry, setConditionQry] = React.useState("");
@@ -254,7 +257,7 @@ function FilterSection({
               });
             }}
           >
-            Reset
+            {getText("Reset", "မူလအတိုင်း", locale)}
           </button>
         </div>
         <div className="flex flex-col space-y-3">
@@ -303,7 +306,7 @@ function FilterSection({
                     }
                   }}
                 />
-                <span className="label-text">{e}</span>
+                <span className="label-text">{t(e)}</span>
               </label>
             </div>
           ))}
@@ -312,7 +315,7 @@ function FilterSection({
       <div className="flex flex-col space-y-3">
         <div className="flex flex-row border-b pb-2">
           <label className="test-primaryText flex-grow text-sm font-semibold">
-            Pricing
+            {getText("Pricing", "စျေးနှုန်း", locale)}
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
@@ -333,7 +336,7 @@ function FilterSection({
               });
             }}
           >
-            Reset
+            {getText("Reset", "မူလအတိုင်း", locale)}
           </button>
         </div>
         <div className="flex flex-col space-y-3">
@@ -389,7 +392,9 @@ function FilterSection({
                       }
                     }}
                   />
-                  <span className="label-text">{e.name}</span>
+                  <span className="label-text">
+                    {getText(e.name, e.nameMM, locale)}
+                  </span>
                 </label>
               </div>
             ))}
@@ -419,7 +424,7 @@ function FilterSection({
               });
             }}
           >
-            Reset
+            {getText("Reset", "မူလအတိုင်း", locale)}
           </button>
         </div>
         <div className="flex flex-col space-y-3">
@@ -432,7 +437,7 @@ function FilterSection({
       <div className="flex flex-col space-y-3">
         <div className="flex flex-row border-b pb-2">
           <label className="test-primaryText flex-grow text-sm font-semibold">
-            Brands
+            {getText("Brands", "အမှတ်တံဆိပ်", locale)}
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
@@ -453,14 +458,14 @@ function FilterSection({
               });
             }}
           >
-            Reset
+            {getText("Reset", "မူလအတိုင်း", locale)}
           </button>
         </div>
         <div className="relative flex flex-col space-y-3 max-h-[200px] overflow-y-auto scrollbar-hide">
           <div className="sticky top-0 bg-white">
             <label htmlFor="Search" className="sr-only">
               {" "}
-              Search{" "}
+              {getText("Search", "ရှာရန်", locale)}{" "}
             </label>
 
             <input
@@ -552,13 +557,28 @@ function FilterSection({
       <div className="flex flex-col space-y-3">
         <div className="flex flex-row border-b pb-2">
           <label className="test-primaryText flex-grow text-sm font-semibold">
-            Conditions
+            {getText("Conditions", "အခြေအနေ", locale)}
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
-            onClick={() => {}}
+            onClick={() => {
+              router.push({
+                pathname: "/marketplace",
+                query: {
+                  page: 1,
+                  categories: pathCategories,
+                  brands: pathBrands,
+                  startPrice: startPrice,
+                  endPrice: endPrice,
+                  type: type,
+                  conditions: "",
+                  qry: qry,
+                  sort: sort,
+                },
+              });
+            }}
           >
-            Reset
+            {getText("Reset", "မူလအတိုင်း", locale)}
           </button>
         </div>
         <div className="flex flex-col space-y-3">
@@ -637,7 +657,9 @@ function FilterSection({
                       });
                     }}
                   />
-                  <span className="label-text">{e.name}</span>
+                  <span className="label-text">
+                    {getText(e.name, e.nameMM, locale)}
+                  </span>
                 </label>
               </div>
             ))}
@@ -647,7 +669,7 @@ function FilterSection({
       <div className="flex flex-col space-y-3">
         <div className="flex flex-row border-b pb-2">
           <label className="test-primaryText flex-grow text-sm font-semibold">
-            Type
+            {getText("Sort", "အစီအစဥ်", locale)}
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
@@ -668,7 +690,7 @@ function FilterSection({
               });
             }}
           >
-            Reset
+            {getText("Reset", "မူလအတိုင်း", locale)}
           </button>
         </div>
         <div className="flex flex-col space-y-3">
@@ -729,7 +751,7 @@ function FilterSection({
                     }
                   }}
                 />
-                <span className="label-text">{e}</span>
+                <span className="label-text">{t(e)}</span>
               </label>
             </div>
           ))}

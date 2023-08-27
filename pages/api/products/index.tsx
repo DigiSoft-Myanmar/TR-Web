@@ -117,8 +117,7 @@ export default async function handler(
                     : e.isPublished === true
                 )
               );
-          }
-          {
+          } else {
             let prods = await getProductsBySeller(sellerId.toString());
             return res
               .status(200)

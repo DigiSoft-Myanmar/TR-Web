@@ -2,6 +2,7 @@ import AddressCard from "@/components/card/AddressCard";
 import AddressModal from "@/components/modal/sideModal/AddressModal";
 import { isInternal } from "@/util/authHelper";
 import { showErrorDialog, showSuccessDialog } from "@/util/swalFunction";
+import { getText } from "@/util/textHelper";
 import { User, UserAddress } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -138,7 +139,11 @@ function UserAddressSection({ user }: { user: User }) {
             </div>
             <div className="grid p-10 bg-white place-content-center rounded-md border">
               <h1 className="tracking-widest text-gray-500 uppercase">
-                This user doesn't set different address yet.
+                {getText(
+                  "This user doesn't set different address yet.",
+                  "ဤအသုံးပြုသူသည် ပို့ဆောင်ရန် အခြားလိပ်စာ ထည့်သွင်းထားခြင်းမရှိပါ။",
+                  locale
+                )}
               </h1>
             </div>
           </>

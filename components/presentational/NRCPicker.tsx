@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
 import SelectBox, { SelectType } from "./SelectBox";
-import { convertMM } from "@/util/textHelper";
+import { convertMM, getText } from "@/util/textHelper";
 import ErrorText from "./ErrorText";
 
 interface Props {
@@ -29,6 +29,7 @@ function NRCPicker({
   disabled,
   userId,
 }: Props) {
+  const { locale } = useRouter();
   const { t } = useTranslation("account");
   const [nrcError, setNrcError] = React.useState("");
   const [nrcErrorMM, setNrcErrorMM] = React.useState("");
@@ -205,7 +206,8 @@ function NRCPicker({
               : "text-error"
           }`}
         >
-          {t("nrc")} <span className="text-primary">*</span>
+          {getText("NRC", "မှတ်ပုံတင်အမှတ်", locale)}{" "}
+          <span className="text-primary">*</span>
         </label>
         <div className="flex items-center gap-2 flex-wrap">
           <SelectBox

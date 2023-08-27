@@ -77,13 +77,14 @@ function ProductInfo({
               false,
               true
             )}{" "}
-            Ratings
+            {getText("Ratings", "အဆင့်သတ်မှတ်ချက်", locale)}
           </span>
         </div>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
         <div className="flex flex-row items-center gap-1">
           <span>
-            {formatAmount(product.Review.length, locale, false, true)} Reviews
+            {formatAmount(product.Review.length, locale, false, true)}{" "}
+            {getText("Reviews", "မှတ်ချက်", locale)}
           </span>
         </div>
         <div className="w-1 h-1 bg-gray-500 rounded-full"></div>

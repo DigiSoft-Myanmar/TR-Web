@@ -12,6 +12,8 @@ import SellerInfoSection from "../section/profile/SellerInfoSection";
 import StatusSection from "../section/profile/StatusSection";
 import ConfirmationSection from "../section/profile/ConfirmationSection";
 import { showErrorDialog } from "@/util/swalFunction";
+import { formatAmount } from "@/util/textHelper";
+import { useRouter } from "next/router";
 
 enum Step {
   Profile,
@@ -25,6 +27,7 @@ enum Step {
 
 function ProfileScreen({ content }: { content: any }) {
   const { t } = useTranslation("common");
+  const { locale } = useRouter();
   const { data: session }: any = useSession();
 
   const submitProfileRef = useRef<HTMLButtonElement | null>();
@@ -457,7 +460,8 @@ function ProfileScreen({ content }: { content: any }) {
                 </div>
                 <div className="flex flex-col gap-1">
                   <p className="text-sm text-white">
-                    {index + 1}. {stepDetails.find((a) => a.step === e)?.title}
+                    {formatAmount(index + 1, locale)}.{" "}
+                    {stepDetails.find((a) => a.step === e)?.title}
                   </p>
                   <span className="text-xs text-gray-100">
                     {stepDetails.find((a) => a.step === e)?.description}

@@ -196,7 +196,7 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                       >
                         <div>
                           <strong className="block text-xs font-medium uppercase text-gray-400">
-                            General
+                            {getText("General", "အထွေထွေ", locale)}
                           </strong>
 
                           <ul className="mt-2 space-y-1">
@@ -447,7 +447,11 @@ function BuyerDrawer({ isModalOpen, setModalOpen }: Props) {
                                       : "hover:bg-gray-100 hover:text-gray-700"
                                   } `}
                                 >
-                                  {t("wishlist")}
+                                  {getText(
+                                    "Wishlist",
+                                    "ကြိုက်နှစ်သက်သည့်ပစ္စည်းများ",
+                                    locale
+                                  )}
                                 </Link>
                               </li>
                             </ul>
