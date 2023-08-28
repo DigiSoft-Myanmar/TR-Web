@@ -344,6 +344,12 @@ export default async function handler(
                 if (
                   hasPermission(session, ProductPermission.productDeleteAllow)
                 ) {
+                  await prisma.productView.deleteMany({
+                    where: {
+                      productId: deleteId.toString(),
+                    },
+                  });
+
                   let prod = await prisma.product.delete({
                     where: { id: deleteId.toString() },
                   });
@@ -352,6 +358,11 @@ export default async function handler(
                   return res.status(401).json(Unauthorized);
                 }
               } else {
+                await prisma.productView.deleteMany({
+                  where: {
+                    productId: deleteId.toString(),
+                  },
+                });
                 let prod = await prisma.product.delete({
                   where: { id: deleteId.toString() },
                 });
