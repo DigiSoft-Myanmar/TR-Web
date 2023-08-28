@@ -199,7 +199,18 @@ export const createProduct = async (data: Product) => {
   } else if (d.SKU) {
     d.slug = d.seller.username + "-" + d.SKU;
   } else {
-    d.slug = d.seller.username;
+    let slug = d.seller.username;
+    if (slug && d.variations && d.variations.length > 0) {
+      slug = slug + "#" + d.variations[0].SKU;
+    }
+    let count = await prisma.product.count({
+      where: {
+        slug: slug,
+      },
+    });
+    if (count > 0) {
+      slug = slug + "_" + Date.now();
+    }
   }
   let prodCount = await prisma.product.count({
     where: {
@@ -282,7 +293,18 @@ export const updateProduct = async (id: string, data: Product) => {
   } else if (d.SKU) {
     d.slug = d.seller.username + "-" + d.SKU;
   } else {
-    d.slug = d.seller.username;
+    let slug = d.seller.username;
+    if (slug && d.variations && d.variations.length > 0) {
+      slug = slug + "#" + d.variations[0].SKU;
+    }
+    let count = await prisma.product.count({
+      where: {
+        slug: slug,
+      },
+    });
+    if (count > 0) {
+      slug = slug + "_" + Date.now();
+    }
   }
   let prodCount = await prisma.product.count({
     where: {
