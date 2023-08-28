@@ -236,7 +236,7 @@ function FilterSection({
       <div className="flex flex-col space-y-3">
         <div className="flex flex-row border-b pb-2">
           <label className="test-primaryText flex-grow text-sm font-semibold">
-            Type
+            {getText("Type", "အမျိုးအစား", locale)}
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"
@@ -403,7 +403,7 @@ function FilterSection({
       <div className="flex flex-col space-y-3">
         <div className="flex flex-row border-b pb-2">
           <label className="test-primaryText flex-grow text-sm font-semibold">
-            Categories
+            {getText("Categories", "ပစ္စည်းအမျိုးအစား", locale)}
           </label>
           <button
             className="text-primaryText text-xs font-light hover:text-primary"

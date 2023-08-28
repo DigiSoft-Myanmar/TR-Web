@@ -192,7 +192,7 @@ function Footer({ content }: { content: Content }) {
 
             <div className="col-span-2 sm:col-span-1">
               <p className="font-medium text-gray-900">
-                {getText("Helpful Links", "ပစ္စည်းရောင်းချရန်", locale)}
+                {getText("Helpful Links", "အသုံးဝင်သည့်လင့်ခ်များ", locale)}
               </p>
 
               <ul className="mt-6 space-y-4 text-sm">

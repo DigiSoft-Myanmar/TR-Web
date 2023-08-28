@@ -132,7 +132,7 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Product",
       minWidth: 90,
-      headerName: "Product",
+      headerName: getText("Product", "ပစ္စည်း", locale),
       renderCell: ({ row }: CellType) => (
         <Link
           href={
@@ -172,7 +172,7 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "status",
       minWidth: 90,
-      headerName: "Status",
+      headerName: getText("Status", "အခြေအနေ", locale),
       renderCell: ({ row }: CellType) => (
         <div
           className={`flex flex-row items-center gap-3 ${
@@ -197,7 +197,7 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Bid Amount",
       minWidth: 90,
-      headerName: "Bid Amount",
+      headerName: getText("Bid Amount", "လေလံစျေး", locale),
       renderCell: ({ row }: CellType) => (
         <Typography>{formatAmount(row.amount, locale, true, false)}</Typography>
       ),
@@ -207,7 +207,7 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.2,
       field: "Bidder",
       minWidth: 90,
-      headerName: "Bidder",
+      headerName: getText("Bidder", "လေလံဆွဲသူ", locale),
       renderCell: ({ row }: CellType) => (
         <Link
           href={
@@ -243,7 +243,7 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
       flex: 0.3,
       minWidth: 125,
       field: "createdAt",
-      headerName: "Bid Time",
+      headerName: getText("Bid Time", "လေလံတင်သည့်အချိန်", locale),
       renderCell: ({ row }: CellType) => (
         <Typography variant="body2">
           {new Date(row.createdAt).toLocaleDateString("en-ca", {
@@ -261,7 +261,9 @@ const BidTbl = ({ data: parentData }: { data: any }) => {
     <Card>
       <div className="flex w-full flex-row flex-wrap items-center px-5 pt-5">
         <div className="flex flex-grow flex-row items-end gap-3">
-          <h3 className="text-xl font-semibold">Auctions</h3>
+          <h3 className="text-xl font-semibold">
+            {getText("Bid History", "လေလံ၀ယ်ယူမှုမှတ်တမ်း", locale)}
+          </h3>
         </div>
         <div className="flex flex-row items-center gap-3">
           <ExportCSVButton

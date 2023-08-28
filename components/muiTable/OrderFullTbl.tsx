@@ -405,7 +405,9 @@ const OrderFullTbl = ({
         <div className="flex w-full flex-row flex-wrap items-center px-5 pt-5">
           <div className="flex flex-grow flex-row items-end gap-3">
             <h3 className="text-xl font-semibold">
-              {isBuyer ? "Purchased History" : "Sales History"}
+              {isBuyer
+                ? getText("Purchased History", "၀ယ်ယူမှု မှတ်တမ်း", locale)
+                : getText("Sales History", "ရောင်းချမှုမှတ်တမ်း", locale)}
             </h3>
           </div>
           <div className="flex flex-row items-center gap-3">

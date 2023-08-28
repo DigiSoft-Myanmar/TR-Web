@@ -1,5 +1,5 @@
 import { useMarketplace } from "@/context/MarketplaceContext";
-import { formatAmount } from "@/util/textHelper";
+import { formatAmount, getText } from "@/util/textHelper";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -16,7 +16,7 @@ function CartFooter({ isModal }: { isModal: boolean }) {
     >
       <div className="flex flex-row items-center">
         <label className="flex flex-grow py-2 text-sm font-semibold">
-          Sub Total
+          {getText("Sub Total", "စုစုပေါင်းတန်ဖိုး", locale)}
         </label>
         <p className="py-2 text-sm font-semibold text-primary">
           {formatAmount(subTotal, locale, true)}
@@ -24,7 +24,7 @@ function CartFooter({ isModal }: { isModal: boolean }) {
       </div>
       <div className="flex flex-row items-center">
         <label className="flex flex-grow py-2 text-sm font-semibold">
-          Shipping Total
+          {getText("Shipping Total", "ပို့ဆောင်ခ", locale)}
         </label>
         <p className="py-2 text-sm font-semibold text-primary">
           {formatAmount(
@@ -44,7 +44,7 @@ function CartFooter({ isModal }: { isModal: boolean }) {
       </div>
       <div className="flex flex-row items-center">
         <label className="flex flex-grow py-2 text-sm font-semibold">
-          Promo Code Discount
+          {getText("Promo Code Discount", "ပရိုမိုကုဒ် လျှော့ငွေ", locale)}
         </label>
         <p className="py-2 text-sm font-semibold text-primary">
           {formatAmount(promoTotal, locale, true)}
@@ -52,7 +52,7 @@ function CartFooter({ isModal }: { isModal: boolean }) {
       </div>
       <div className="flex flex-row items-center">
         <label className="flex flex-grow py-2 text-sm font-semibold">
-          Total
+          {getText("Total", "စုစုပေါင်း", locale)}:
         </label>
         <p className="py-2 text-sm font-semibold text-primary">
           {formatAmount(totalPrice, locale, true)}
@@ -82,7 +82,7 @@ function CartFooter({ isModal }: { isModal: boolean }) {
             </span>
 
             <span className="text-sm font-medium transition-all group-hover:mr-4">
-              Checkout
+              {getText("Checkout", "ငွေရှင်းရန်", locale)}
             </span>
           </Link>
         </div>

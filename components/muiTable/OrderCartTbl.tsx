@@ -69,7 +69,7 @@ const OrderCartTbl = ({
       flex: 0.3,
       minWidth: 120,
       field: "productInfo",
-      headerName: "Product",
+      headerName: getText("Product", "ပစ္စည်း", locale),
       renderCell: ({ row }: CellType) => {
         return (
           <div className="flex max-h-[100px] items-center overflow-auto">
@@ -115,7 +115,7 @@ const OrderCartTbl = ({
                     : "line-through",
                 }}
               >
-                Brand -{" "}
+                {t("brand")} -{" "}
                 {getText(
                   row.productInfo.Brand.name,
                   row.productInfo.Brand.nameMM,
@@ -137,7 +137,7 @@ const OrderCartTbl = ({
                     : "line-through",
                 }}
               >
-                Condition -{" "}
+                {t("condition")} -{" "}
                 {getText(
                   row.productInfo.Condition.name,
                   row.productInfo.Condition.nameMM,
@@ -159,7 +159,7 @@ const OrderCartTbl = ({
                     : "line-through",
                 }}
               >
-                Seller - {row.productInfo.seller.username}
+                {t("seller")} - {row.productInfo.seller.username}
               </Typography>
               <Typography
                 variant="caption"
@@ -252,7 +252,7 @@ const OrderCartTbl = ({
     {
       flex: 0.15,
       minWidth: 100,
-      headerName: "Unit Price",
+      headerName: getText("Unit Price", "၁ခုချင်းစျေးနှုန်း", locale),
       field: "unitPrice",
       renderCell: ({ row }: CellType) => (
         <Typography
@@ -281,7 +281,7 @@ const OrderCartTbl = ({
     {
       flex: 0.1,
       minWidth: 50,
-      headerName: "Qty",
+      headerName: getText("Qty", "အရေအတွက်", locale),
       field: "quantity",
       renderCell: ({ row }: CellType) => (
         <Typography
@@ -306,7 +306,7 @@ const OrderCartTbl = ({
     {
       flex: 0.2,
       minWidth: 100,
-      headerName: "Total",
+      headerName: getText("Total", "ကျသင့်ငွေ", locale),
       field: "total",
       renderCell: ({ row }: CellType) => (
         <Typography

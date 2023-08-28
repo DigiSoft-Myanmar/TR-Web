@@ -141,17 +141,30 @@ function Default({
                 </div>
               </div>
               <div className="border-t pt-3">
-                <h1 className="font-semibold text-primary">Order Info</h1>
+                <h1 className="font-semibold text-primary">
+                  {getText("Order Info", "အော်ဒါအချက်အလက်", locale)}
+                </h1>
 
                 <div className="flex flex-row items-start gap-3 mt-3">
                   <div className="flex flex-col gap-3">
-                    <h3 className="text-sm text-gray-500">Order No: </h3>
-                    <h3 className="text-sm text-gray-500">Status: </h3>
-                    <h3 className="text-sm text-gray-500">Order Date: </h3>
+                    <h3 className="text-sm text-gray-500">
+                      {getText("Order No", "အော်ဒါနံပါတ်", locale)}:{" "}
+                    </h3>
+                    <h3 className="text-sm text-gray-500">
+                      {getText("Status", "အခြေအနေ", locale)}:{" "}
+                    </h3>
+                    <h3 className="text-sm text-gray-500">
+                      {getText("Order Date", "အော်ဒါတင်သည့်ရက်", locale)}:{" "}
+                    </h3>
                     {new Date(order?.createdAt).getTime() !==
                       new Date(order?.updatedAt).getTime() && (
                       <h3 className="text-sm text-gray-500">
-                        Last Updated Date:{" "}
+                        {getText(
+                          "Last Updated Date",
+                          "နောက်ဆုံးပြင်ဆင်သည့်ရက်",
+                          locale
+                        )}
+                        :{" "}
                       </h3>
                     )}
                   </div>
@@ -279,26 +292,34 @@ function Default({
                 <div className="flex flex-col gap-3 lg:flex-[2]">
                   <h1 className="text-primary font-semibold">
                     {order?.isAddressDiff === true
-                      ? "Billing Address"
-                      : "Billing / Shipping Address"}
+                      ? getText(
+                          "Billing Address",
+                          "ငွေပေးချေမှုအချက်အလက်",
+                          locale
+                        )
+                      : getText(
+                          "Billing / Shipping Address",
+                          "ငွေပေးချေမှုအချက်အလက် / ပို့ဆောင်ရမည့်လိပ်စာ",
+                          locale
+                        )}
                   </h1>
                   <h3 className="text-sm text-gray-500">
-                    Name : {order?.billingAddress?.name}
+                    {t("name")} : {order?.billingAddress?.name}
                   </h3>
                   <h3 className="text-sm text-gray-500">
-                    Phone : {order?.billingAddress?.phoneNum}
+                    {t("phoneNum")} : {order?.billingAddress?.phoneNum}
                   </h3>
                   <h3 className="text-sm text-gray-500">
-                    E-mail : {order?.billingAddress?.email}
+                    {t("email")} : {order?.billingAddress?.email}
                   </h3>
                   <h3 className="text-sm text-gray-500">
-                    House No : {order?.billingAddress?.houseNo}
+                    {t("houseNo")} : {order?.billingAddress?.houseNo}
                   </h3>
                   <h3 className="text-sm text-gray-500">
-                    Street : {order?.billingAddress?.street}
+                    {t("street")} : {order?.billingAddress?.street}
                   </h3>
                   <h3 className="text-sm text-gray-500">
-                    Location :{" "}
+                    {t("location")} :{" "}
                     {getText(
                       stateList.find(
                         (e) => e.id === order?.billingAddress?.stateId
@@ -333,23 +354,23 @@ function Default({
                 {order?.isAddressDiff === true && (
                   <div className="flex w-full flex-col gap-3 border-t pt-5 lg:w-fit lg:border-0 lg:pt-0">
                     <h1 className="text-primary font-semibold">
-                      Shipping Address
+                      {t("shippingAddress")}
                     </h1>
                     <h3 className="text-sm text-gray-500">
-                      Name : {order?.shippingAddress.name}
+                      {t("name")} : {order?.shippingAddress.name}
                     </h3>
                     <h3 className="text-sm text-gray-500">
-                      Phone : {order?.shippingAddress.phoneNum}
+                      {t("phoneNum")} : {order?.shippingAddress.phoneNum}
                     </h3>
 
                     <h3 className="text-sm text-gray-500">
-                      House No : {order?.shippingAddress.houseNo}
+                      {t("houseNo")} : {order?.shippingAddress.houseNo}
                     </h3>
                     <h3 className="text-sm text-gray-500">
-                      Street : {order?.shippingAddress.street}
+                      {t("street")} : {order?.shippingAddress.street}
                     </h3>
                     <h3 className="text-sm text-gray-500">
-                      Location :{" "}
+                      {t("location")} :{" "}
                       {getText(
                         stateList.find(
                           (e) => e.id === order?.shippingAddress.stateId
@@ -385,14 +406,18 @@ function Default({
               </div>
               {order.buyerNote && order.buyerNote.length > 0 && (
                 <div className="border-t pt-3">
-                  <h1 className="text-primary font-semibold">Order Note</h1>
+                  <h1 className="text-primary font-semibold">
+                    {t("orderNote")}
+                  </h1>
                   <p className="text-sm mt-3 text-gray-500">
                     {order.buyerNote}
                   </p>
                 </div>
               )}
               <div className="flex flex-col gap-5 border-t pt-5">
-                <h1 className="text-primary font-semibold">Order Details</h1>
+                <h1 className="text-primary font-semibold">
+                  {getText("Order Details", "အော်ဒါအသေးစိတ်", locale)}
+                </h1>
                 <OrderCartTbl
                   data={order.cartItems.filter((e: any) =>
                     sellerList.find((z) => z.id === session.id)
@@ -407,7 +432,9 @@ function Default({
                 <div className="flex-grow"></div>
                 <div className="flex min-w-[300px] flex-col gap-1 p-3">
                   <div className="flex flex-row items-center justify-between gap-3">
-                    <h3 className="text-sm text-gray-400">Sub Total:</h3>
+                    <h3 className="text-sm text-gray-400">
+                      {getText("Sub Total", "စုစုပေါင်းတန်ဖိုး", locale)}:
+                    </h3>
                     <p className="text-sm">
                       {formatAmount(
                         getTotal(
@@ -423,7 +450,9 @@ function Default({
                   </div>
 
                   <div className="flex flex-row items-center justify-between gap-3">
-                    <h3 className="text-sm text-gray-400">Shipping Total:</h3>
+                    <h3 className="text-sm text-gray-400">
+                      {getText("Shipping Total", "ပို့ဆောင်ခ", locale)}:
+                    </h3>
                     <p className="text-sm">
                       {formatAmount(
                         getShippingTotal(
@@ -440,7 +469,11 @@ function Default({
 
                   <div className="flex flex-row items-center justify-between gap-3 pb-3">
                     <h3 className="text-sm text-gray-400">
-                      Promo Discount Total:
+                      {getText(
+                        "Promo Code Discount",
+                        "ပရိုမိုကုဒ် လျှော့ငွေ",
+                        locale
+                      )}
                     </h3>
                     <p className="text-sm">
                       {formatAmount(
@@ -458,7 +491,9 @@ function Default({
                   </div>
 
                   <div className="flex flex-row items-center justify-between gap-3 border-t pt-5">
-                    <h3 className="text-sm text-gray-400">Total:</h3>
+                    <h3 className="text-sm text-gray-400">
+                      {getText("Total", "စုစုပေါင်း", locale)}:{" "}
+                    </h3>
                     <p>
                       {formatAmount(
                         getTotal(
@@ -547,7 +582,9 @@ function Default({
               {(sellerList.find((z: any) => z.id === session.id) ||
                 isInternal(session)) && (
                 <div className="bg-white p-3 rounded-md shadow flex flex-col gap-3">
-                  <h3 className="font-semibold text-primary">Buyer Info</h3>
+                  <h3 className="font-semibold text-primary">
+                    {getText("Buyer Info", "ဝယ်သူအချက်အလက်", locale)}
+                  </h3>
                   <div className="flex flex-row items-center gap-3 justify-between flex-wrap">
                     <div className="flex flex-row items-center gap-3 flex-grow">
                       <Avatar
@@ -628,7 +665,9 @@ function Default({
                   isInternal(session) ? "top-20" : "top-36"
                 } bg-white p-3 rounded-md shadow flex flex-col gap-3`}
               >
-                <h3 className="font-semibold text-primary">Seller Info</h3>
+                <h3 className="font-semibold text-primary">
+                  {getText("Seller Info", "ရောင်းသူအချက်အလက်", locale)}
+                </h3>
                 {sellerList.find((z) => z.id === session.id) ? (
                   <>
                     {[sellerList.find((z) => z.id === session.id)].map(
