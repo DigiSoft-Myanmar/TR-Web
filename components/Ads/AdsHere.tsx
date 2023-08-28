@@ -139,7 +139,9 @@ function AdsHere({
   return (
     <div
       className={`flex flex-row items-center ${
-        router.asPath === "/" || router.asPath === "/memberships"
+        router.asPath === "/" ||
+        router.asPath === "/memberships" ||
+        router.asPath.includes("marketplace")
           ? "max-w-screen-xl"
           : ""
       } justify-between gap-3 my-5 mx-auto w-full`}

@@ -192,6 +192,7 @@ function MarketplacePage({
       setAttributes([]);
       setPricingInfo(getPricing(product));
     }
+    setImgList(product.imgList);
   }, [product]);
 
   console.log(pricingInfo);

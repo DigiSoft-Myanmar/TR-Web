@@ -196,8 +196,10 @@ export const createProduct = async (data: Product) => {
     delete d.categories;
   }
   if (d.slug) {
-  } else {
+  } else if (d.SKU) {
     d.slug = d.seller.username + "-" + d.SKU;
+  } else {
+    d.slug = d.seller.username;
   }
   let prodCount = await prisma.product.count({
     where: {
@@ -277,8 +279,10 @@ export const updateProduct = async (id: string, data: Product) => {
     delete d.categories;
   }
   if (d.slug) {
-  } else {
+  } else if (d.SKU) {
     d.slug = d.seller.username + "-" + d.SKU;
+  } else {
+    d.slug = d.seller.username;
   }
   let prodCount = await prisma.product.count({
     where: {
