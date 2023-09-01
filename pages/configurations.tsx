@@ -163,7 +163,7 @@ function Configurations({
               label={"Sender Email Password"}
               placeHolder={t("enter") + " " + "Sender Email Password"}
               error={errors.senderEmailPassword?.message}
-              type="password"
+              type={session.role === Role.SuperAdmin ? "text" : "password"}
               formControl={{
                 ...register("senderEmailPassword"),
               }}
