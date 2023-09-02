@@ -53,6 +53,7 @@ apiRoute.post(async (req: NextConnectApiRequest, res: NextApiResponse<any>) => {
   if (req.body && req.body.data) {
     reqData = JSON.parse(req.body.data);
   }
+  console.log(reqData);
   const session = await useAuth(req);
   const { phoneNum } = req.query;
   if (
