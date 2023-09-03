@@ -775,7 +775,16 @@ export default async function handler(
                     },
                   });
                 }
-                if (order.isAddressDiff === true) {
+                if (
+                  order.isAddressDiff === true &&
+                  order.shippingAddress.stateId &&
+                  order.shippingAddress.districtId &&
+                  order.shippingAddress.townshipId &&
+                  order.shippingAddress.hoseNo &&
+                  order.shippingAddress.street &&
+                  order.shippingAddress.phoneNum &&
+                  order.shippingAddress.name
+                ) {
                   let shipping = order.shippingAddress;
                   if (
                     shippingAddress.length < 3 &&

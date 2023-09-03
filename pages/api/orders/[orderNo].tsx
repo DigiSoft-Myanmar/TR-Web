@@ -31,11 +31,11 @@ async function addUnitSold(order: any, sellerId: string) {
       where: {
         productId: cartItems[i].productId,
         purchasedDate: today,
-        regularPrice: cartItems[i].regularPrice,
+        regularPrice: cartItems[i].normalPrice,
         isDiscount: cartItems[i].salePrice ? true : false,
         soldPrice: cartItems[i].salePrice
           ? cartItems[i].salePrice
-          : cartItems[i].regularPrice,
+          : cartItems[i].normalPrice,
       },
     });
     if (unitSold) {
@@ -53,12 +53,12 @@ async function addUnitSold(order: any, sellerId: string) {
         data: {
           productId: cartItems[i].productId,
           purchasedDate: today,
-          regularPrice: cartItems[i].regularPrice,
+          regularPrice: cartItems[i].normalPrice,
           isDiscount: cartItems[i].salePrice ? true : false,
           soldUnit: cartItems[i].quantity,
           soldPrice: cartItems[i].salePrice
             ? cartItems[i].salePrice
-            : cartItems[i].regularPrice,
+            : cartItems[i].normalPrice,
         },
       });
     }
