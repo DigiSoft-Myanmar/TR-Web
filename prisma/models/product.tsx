@@ -191,15 +191,29 @@ export const getProductsBySeller = async (id: string) => {
 
 export const createProduct = async (data: Product) => {
   let d: any = { ...data };
+  let user = await prisma.user.findFirst({
+    where: {
+      id: data.sellerId,
+    },
+  });
 
   if (d.categories) {
     delete d.categories;
   }
   if (d.slug) {
   } else if (d.SKU) {
-    d.slug = d.seller.username + "-" + d.SKU;
+    if (d.seller) {
+      d.slug = d.seller.username + "-" + d.SKU;
+    } else if (user) {
+      d.slug = user.username + "-" + d.SKU;
+    }
   } else {
-    let slug = d.seller.username;
+    let slug = "";
+    if (d.seller) {
+      slug = d.seller.username;
+    } else if (user) {
+      slug = user.username;
+    }
     if (slug && d.variations && d.variations.length > 0) {
       slug = slug + "#" + d.variations[0].SKU;
     }
@@ -286,14 +300,30 @@ export const createProduct = async (data: Product) => {
 
 export const updateProduct = async (id: string, data: Product) => {
   let d: any = { ...data };
+  let user = await prisma.user.findFirst({
+    where: {
+      id: data.sellerId,
+    },
+  });
   if (d.categories) {
     delete d.categories;
   }
   if (d.slug) {
   } else if (d.SKU) {
-    d.slug = d.seller.username + "-" + d.SKU;
+    if (d.seller) {
+      d.slug = d.seller.username + "-" + d.SKU;
+    } else if (user) {
+      d.slug = user.username + "-" + d.SKU;
+    }
   } else {
-    let slug = d.seller.username;
+    let slug = "";
+
+    if (d.seller) {
+      slug = d.seller.username;
+    } else if (user) {
+      slug = user.username + "-" + d.SKU;
+    }
+
     if (slug && d.variations && d.variations.length > 0) {
       slug = slug + "#" + d.variations[0].SKU;
     }

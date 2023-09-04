@@ -57,7 +57,12 @@ async function getContact(req: NextApiRequest, res: NextApiResponse<any>) {
 async function addContact(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     let { token } = req.query;
-    let data = JSON.parse(req.body);
+    let data: any = {};
+    if (typeof req.body === "object") {
+      data = req.body;
+    } else {
+      data = JSON.parse(req.body);
+    }
     await prisma.helpMessage.create({ data: data });
 
     let adminList = await getAdminIdList();

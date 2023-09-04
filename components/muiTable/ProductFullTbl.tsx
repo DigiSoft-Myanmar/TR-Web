@@ -508,6 +508,42 @@ const ProductFullTbl = ({
           {
             flex: 0.15,
             minWidth: 100,
+            field: "createdAt",
+            headerName: "Created At",
+            valueGetter(params: any) {
+              return new Date(params.row.createdAt);
+            },
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {new Date(row.createdAt).toLocaleDateString("en-ca", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                })}
+              </Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "updatedAt",
+            headerName: "Updated At",
+            valueGetter(params: any) {
+              return new Date(params.row.updatedAt);
+            },
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {new Date(row.updatedAt).toLocaleDateString("en-ca", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                })}
+              </Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
             field: "action",
             headerName: "Action",
             renderCell: ({ row }: CellType) => (
@@ -1057,6 +1093,42 @@ const ProductFullTbl = ({
                     </Tooltip>
                   )}
               </div>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "createdAt",
+            headerName: "Created At",
+            valueGetter(params: any) {
+              return new Date(params.row.createdAt);
+            },
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {new Date(row.createdAt).toLocaleDateString("en-ca", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                })}
+              </Typography>
+            ),
+          },
+          {
+            flex: 0.15,
+            minWidth: 100,
+            field: "updatedAt",
+            headerName: "Updated At",
+            valueGetter(params: any) {
+              return new Date(params.row.updatedAt);
+            },
+            renderCell: ({ row }: CellType) => (
+              <Typography variant="body2">
+                {new Date(row.updatedAt).toLocaleDateString("en-ca", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                })}
+              </Typography>
             ),
           },
           {
