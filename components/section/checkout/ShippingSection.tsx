@@ -173,7 +173,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("name")}
           placeHolder={t("enter") + " " + t("name")}
           error={errors.name?.message}
-          type="p"
+          type="text"
           defaultValue={shippingAddress?.name}
           formControl={{ ...register("name") }}
           currentValue={watchFields.name}
@@ -199,7 +199,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("phone")}
           placeHolder={t("enter") + " " + t("phone")}
           error={errors.phoneNum?.message}
-          type="p"
+          type="text"
           defaultValue={shippingAddress?.phoneNum}
           formControl={{ ...register("phoneNum") }}
           currentValue={watchFields.phoneNum}
@@ -225,7 +225,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("houseNo")}
           placeHolder={t("enter") + " " + t("houseNo")}
           error={errors.houseNo?.message}
-          type="p"
+          type="text"
           defaultValue={shippingAddress?.houseNo}
           formControl={{ ...register("houseNo") }}
           currentValue={watchFields.houseNo}
@@ -251,7 +251,7 @@ function ShippingSection({ nextFn, backFn }: Props) {
           label={t("street")}
           placeHolder={t("enter") + " " + t("street")}
           error={errors.street?.message}
-          type="p"
+          type="text"
           defaultValue={shippingAddress?.street}
           formControl={{ ...register("street") }}
           currentValue={watchFields.street}
