@@ -47,31 +47,50 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
       });
       let orders = await prisma.order.findMany({
         where: {
-          sellerIds: {
-            hasSome: seller.map((z) => z.id),
-          },
+          OR: [
+            {
+              sellerIds: {
+                hasSome: seller.map((z) => z.id),
+              },
+            },
+            {
+              createdAt: {
+                lte: date,
+              },
+            },
+          ],
         },
       });
       for (let i = 0; i < orders.length; i++) {
         let sellerResponse: any = [...orders[i].sellerResponse];
+        let changedSeller = [];
         let update = false;
-        for (let j = 0; j < seller.length; j++) {
-          let status = sellerResponse.find((z) => z.sellerId === seller[j].id);
+        for (let j = 0; j < orders[i].sellerIds.length; j++) {
+          let status = sellerResponse.find(
+            (z) => z.sellerId === orders[i].sellerIds[j]
+          );
           if (status) {
             if (
-              sellerResponse.find((z) => z.sellerId === seller[j].id)
+              sellerResponse.find((z) => z.sellerId === orders[i].sellerIds[j])
                 .statusHistory.length === 1
             ) {
               let adminList = await getAdminIdList();
               let staffList = await getStaffIdList(
                 OrderPermission.orderNotiAllow
               );
+              changedSeller.push(orders[i].sellerIds[j]);
+
+              let cancelledSeller = await prisma.user.findFirst({
+                where: {
+                  id: orders[i].sellerIds[j],
+                },
+              });
 
               let msg: any = {
                 body:
                   orders[i].orderNo +
                   " was auto cancelled since no action taken by seller: " +
-                  seller[j].username,
+                  cancelledSeller?.username,
                 createdAt: new Date().toISOString(),
                 title: "Auto cancelled for Order #" + orders[i].orderNo,
                 type: NotiType.AutoCancelledOrder,
@@ -80,7 +99,7 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
                   ...adminList,
                   ...staffList,
                   orders[i].orderByUserId,
-                  seller[j].id,
+                  orders[i].sellerIds[j],
                 ],
                 details: {
                   web: "/orders/" + encodeURIComponent(orders[j].orderNo),
@@ -93,7 +112,7 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
               await addNotification(msg, "");
 
               sellerResponse
-                .find((z) => z.sellerId === seller[j].id)
+                .find((z) => z.sellerId === orders[i].sellerIds[j])
                 .statusHistory.push({
                   status: OrderStatus.AutoCancelled,
                   updatedDate: new Date().toISOString(),
@@ -111,17 +130,20 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
               sellerResponse: sellerResponse,
             },
           });
-          for (let k = 0; k < seller.length; k++) {
-            if (order.sellerIds.includes(seller[k].id)) {
-              await sendOrderEmail(
-                order,
-                seller[k].username +
-                  " " +
-                  OrderStatus.AutoCancelled +
-                  " for #" +
-                  order.orderNo
-              );
-            }
+          for (let k = 0; k < changedSeller.length; k++) {
+            let cancelledSeller = await prisma.user.findFirst({
+              where: {
+                id: changedSeller[k],
+              },
+            });
+            await sendOrderEmail(
+              order,
+              cancelledSeller?.username +
+                " " +
+                OrderStatus.AutoCancelled +
+                " for #" +
+                order.orderNo
+            );
           }
         }
       }
