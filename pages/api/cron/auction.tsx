@@ -226,8 +226,11 @@ export default async function handler(
           }
         }
       }
-      let d = new Date();
-      d.setDate(d.getDate() - 2);
+      let today = new Date();
+
+      let d = new Date(today.toISOString().split("T")[0]);
+      d.setDate(d.getDate() - 3);
+
       let wonList = await prisma.wonList.findMany({
         where: {
           status: "LowPrice",

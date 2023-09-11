@@ -32,8 +32,10 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
     let { key } = req.query;
     if (key && key.toString() === "rmRNMOIQ9P") {
       //check membership
-      let date = new Date();
-      date.setDate(date.getDate() - 2);
+      let today = new Date();
+
+      let date = new Date(today.toISOString().split("T")[0]);
+      date.setDate(date.getDate() - 3);
 
       let seller = await prisma.user.findMany({
         where: {
