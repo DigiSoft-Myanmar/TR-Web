@@ -14,7 +14,7 @@ import { isInternal } from "@/util/authHelper";
 import { caesarEncrypt } from "@/util/encrypt";
 import { getPricing, getPricingSingle } from "@/util/pricing";
 import { Product, ProductType, Role, StockType, Term } from "@prisma/client";
-import _, { sortBy } from "lodash";
+import _, { sortBy, uniq, uniqBy } from "lodash";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -39,8 +39,12 @@ export default async function handler(
             SKU: product.SKU,
           },
         });
+
         return res.status(200).json(
-          sortBy(list, (e) => e.amount)
+          sortBy(
+            uniqBy(list, (z) => z.amount),
+            (e) => e.amount
+          )
             .reverse()
             .map((z) => {
               let userId = caesarEncrypt(z.createdByUserId, 5);
