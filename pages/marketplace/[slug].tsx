@@ -1180,7 +1180,7 @@ function MarketplacePage({
                         </span>
 
                         <span className="text-sm font-medium transition-all group-hover:ms-4">
-                          Place Bid
+                          {isBidding === product.id ? "Bidding" : "Place Bid"}
                         </span>
                       </button>
                     </div>
