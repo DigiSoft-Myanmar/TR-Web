@@ -107,7 +107,7 @@ function MarketplacePage({
     isShippingAddressFilled,
   } = useMarketplace();
 
-  const { placeBid } = useAuction();
+  const { placeBid, isBidding } = useAuction();
 
   const { data: session }: any = useSession();
   const { t } = useTranslation("common");
@@ -1156,6 +1156,7 @@ function MarketplacePage({
                     <div className="flex flex-row items-center justify-between gap-3 px-3">
                       <button
                         type="button"
+                        disabled={isBidding === product.id ? true : false}
                         className="group relative inline-flex items-center justify-center overflow-hidden rounded bg-primary px-8 py-3 text-white focus:outline-none focus:ring active:bg-primary flex-grow"
                         onClick={() => {
                           placeBid(

@@ -22,9 +22,11 @@ type IAuctionType = {
     sellerId: string,
     seller: any
   ) => void;
+  isBidding: string;
 };
 const AuctionContext = createContext<IAuctionType>({
   newBid: [],
+  isBidding: "",
   setNewBid: () => {},
   placeBid: () => {},
 });
@@ -42,6 +44,7 @@ export const AuctionProvider = ({
   const [isSet, setSet] = React.useState(false);
   const [newBid, setNewBid] = React.useState([]);
   const { canShip } = useMarketplace();
+  const [isBidding, setBidding] = React.useState("");
 
   async function socketInitilizer() {
     if (socket === undefined) {
@@ -111,6 +114,7 @@ export const AuctionProvider = ({
       if (isAvailable === false) {
         return;
       }
+      setBidding(productId);
       fetch("/api/auction/mobile", {
         method: "POST",
         body: JSON.stringify({
@@ -120,6 +124,7 @@ export const AuctionProvider = ({
         }),
         headers: getHeaders(session),
       }).then(async (data) => {
+        setBidding("");
         if (data.status === 200) {
           showSuccessDialog(
             "You have successfully bidded " +
@@ -156,6 +161,7 @@ export const AuctionProvider = ({
         newBid,
         setNewBid,
         placeBid,
+        isBidding,
       }}
     >
       {children}
