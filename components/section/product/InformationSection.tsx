@@ -54,8 +54,6 @@ type Information = {
   brandId?: String;
   categoryIds?: String[];
   tags?: String[];
-  shortDescription?: String;
-  shortDescriptionMM?: String;
 };
 
 function InformationSection({ nextFn, infoRef }: Props) {
@@ -63,6 +61,8 @@ function InformationSection({ nextFn, infoRef }: Props) {
   const { product, setProduct, setInfoCheck } = useProduct();
   const { data: session }: any = useSession();
   const tagInput = React.useRef<HTMLInputElement | null>(null);
+  const [shortDescription, setShortDescription] = React.useState("");
+  const [shortDescriptionMM, setShortDescriptionMM] = React.useState("");
 
   const { data: conditionData, refetch } = useQuery("conditionsData", () =>
     fetch("/api/products/conditions").then((res) => {
@@ -83,16 +83,6 @@ function InformationSection({ nextFn, infoRef }: Props) {
             .min(1, { message: t("inputError") })
             .optional()
             .or(z.literal("")),
-          shortDescription: z
-            .string()
-            .min(1, { message: t("inputError") })
-            .optional()
-            .or(z.literal("")),
-          shortDescriptionMM: z
-            .string()
-            .min(1, { message: t("inputError") })
-            .optional()
-            .or(z.literal("")),
         }
       : {
           name: z.string().min(1, { message: t("inputError") }),
@@ -102,16 +92,6 @@ function InformationSection({ nextFn, infoRef }: Props) {
             .optional()
             .or(z.literal("")),
           SKU: z.string().min(1, { message: t("inputError") }),
-          shortDescription: z
-            .string()
-            .min(1, { message: t("inputError") })
-            .optional()
-            .or(z.literal("")),
-          shortDescriptionMM: z
-            .string()
-            .min(1, { message: t("inputError") })
-            .optional()
-            .or(z.literal("")),
         }
   );
   const [isChecking, setChecking] = React.useState(false);
@@ -146,12 +126,26 @@ function InformationSection({ nextFn, infoRef }: Props) {
   }
 
   React.useEffect(() => {
+    if (product?.shortDescription) {
+      setShortDescription(product.shortDescription);
+      if (product?.shortDescriptionMM) {
+        setShortDescriptionMM(product.shortDescriptionMM);
+      }
+    }
+  }, [product]);
+
+  React.useEffect(() => {
     console.log(errors);
   }, [errors]);
 
   function submit(data: Information) {
     setProduct((prevValue: any) => {
-      return { ...prevValue, ...data };
+      return {
+        ...prevValue,
+        ...data,
+        shortDescription: shortDescription,
+        shortDescriptionMM: shortDescriptionMM,
+      };
     });
     if (
       product &&
@@ -755,25 +749,23 @@ function InformationSection({ nextFn, infoRef }: Props) {
           </div>
 
           <FormInputRichText
-            content={product.shortDescription}
+            content={shortDescription}
             label={t("shortDescription")}
             disableColor={true}
             setContent={(e: string) => {
-              setProduct((prevValue: any) => {
-                return { ...prevValue, shortDescription: e };
-              });
+              let value = e;
+              setShortDescription(value);
             }}
           />
 
-          {product.shortDescription && product.shortDescription.length > 0 && (
+          {shortDescription && shortDescription.length > 0 && (
             <FormInputRichText
-              content={product.shortDescriptionMM}
+              content={shortDescriptionMM}
               label={t("shortDescription") + " " + t("mm")}
               disableColor={true}
               setContent={(e: string) => {
-                setProduct((prevValue: any) => {
-                  return { ...prevValue, shortDescriptionMM: e };
-                });
+                let value = e;
+                setShortDescriptionMM(value);
               }}
             />
           )}
