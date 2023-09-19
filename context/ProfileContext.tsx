@@ -74,13 +74,19 @@ export const ProfileProvider = ({
   );
   const isNRCValid = React.useMemo(
     () =>
-      user &&
-      (user.nrcFront || nrcFront) &&
-      (user.nrcBack || nrcBack) &&
-      user.nrcType &&
-      user.nrcState &&
-      user.nrcTownship &&
-      user.nrcNumber.length === 6,
+      isSeller(user)
+        ? user &&
+          (user.nrcFront || nrcFront) &&
+          (user.nrcBack || nrcBack) &&
+          user.nrcType &&
+          user.nrcState &&
+          user.nrcTownship &&
+          user.nrcNumber.length === 6
+        : user &&
+          user.nrcType &&
+          user.nrcState &&
+          user.nrcTownship &&
+          user.nrcNumber.length === 6,
     [user]
   );
   const isProfileValid = React.useMemo(
