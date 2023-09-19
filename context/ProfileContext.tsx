@@ -1,3 +1,4 @@
+import { isSeller } from "@/util/authHelper";
 import { fetcher } from "@/util/fetcher";
 import { getText } from "@/util/textHelper";
 import { Brand, Membership, Role, User } from "@prisma/client";
@@ -84,15 +85,26 @@ export const ProfileProvider = ({
   );
   const isProfileValid = React.useMemo(
     () =>
-      user &&
-      (user.profile || profileImg) &&
-      user.email &&
-      user.dob &&
-      user.houseNo &&
-      user.street &&
-      user.stateId &&
-      user.districtId &&
-      user.townshipId
+      isSeller(user)
+        ? user &&
+          (user.profile || profileImg) &&
+          user.email &&
+          user.dob &&
+          user.houseNo &&
+          user.street &&
+          user.stateId &&
+          user.districtId &&
+          user.townshipId
+          ? true
+          : false
+        : user &&
+          user.email &&
+          user.dob &&
+          user.houseNo &&
+          user.street &&
+          user.stateId &&
+          user.districtId &&
+          user.townshipId
         ? true
         : false,
     [user]

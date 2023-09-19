@@ -28,7 +28,6 @@ function AddressCard({
   userId,
 }: Props) {
   const { t } = useTranslation("common");
-  const { t: checkoutT } = useTranslation("checkout");
   const { locale } = useRouter();
   const { theme } = useTheme();
   const [currentAddress, setCurrentAddress] = React.useState<any>();
@@ -61,7 +60,7 @@ function AddressCard({
           </svg>
         )}
         <h5 className="mb-4 text-lg font-semibold tracking-tight text-gray-900">
-          {isBilling === true ? checkoutT("billing") : checkoutT("shipping")}
+          {isBilling === true ? t("billingAddress") : t("shippingAddress")}
         </h5>
         <div className="flex flex-col gap-3 pt-3 border-t border-t-inputLightBorder">
           <div className="mb-3 font-normal text-gray-500 text-sm flex items-center gap-2">
