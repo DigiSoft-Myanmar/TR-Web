@@ -82,15 +82,29 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
                   "",
                   router.locale,
                   () => {
-                    router.push(
-                      "/account/" +
-                        encodeURIComponent(encryptPhone(profile.phoneNum)) +
-                        "?reload=true",
-                      null,
-                      {
-                        shallow: false,
-                      }
-                    );
+                    if (profile.newPhoneNum) {
+                      router.push(
+                        "/account/" +
+                          encodeURIComponent(
+                            encryptPhone(profile.newPhoneNum)
+                          ) +
+                          "?reload=true",
+                        null,
+                        {
+                          shallow: false,
+                        }
+                      );
+                    } else {
+                      router.push(
+                        "/account/" +
+                          encodeURIComponent(encryptPhone(profile.phoneNum)) +
+                          "?reload=true",
+                        null,
+                        {
+                          shallow: false,
+                        }
+                      );
+                    }
                   }
                 );
               } else {
@@ -167,6 +181,12 @@ function ConfirmationSection({ backFn, currentStep }: Props) {
               <h3 className="font-semibold text-sm">{t("phoneNum")}</h3>
               <p>{profile.phoneNum}</p>
             </div>
+            {session && session.role === Role.SuperAdmin && (
+              <div className="flex flex-row items-center justify-between gap-3">
+                <h3 className="font-semibold text-sm">New phone number</h3>
+                <p>{profile.newPhoneNum}</p>
+              </div>
+            )}
             <div className="flex flex-row items-center justify-between gap-3">
               <h3 className="font-semibold text-sm">{t("email")}</h3>
               <p>{profile.email}</p>

@@ -8,6 +8,7 @@ import { showErrorDialog } from "@/util/swalFunction";
 import { formatAmount, getText } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender, Role } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -25,6 +26,7 @@ type Profile = {
   displayName?: string;
   email?: string;
   phoneNum?: string;
+  newPhoneNum?: string;
   houseNo?: string;
   street?: string;
   stateId?: string;
@@ -36,6 +38,7 @@ type Profile = {
 
 function ProfileSection({ nextFn, submitRef }: Props) {
   const { t } = useTranslation("common");
+  const { data: session }: any = useSession();
   const genderList = [Gender.Male, Gender.Female];
   const {
     user: profile,
@@ -45,7 +48,35 @@ function ProfileSection({ nextFn, submitRef }: Props) {
   } = useProfile();
 
   const schema = z.object(
-    isSeller(profile)
+    session && session.role === Role.SuperAdmin
+      ? isSeller(profile)
+        ? {
+            username: z.string().min(1, { message: t("inputError") }),
+            displayName: z.string().min(1, { message: t("inputError") }),
+            email: z.string().email({ message: t("inputValidEmailError") }),
+            phoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
+              message: t("inputValidPhoneError"),
+            }),
+            newPhoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
+              message: t("inputValidPhoneError"),
+            }),
+            houseNo: z.string().min(1, { message: t("inputError") }),
+            street: z.string().min(1, { message: t("inputError") }),
+            dob: z.date(),
+          }
+        : {
+            username: z.string().min(1, { message: t("inputError") }),
+            email: z.string().email({ message: t("inputValidEmailError") }),
+            phoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
+              message: t("inputValidPhoneError"),
+            }),
+            newPhoneNum: z.string().regex(new RegExp("^\\+959\\d{7,9}$"), {
+              message: t("inputValidPhoneError"),
+            }),
+            houseNo: z.string().min(1, { message: t("inputError") }),
+            street: z.string().min(1, { message: t("inputError") }),
+          }
+      : isSeller(profile)
       ? {
           username: z.string().min(1, { message: t("inputError") }),
           displayName: z.string().min(1, { message: t("inputError") }),
@@ -354,6 +385,37 @@ function ProfileSection({ nextFn, submitRef }: Props) {
           }
         />
 
+        {session && session.role === Role.SuperAdmin && (
+          <FormInput
+            label={"New phone number"}
+            placeHolder={t("enter") + " new phone number"}
+            error={errors.newPhoneNum?.message}
+            type="text"
+            defaultValue={profile?.phoneNum}
+            formControl={{ ...register("newPhoneNum") }}
+            currentValue={watchFields.newPhoneNum}
+            disabled={
+              session && session.role === Role.SuperAdmin ? false : true
+            }
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+                />
+              </svg>
+            }
+          />
+        )}
+
         <FormInput
           label={t("email")}
           placeHolder={t("enter") + " " + t("email")}
@@ -362,7 +424,13 @@ function ProfileSection({ nextFn, submitRef }: Props) {
           defaultValue={profile?.email}
           formControl={{ ...register("email") }}
           currentValue={watchFields.email}
-          disabled={profile?.email ? true : false}
+          disabled={
+            session && session.role === Role.SuperAdmin
+              ? false
+              : profile?.email
+              ? true
+              : false
+          }
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"

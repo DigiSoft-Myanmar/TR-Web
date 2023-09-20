@@ -167,31 +167,52 @@ export const updateUser = async (id: string, updateData: any) => {
     d.email = d.email.toLowerCase();
   }
 
-  if (d.password && d.password.length > 0) {
-    let body = {
-      password: d.password,
-      providerToLink: {
-        email: d.email,
-        uid: d.email,
-        providerId: "email",
-      },
-    };
+  if (updateData && updateData.newPhoneNum === d.phoneNum) {
+    if (d.password && d.password.length > 0) {
+      let body = {
+        password: d.password,
+        providerToLink: {
+          email: d.email,
+          uid: d.email,
+          providerId: "email",
+        },
+      };
 
-    let user = await firebaseAdmin.auth().getUserByPhoneNumber(d.phoneNum);
-    firebaseRes = await firebaseAdmin
-      .auth()
-      .updateUser(user.uid, body)
-      .then((data) => {
-        console.log("Successfully updated user", data.toJSON());
+      let user = await firebaseAdmin.auth().getUserByPhoneNumber(d.phoneNum);
+      firebaseRes = await firebaseAdmin
+        .auth()
+        .updateUser(user.uid, body)
+        .then((data) => {
+          console.log("Successfully updated user", data.toJSON());
 
-        return { isSuccess: true, error: "" };
-      })
-      .catch((err) => {
-        console.log("Error updating user:", err);
-        return { isSuccess: false, error: err };
-      });
+          return { isSuccess: true, error: "" };
+        })
+        .catch((err) => {
+          console.log("Error updating user:", err);
+          return { isSuccess: false, error: err };
+        });
+    }
+  } else {
+    let deleteUser = await deleteUserFirebase(d.phoneNum);
+    if (deleteUser.isSuccess === true) {
+      try {
+        let body = {
+          email: d.email,
+          emailVerified: false,
+          phoneNumber: d.newPhoneNum,
+          password: d.password,
+          disabled: false,
+        };
+        let result = await firebaseAdmin.auth().createUser(body);
+        d.phoneNum = d.newPhoneNum;
+        console.log(result);
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 
+  delete d?.newPhoneNum;
   delete d?.password;
   delete d?.confirmPassword;
   delete d?.note;
@@ -213,24 +234,27 @@ export const updateUser = async (id: string, updateData: any) => {
   }
 };
 
-async function deleteUserFirebase(phoneNum: string, id: string) {
-  let u = await firebaseAdmin.auth().getUserByPhoneNumber(phoneNum);
-  if (u) {
-    let result = await firebaseAdmin
-      .auth()
-      .deleteUser(u.uid)
-      .then((data) => {
-        console.log("Successfully deleted user");
-        return { isSuccess: true, error: "" };
-      })
-      .catch((err) => {
-        console.log("Error updating user:", err);
-        return { isSuccess: false, error: err };
-      });
-    if (result.isSuccess) {
-      const deleteUser = await prisma.user.delete({ where: { id: id } });
-      return deleteUser;
+async function deleteUserFirebase(phoneNum: string) {
+  try {
+    let u = await firebaseAdmin.auth().getUserByPhoneNumber(phoneNum);
+    if (u) {
+      let result = await firebaseAdmin
+        .auth()
+        .deleteUser(u.uid)
+        .then((data) => {
+          console.log("Successfully deleted user");
+          return { isSuccess: true, error: "" };
+        })
+        .catch((err) => {
+          console.log("Error updating user:", err);
+          return { isSuccess: false, error: err };
+        });
+      return result;
+    } else {
+      return { isSuccess: true, error: "" };
     }
+  } catch (e) {
+    return { isSuccess: true, error: "" };
   }
 }
 

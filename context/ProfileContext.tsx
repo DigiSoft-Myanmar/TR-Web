@@ -7,7 +7,7 @@ import React, { createContext } from "react";
 import useSWR from "swr";
 
 type IProfile = {
-  user: User | undefined;
+  user: (User & { newPhoneNum?: string }) | undefined;
   setUser: Function;
   profileImg: any;
   setProfileImg: Function;

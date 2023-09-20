@@ -24,18 +24,29 @@ function PasswordSection({ backFn, nextFn, submitRef }: Props) {
   const { user: profile, setUser: setProfile } = useProfile();
   const { locale } = useRouter();
 
-  const schema = z.object({
-    password: z
-      .string()
-      .min(6, { message: t("inputPasswordErrorLength") })
-      .optional()
-      .or(z.literal("")),
-    confirmPassword: z
-      .string()
-      .min(6, { message: t("inputPasswordErrorLength") })
-      .optional()
-      .or(z.literal("")),
-  });
+  const schema = z.object(
+    profile.phoneNum !== profile.newPhoneNum
+      ? {
+          password: z
+            .string()
+            .min(6, { message: t("inputPasswordErrorLength") }),
+          confirmPassword: z
+            .string()
+            .min(6, { message: t("inputPasswordErrorLength") }),
+        }
+      : {
+          password: z
+            .string()
+            .min(6, { message: t("inputPasswordErrorLength") })
+            .optional()
+            .or(z.literal("")),
+          confirmPassword: z
+            .string()
+            .min(6, { message: t("inputPasswordErrorLength") })
+            .optional()
+            .or(z.literal("")),
+        }
+  );
 
   const { register, handleSubmit, watch, formState, reset } = useForm<Password>(
     {
