@@ -101,26 +101,30 @@ function StatusSection({ backFn, nextFn, currentStep, submitRef }: Props) {
           };
         });
         nextFn();
-      } else if (memberStartDate) {
+      } else if (isSeller(profile)) {
+        if (memberStartDate) {
+          setProfile((prevValue: any) => {
+            return {
+              ...prevValue,
+              ...data,
+              memberStartDate: new Date(memberStartDate),
+              sellAllow: sellAllow,
+            };
+          });
+          nextFn();
+        } else {
+          setError("Please input member start date");
+        }
+      } else {
         setProfile((prevValue: any) => {
           return {
             ...prevValue,
             ...data,
-            memberStartDate: new Date(memberStartDate),
-            sellAllow: sellAllow,
           };
         });
         nextFn();
-      } else {
-        setError("Please input member start date");
       }
     } else {
-      setProfile((prevValue: any) => {
-        return {
-          ...prevValue,
-          ...data,
-        };
-      });
       nextFn();
     }
   }
