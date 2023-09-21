@@ -21,10 +21,10 @@ export function getPricingSingle(product: any) {
       isBetween(
         typeof product.saleStartDate === "object"
           ? new Date(product.saleStartDate).toISOString().slice(0, 10)
-          : product.saleStartDate,
+          : new Date(product.saleStartDate).toISOString().slice(0, 10),
         typeof product.saleEndDate === "object"
           ? new Date(product.saleEndDate).toISOString().slice(0, 10)
-          : product.saleEndDate
+          : new Date(product.saleEndDate).toISOString().slice(0, 10)
       )
     ) {
       if (product.salePrice) {
