@@ -1,7 +1,10 @@
 import FormInput from "@/components/presentational/FormInput";
 import { useProfile } from "@/context/ProfileContext";
+import { isInternal } from "@/util/authHelper";
 import { formatAmount } from "@/util/textHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Role } from "@prisma/client";
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import React from "react";
@@ -23,9 +26,12 @@ function PasswordSection({ backFn, nextFn, submitRef }: Props) {
   const { t } = useTranslation("common");
   const { user: profile, setUser: setProfile } = useProfile();
   const { locale } = useRouter();
+  const { data: session }: any = useSession();
 
   const schema = z.object(
-    profile.phoneNum !== profile.newPhoneNum
+    profile.phoneNum !== profile.newPhoneNum &&
+      isInternal(session) &&
+      session.role !== Role.Staff
       ? {
           password: z
             .string()
