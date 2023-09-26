@@ -2,7 +2,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { isMaintainence } from "@/types/const";
 import { getDevice } from "@/util/getDevice";
 import { Role } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React from "react";
 import AdminSidebar from "../navbar/AdminSidebar";
@@ -154,6 +154,16 @@ function DefaultLayout({ children }: LayoutProps) {
       }
     });
   }, []);
+
+  React.useEffect(() => {
+    if (session) {
+      if (session.isDeleted === true || session.isBlocked === true) {
+        signOut({
+          callbackUrl: "/",
+        });
+      }
+    }
+  }, [session]);
 
   if (status === "loading") {
     return <LoadingScreen />;
