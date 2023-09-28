@@ -2,6 +2,7 @@ import { fileUrl } from "@/types/const";
 import { AdsLocation } from "@/util/adsHelper";
 import { Ads, AdsPlacement, Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -72,9 +73,12 @@ function AdsList({
             }
           }}
         >
-          <img
+          <Image
             src={fileUrl + adsList[currentItemIndex].adsImg}
             className="max-h-[300px] w-full object-contain"
+            width={1280}
+            height={300}
+            alt={"default"}
           />
         </a>
       ) : (
@@ -112,9 +116,12 @@ function AdsList({
             }
           }}
         >
-          <img
+          <Image
             src={fileUrl + adsList[currentItemIndex].adsImg}
             className="max-h-[300px] w-full object-contain"
+            width={1280}
+            height={300}
+            alt={"default"}
           />
         </div>
       )}
@@ -163,9 +170,12 @@ function AdsHere({
                   : "/memberships"
               }
             >
-              <img
+              <Image
                 src={fileUrl + defaultImg}
                 className="max-h-[300px] min-h-[300px] w-full object-contain"
+                width={1280}
+                height={300}
+                alt={"default"}
               />
             </Link>
           )}
