@@ -27,7 +27,9 @@ export default async function Handler(
           iosSellAllow: false,
           currentVersion: "",
         };
+
         let content = await prisma.content.findFirst({});
+
         if (configuration && content) {
           d = {
             lowStockLimit: configuration.lowStockLimit,
@@ -37,6 +39,7 @@ export default async function Handler(
             currentVersion: configuration.currentVersion,
             playStoreURL: content.playStoreURL,
             appStoreURL: content.appStoreURL,
+            facebookPlugin: content.facebookPlugin,
           };
         }
         return res.status(200).json(d);

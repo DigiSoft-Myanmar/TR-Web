@@ -20,6 +20,7 @@ import { SellerProvider } from "@/context/SellerContext";
 import { AuctionProvider } from "@/context/AuctionContext";
 import { encryptPhone } from "@/util/encrypt";
 import { NotiProvider } from "@/context/NotificationContext";
+import FBChatPlugin from "../presentational/FBChatPlugin";
 
 declare global {
   interface Window {
@@ -296,6 +297,7 @@ function DefaultLayout({ children }: LayoutProps) {
               )}
               <Footer content={content} />
             </div>
+            <FBChatPlugin />
           </AuctionProvider>
         </MarketplaceProvider>
       </NotiProvider>
