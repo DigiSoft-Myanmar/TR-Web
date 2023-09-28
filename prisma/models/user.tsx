@@ -124,15 +124,34 @@ export const getUserByPhone = async (phone: string) => {
 };
 
 export const createUser = async (email: string, username: string) => {
-  const user = await prisma.user.create({
-    data: {
-      email: email.toLowerCase(),
-      username: username,
-      role: Role.Admin,
-      gender: Gender.Male,
-    },
-  });
-  return user;
+  try {
+    let sameEmail = await firebaseAdmin
+      .auth()
+      .getUserByEmail(email.toLowerCase());
+    if (sameEmail) {
+      return { isSuccess: false, error: "Email already exists." };
+    } else {
+      const user = await prisma.user.create({
+        data: {
+          email: email.toLowerCase(),
+          username: username,
+          role: Role.Admin,
+          gender: Gender.Male,
+        },
+      });
+      return { isSuccess: true, data: user };
+    }
+  } catch (err) {
+    const user = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        username: username,
+        role: Role.Admin,
+        gender: Gender.Male,
+      },
+    });
+    return { isSuccess: true, data: user };
+  }
 };
 
 export const createSeller = async (data: any) => {
@@ -179,18 +198,22 @@ export const updateUser = async (id: string, updateData: any) => {
       };
 
       let user = await firebaseAdmin.auth().getUserByPhoneNumber(d.phoneNum);
-      firebaseRes = await firebaseAdmin
-        .auth()
-        .updateUser(user.uid, body)
-        .then((data) => {
-          console.log("Successfully updated user", data.toJSON());
+      if (user.email && user.email === d.email) {
+        firebaseRes = await firebaseAdmin
+          .auth()
+          .updateUser(user.uid, body)
+          .then((data) => {
+            console.log("Successfully updated user", data.toJSON());
 
-          return { isSuccess: true, error: "" };
-        })
-        .catch((err) => {
-          console.log("Error updating user:", err);
-          return { isSuccess: false, error: err };
-        });
+            return { isSuccess: true, error: "" };
+          })
+          .catch((err) => {
+            console.log("Error updating user:", err);
+            return { isSuccess: false, error: err };
+          });
+      } else {
+        return { isSuccess: false, error: "Cannot change email address." };
+      }
     }
   } else {
     let deleteUser = await deleteUserFirebase(d.phoneNum);
@@ -203,9 +226,18 @@ export const updateUser = async (id: string, updateData: any) => {
           password: d.password,
           disabled: false,
         };
-        let result = await firebaseAdmin.auth().createUser(body);
-        d.phoneNum = d.newPhoneNum;
-        console.log(result);
+        try {
+          let sameEmail = await firebaseAdmin.auth().getUserByEmail(d.email);
+          if (sameEmail) {
+            return { isSuccess: false, error: "Email address already exists." };
+          } else {
+            await firebaseAdmin.auth().createUser(body);
+            d.phoneNum = d.newPhoneNum;
+          }
+        } catch (err) {
+          await firebaseAdmin.auth().createUser(body);
+          d.phoneNum = d.newPhoneNum;
+        }
       } catch (err) {
         console.log(err);
       }

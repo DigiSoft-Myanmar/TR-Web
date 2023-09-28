@@ -17,7 +17,7 @@ export default function FBChatPlugin() {
             var chatbox = document.getElementById('fb-customer-chat');
             chatbox.setAttribute("page_id", ${data.facebookPlugin});
             chatbox.setAttribute("attribution", "biz_inbox");
-            chatbox.setAttribute("theme_color", "#052617");
+            chatbox.setAttribute("theme_color", "#E71D2A");
             chatbox.setAttribute("logged_in_greeting", "Hello and thanks for getting in touch with us! What can we help you with today?")
       
             window.fbAsyncInit = function() {

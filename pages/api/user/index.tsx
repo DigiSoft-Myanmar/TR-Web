@@ -255,6 +255,17 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
           password: data.password,
           disabled: false,
         };
+        try {
+          if (data.email) {
+            let sameEmail = await firebaseAdmin
+              .auth()
+              .getUserByEmail(data.email.toLowerCase());
+            if (sameEmail) {
+              return { isSuccess: false, error: "Email already exists." };
+            }
+          }
+        } catch (err) {}
+
         let result = await firebaseAdmin
           .auth()
           .createUser(body)
@@ -332,6 +343,14 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
           }
           if (b.email) {
             b.email = b.email.toLowerCase();
+            try {
+              let sameEmail = await firebaseAdmin
+                .auth()
+                .getUserByEmail(b.email);
+              if (sameEmail) {
+                return { isSuccess: false, error: "Email already exists." };
+              }
+            } catch (err) {}
           }
           let user = await prisma.user.create({
             data: b,
