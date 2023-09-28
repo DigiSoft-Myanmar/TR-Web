@@ -146,7 +146,17 @@ export default async function handler(
             if (state) {
               filter.stateId = state.toString();
             }
-            if (state || district || township) {
+            let seller = await prisma.user.findFirst({
+              where: {
+                id: sellerId.toString(),
+              },
+            });
+            if (seller && seller.shippingIncluded === false) {
+              return res.status(200).json({
+                shippingIncluded: true,
+                defaultShippingCost: 0,
+              });
+            } else if (state || district || township) {
               const data = await prisma.shippingCost.findFirst({
                 where: filter,
               });
