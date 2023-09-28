@@ -198,7 +198,9 @@ export const updateUser = async (id: string, updateData: any) => {
       };
 
       let user = await firebaseAdmin.auth().getUserByPhoneNumber(d.phoneNum);
-      if (user.email && user.email === d.email) {
+      if (user.email && updateData.email && user.email !== updateData.email) {
+        return { isSuccess: false, error: "Cannot change email address." };
+      } else {
         firebaseRes = await firebaseAdmin
           .auth()
           .updateUser(user.uid, body)
@@ -211,8 +213,6 @@ export const updateUser = async (id: string, updateData: any) => {
             console.log("Error updating user:", err);
             return { isSuccess: false, error: err };
           });
-      } else {
-        return { isSuccess: false, error: "Cannot change email address." };
       }
     }
   } else {
