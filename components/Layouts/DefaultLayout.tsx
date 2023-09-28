@@ -98,7 +98,7 @@ function DefaultLayout({ children }: LayoutProps) {
   React.useEffect(() => {
     if (session && isReload === true && !reload) {
       if (!isInternal(session)) {
-        if (!session.nrcFront) {
+        if (!session.nrcNumber) {
           router.push(
             "/account/" +
               encodeURIComponent(encryptPhone(session.phoneNum)) +
