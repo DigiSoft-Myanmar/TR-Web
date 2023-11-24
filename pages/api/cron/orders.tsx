@@ -37,10 +37,13 @@ async function test(req: NextApiRequest, res: NextApiResponse<any>) {
       let date = new Date(today.toISOString().split("T")[0]);
       date.setDate(date.getDate() - 3);
 
+      let oneMonth = new Date(today.toISOString().split("T")[0]);
+      oneMonth.setMonth(oneMonth.getMonth() - 1);
+
       let seller = await prisma.user.findMany({
         where: {
           lastLogin: {
-            lte: date,
+            lte: oneMonth,
           },
           role: {
             in: [Role.Seller, Role.Trader],
