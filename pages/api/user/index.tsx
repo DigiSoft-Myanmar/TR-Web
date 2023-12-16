@@ -265,7 +265,7 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
             }
           }
         } catch (err) {}
-
+        console.log(body);
         let result = await firebaseAdmin
           .auth()
           .createUser(body)
@@ -287,6 +287,7 @@ async function addUser(req: NextApiRequest, res: NextApiResponse<any>) {
             return { isError: false, data: user };
           })
           .catch((err) => {
+            console.log(err);
             return { isError: true, data: err };
           });
         if (result.isError === true) {
